@@ -28,8 +28,14 @@ jobs:
 
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
+
+      - name: Cache ESLint
+        uses: actions/cache@v5
         with:
-          working-directory: ./backend
+          path: ./backend/.eslintcache
+          key: ${{ runner.os }}-eslint-backend-${{ hashFiles('./backend/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-backend-
 
       - name: Run ESLint
         shell: bash
@@ -65,8 +71,6 @@ jobs:
 
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
-        with:
-          working-directory: ./backend
 
       - name: Build
         shell: bash
@@ -120,8 +124,14 @@ jobs:
 
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
+
+      - name: Cache ESLint
+        uses: actions/cache@v5
         with:
-          working-directory: ./frontend
+          path: ./frontend/.eslintcache
+          key: ${{ runner.os }}-eslint-frontend-${{ hashFiles('./frontend/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-frontend-
 
       - name: Run ESLint
         shell: bash
@@ -141,8 +151,6 @@ jobs:
 
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
-        with:
-          working-directory: ./frontend
 
       - name: Cache Next.js build cache
         uses: actions/cache@v5
