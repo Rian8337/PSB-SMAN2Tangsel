@@ -25,6 +25,9 @@ node_modules
 .DS_Store
 *.pem
 
+# ESLint cache
+.eslintcache
+
 # debug
 npm-debug.log*
 yarn-debug.log*

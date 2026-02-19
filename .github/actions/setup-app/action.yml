@@ -30,3 +30,11 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: pnpm install
+
+    - name: Cache ESLint
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.working-directory }}/.eslintcache
+        key: ${{ runner.os }}-eslint-${{ inputs.working-directory }}-${{ hashFiles(format('{0}/src/**', inputs.working-directory)) }}
+        restore-keys: |
+          ${{ runner.os }}-eslint-${{ inputs.working-directory }}-
