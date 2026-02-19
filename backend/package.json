@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "build": "tsc -p tsconfig.build.json",
     "dev": "cross-env NODE_ENV=development tsx src/index.ts",
     "lint": "eslint",
     "start": "cross-env NODE_ENV=production node dist/index.js",
