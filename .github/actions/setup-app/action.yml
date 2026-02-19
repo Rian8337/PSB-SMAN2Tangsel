@@ -6,6 +6,10 @@ inputs:
     description: "Node.js version to use"
     required: false
     default: 24
+  working-directory:
+    description: "Working directory for the action"
+    required: false
+    default: "."
 
 runs:
   using: "composite"
@@ -20,7 +24,9 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'pnpm'
+        cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
 
     - name: Install dependencies
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: pnpm install
