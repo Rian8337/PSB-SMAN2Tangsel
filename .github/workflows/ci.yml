@@ -1,0 +1,141 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend-inspect-code:
+    name: (Backend) Code Quality
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-app
+
+      - name: Run ESLint
+        shell: bash
+        run: pnpm lint
+
+  backend-test:
+    name: (Backend) Test
+    runs-on: ubuntu-latest
+
+    # services:
+    #   db:
+    #     image: mariadb:12.2.2
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: password
+    #       MYSQL_DATABASE: psb-sman2
+    #       MYSQL_USER: user
+    #       MYSQL_PASSWORD: password
+    #     ports:
+    #       - 3306:3306
+    #     options: >-
+    #       --health-cmd="mysqladmin ping -h localhost -u user -ppassword" 
+    #       --health-interval=10s 
+    #       --health-timeout=5s 
+    #       --health-retries=5
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-app
+
+      - name: Build
+        shell: bash
+        run: pnpm build
+
+      # - name: Create test environment file
+      #   run: |
+      #     echo "NODE_ENV=test" >> .env.test
+      #     echo "DB_HOST=127.0.0.1" >> .env.test
+      #     echo "DB_PORT=3306" >> .env.test
+      #     echo "DB_USER=test_user" >> .env.test
+      #     echo "DB_PASSWORD=test_pass" >> .env.test
+      #     echo "DB_NAME=ttms_test" >> .env.test
+      #     echo "COOKIE_SECRET=secret" >> .env.test
+      #     echo "SESSION_ENCRYPTION_KEY=${{ secrets.GITHUB_TOKEN }}" >> .env.test
+
+      # - name: Wait for MariaDB
+      #   run: |
+      #     for i in {1..10}; do
+      #       mysqladmin ping -h127.0.0.1 -ptest_pass -utest_user && break
+      #       echo "Waiting for MariaDB..."
+      #       sleep 3
+      #     done
+
+      # - name: Push database schema
+      #   shell: bash
+      #   run: NODE_ENV=test pnpm drizzle-kit push --force
+
+      - name: Run tests
+        shell: bash
+        run: pnpm test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: ./backend/html/
+
+  frontend-inspect-code:
+    name: (Frontend) Code Quality
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-app
+
+      - name: Run ESLint
+        shell: bash
+        run: pnpm lint
+
+  frontend-test:
+    name: (Frontend) Test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-app
+
+      - name: Run tests
+        shell: bash
+        run: pnpm test

@@ -1,0 +1,32 @@
+{
+  "name": "psb-sman2-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.30.0",
+  "author": "Rian8337",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitest/eslint-plugin": "^1.6.9",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "prettier": "^3.8.1",
+    "typescript": "^5",
+    "vitest": "^4.0.18"
+  }
+}
