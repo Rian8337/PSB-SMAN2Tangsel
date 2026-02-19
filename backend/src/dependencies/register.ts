@@ -1,4 +1,4 @@
-import { db } from "@/database";
+import { createDatabase } from "@/database";
 import { InjectionToken } from "tsyringe";
 import { constructor } from "tsyringe/dist/typings/types";
 // Ensure repositories and services are loaded and metadata is registered
@@ -14,7 +14,14 @@ import { dependencyTokens } from "./tokens";
  * If not provided, the container from {@link getContainer} will be used.
  */
 export function registerDependencies(container = getContainer()) {
-    container.registerInstance(dependencyTokens.drizzleDb, db);
+    // We only want to create and register the database instance once (otherwise we would create
+    // multiple connection pools), so we check if it's already registered before creating it.
+    if (!container.isRegistered(dependencyTokens.drizzleDb)) {
+        container.registerInstance(
+            dependencyTokens.drizzleDb,
+            createDatabase(),
+        );
+    }
 
     const classes = [
         ...((Reflect.getMetadata("repositories", globalThis) as
