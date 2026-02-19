@@ -1,5 +1,16 @@
 {
   "name": "psb-sman2",
   "private": true,
-  "packageManager": "pnpm@10.30.0"
+  "packageManager": "pnpm@10.30.0",
+  "scripts": {
+    "lint": "eslint . --cache"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/eslint-plugin": "^1.6.9",
+    "eslint": "^10.0.0",
+    "eslint-config-next": "16.1.6",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.56.0"
+  }
 }

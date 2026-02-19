@@ -14,13 +14,9 @@ permissions:
   contents: read
 
 jobs:
-  backend-inspect-code:
-    name: (Backend) Code Quality
+  inspect-code:
+    name: Code Quality
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
       - name: Checkout repository
@@ -32,10 +28,10 @@ jobs:
       - name: Cache ESLint
         uses: actions/cache@v5
         with:
-          path: ./backend/.eslintcache
-          key: ${{ runner.os }}-eslint-backend-${{ hashFiles('./backend/src/**') }}
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('eslint.config.mjs', 'backend/src/**', 'frontend/src/**') }}
           restore-keys: |
-            ${{ runner.os }}-eslint-backend-
+            ${{ runner.os }}-eslint-
 
       - name: Run ESLint
         shell: bash
@@ -81,9 +77,9 @@ jobs:
       #     echo "NODE_ENV=test" >> .env.test
       #     echo "DB_HOST=127.0.0.1" >> .env.test
       #     echo "DB_PORT=3306" >> .env.test
-      #     echo "DB_USER=test_user" >> .env.test
-      #     echo "DB_PASSWORD=test_pass" >> .env.test
-      #     echo "DB_NAME=ttms_test" >> .env.test
+      #     echo "DB_USER=user" >> .env.test
+      #     echo "DB_PASSWORD=password" >> .env.test
+      #     echo "DB_NAME=psb-sman2" >> .env.test
       #     echo "COOKIE_SECRET=secret" >> .env.test
       #     echo "SESSION_ENCRYPTION_KEY=${{ secrets.GITHUB_TOKEN }}" >> .env.test
 
@@ -110,33 +106,6 @@ jobs:
           name: backend-test-results
           path: ./backend/html/
 
-  frontend-inspect-code:
-    name: (Frontend) Code Quality
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./frontend
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js and Install Dependencies
-        uses: ./.github/actions/setup-app
-
-      - name: Cache ESLint
-        uses: actions/cache@v5
-        with:
-          path: ./frontend/.eslintcache
-          key: ${{ runner.os }}-eslint-frontend-${{ hashFiles('./frontend/src/**') }}
-          restore-keys: |
-            ${{ runner.os }}-eslint-frontend-
-
-      - name: Run ESLint
-        shell: bash
-        run: pnpm lint
-
   frontend-test:
     name: (Frontend) Test
     runs-on: ubuntu-latest
@@ -155,7 +124,7 @@ jobs:
       - name: Cache Next.js build cache
         uses: actions/cache@v5
         with:
-          path: .next/cache
+          path: ./frontend/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('./pnpm-lock.yaml') }}-${{ hashFiles('./frontend/src/**') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('./pnpm-lock.yaml') }}-
