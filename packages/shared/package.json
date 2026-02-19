@@ -1,0 +1,28 @@
+{
+  "name": "@psb/shared",
+  "private": true,
+  "version": "1.0.0",
+  "exports": {
+    "./schema": {
+      "default": "./src/schema/index.ts",
+      "types": "./src/schema/index.ts"
+    },
+    "./types": {
+      "default": "./src/types/index.ts",
+      "types": "./src/types/index.ts"
+    },
+    "./validator": {
+      "default": "./src/validator/index.ts",
+      "types": "./src/validator/index.ts"
+    }
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "drizzle-zod": "^0.8.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.13",
+    "typescript": "^5.9.3"
+  }
+}

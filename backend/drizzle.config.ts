@@ -5,7 +5,8 @@ config({ path: process.env.NODE_ENV === "test" ? ".env.test" : ".env" });
 
 export default defineConfig({
     dialect: "mysql",
-    schema: "./src/database/schema",
+    out: "./drizzle",
+    schema: "../packages/shared/src/schema",
     strict: true,
     dbCredentials: {
         host: process.env.DB_HOST!,

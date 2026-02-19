@@ -1,8 +1,12 @@
-import { int } from "drizzle-orm/mysql-core";
-import { varchar } from "drizzle-orm/mysql-core";
-import { text } from "drizzle-orm/mysql-core";
-import { boolean } from "drizzle-orm/mysql-core";
-import { mysqlTable } from "drizzle-orm/mysql-core";
+import {
+    boolean,
+    mysqlTable,
+    serial,
+    text,
+    varchar,
+} from "drizzle-orm/mysql-core";
+import { createInsertSchema } from "drizzle-zod";
+import z from "zod";
 
 /**
  * Base table for all users.
@@ -16,7 +20,7 @@ export const users = mysqlTable("user", {
     /**
      * The system-issued identification number of the user.
      */
-    id: int().autoincrement().primaryKey(),
+    id: serial().primaryKey(),
 
     /**
      * The name of the user.
@@ -28,6 +32,3 @@ export const users = mysqlTable("user", {
      */
     password: varchar({ length: 72 }).notNull(),
 });
-
-export type IUser = typeof users.$inferSelect;
-export type IUserInsert = typeof users.$inferInsert;

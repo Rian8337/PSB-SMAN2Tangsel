@@ -28,6 +28,7 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@psb/shared": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -36,7 +37,6 @@
     "express-form-data": "^3.0.1",
     "mysql2": "^3.17.2",
     "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.10.0",
-    "zod": "^4.3.6"
+    "tsyringe": "^4.10.0"
   }
 }
