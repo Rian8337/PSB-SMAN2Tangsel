@@ -1,0 +1,5 @@
+{
+  "name": "psb-sman2",
+  "private": true,
+  "packageManager": "pnpm@10.30.0"
+}
