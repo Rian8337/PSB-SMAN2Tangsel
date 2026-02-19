@@ -129,6 +129,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('./pnpm-lock.yaml') }}-
 
+      - name: Build
+        shell: bash
+        run: pnpm build
+
       - name: Run tests
         shell: bash
         run: pnpm test
