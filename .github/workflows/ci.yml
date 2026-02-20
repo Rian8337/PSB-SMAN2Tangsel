@@ -190,7 +190,7 @@ jobs:
         run: pnpm exec playwright install --with-deps
 
       - name: Push database schema
-        working-directory: ../backend
+        working-directory: ./backend
         shell: bash
         run: NODE_ENV=production pnpm drizzle-kit push --force
 
