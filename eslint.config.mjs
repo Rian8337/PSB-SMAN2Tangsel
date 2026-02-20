@@ -67,10 +67,22 @@ export default defineConfig(
     ...nextVitals.map((config) => ({
         ...config,
         files: ["frontend/**/*.{ts,tsx}"],
+        settings: {
+            ...config.settings,
+            next: {
+                rootDir: "./frontend",
+            },
+        },
     })),
     ...nextTs.map((config) => ({
         ...config,
         files: ["frontend/**/*.{ts,tsx}"],
+        settings: {
+            ...config.settings,
+            next: {
+                rootDir: "./frontend",
+            },
+        },
     })),
     {
         files: ["**/tests/**"],
