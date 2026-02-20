@@ -39,6 +39,26 @@ export default defineConfig(
             "@typescript-eslint/no-non-null-assertion": "off",
         },
     },
+    {
+        files: [
+            "frontend/**/*.ts",
+            "frontend/**/*.tsx",
+            "packages/shared/**/*.ts",
+        ],
+        extends: [
+            ...tseslint.configs.strictTypeChecked,
+            ...tseslint.configs.stylisticTypeChecked,
+        ],
+        plugins: {
+            "@typescript-eslint": tseslint.plugin,
+        },
+        languageOptions: {
+            parser: tseslint.parser,
+        },
+        rules: {
+            "@typescript-eslint/no-non-null-assertion": "off",
+        },
+    },
     ...nextVitals.map((config) => ({
         ...config,
         files: ["frontend/**/*.{ts,tsx}"],

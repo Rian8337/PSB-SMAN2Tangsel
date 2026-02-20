@@ -1,4 +1,4 @@
-import { DrizzleDb } from "@/database";
+import { DrizzleDb } from "@psb/shared/types";
 import { IAuthService, IConfigService } from "@/services";
 import { InjectionToken } from "tsyringe";
 

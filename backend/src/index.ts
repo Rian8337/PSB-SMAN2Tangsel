@@ -1,21 +1,15 @@
-import { config } from "dotenv";
 import "reflect-metadata";
-import { createApp } from "./app";
-import { registerDependencies } from "./dependencies/register";
+import { createApp, loadEnvironmentVariables } from "./app";
 import { getContainer } from "./dependencies/container";
+import { registerDependencies } from "./dependencies/register";
 import { dependencyTokens } from "./dependencies/tokens";
 import { EnvironmentVariableKey } from "./types";
 
 registerDependencies();
-
-const configService = getContainer().resolve(dependencyTokens.configService);
-
-config({
-    path: `.env.${configService.getEnvironmentVariable(EnvironmentVariableKey.nodeEnv) ?? "development"}`,
-    quiet: true,
-});
+loadEnvironmentVariables();
 
 const app = createApp();
+const configService = getContainer().resolve(dependencyTokens.configService);
 
 const port = parseInt(
     configService.getEnvironmentVariable(EnvironmentVariableKey.port) ?? "3001",

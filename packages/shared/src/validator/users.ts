@@ -1,5 +1,5 @@
 import { createInsertSchema } from "drizzle-zod";
-import { users } from "../schema";
+import { users } from "../database/schema";
 
 /**
  * The Zod schema for validating user insertion data.

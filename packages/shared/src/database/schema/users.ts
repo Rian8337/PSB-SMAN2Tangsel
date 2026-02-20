@@ -5,8 +5,6 @@ import {
     text,
     varchar,
 } from "drizzle-orm/mysql-core";
-import { createInsertSchema } from "drizzle-zod";
-import z from "zod";
 
 /**
  * Base table for all users.

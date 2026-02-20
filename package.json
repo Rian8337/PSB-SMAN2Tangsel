@@ -3,6 +3,9 @@
   "private": true,
   "packageManager": "pnpm@10.30.0",
   "scripts": {
+    "build": "pnpm --filter backend --filter frontend --parallel run build",
+    "dev": "pnpm --filter backend --filter frontend --parallel run dev",
+    "start": "pnpm --filter backend --filter frontend --parallel start",
     "lint": "eslint . --cache"
   },
   "devDependencies": {

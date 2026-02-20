@@ -3,9 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "exports": {
+    "./database": {
+      "default": "./src/database/index.ts",
+      "types": "./src/database/index.ts"
+    },
     "./schema": {
-      "default": "./src/schema/index.ts",
-      "types": "./src/schema/index.ts"
+      "default": "./src/database/schema/index.ts",
+      "types": "./src/database/schema/index.ts"
+    },
+    "./tests": {
+      "default": "./src/tests/index.ts",
+      "types": "./src/tests/index.ts"
     },
     "./types": {
       "default": "./src/types/index.ts",
@@ -19,6 +27,7 @@
   "dependencies": {
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
+    "mysql2": "^3.17.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
