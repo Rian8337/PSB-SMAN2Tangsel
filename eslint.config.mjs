@@ -54,6 +54,11 @@ export default defineConfig(
         },
         languageOptions: {
             parser: tseslint.parser,
+            parserOptions: {
+                projectService: true,
+                // @ts-ignore
+                tsconfigRootDir: `${import.meta.dirname}/frontend`,
+            },
         },
         rules: {
             "@typescript-eslint/no-non-null-assertion": "off",

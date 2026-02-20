@@ -5,4 +5,7 @@ import { DrizzleDb } from "../types";
  *
  * @param db The Drizzle database instance to use for seeding the tables.
  */
-export async function seedPrimaryTables(db: DrizzleDb) {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function seedPrimaryTables(db: DrizzleDb) {
+    // TODO: insert seeding logic
+}
