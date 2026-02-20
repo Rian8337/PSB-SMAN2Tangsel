@@ -1,7 +1,7 @@
 import { createDatabase } from "@psb/shared/database";
 import { seedPrimaryTables } from "@psb/shared/tests";
 
-export default async function globalSetup() {
+export default function globalSetup() {
     const db = createDatabase({
         host: process.env.DB_HOST!,
         user: process.env.DB_USER!,
@@ -11,7 +11,7 @@ export default async function globalSetup() {
     });
 
     try {
-        await seedPrimaryTables(db);
+        seedPrimaryTables(db);
     } catch (e) {
         console.error("Error seeding primary tables:", e);
         throw e;
