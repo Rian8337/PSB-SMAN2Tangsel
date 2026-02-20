@@ -85,7 +85,7 @@ jobs:
 
       - name: Push database schema
         shell: bash
-        run: pnpm drizzle-kit push --force
+        run: NODE_ENV=test pnpm drizzle-kit push --force
 
       - name: Run tests
         shell: bash
@@ -192,7 +192,7 @@ jobs:
       - name: Push database schema
         working-directory: ../backend
         shell: bash
-        run: pnpm drizzle-kit push --force
+        run: NODE_ENV=production pnpm drizzle-kit push --force
 
       - name: Run Playwright tests
         run: pnpm exec playwright test

@@ -1,12 +1,13 @@
 import "reflect-metadata";
-import { createApp, loadEnvironmentVariables } from "./app";
+import { createApp } from "./app";
 import { getContainer } from "./dependencies/container";
 import { registerDependencies } from "./dependencies/register";
 import { dependencyTokens } from "./dependencies/tokens";
 import { EnvironmentVariableKey } from "./types";
+import { loadEnvironmentVariables } from "./env";
 
-registerDependencies();
 loadEnvironmentVariables();
+registerDependencies();
 
 const app = createApp();
 const configService = getContainer().resolve(dependencyTokens.configService);
