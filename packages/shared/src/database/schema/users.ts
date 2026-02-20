@@ -1,7 +1,7 @@
 import {
     boolean,
+    int,
     mysqlTable,
-    serial,
     text,
     varchar,
 } from "drizzle-orm/mysql-core";
@@ -18,7 +18,7 @@ export const users = mysqlTable("user", {
     /**
      * The system-issued identification number of the user.
      */
-    id: serial().primaryKey(),
+    id: int().autoincrement().primaryKey(),
 
     /**
      * The name of the user.
