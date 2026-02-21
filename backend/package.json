@@ -1,5 +1,5 @@
 {
-  "name": "psb-sman2-backend",
+  "name": "backend",
   "private": true,
   "version": "1.0.0",
   "main": "dist/index.js",

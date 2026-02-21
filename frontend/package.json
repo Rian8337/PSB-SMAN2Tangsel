@@ -1,10 +1,7 @@
 {
-  "name": "psb-sman2-frontend",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.30.0",
-  "author": "Rian8337",
-  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
