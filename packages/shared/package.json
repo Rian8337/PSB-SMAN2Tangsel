@@ -2,26 +2,35 @@
   "name": "@psb/shared",
   "private": true,
   "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
     "./database": {
-      "default": "./src/database/index.ts",
-      "types": "./src/database/index.ts"
+      "default": "./dist/database/index.js",
+      "types": "./dist/database/index.d.ts"
     },
     "./schema": {
-      "default": "./src/database/schema/index.ts",
-      "types": "./src/database/schema/index.ts"
+      "default": "./dist/database/schema/index.js",
+      "types": "./dist/database/schema/index.d.ts"
     },
     "./tests": {
-      "default": "./src/tests/index.ts",
-      "types": "./src/tests/index.ts"
+      "default": "./dist/tests/index.js",
+      "types": "./dist/tests/index.d.ts"
     },
     "./types": {
-      "default": "./src/types/index.ts",
-      "types": "./src/types/index.ts"
+      "default": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
     },
     "./validator": {
-      "default": "./src/validator/index.ts",
-      "types": "./src/validator/index.ts"
+      "default": "./dist/validator/index.js",
+      "types": "./dist/validator/index.d.ts"
     }
   },
   "dependencies": {
