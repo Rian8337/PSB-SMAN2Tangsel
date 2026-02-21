@@ -25,6 +25,11 @@ jobs:
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
 
+      - name: Build (shared code)
+        working-directory: ./packages/shared
+        shell: bash
+        run: pnpm build
+
       - name: Cache ESLint
         uses: actions/cache@v5
         with:
