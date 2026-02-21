@@ -70,8 +70,9 @@ jobs:
         uses: ./.github/actions/setup-app
 
       - name: Build
+        working-directory: .
         shell: bash
-        run: pnpm build
+        run: pnpm --filter backend... build
 
       - name: Create test environment file
         run: |
@@ -124,8 +125,9 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('./pnpm-lock.yaml') }}-
 
       - name: Build
+        working-directory: .
         shell: bash
-        run: pnpm build
+        run: pnpm --filter frontend... build
 
       - name: Run tests
         shell: bash
