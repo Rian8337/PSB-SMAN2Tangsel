@@ -14,23 +14,10 @@ import { dependencyTokens } from "./tokens";
  * If not provided, the container from {@link getContainer} will be used.
  */
 export function registerDependencies(container = getContainer()) {
-    // We only want to create and register the database instance once (otherwise we would create
-    // multiple connection pools), so we check if it's already registered before creating it.
-    if (!container.isRegistered(dependencyTokens.drizzleDb)) {
-        container.registerInstance(
-            dependencyTokens.drizzleDb,
-            createDatabase(),
-        );
-    }
-
-    const classes = [
-        ...((Reflect.getMetadata("repositories", globalThis) as
+    const classes =
+        (Reflect.getMetadata("classes", globalThis) as
             | constructor<unknown>[]
-            | undefined) ?? []),
-        ...((Reflect.getMetadata("services", globalThis) as
-            | constructor<unknown>[]
-            | undefined) ?? []),
-    ];
+            | undefined) ?? [];
 
     for (const cls of classes) {
         const token = Reflect.getMetadata("registrationToken", cls) as
@@ -43,6 +30,15 @@ export function registerDependencies(container = getContainer()) {
             );
         }
 
-        container.register(token, { useClass: cls });
+        container.registerSingleton(token, cls);
+    }
+
+    // We only want to create and register the database instance once (otherwise we would create
+    // multiple connection pools), so we check if it's already registered before creating it.
+    if (!container.isRegistered(dependencyTokens.drizzleDb)) {
+        container.registerInstance(
+            dependencyTokens.drizzleDb,
+            createDatabase(),
+        );
     }
 }
