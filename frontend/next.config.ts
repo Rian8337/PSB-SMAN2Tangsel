@@ -10,4 +10,7 @@ const withNextIntl = createNextIntlPlugin({
 export default withNextIntl({
     reactCompiler: true,
     transpilePackages: ["@psb/shared"],
+    experimental: {
+        optimizePackageImports: ["@psb/shared", "@chakra-ui/react"],
+    },
 } satisfies NextConfig);

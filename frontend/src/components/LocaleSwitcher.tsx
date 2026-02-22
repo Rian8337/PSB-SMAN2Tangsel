@@ -2,27 +2,35 @@
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import { Locale, useLocale } from "next-intl";
+import { Box, Button, HStack } from "@chakra-ui/react";
 
 export default function LocaleSwitcher() {
     const locale = useLocale();
     const pathname = usePathname();
     const router = useRouter();
 
+    function switchLocale(locale: Locale) {
+        router.replace(pathname, { locale });
+    }
+
     return (
-        <div style={{ padding: "1rem", borderBottom: "1px solid #ccc" }}>
-            {routing.locales.map((l) => (
-                <button
-                    key={l}
-                    onClick={() => {
-                        router.replace(pathname, { locale: l });
-                    }}
-                    disabled={l === locale}
-                    style={{ marginRight: "8px", padding: "4px 8px" }}
-                >
-                    {l.toUpperCase()}
-                </button>
-            ))}
-        </div>
+        <Box p={4} borderBottomWidth="1px" borderColor="border">
+            <HStack gap={2}>
+                {routing.locales.map((l) => (
+                    <Button
+                        key={l}
+                        onClick={() => {
+                            switchLocale(l);
+                        }}
+                        disabled={l === locale}
+                        size="sm"
+                        variant={l === locale ? "solid" : "outline"}
+                    >
+                        {l.toUpperCase()}
+                    </Button>
+                ))}
+            </HStack>
+        </Box>
     );
 }
