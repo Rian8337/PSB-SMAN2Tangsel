@@ -1,5 +1,12 @@
 import { createDatabase } from "@psb/shared/database";
 import { seedPrimaryTables } from "@psb/shared/tests";
+import { config } from "dotenv";
+
+config({
+    // ALWAYS use test environment variables to avoid tinkering production or development databases.
+    path: `.env.test`,
+    quiet: true,
+});
 
 export default function globalSetup() {
     const db = createDatabase({
