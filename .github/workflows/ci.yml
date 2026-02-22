@@ -63,6 +63,16 @@ jobs:
           --health-timeout=5s 
           --health-retries=5
 
+    env:
+      NODE_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: psb-sman2
+      COOKIE_SECRET: secret
+      SESSION_ENCRYPTION_KEY: ${{ secrets.GITHUB_TOKEN }}
+
     defaults:
       run:
         working-directory: ./backend
@@ -79,20 +89,9 @@ jobs:
         shell: bash
         run: pnpm --filter backend... build
 
-      - name: Create test environment file
-        run: |
-          echo "NODE_ENV=test" >> .env.test
-          echo "DB_HOST=127.0.0.1" >> .env.test
-          echo "DB_PORT=3306" >> .env.test
-          echo "DB_USER=user" >> .env.test
-          echo "DB_PASSWORD=password" >> .env.test
-          echo "DB_NAME=psb-sman2" >> .env.test
-          echo "COOKIE_SECRET=secret" >> .env.test
-          echo "SESSION_ENCRYPTION_KEY=${{ secrets.GITHUB_TOKEN }}" >> .env.test
-
       - name: Push database schema
         shell: bash
-        run: NODE_ENV=test pnpm drizzle-kit push --force
+        run: pnpm drizzle-kit push --force
 
       - name: Run tests
         shell: bash
@@ -167,6 +166,16 @@ jobs:
           --health-timeout=5s 
           --health-retries=5
 
+    env:
+      NODE_ENV: production
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: psb-sman2
+      COOKIE_SECRET: secret
+      SESSION_ENCRYPTION_KEY: ${{ secrets.GITHUB_TOKEN }}
+
     defaults:
       run:
         working-directory: ./frontend
@@ -177,18 +186,6 @@ jobs:
 
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
-
-      - name: Create production environment file
-        run: |
-          echo "NODE_ENV=production" >> .env.production
-          echo "DB_HOST=127.0.0.1" >> .env.production
-          echo "DB_PORT=3306" >> .env.production
-          echo "DB_USER=user" >> .env.production
-          echo "DB_PASSWORD=password" >> .env.production
-          echo "DB_NAME=psb-sman2" >> .env.production
-          echo "COOKIE_SECRET=secret" >> .env.production
-          echo "SESSION_ENCRYPTION_KEY=${{ secrets.GITHUB_TOKEN }}" >> .env.production
-          cp .env.production ../backend/.env.production
 
       - name: Build
         working-directory: .
@@ -201,7 +198,7 @@ jobs:
       - name: Push database schema
         working-directory: ./backend
         shell: bash
-        run: NODE_ENV=production pnpm drizzle-kit push --force
+        run: pnpm drizzle-kit push --force
 
       - name: Run Playwright tests
         run: pnpm test:e2e
