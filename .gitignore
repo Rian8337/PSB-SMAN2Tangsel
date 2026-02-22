@@ -54,3 +54,6 @@ playwright/.auth/
 # Vitest
 backend/html/
 frontend/html/
+
+# next-intl
+frontend/messages/*.d.json.ts
