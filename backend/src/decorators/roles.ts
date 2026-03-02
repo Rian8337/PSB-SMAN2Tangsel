@@ -1,6 +1,6 @@
 import { getContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { UserRole } from "@/types";
+import { UserRole } from "@psb/shared/types";
 import { RequestHandler } from "express";
 import { UseMiddleware } from "./middleware";
 
@@ -17,7 +17,6 @@ export function Roles(...roles: UserRole[]): MethodDecorator {
             res,
             next,
         ) => {
-            // IMPORTANT: The service resolution is deferred to here to make sure that it has been registered.
             const container = getContainer();
             const authService = container.resolve(dependencyTokens.authService);
 
