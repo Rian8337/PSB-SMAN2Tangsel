@@ -1,4 +1,4 @@
-import { UserRole } from "@/types";
+import { User, UserRole } from "@psb/shared/types";
 import { RequestHandler, Response } from "express";
 
 /**

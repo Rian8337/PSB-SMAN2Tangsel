@@ -3,8 +3,10 @@ import {
     int,
     mysqlTable,
     text,
+    tinyint,
     varchar,
 } from "drizzle-orm/mysql-core";
+import { UserRole } from "../../types";
 
 /**
  * Base table for all users.
@@ -29,4 +31,12 @@ export const users = mysqlTable("user", {
      * The encrypted password of the user. The maximum length is 72 characters, which is the maximum length of a bcrypt hash.
      */
     password: varchar({ length: 72 }).notNull(),
+
+    /**
+     * The role of the user. Maps to the `UserRole` enum:
+     * - 0: student
+     * - 1: teacher
+     * - 2: administrator
+     */
+    role: tinyint().$type<UserRole>().notNull().default(0),
 });
