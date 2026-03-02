@@ -2,5 +2,12 @@
   "HomePage": {
     "title": "Selamat Datang di SMAN 2 Tangerang Selatan",
     "description": "Portal e-learning resmi."
+  },
+  "LoginPage": {
+    "title": "Masuk",
+    "id": "ID",
+    "password": "Kata sandi",
+    "login": "Masuk",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

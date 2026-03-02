@@ -2,5 +2,12 @@
   "HomePage": {
     "title": "Welcome to SMAN 2 Tangerang Selatan",
     "description": "The official e-learning portal."
+  },
+  "LoginPage": {
+    "title": "Login",
+    "id": "ID",
+    "password": "Password",
+    "login": "Login",
+    "error": "An error occurred. Please try again."
   }
 }
