@@ -1,7 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 import { loadEnvFile } from "process";
 
-loadEnvFile(`.env.${process.env.NODE_ENV ?? "development"}`)
+if (!process.env.CI) {
+    loadEnvFile(`.env.${process.env.NODE_ENV ?? "development"}`)
+}
 
 export default defineConfig({
     dialect: "mysql",
