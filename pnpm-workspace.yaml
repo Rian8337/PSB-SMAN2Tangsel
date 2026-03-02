@@ -6,6 +6,7 @@ packages:
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@swc/core'
+  - bcrypt
   - esbuild
   - sharp
   - unrs-resolver
