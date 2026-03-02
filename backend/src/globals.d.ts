@@ -41,3 +41,14 @@ namespace NodeJS {
         readonly SESSION_ENCRYPTION_KEY?: string;
     }
 }
+
+namespace Express {
+    interface Request {
+        /**
+         * The decrypted session data attached by the auth middleware.
+         *
+         * Only present on role-protected routes.
+         */
+        sessionData?: import("./types/session").SessionData;
+    }
+}

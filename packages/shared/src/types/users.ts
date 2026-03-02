@@ -1,6 +1,4 @@
-import z from "zod";
-import { insertUserSchema } from "../validator";
-import { users } from "../database/schema";
+import { administrators, students, teachers, users } from "../database/schema";
 
 /**
  * Available user roles.
@@ -17,6 +15,16 @@ export enum UserRole {
 export type User = typeof users.$inferSelect;
 
 /**
- * The type of data required to insert a new user into the database.
+ * The type of an administrator user.
  */
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type Administrator = User & typeof administrators.$inferSelect;
+
+/**
+ * The type of a teacher user.
+ */
+export type Teacher = User & typeof teachers.$inferSelect;
+
+/**
+ * The type of a student user.
+ */
+export type Student = User & typeof students.$inferSelect;

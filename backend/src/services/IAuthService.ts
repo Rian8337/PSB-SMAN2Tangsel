@@ -6,6 +6,15 @@ import { RequestHandler, Response } from "express";
  */
 export interface IAuthService {
     /**
+     * Logs in a user with the given ID and password.
+     *
+     * @param id The ID of the user to log in.
+     * @param password The password of the user to log in.
+     * @returns The authenticated user.
+     */
+    login(id: string, password: string): Promise<User>;
+
+    /**
      * Creates a session for a user.
      *
      * The session is signed and encrypted using the secret key.
