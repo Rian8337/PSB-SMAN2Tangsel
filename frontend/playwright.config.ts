@@ -2,7 +2,9 @@ import { defineConfig, devices } from "@playwright/test";
 import { loadEnvFile } from "process";
 
 // ALWAYS use test environment variables to avoid tinkering production or development databases.
-loadEnvFile(".env.test");
+if (!process.env.CI) {
+    loadEnvFile(".env.test");
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
