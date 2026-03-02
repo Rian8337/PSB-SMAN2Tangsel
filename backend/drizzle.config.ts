@@ -1,10 +1,7 @@
-import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+import { loadEnvFile } from "process";
 
-config({
-    path: `.env.${process.env.NODE_ENV ?? "development"}`,
-    quiet: true,
-});
+loadEnvFile(`.env.${process.env.NODE_ENV ?? "development"}`)
 
 export default defineConfig({
     dialect: "mysql",

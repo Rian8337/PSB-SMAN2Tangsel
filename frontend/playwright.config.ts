@@ -1,12 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import { loadEnvFile } from "process";
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+// ALWAYS use test environment variables to avoid tinkering production or development databases.
+loadEnvFile(".env.test");
 
 /**
  * See https://playwright.dev/docs/test-configuration.

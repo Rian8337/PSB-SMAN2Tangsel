@@ -33,7 +33,6 @@
     "@psb/shared": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-form-data": "^3.0.1",
     "reflect-metadata": "^0.2.2",
