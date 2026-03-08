@@ -2,7 +2,7 @@ import { defineConfig } from "drizzle-kit";
 import { loadEnvFile } from "process";
 
 if (!process.env.CI) {
-    loadEnvFile(`.env.${process.env.NODE_ENV ?? "development"}`)
+    loadEnvFile(`.env.${process.env.NODE_ENV ?? "development"}`);
 }
 
 export default defineConfig({
@@ -10,6 +10,7 @@ export default defineConfig({
     out: "./drizzle",
     schema: "../packages/shared/src/database/schema",
     strict: true,
+    casing: "snake_case",
     dbCredentials: {
         host: process.env.DB_HOST!,
         database: process.env.DB_NAME!,
