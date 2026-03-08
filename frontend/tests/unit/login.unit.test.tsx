@@ -16,10 +16,6 @@ function renderPage() {
 }
 
 describe("LoginPage", () => {
-    afterEach(() => {
-        vi.unstubAllGlobals();
-    });
-
     it("renders the form fields", () => {
         renderPage();
 
