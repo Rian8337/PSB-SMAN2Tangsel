@@ -4,7 +4,7 @@ import { IAdministratorRepository } from "./IAdministratorRepository";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { Administrator } from "@psb/shared/types";
 import { eq } from "drizzle-orm";
-import { administrators } from "@psb/shared/schema";
+import { administrators, users } from "@psb/shared/schema";
 
 /**
  * Defines operations for accessing and managing administrator data in the database.
@@ -15,14 +15,18 @@ export class AdministratorRepository
     implements IAdministratorRepository
 {
     findByStaffId(staffId: number): Promise<Administrator | null> {
-        return this.db.query.administrators
-            .findFirst({
-                with: {
-                    user: true,
-                },
-                where: eq(administrators.staffId, staffId),
+        return this.db
+            .select({
+                user: users,
+                admin: administrators,
             })
-            .then((res) => {
+            .from(administrators)
+            .innerJoin(users, eq(administrators.userId, users.id))
+            .where(eq(administrators.staffId, staffId))
+            .limit(1)
+            .then((result) => {
+                const res = result.at(0);
+
                 if (!res) {
                     return null;
                 }
@@ -33,8 +37,8 @@ export class AdministratorRepository
                     name: res.user.name,
                     password: res.user.password,
                     role: res.user.role,
-                    staffId: res.staffId,
-                    userId: res.userId,
+                    staffId: res.admin.staffId,
+                    userId: res.admin.userId,
                 };
             });
     }

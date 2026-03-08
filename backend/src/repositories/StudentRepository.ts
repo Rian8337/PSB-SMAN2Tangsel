@@ -1,5 +1,5 @@
 import { dependencyTokens } from "@/dependencies/tokens";
-import { students } from "@psb/shared/schema";
+import { students, users } from "@psb/shared/schema";
 import { DrizzleDb, Student } from "@psb/shared/types";
 import { eq } from "drizzle-orm";
 import { inject } from "tsyringe";
@@ -23,14 +23,18 @@ export class StudentRepository
     }
 
     findByNISN(nisn: string): Promise<Student | null> {
-        return this.db.query.students
-            .findFirst({
-                with: {
-                    user: true,
-                },
-                where: eq(students.nisn, nisn),
+        return this.db
+            .select({
+                user: users,
+                student: students,
             })
-            .then((res) => {
+            .from(students)
+            .innerJoin(users, eq(students.userId, users.id))
+            .where(eq(students.nisn, nisn))
+            .limit(1)
+            .then((result) => {
+                const res = result.at(0);
+
                 if (!res) {
                     return null;
                 }
@@ -39,10 +43,10 @@ export class StudentRepository
                     active: res.user.active,
                     id: res.user.id,
                     name: res.user.name,
-                    nisn: res.nisn,
+                    nisn: res.student.nisn,
                     password: res.user.password,
                     role: res.user.role,
-                    userId: res.userId,
+                    userId: res.student.userId,
                 };
             });
     }
