@@ -77,6 +77,7 @@ export default defineConfig({
         url: "http://localhost:3000",
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
+        stdout: "pipe",
         env: {
             NODE_ENV: "production",
             // Explicitly pass database environment variables to ensure that the test database is used instead.
