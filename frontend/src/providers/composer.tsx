@@ -12,7 +12,7 @@ interface ProviderProps {
  * @param Providers An array of provider components to compose.
  * @returns A single provider component that renders the given children wrapped in all the provided components.
  */
-export const compose =
+export const composeProviders =
     (...Providers: ComponentType<ProviderProps>[]) =>
     ({ children }: ProviderProps) =>
         Providers.reduceRight(
