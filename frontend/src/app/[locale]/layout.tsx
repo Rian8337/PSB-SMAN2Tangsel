@@ -1,6 +1,7 @@
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { Provider } from "@/components/ui/provider";
 import { routing } from "@/i18n/routing";
+import { AppProviders } from "@/providers/providers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -25,8 +26,10 @@ export default async function LocaleLayout(props: PropsWithChildren<Props>) {
             <body>
                 <NextIntlClientProvider messages={messages}>
                     <Provider>
-                        <LocaleSwitcher />
-                        <main style={{ padding: "1rem" }}>{children}</main>
+                        <AppProviders>
+                            <LocaleSwitcher />
+                            <main style={{ padding: "1rem" }}>{children}</main>
+                        </AppProviders>
                     </Provider>
                 </NextIntlClientProvider>
             </body>

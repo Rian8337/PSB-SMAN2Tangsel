@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
+import { useAuthApiClient } from "@/providers/api/auth-api-provider";
 import {
     Box,
     Button,
@@ -14,6 +16,9 @@ import { useState } from "react";
 
 export default function LoginPage() {
     const t = useTranslations("LoginPage");
+    const authApiClient = useAuthApiClient();
+    const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -25,23 +30,12 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch("http://localhost:3001/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ id, password }),
-            });
-
-            if (!response.ok) {
-                const data = (await response.json()) as { error?: string };
-                setError(data.error ?? t("error"));
-                return;
-            }
+            await authApiClient.login(id, password);
 
             // Redirect to home page on successful login
-            window.location.href = "/";
-        } catch {
-            setError(t("error"));
+            router.push("/");
+        } catch (e) {
+            setError(e instanceof Error ? e.message : t("error"));
         } finally {
             setIsLoading(false);
         }
