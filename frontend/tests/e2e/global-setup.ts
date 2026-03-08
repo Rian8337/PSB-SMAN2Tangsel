@@ -3,7 +3,9 @@ import { seedPrimaryTables } from "@psb/shared/tests";
 import { loadEnvFile } from "process";
 
 // ALWAYS use test environment variables to avoid tinkering production or development databases.
-loadEnvFile(".env.test");
+if (!process.env.CI) {
+    loadEnvFile(".env.test");
+}
 
 export default function globalSetup() {
     const db = createDatabase({
