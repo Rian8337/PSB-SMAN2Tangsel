@@ -1,5 +1,3 @@
-"use client";
-
 import { ComponentType, ReactNode } from "react";
 
 interface ProviderProps {
