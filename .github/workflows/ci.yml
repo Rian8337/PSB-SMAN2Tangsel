@@ -70,8 +70,8 @@ jobs:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: psb-sman2
-      COOKIE_SECRET: secret
-      SESSION_ENCRYPTION_KEY: ${{ secrets.GITHUB_TOKEN }}
+      COOKIE_SECRET: f3a2007d-6344-49f4-8705-f1f9818a86d9
+      SESSION_ENCRYPTION_KEY: 6e0eb1287fc4afdc22df1fb5f5c205709347cacbe5ed687bec17a48bf511b995
 
     defaults:
       run:
@@ -173,8 +173,8 @@ jobs:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: psb-sman2
-      COOKIE_SECRET: secret
-      SESSION_ENCRYPTION_KEY: ${{ secrets.GITHUB_TOKEN }}
+      COOKIE_SECRET: f3a2007d-6344-49f4-8705-f1f9818a86d9
+      SESSION_ENCRYPTION_KEY: 6e0eb1287fc4afdc22df1fb5f5c205709347cacbe5ed687bec17a48bf511b995
 
     defaults:
       run:
