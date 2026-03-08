@@ -10,7 +10,6 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,
-    "removeComments": true,
   },
   "include": ["src/**/*"]
 }
