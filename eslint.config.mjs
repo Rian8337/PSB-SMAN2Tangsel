@@ -87,7 +87,10 @@ export default defineConfig(
     {
         files: ["**/tests/**"],
         plugins: { vitest },
-        rules: vitest.configs.recommended.rules,
+        rules: {
+            ...vitest.configs.recommended.rules,
+            "@typescript-eslint/unbound-method": "off",
+        },
     },
     {
         files: ["eslint.config.mjs", "prettier.config.mjs"],
