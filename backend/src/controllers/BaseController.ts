@@ -1,5 +1,5 @@
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "@/types";
-import { Response } from "express";
+import { APIError } from "@/types";
+import { Request, Response } from "express";
 
 /**
  * Base class for controllers.
@@ -8,31 +8,23 @@ export abstract class BaseController {
     /**
      * Handles errors thrown by controller methods and sends appropriate HTTP responses.
      *
+     * @param req The request object.
      * @param res The response object to send the error response with.
      * @param error The error to handle.
      */
-    protected handleError(res: Response<{ error: string }>, error: unknown) {
-        if (error instanceof Error) {
-            let statusCode: number;
+    protected handleError(
+        req: Request<unknown, unknown>,
+        res: Response<{ error: string }>,
+        error: unknown,
+    ) {
+        if (error instanceof APIError) {
+            res.status(error.statusCode).json({ error: req.t(error.key) });
 
-            switch (true) {
-                case error instanceof UnauthorizedError:
-                    statusCode = 401;
-                    break;
-
-                case error instanceof ForbiddenError:
-                    statusCode = 403;
-                    break;
-
-                case error instanceof NotFoundError:
-                    statusCode = 404;
-                    break;
-
-                default:
-                    statusCode = 500;
-            }
-
-            res.status(statusCode).json({ error: error.message });
+            return;
         }
+
+        console.error("[Unhandled Error]:", error);
+
+        res.status(500).json({ error: req.t("http.serverError") });
     }
 }

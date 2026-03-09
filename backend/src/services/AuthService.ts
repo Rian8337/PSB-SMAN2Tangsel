@@ -173,7 +173,7 @@ export class AuthService implements IAuthService {
         const student = await this.studentRepository.findByNISN(nisn);
 
         if (!student) {
-            throw new UnauthorizedError("Invalid credentials.");
+            throw new UnauthorizedError("auth.invalidCredentials");
         }
 
         await this.validateCredentials(student, password);
@@ -183,7 +183,7 @@ export class AuthService implements IAuthService {
 
     private async loginStaff(id: string, password: string): Promise<User> {
         if (/^[1-9]\d$/.test(id)) {
-            throw new UnauthorizedError("Invalid staff ID.");
+            throw new UnauthorizedError("auth.invalidStaffId");
         }
 
         const staffId = parseInt(id, 10);
@@ -201,7 +201,7 @@ export class AuthService implements IAuthService {
             await this.administratorRepository.findByStaffId(staffId);
 
         if (!administrator) {
-            throw new UnauthorizedError("Invalid credentials.");
+            throw new UnauthorizedError("auth.invalidCredentials");
         }
 
         await this.validateCredentials(administrator, password, true);
@@ -215,17 +215,17 @@ export class AuthService implements IAuthService {
         isAdministrator = false,
     ) {
         if (!user.active) {
-            const message = isAdministrator
-                ? "Your administrator account is inactive. Please contact another administrator."
-                : "Your account is inactive. Please contact an administrator.";
-
-            throw new ForbiddenError(message);
+            throw new ForbiddenError(
+                isAdministrator
+                    ? "auth.inactiveAdminAccount"
+                    : "auth.inactiveUserAccount",
+            );
         }
 
         const isPasswordValid = await compare(password, user.password);
 
         if (!isPasswordValid) {
-            throw new UnauthorizedError("Invalid credentials.");
+            throw new UnauthorizedError("auth.invalidCredentials");
         }
     }
 }

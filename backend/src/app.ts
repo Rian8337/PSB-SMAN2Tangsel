@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import formData from "express-form-data";
 import { createRouter } from "./router";
+import { i18nMiddleware } from "./i18n";
 
 /**
  * Creates an Express application with all necessary middleware and routes configured.
@@ -28,6 +29,7 @@ export function createApp() {
                 credentials: true,
             }),
         )
+        .use(i18nMiddleware)
         .use(createRouter());
 
     return app;

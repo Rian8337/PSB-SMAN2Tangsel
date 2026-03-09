@@ -1,10 +1,11 @@
+import { MessageKey } from "@/i18n";
+import { APIError } from "./APIError";
+
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403
  */
-export class ForbiddenError extends Error {
-    constructor(message = "Forbidden", options?: ErrorOptions) {
-        super(message, options);
-
-        this.name = "ForbiddenError";
+export class ForbiddenError extends APIError {
+    constructor(key: MessageKey = "http.forbidden") {
+        super(key, 401);
     }
 }

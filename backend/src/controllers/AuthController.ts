@@ -63,7 +63,7 @@ export class AuthController extends BaseController {
                 role: user.role,
             });
         } catch (e) {
-            this.handleError(res, e);
+            this.handleError(req, res, e);
         }
     }
 
@@ -104,7 +104,7 @@ export class AuthController extends BaseController {
                 role: user.role,
             });
         } catch (e) {
-            this.handleError(res, e);
+            this.handleError(req, res, e);
         }
     }
 }
