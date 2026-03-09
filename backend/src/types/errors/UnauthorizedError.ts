@@ -6,6 +6,6 @@ import { APIError } from "./APIError";
  */
 export class UnauthorizedError extends APIError {
     constructor(key: MessageKey = "http.unauthorized") {
-        super(key, 404);
+        super(key, 401);
     }
 }
