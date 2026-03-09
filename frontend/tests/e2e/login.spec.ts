@@ -22,7 +22,9 @@ test.describe("Login Page", () => {
         await page.getByRole("button", { name: "Masuk" }).click();
 
         await expect(
-            page.getByRole("alert").filter({ hasText: "Invalid credentials." }),
+            page
+                .getByRole("alert")
+                .filter({ hasText: /kredensial tidak valid/i }),
         ).toBeVisible({ timeout: 10000 });
     });
 
