@@ -5,8 +5,8 @@ import { Locale, messages } from "./messages";
  * Middleware for parsing request locales.
  */
 export function i18nMiddleware(
-    req: Request,
-    res: Response,
+    req: Request<unknown>,
+    res: Response<unknown>,
     next: NextFunction,
 ) {
     const preferredLocale = req.acceptsLanguages(["id", "en"]);
