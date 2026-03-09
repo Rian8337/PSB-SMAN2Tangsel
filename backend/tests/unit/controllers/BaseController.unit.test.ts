@@ -1,0 +1,57 @@
+import { BaseController } from "@/controllers/BaseController";
+import { UnauthorizedError } from "@/types";
+import { createMockRequest, createMockResponse } from "@test/mocks";
+import { Request, Response } from "express";
+
+class TestController extends BaseController {
+    triggerError(
+        req: Request<unknown>,
+        res: Response<{ error: string }>,
+        error: unknown,
+    ) {
+        this.handleError(req, res, error);
+    }
+}
+
+describe("BaseController (unit)", () => {
+    const controller = new TestController();
+
+    let req: ReturnType<typeof createMockRequest>;
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        req = createMockRequest({
+            t: vi.fn().mockImplementation((key: string) => `translated_${key}`),
+        });
+
+        res = createMockResponse();
+    });
+
+    it("Translates and formats known APIErrors correctly", () => {
+        const error = new UnauthorizedError("auth.invalidCredentials");
+
+        controller.triggerError(req, res, error);
+
+        expect(req.t).toHaveBeenCalledWith("auth.invalidCredentials");
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error: "translated_auth.invalidCredentials",
+        });
+    });
+
+    it("Falls back to a 500 status and generic message for unknown errors", () => {
+        const error = new Error("Database connection dropped");
+        const consoleSpy = vi
+            .spyOn(console, "error")
+            .mockImplementation(() => null);
+
+        controller.triggerError(req, res, error);
+
+        expect(consoleSpy).toHaveBeenCalledWith("[Unhandled Error]:", error);
+        expect(req.t).toHaveBeenCalledWith("http.serverError");
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            error: "translated_http.serverError",
+        });
+    });
+});
