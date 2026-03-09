@@ -6,6 +6,6 @@ import { APIError } from "./APIError";
  */
 export class ForbiddenError extends APIError {
     constructor(key: MessageKey = "http.forbidden") {
-        super(key, 401);
+        super(key, 403);
     }
 }
