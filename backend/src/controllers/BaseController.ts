@@ -13,7 +13,7 @@ export abstract class BaseController {
      * @param error The error to handle.
      */
     protected handleError(
-        req: Request<unknown, unknown>,
+        req: Request<unknown>,
         res: Response<{ error: string }>,
         error: unknown,
     ) {
