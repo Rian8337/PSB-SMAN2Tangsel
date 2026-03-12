@@ -73,23 +73,7 @@ export class AuthService implements IAuthService {
     }
 
     createSession(res: Response, data: unknown): void {
-        const plaintext = JSON.stringify(data);
-        const iv = randomBytes(this.ivLength);
-        const cipher = createCipheriv(this.algorithm, this.encryptionKey, iv);
-
-        const encrypted = Buffer.concat([
-            cipher.update(plaintext, "utf8"),
-            cipher.final(),
-        ]);
-
-        const authTag = cipher.getAuthTag();
-
-        // Format: base64url(iv + authTag + ciphertext)
-        const token = Buffer.concat([iv, authTag, encrypted]).toString(
-            "base64url",
-        );
-
-        res.cookie(this.sessionCookieName, token, {
+        res.cookie(this.sessionCookieName, this.encryptSession(data), {
             httpOnly: true,
             secure: this.isProduction,
             sameSite: "strict",
@@ -141,7 +125,32 @@ export class AuthService implements IAuthService {
     }
 
     /**
+     * Encrypts a session using AES-256-GCM encryption.
+     *
+     * @param data The session data.
+     * @returns The session token.
+     */
+    private encryptSession(data: unknown): string {
+        const plaintext = JSON.stringify(data);
+        const iv = randomBytes(this.ivLength);
+        const cipher = createCipheriv(this.algorithm, this.encryptionKey, iv);
+
+        const encrypted = Buffer.concat([
+            cipher.update(plaintext, "utf8"),
+            cipher.final(),
+        ]);
+
+        const authTag = cipher.getAuthTag();
+
+        // Format: base64url(iv + authTag + ciphertext)
+        return Buffer.concat([iv, authTag, encrypted]).toString("base64url");
+    }
+
+    /**
      * Decrypts an AES-256-GCM encrypted session token.
+     *
+     * @param token The session token.
+     * @returns The session data.
      */
     private decryptSession(token: string): SessionData {
         const raw = Buffer.from(token, "base64url");
