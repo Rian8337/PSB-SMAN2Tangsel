@@ -2,17 +2,12 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Get, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { IUserService } from "@/services";
 import { IAuthService } from "@/services/IAuthService";
-import { SessionData } from "@/types";
+import { LoginResponseBody, SessionData } from "@/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
-import { IUserService } from "@/services";
-import { UserRole } from "@psb/shared/types";
-
-type LoginResponseBody =
-    | { id: number; name: string; role: UserRole }
-    | { error: string };
 
 /**
  * Controller that handles authentication endpoints.
@@ -34,8 +29,8 @@ export class AuthController extends BaseController {
     @Post("/login")
     async login(
         req: Request<
-            unknown,
-            unknown,
+            "/login",
+            LoginResponseBody,
             Partial<{ id: string; password: string }>
         >,
         res: Response<LoginResponseBody>,
