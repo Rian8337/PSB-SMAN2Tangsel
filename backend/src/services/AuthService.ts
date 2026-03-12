@@ -116,7 +116,7 @@ export class AuthService implements IAuthService {
             )[this.sessionCookieName];
 
             if (!token) {
-                res.status(401).json({ error: "Not authenticated." });
+                res.status(401).json({ error: req.t("http.unauthorized") });
                 return;
             }
 
@@ -129,13 +129,13 @@ export class AuthService implements IAuthService {
                     allowedRoles.length > 0 &&
                     !allowedRoles.includes(data.role)
                 ) {
-                    res.status(403).json({ error: "Forbidden." });
+                    res.status(403).json({ error: req.t("http.forbidden") });
                     return;
                 }
 
                 next();
             } catch {
-                res.status(401).json({ error: "Invalid session." });
+                res.status(401).json({ error: req.t("auth.sessionExpired") });
             }
         };
     }

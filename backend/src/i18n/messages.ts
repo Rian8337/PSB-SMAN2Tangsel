@@ -7,6 +7,7 @@ interface Localization {
     };
 
     readonly auth: {
+        readonly sessionExpired: string;
         readonly invalidCredentials: string;
         readonly invalidStaffId: string;
         readonly inactiveUserAccount: string;
@@ -36,6 +37,7 @@ export const messages = {
                 "Akun Anda telah dinonaktifkan. Mohon hubungi administrator.",
             inactiveAdminAccount:
                 "Akun administrator Anda telah dinonaktifkan. Mohon hubungi administrator lainnya.",
+            sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
         },
         userRepository: {
             userNotFound: "Pengguna tidak ditemukan.",
@@ -55,6 +57,8 @@ export const messages = {
                 "Your account is inactive. Please contact an administrator.",
             inactiveAdminAccount:
                 "Your administrator account is inactive. Please contact another administrator.",
+            sessionExpired:
+                "Your current session has expired. Please log in again.",
         },
         userRepository: {
             userNotFound: "User not found.",
