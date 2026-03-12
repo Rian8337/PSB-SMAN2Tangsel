@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 
+interface ParamsDictionary {
+    [key: string]: string | string[];
+    [key: number]: string;
+}
+
 /**
  * Creates a factory to create mock request objects for testing with Express.js.
  *
  * @returns A factory to create mock request objects with default values and the provided overrides.
  */
 export function createMockRequestFactory<
-    TPath = string,
+    TPath = ParamsDictionary,
     TResponse = unknown,
     TBody extends Record<string, unknown> = Record<string, unknown>,
     TQuery extends Record<string, string> = Record<string, string>,
