@@ -3,13 +3,15 @@ import { mysqlTable } from "drizzle-orm/mysql-core";
 import { users } from "./users";
 import { varchar } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
+import { studentClasses } from "./studentClasses";
+import { assignmentSubmissions } from "./assignmentSubmissions";
 
 /**
  * The student table.
  */
 export const students = mysqlTable("student", {
     /**
-     * The ID of the student, which is also the ID of the corresponding user in the `user` table.
+     * The ID of the student, which is also the ID of the corresponding user in the {@link users} table.
      */
     userId: int()
         .primaryKey()
@@ -26,7 +28,12 @@ export const students = mysqlTable("student", {
 /**
  * Relations for the {@link students} table.
  */
-export const studentRelations = relations(students, ({ one }) => ({
+export const studentRelations = relations(students, ({ one, many }) => ({
+    /**
+     * The assignment submissions that the student has submitted.
+     */
+    assignmentSubmissions: many(assignmentSubmissions),
+
     /**
      * The user associated with the student.
      */
@@ -34,4 +41,9 @@ export const studentRelations = relations(students, ({ one }) => ({
         fields: [students.userId],
         references: [users.id],
     }),
+
+    /**
+     * The classes that this student is enrolled to.
+     */
+    classes: many(studentClasses),
 }));

@@ -7,7 +7,7 @@ import { relations } from "drizzle-orm";
  */
 export const administrators = mysqlTable("administrator", {
     /**
-     * The ID of the administrator, which is also the ID of the corresponding user in the `user` table.
+     * The ID of the administrator, which is also the ID of the corresponding user in the {@link users} table.
      */
     userId: int()
         .primaryKey()

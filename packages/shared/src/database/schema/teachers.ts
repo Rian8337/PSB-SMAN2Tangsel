@@ -1,13 +1,14 @@
 import { int, mysqlTable } from "drizzle-orm/mysql-core";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
+import { classSubjects } from "./classSubjects";
 
 /**
  * The teacher table.
  */
 export const teachers = mysqlTable("teacher", {
     /**
-     * The ID of the teacher, which is also the ID of the corresponding user in the `user` table.
+     * The ID of the teacher, which is also the ID of the corresponding user in the {@link users} table.
      */
     userId: int()
         .primaryKey()
@@ -22,7 +23,7 @@ export const teachers = mysqlTable("teacher", {
 /**
  * Relations for the {@link teachers} table.
  */
-export const teacherRelations = relations(teachers, ({ one }) => ({
+export const teacherRelations = relations(teachers, ({ one, many }) => ({
     /**
      * The user associated with the teacher.
      */
@@ -30,4 +31,9 @@ export const teacherRelations = relations(teachers, ({ one }) => ({
         fields: [teachers.userId],
         references: [users.id],
     }),
+
+    /**
+     * The classes that the teacher teaches.
+     */
+    classes: many(classSubjects),
 }));
