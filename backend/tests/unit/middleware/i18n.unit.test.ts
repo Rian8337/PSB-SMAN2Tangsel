@@ -1,9 +1,11 @@
 import { i18nMiddleware, Locale, messages } from "@/i18n";
-import { createMockRequest, createMockResponse } from "@test/mocks";
+import { createMockRequestFactory, createMockResponse } from "@test/mocks";
 
 describe("i18nMiddleware (unit)", () => {
+    const mockRequestFactory = createMockRequestFactory();
+
     function setupMiddleware(matchedLanguage: Locale | false) {
-        const req = createMockRequest({
+        const req = mockRequestFactory({
             acceptsLanguages: vi.fn().mockReturnValue(matchedLanguage),
         });
 

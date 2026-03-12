@@ -1,6 +1,6 @@
 import { BaseController } from "@/controllers/BaseController";
 import { UnauthorizedError } from "@/types";
-import { createMockRequest, createMockResponse } from "@test/mocks";
+import { createMockRequestFactory, createMockResponse } from "@test/mocks";
 import { Request, Response } from "express";
 
 class TestController extends BaseController {
@@ -15,12 +15,13 @@ class TestController extends BaseController {
 
 describe("BaseController (unit)", () => {
     const controller = new TestController();
+    const mockRequestFactory = createMockRequestFactory();
 
-    let req: ReturnType<typeof createMockRequest>;
+    let req: ReturnType<typeof mockRequestFactory>;
     let res: ReturnType<typeof createMockResponse>;
 
     beforeEach(() => {
-        req = createMockRequest({
+        req = mockRequestFactory({
             t: vi.fn().mockImplementation((key: string) => `translated_${key}`),
         });
 

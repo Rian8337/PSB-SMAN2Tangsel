@@ -1,28 +1,41 @@
 import { Request, Response } from "express";
 
 /**
- * Creates a mock request object for testing with Express.js.
+ * Creates a factory to create mock request objects for testing with Express.js.
  *
- * **Do not reuse this mock across tests.**
- *
- * @param overrides Partial overrides for the request object.
- * @returns A mock request object with default values and the provided overrides.
+ * @returns A factory to create mock request objects with default values and the provided overrides.
  */
-export function createMockRequest<
+export function createMockRequestFactory<
     TPath = string,
     TResponse = unknown,
     TBody extends Record<string, unknown> = Record<string, unknown>,
     TQuery extends Record<string, string> = Record<string, string>,
->(overrides: Partial<Request<TPath, TResponse, TBody, TQuery>> = {}) {
+>() {
     type Req = Request<TPath, TResponse, TBody, TQuery>;
 
-    return {
-        params: {} as TPath,
-        query: {} as TQuery,
-        body: {} as TBody,
-        signedCookies: {},
-        ...overrides,
-    } satisfies Partial<Req> as unknown as Req;
+    /**
+     * Creates a mock request object with default values and the provided overrides.
+     *
+     * **Do not reuse this mock across tests.**
+     *
+     * @param overrides Partial overrides for the request object.
+     * @returns A mock request object with default values and the provided overrides.
+     */
+    return <const TOverrides extends Partial<Req>>(
+        overrides: TOverrides = {} as TOverrides,
+    ) => {
+        const mock = {
+            params: {} as TPath,
+            query: {} as TQuery,
+            body: {} as TBody,
+            signedCookies: {},
+            t: vi.fn<Req["t"]>(),
+            acceptsLanguages: vi.fn<Req["acceptsLanguages"]>(),
+            ...overrides,
+        } satisfies Partial<Req>;
+
+        return mock as Req & typeof mock & TOverrides;
+    };
 }
 
 /**
@@ -33,11 +46,13 @@ export function createMockRequest<
 export function createMockResponse<TResponse = unknown>() {
     type Res = Response<TResponse>;
 
-    return {
-        cookie: vi.fn().mockReturnThis(),
-        clearCookie: vi.fn().mockReturnThis(),
-        status: vi.fn().mockReturnThis(),
-        sendStatus: vi.fn().mockReturnThis(),
-        json: vi.fn().mockReturnThis(),
-    } satisfies Partial<Res> as unknown as Res;
+    const mock = {
+        cookie: vi.fn<Res["cookie"]>().mockReturnThis(),
+        clearCookie: vi.fn<Res["clearCookie"]>().mockReturnThis(),
+        status: vi.fn<Res["status"]>().mockReturnThis(),
+        sendStatus: vi.fn<Res["sendStatus"]>().mockReturnThis(),
+        json: vi.fn<Res["json"]>().mockReturnThis(),
+    } satisfies Partial<Res>;
+
+    return mock as Res & typeof mock;
 }
