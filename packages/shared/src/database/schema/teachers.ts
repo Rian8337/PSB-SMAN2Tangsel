@@ -11,7 +11,7 @@ export const teachers = mysqlTable("teacher", {
      */
     userId: int()
         .primaryKey()
-        .references(() => users.id),
+        .references(() => users.id, { onDelete: "cascade" }),
 
     /**
      * The school-issued staff ID of the teacher.

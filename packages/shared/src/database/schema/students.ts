@@ -13,7 +13,7 @@ export const students = mysqlTable("student", {
      */
     userId: int()
         .primaryKey()
-        .references(() => users.id),
+        .references(() => users.id, { onDelete: "cascade" }),
 
     /**
      * The government-issued NISN (National Student Identification Number) of the student.
