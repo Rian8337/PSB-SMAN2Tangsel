@@ -8,8 +8,13 @@ import { EnvironmentVariableKey } from "@/types";
  */
 @Injectable(dependencyTokens.configService)
 export class ConfigService implements IConfigService {
-    getEnvironmentVariable(key: EnvironmentVariableKey): string | undefined;
+    getEnvironmentVariable(
+        key: EnvironmentVariableKey,
+        required?: boolean,
+    ): string | undefined;
+
     getEnvironmentVariable(key: EnvironmentVariableKey, required: true): string;
+
     getEnvironmentVariable(
         key: EnvironmentVariableKey,
         required?: boolean,
