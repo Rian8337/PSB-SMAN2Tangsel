@@ -23,9 +23,11 @@ export const assignments = mysqlTable("assignment", {
      * The ID of the class subject this assignment is associated with, which is also the ID of the
      * corresponding class subject in the {@link classSubjects} table.
      */
-    classSubjectId: int().references(() => classSubjects.id, {
-        onDelete: "cascade",
-    }),
+    classSubjectId: int()
+        .references(() => classSubjects.id, {
+            onDelete: "cascade",
+        })
+        .notNull(),
 
     /**
      * The time at which this assignment was created.

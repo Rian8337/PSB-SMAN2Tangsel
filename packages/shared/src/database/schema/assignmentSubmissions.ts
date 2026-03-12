@@ -17,9 +17,11 @@ export const assignmentSubmissions = mysqlTable("assignment_submission", {
      * The ID of the assignment this assignment submission is associated with, which is also the ID of the
      * corresponding assignment in the {@link assignments} table.
      */
-    assignmentId: int().references(() => assignments.id, {
-        onDelete: "cascade",
-    }),
+    assignmentId: int()
+        .references(() => assignments.id, {
+            onDelete: "cascade",
+        })
+        .notNull(),
 
     /**
      * The time at which this assignment submission was created.
