@@ -5,7 +5,12 @@ import {
     ITeacherRepository,
     IUserRepository,
 } from "@/repositories";
-import { IAuthService, IConfigService, IUserService } from "@/services";
+import {
+    IAuthService,
+    IConfigService,
+    IScheduleService,
+    IUserService,
+} from "@/services";
 import { DrizzleDb } from "@psb/shared/types";
 import { InjectionToken } from "tsyringe";
 
@@ -70,6 +75,13 @@ export const dependencyTokens = {
     configService: Symbol.for(
         "configService",
     ) as InjectionToken<IConfigService>,
+
+    /**
+     * Injection token for an {@link IScheduleService}.
+     */
+    scheduleService: Symbol.for(
+        "scheduleService",
+    ) as InjectionToken<IScheduleService>,
 
     /**
      * Injection token for an {@link IUserService}.
