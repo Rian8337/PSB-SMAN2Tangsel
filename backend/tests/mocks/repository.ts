@@ -11,6 +11,7 @@ import { Mocked } from "vitest";
  */
 export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
     findByStaffId: vi.fn(),
+    getLoginData: vi.fn(),
 };
 
 /**
@@ -18,6 +19,7 @@ export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
  */
 export const mockStudentRepository: Mocked<IStudentRepository> = {
     findByNISN: vi.fn(),
+    getLoginData: vi.fn(),
 };
 
 /**
@@ -25,6 +27,7 @@ export const mockStudentRepository: Mocked<IStudentRepository> = {
  */
 export const mockTeacherRepository: Mocked<ITeacherRepository> = {
     findByStaffId: vi.fn(),
+    getLoginData: vi.fn(),
 };
 
 /**

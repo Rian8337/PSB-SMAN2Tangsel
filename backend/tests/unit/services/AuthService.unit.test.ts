@@ -1,7 +1,10 @@
 import { AuthService } from "@/services";
 import {
+    AdministratorSessionData,
     EnvironmentVariableKey,
     ForbiddenError,
+    LoginResult,
+    StudentSessionData,
     UnauthorizedError,
 } from "@/types";
 import { Administrator, Student, UserRole } from "@psb/shared/types";
@@ -38,30 +41,39 @@ describe("AuthService (unit)", () => {
 
     describe("Operations", () => {
         let service: AuthService;
-        let student: Student;
+        let studentLoginData: LoginResult<Student, StudentSessionData>;
 
         beforeEach(() => {
             service = createService();
 
-            student = {
-                active: true,
-                id: 1,
-                name: "Test",
-                nisn: "0011223344",
-                password: hashSync("test", 10),
-                role: UserRole.student,
-                userId: 1,
+            studentLoginData = {
+                user: {
+                    active: true,
+                    id: 1,
+                    name: "Test",
+                    nisn: "0011223344",
+                    password: hashSync("test", 10),
+                    role: UserRole.student,
+                    userId: 1,
+                },
+                sessionData: {
+                    role: UserRole.student,
+                    userId: 1,
+                    nisn: "0011223344",
+                },
             };
 
-            mockStudentRepository.findByNISN.mockResolvedValue(student);
+            mockStudentRepository.getLoginData.mockResolvedValue(
+                studentLoginData,
+            );
         });
 
         describe("Student login", () => {
             it("should throw if NISN is not found", async () => {
-                mockStudentRepository.findByNISN.mockResolvedValue(null);
+                mockStudentRepository.getLoginData.mockResolvedValue(null);
 
                 await expect(() =>
-                    service.login(student.nisn, "test"),
+                    service.login(studentLoginData.user.nisn, "test"),
                 ).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
                 );
@@ -69,30 +81,40 @@ describe("AuthService (unit)", () => {
         });
 
         describe("Staff login", () => {
-            let administrator: Administrator;
+            let administratorLoginData: LoginResult<
+                Administrator,
+                AdministratorSessionData
+            >;
 
             beforeEach(() => {
-                administrator = {
-                    active: true,
-                    id: 1,
-                    name: "Test",
-                    password: hashSync("test", 10),
-                    role: UserRole.administrator,
-                    staffId: 1,
-                    userId: 1,
+                administratorLoginData = {
+                    user: {
+                        active: true,
+                        id: 1,
+                        name: "Test",
+                        password: hashSync("test", 10),
+                        role: UserRole.administrator,
+                        staffId: 1,
+                        userId: 1,
+                    },
+                    sessionData: {
+                        role: UserRole.administrator,
+                        userId: 1,
+                        staffId: 1,
+                    },
                 };
 
-                mockAdministratorRepository.findByStaffId.mockResolvedValue(
-                    administrator,
+                mockAdministratorRepository.getLoginData.mockResolvedValue(
+                    administratorLoginData,
                 );
             });
 
             it("should throw if staff ID is not found", async () => {
-                mockAdministratorRepository.findByStaffId.mockResolvedValue(
+                mockAdministratorRepository.getLoginData.mockResolvedValue(
                     null,
                 );
 
-                mockTeacherRepository.findByStaffId.mockResolvedValue(null);
+                mockTeacherRepository.getLoginData.mockResolvedValue(null);
 
                 await expect(() => service.login("1", "test")).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
@@ -100,42 +122,55 @@ describe("AuthService (unit)", () => {
             });
 
             it("should throw if administrator account is inactive", async () => {
-                administrator.active = false;
+                administratorLoginData.user.active = false;
 
                 await expect(() =>
-                    service.login(administrator.staffId.toString(), "test"),
+                    service.login(
+                        administratorLoginData.user.staffId.toString(),
+                        "test",
+                    ),
                 ).rejects.toThrow(
                     new ForbiddenError("auth.inactiveAdminAccount"),
                 );
             });
 
             it("should login as teacher in case of staff ID collision", async () => {
-                mockTeacherRepository.findByStaffId.mockResolvedValue({
-                    active: true,
-                    id: 2,
-                    name: "Test",
-                    password: hashSync("test", 10),
-                    role: UserRole.teacher,
-                    staffId: 1,
-                    userId: 2,
+                mockTeacherRepository.getLoginData.mockResolvedValue({
+                    user: {
+                        active: true,
+                        id: 2,
+                        name: "Test",
+                        password: hashSync("test", 10),
+                        role: UserRole.teacher,
+                        staffId: 1,
+                        userId: 2,
+                    },
+                    sessionData: {
+                        role: UserRole.teacher,
+                        userId: 2,
+                        staffId: 1,
+                    },
                 });
 
-                await service.login(administrator.staffId.toString(), "test");
+                await service.login(
+                    administratorLoginData.user.staffId.toString(),
+                    "test",
+                );
 
-                expect(mockTeacherRepository.findByStaffId).toHaveBeenCalled();
+                expect(mockTeacherRepository.getLoginData).toHaveBeenCalled();
 
                 expect(
-                    mockAdministratorRepository.findByStaffId,
+                    mockAdministratorRepository.getLoginData,
                 ).not.toHaveBeenCalled();
             });
         });
 
         describe("Validation", () => {
             it("should throw if user is inactive", async () => {
-                student.active = false;
+                studentLoginData.user.active = false;
 
                 await expect(() =>
-                    service.login(student.nisn, "test"),
+                    service.login(studentLoginData.user.nisn, "test"),
                 ).rejects.toThrow(
                     new ForbiddenError("auth.inactiveUserAccount"),
                 );
@@ -143,7 +178,7 @@ describe("AuthService (unit)", () => {
 
             it("should throw if password is incorrect", async () => {
                 await expect(() =>
-                    service.login(student.nisn, "test2"),
+                    service.login(studentLoginData.user.nisn, "test2"),
                 ).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
                 );
