@@ -12,7 +12,7 @@ import { classes } from "./classes";
 /**
  * The academic session table.
  */
-export const session = mysqlTable(
+export const sessions = mysqlTable(
     "session",
     {
         /**
@@ -39,9 +39,9 @@ export const session = mysqlTable(
 );
 
 /**
- * Relations for the {@link session} table.
+ * Relations for the {@link sessions} table.
  */
-export const sessionRelations = relations(session, ({ many }) => ({
+export const sessionRelations = relations(sessions, ({ many }) => ({
     /**
      * The classes registered in the academic session and semester.
      */

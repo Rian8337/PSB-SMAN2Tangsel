@@ -7,7 +7,7 @@ import {
     varchar,
 } from "drizzle-orm/mysql-core";
 import { ValidSemester } from "../../types";
-import { session } from "./sessions";
+import { sessions } from "./sessions";
 import { classSubjects } from "./classSubjects";
 import { studentClasses } from "./studentClasses";
 
@@ -40,7 +40,7 @@ export const classes = mysqlTable(
     (table) => [
         foreignKey({
             columns: [table.session, table.semester],
-            foreignColumns: [session.session, session.semester],
+            foreignColumns: [sessions.session, sessions.semester],
         }).onDelete("cascade"),
     ],
 );
@@ -52,9 +52,9 @@ export const classRelations = relations(classes, ({ one, many }) => ({
     /**
      * The academic session and semester this class is registered in.
      */
-    session: one(session, {
+    session: one(sessions, {
         fields: [classes.session, classes.semester],
-        references: [session.session, session.semester],
+        references: [sessions.session, sessions.semester],
     }),
 
     /**
