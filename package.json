@@ -4,6 +4,7 @@
   "packageManager": "pnpm@10.30.0",
   "scripts": {
     "build": "pnpm -r run build",
+    "build-shared": "pnpm --filter @psb/shared build",
     "dev": "pnpm --filter backend --filter frontend --parallel run dev",
     "start": "pnpm --filter backend --filter frontend --parallel start",
     "lint": "eslint . --cache"
