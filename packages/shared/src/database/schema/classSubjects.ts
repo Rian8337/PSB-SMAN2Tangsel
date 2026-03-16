@@ -1,10 +1,10 @@
+import { relations } from "drizzle-orm";
 import { int, mysqlTable } from "drizzle-orm/mysql-core";
 import { classes } from "./classes";
+import { materials } from "./materials";
+import { schedules } from "./schedules";
 import { subjects } from "./subjects";
 import { teachers } from "./teachers";
-import { relations } from "drizzle-orm";
-import { schedules } from "./schedules";
-import { materials } from "./materials";
 
 /**
  * The class subject table, which represents the many-to-many relationship between classes and subjects.
