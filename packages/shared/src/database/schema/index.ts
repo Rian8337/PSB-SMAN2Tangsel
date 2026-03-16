@@ -8,6 +8,7 @@ export * from "./classes";
 export * from "./classSubjects";
 export * from "./materialAttachments";
 export * from "./materials";
+export * from "./notifications";
 export * from "./schedules";
 export * from "./sessions";
 export * from "./studentClasses";
