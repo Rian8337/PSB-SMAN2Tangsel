@@ -84,12 +84,27 @@ export abstract class APIClient {
             ? urlStr
             : `${this.baseURL.replace(/\/$/, "")}/${urlStr.replace(/^\//, "")}`;
 
+        const headers: Record<string, string> = {
+            "Accept-Language": this.locale,
+            ...((options?.headers as Record<string, string> | undefined) ?? {}),
+        };
+
+        if (typeof window === "undefined") {
+            // On the server, we need to forward the session cookie manually.
+            const { cookies } = await import("next/headers");
+            const cookieStore = await cookies();
+            const sessionCookie = cookieStore.get("session")?.value;
+
+            if (sessionCookie) {
+                headers.Cookie = `session=${sessionCookie}`;
+            }
+        }
+
         const res = await fetch(finalUrl, {
             ...options,
-            headers: Object.assign(options?.headers ?? {}, {
-                "Accept-Language": this.locale,
-            }),
+            headers,
             credentials: "include",
+            cache: options?.cache ?? "no-store",
         });
 
         if (!res.ok) {
