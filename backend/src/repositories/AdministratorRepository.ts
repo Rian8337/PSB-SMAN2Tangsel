@@ -2,9 +2,10 @@ import { Injectable } from "@/decorators/injectable";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IAdministratorRepository } from "./IAdministratorRepository";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { Administrator } from "@psb/shared/types";
+import { Administrator, DrizzleDb } from "@psb/shared/types";
 import { eq } from "drizzle-orm";
 import { administrators, users } from "@psb/shared/schema";
+import { inject } from "tsyringe";
 
 /**
  * Defines operations for accessing and managing administrator data in the database.
@@ -14,6 +15,13 @@ export class AdministratorRepository
     extends DatabaseRepository
     implements IAdministratorRepository
 {
+    constructor(
+        @inject(dependencyTokens.db)
+        db: DrizzleDb,
+    ) {
+        super(db);
+    }
+
     findByStaffId(staffId: number): Promise<Administrator | null> {
         return this.db
             .select({
