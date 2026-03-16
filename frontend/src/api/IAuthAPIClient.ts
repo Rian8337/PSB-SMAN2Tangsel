@@ -1,3 +1,5 @@
+import { SuccessfulLoginResponse } from "@psb/shared/types";
+
 /**
  * Provides operations for authentication-related API calls.
  */
@@ -17,4 +19,11 @@ export interface IAuthAPIClient {
      * @returns A promise that resolves when the logout is successful, or rejects with an error if the logout fails.
      */
     logout(): Promise<void>;
+
+    /**
+     * Fetches the identity of the currently authenticated user.
+     *
+     * @returns A promise that resolves with the identity of the currently authenticated user, or `null` if the user is not authenticated.
+     */
+    getMe(): Promise<SuccessfulLoginResponse | null>;
 }

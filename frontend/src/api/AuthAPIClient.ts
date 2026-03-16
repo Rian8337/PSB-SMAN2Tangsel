@@ -1,3 +1,8 @@
+import {
+    isSuccessfulLogin,
+    LoginResponseBody,
+    SuccessfulLoginResponse,
+} from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { IAuthAPIClient } from "./IAuthAPIClient";
 
@@ -18,5 +23,11 @@ export class AuthAPIClient extends APIClient implements IAuthAPIClient {
 
     async logout(): Promise<void> {
         await this.post("/logout");
+    }
+
+    getMe(): Promise<SuccessfulLoginResponse | null> {
+        return this.get("/me")
+            .then((res) => res.json() as Promise<LoginResponseBody>)
+            .then((res) => (isSuccessfulLogin(res) ? res : null));
     }
 }
