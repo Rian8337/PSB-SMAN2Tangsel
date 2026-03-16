@@ -1,4 +1,23 @@
-import { UserRole } from "@psb/shared/types";
+import { User, UserRole } from "@psb/shared/types";
+import { SessionData } from "./session";
+
+/**
+ * The result of a login operation.
+ */
+export interface LoginResult<
+    TUser extends User = User,
+    TSessionData extends SessionData = SessionData,
+> {
+    /**
+     * The user from the login.
+     */
+    readonly user: TUser;
+
+    /**
+     * The session data that can be used to identify the user in subsequent requests.
+     */
+    readonly sessionData: TSessionData;
+}
 
 /**
  * The response that is given when a user logs in or checks for their identity.

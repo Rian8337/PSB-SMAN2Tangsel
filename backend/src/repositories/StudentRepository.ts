@@ -1,11 +1,12 @@
+import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { students, users } from "@psb/shared/schema";
-import { DrizzleDb, Student } from "@psb/shared/types";
+import { LoginResult, StudentSessionData } from "@/types";
+import { classes, studentClasses, students, users } from "@psb/shared/schema";
+import { DrizzleDb, Student, UserRole } from "@psb/shared/types";
 import { eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IStudentRepository } from "./IStudentRepository";
-import { Injectable } from "@/decorators/injectable";
 
 /**
  * Defines operations for accessing and managing student data in the database.
@@ -48,6 +49,50 @@ export class StudentRepository
                     role: res.user.role,
                     userId: res.student.userId,
                 };
+            });
+    }
+
+    getLoginData(
+        nisn: string,
+    ): Promise<LoginResult<Student, StudentSessionData> | null> {
+        return this.db
+            .select({
+                user: users,
+                classId: classes.id,
+            })
+            .from(students)
+            .innerJoin(users, eq(students.userId, users.id))
+            .innerJoin(
+                studentClasses,
+                eq(studentClasses.studentId, students.userId),
+            )
+            .innerJoin(classes, eq(classes.id, studentClasses.classId))
+            .where(eq(students.nisn, nisn))
+            .limit(1)
+            .then((res) => {
+                const data = res.at(0);
+
+                if (!data) {
+                    return null;
+                }
+
+                return {
+                    user: {
+                        active: data.user.active,
+                        id: data.user.id,
+                        name: data.user.name,
+                        nisn,
+                        password: data.user.password,
+                        role: data.user.role,
+                        userId: data.user.id,
+                    },
+                    sessionData: {
+                        classId: data.classId,
+                        nisn,
+                        role: UserRole.student,
+                        userId: data.user.id,
+                    },
+                } satisfies LoginResult<Student, StudentSessionData>;
             });
     }
 }

@@ -4,7 +4,7 @@ import { Get, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
 import { IAuthService } from "@/services/IAuthService";
-import { LoginResponseBody, SessionData } from "@/types";
+import { LoginResponseBody } from "@/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
@@ -43,19 +43,14 @@ export class AuthController extends BaseController {
         }
 
         try {
-            const user = await this.authService.login(id, password);
+            const loginData = await this.authService.login(id, password);
 
-            const sessionData: SessionData = {
-                userId: user.id,
-                role: user.role,
-            };
-
-            this.authService.createSession(res, sessionData);
+            this.authService.createSession(res, loginData.sessionData);
 
             res.json({
-                id: user.id,
-                name: user.name,
-                role: user.role,
+                id: loginData.user.id,
+                name: loginData.user.name,
+                role: loginData.user.role,
             });
         } catch (e) {
             this.handleError(req, res, e);

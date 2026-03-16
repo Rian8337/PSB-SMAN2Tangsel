@@ -1,4 +1,5 @@
-import { User, UserRole } from "@psb/shared/types";
+import { LoginResult } from "@/types";
+import { UserRole } from "@psb/shared/types";
 import { RequestHandler, Response } from "express";
 
 /**
@@ -10,9 +11,9 @@ export interface IAuthService {
      *
      * @param id The ID of the user to log in.
      * @param password The password of the user to log in.
-     * @returns The authenticated user.
+     * @returns The result of the login operation.
      */
-    login(id: string, password: string): Promise<User>;
+    login(id: string, password: string): Promise<LoginResult>;
 
     /**
      * Creates a session for a user.

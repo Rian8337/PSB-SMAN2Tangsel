@@ -8,6 +8,7 @@ import {
 import {
     EnvironmentVariableKey,
     ForbiddenError,
+    LoginResult,
     SessionData,
     UnauthorizedError,
 } from "@/types";
@@ -64,7 +65,7 @@ export class AuthService implements IAuthService {
             ) === "production";
     }
 
-    async login(id: string, password: string): Promise<User> {
+    async login(id: string, password: string): Promise<LoginResult> {
         if (/^\d{10}$/.test(id)) {
             return this.loginStudent(id, password);
         }
@@ -178,19 +179,26 @@ export class AuthService implements IAuthService {
         return JSON.parse(decrypted.toString("utf8")) as SessionData;
     }
 
-    private async loginStudent(nisn: string, password: string): Promise<User> {
-        const student = await this.studentRepository.findByNISN(nisn);
+    private async loginStudent(
+        nisn: string,
+        password: string,
+    ): Promise<LoginResult> {
+        const studentLoginData =
+            await this.studentRepository.getLoginData(nisn);
 
-        if (!student) {
+        if (!studentLoginData) {
             throw new UnauthorizedError("auth.invalidCredentials");
         }
 
-        await this.validateCredentials(student, password);
+        await this.validateCredentials(studentLoginData.user, password);
 
-        return student;
+        return studentLoginData;
     }
 
-    private async loginStaff(id: string, password: string): Promise<User> {
+    private async loginStaff(
+        id: string,
+        password: string,
+    ): Promise<LoginResult> {
         if (/^[1-9]\d$/.test(id)) {
             throw new UnauthorizedError("auth.invalidStaffId");
         }
@@ -198,34 +206,31 @@ export class AuthService implements IAuthService {
         const staffId = parseInt(id, 10);
 
         // Attempt teacher login first in case of ID conflicts with administrator.
-        const teacher = await this.teacherRepository.findByStaffId(staffId);
+        const teacherLoginData =
+            await this.teacherRepository.getLoginData(staffId);
 
-        if (teacher) {
-            await this.validateCredentials(teacher, password);
+        if (teacherLoginData) {
+            await this.validateCredentials(teacherLoginData.user, password);
 
-            return teacher;
+            return teacherLoginData;
         }
 
-        const administrator =
-            await this.administratorRepository.findByStaffId(staffId);
+        const administratorLoginData =
+            await this.administratorRepository.getLoginData(staffId);
 
-        if (!administrator) {
+        if (!administratorLoginData) {
             throw new UnauthorizedError("auth.invalidCredentials");
         }
 
-        await this.validateCredentials(administrator, password, true);
+        await this.validateCredentials(administratorLoginData.user, password);
 
-        return administrator;
+        return administratorLoginData;
     }
 
-    private async validateCredentials(
-        user: User,
-        password: string,
-        isAdministrator = false,
-    ) {
+    private async validateCredentials(user: User, password: string) {
         if (!user.active) {
             throw new ForbiddenError(
-                isAdministrator
+                user.role === UserRole.administrator
                     ? "auth.inactiveAdminAccount"
                     : "auth.inactiveUserAccount",
             );
