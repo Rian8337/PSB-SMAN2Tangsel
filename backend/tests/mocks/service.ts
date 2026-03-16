@@ -15,7 +15,16 @@ export const mockAuthService: Mocked<IAuthService> = {
  * Mock implementation of {@link IConfigService}.
  */
 export const mockConfigService: Mocked<IConfigService> = {
-    getEnvironmentVariable: vi.fn(),
+    getEnvironmentVariable: vi.fn((key) => {
+        // For testing, we want *all* environment variables to be defined.
+        const value = process.env[key];
+
+        if (!value) {
+            throw new Error(`Environment variable ${key} is not set.`);
+        }
+
+        return value;
+    }),
 };
 
 /**
