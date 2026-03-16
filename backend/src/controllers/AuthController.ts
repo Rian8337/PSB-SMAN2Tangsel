@@ -4,7 +4,7 @@ import { Get, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
 import { IAuthService } from "@/services/IAuthService";
-import { LoginResponseBody } from "@/types";
+import { LoginResponseBody } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
