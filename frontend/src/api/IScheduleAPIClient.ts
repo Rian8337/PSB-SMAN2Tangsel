@@ -1,0 +1,13 @@
+import { ScheduleDTO } from "@psb/shared/types";
+
+/**
+ * Provides operations for schedule-related API calls.
+ */
+export interface IScheduleAPIClient {
+    /**
+     * Fetches the weekly schedule of the authenticated user.
+     *
+     * @returns The weekly schedule of the user.
+     */
+    getSchedule(): Promise<ScheduleDTO[]>;
+}

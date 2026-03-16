@@ -1,5 +1,5 @@
 /**
- * Provides methods for authentication-related API calls.
+ * Provides operations for authentication-related API calls.
  */
 export interface IAuthAPIClient {
     /**
@@ -13,7 +13,7 @@ export interface IAuthAPIClient {
 
     /**
      * Logs out the currently authenticated user.
-     * 
+     *
      * @returns A promise that resolves when the logout is successful, or rejects with an error if the logout fails.
      */
     logout(): Promise<void>;

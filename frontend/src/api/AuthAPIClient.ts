@@ -2,7 +2,7 @@ import { APIClient } from "./APIClient";
 import { IAuthAPIClient } from "./IAuthAPIClient";
 
 /**
- * Provides methods for authentication-related API calls.
+ * Provides operations for authentication-related API calls.
  */
 export class AuthAPIClient extends APIClient implements IAuthAPIClient {
     protected override get baseURL(): string {

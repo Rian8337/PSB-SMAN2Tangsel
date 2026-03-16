@@ -1,9 +1,9 @@
 "use client";
 
 import { AuthAPIClient, IAuthAPIClient } from "@/api";
+import { useLocale } from "next-intl";
 import { createContext, use, useMemo } from "react";
 import { ApiProviderProps } from "./api-provider-props";
-import { useLocale } from "next-intl";
 
 const ApiContext = createContext<IAuthAPIClient | null>(null);
 
