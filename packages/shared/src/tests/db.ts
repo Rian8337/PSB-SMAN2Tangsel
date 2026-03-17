@@ -1,15 +1,26 @@
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import * as schema from "../database/schema";
-import { DrizzleDb } from "../types";
+import { DrizzleDb, UserRole } from "../types";
 
 //#region Global Database Seeding
 
 type Insert<T extends AnyMySqlTable> = T["$inferInsert"];
 
+// Hash for password123, 12 rounds
+const testPasswordHash =
+    "$2a$12$qwDcGIMf0xiOI5W5JhxM3eVWi5YnuCr9vsmq4S0quIbroKo12npZ2";
+
 /**
  * The seeded data for primary tables.
  */
 export const seededPrimaryData = {
+    /**
+     * The seeded attachments.
+     */
+    attachments: [] as const satisfies readonly Insert<
+        typeof schema.attachments
+    >[],
+
     /**
      * The seeded sessions.
      */
@@ -27,6 +38,54 @@ export const seededPrimaryData = {
             endTime: new Date("2024-01-31"),
         },
     ] as const satisfies readonly Insert<typeof schema.sessions>[],
+
+    /**
+     * The seeded subjects.
+     */
+    subjects: [
+        {
+            code: "MA1",
+            name: "Matematika Wajib",
+        },
+        {
+            code: "MA2",
+            name: "Matematika Peminatan",
+        },
+    ] as const satisfies readonly Insert<typeof schema.subjects>[],
+
+    /**
+     * The seeded users.
+     */
+    users: [
+        {
+            active: true,
+            id: 1,
+            name: "Administrator",
+            password: testPasswordHash,
+            role: UserRole.administrator,
+        },
+        {
+            active: true,
+            name: "Teacher",
+            id: 2,
+            password: testPasswordHash,
+            role: UserRole.teacher,
+        },
+        {
+            active: true,
+            name: "Active Student",
+            id: 3,
+            password: testPasswordHash,
+            role: UserRole.student,
+        },
+        {
+            active: false,
+            name: "Inactive Student",
+            id: 4,
+            password: testPasswordHash,
+            role: UserRole.student,
+        },
+    ] as const satisfies readonly Insert<typeof schema.users>[],
 } as const;
 
 //#endregion
