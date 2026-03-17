@@ -1,29 +1,31 @@
+import { testDb, testDbManager } from "./utils";
+
 let setupHappened = false;
 let teardownHappened = false;
 
-export function setup() {
+export async function setup() {
     if (setupHappened) {
         throw new Error("Setup called twice");
     }
 
     setupHappened = true;
 
-    // await wipeTestDb();
-    // await seedPrimaryTables();
+    await wipeTestDb();
+    await testDbManager.seedPrimaryTables();
 }
 
-export function teardown() {
+export async function teardown() {
     if (teardownHappened) {
         throw new Error("Teardown called twice");
     }
 
     teardownHappened = true;
 
-    // await wipeTestDb();
-    // db.$client.end();
+    await wipeTestDb();
+    testDb.$client.end();
 }
 
-// async function wipeTestDb() {
-//     await cleanupSecondaryTables();
-//     await cleanupPrimaryTables();
-// }
+async function wipeTestDb() {
+    await testDbManager.cleanupSecondaryTables();
+    await testDbManager.cleanupPrimaryTables();
+}
