@@ -15,11 +15,25 @@ const testPasswordHash =
  */
 export const seededPrimaryData = {
     /**
+     * The seeded administrators.
+     */
+    administrators: [
+        {
+            userId: 1,
+            staffId: 1,
+        },
+    ] as const satisfies readonly Insert<typeof schema.administrators>[],
+
+    /**
      * The seeded attachments.
      */
-    attachments: [] as const satisfies readonly Insert<
-        typeof schema.attachments
-    >[],
+    attachments: [
+        {
+            name: "Test Attachment",
+            path: "test_attachment.txt",
+            id: 1,
+        },
+    ] as const satisfies readonly Insert<typeof schema.attachments>[],
 
     /**
      * The seeded sessions.
@@ -44,14 +58,40 @@ export const seededPrimaryData = {
      */
     subjects: [
         {
+            id: 1,
             code: "MA1",
             name: "Matematika Wajib",
         },
         {
+            id: 2,
             code: "MA2",
             name: "Matematika Peminatan",
         },
     ] as const satisfies readonly Insert<typeof schema.subjects>[],
+
+    /**
+     * The seeded students.
+     */
+    students: [
+        {
+            nisn: "0012345678",
+            userId: 3,
+        },
+        {
+            nisn: "0012345679",
+            userId: 4,
+        },
+    ] as const satisfies readonly Insert<typeof schema.students>[],
+
+    /**
+     * The seeded teachers.
+     */
+    teachers: [
+        {
+            userId: 2,
+            staffId: 2,
+        },
+    ] as const satisfies readonly Insert<typeof schema.teachers>[],
 
     /**
      * The seeded users.
@@ -135,27 +175,61 @@ export function createDatabaseSeeder(db: DrizzleDb) {
 
     return {
         /**
-         * Seeds primary tables ({@link session}) with {@link seededPrimaryData}.
+         * Seeds primary tables ({@link schema.administrators}, {@link schema.attachments}, {@link schema.sessions},
+         * {@link schema.subjects}, {@link schema.students}, {@link schema.teachers}, and {@link schema.users})
+         * with {@link seededPrimaryData}.
          *
          * Additional data can be seeded by calling the respective {@link seeders}.
          */
         seedPrimaryTables: async () => {
             await db.transaction(async (tx) => {
                 await tx
+                    .insert(schema.attachments)
+                    .values(seededPrimaryData.attachments.slice());
+
+                await tx
                     .insert(schema.sessions)
                     .values(seededPrimaryData.sessions.slice());
+
+                await tx
+                    .insert(schema.subjects)
+                    .values(seededPrimaryData.subjects.slice());
+
+                await tx
+                    .insert(schema.users)
+                    .values(seededPrimaryData.users.slice());
+
+                await tx
+                    .insert(schema.administrators)
+                    .values(seededPrimaryData.administrators.slice());
+
+                await tx
+                    .insert(schema.teachers)
+                    .values(seededPrimaryData.teachers.slice());
+
+                await tx
+                    .insert(schema.students)
+                    .values(seededPrimaryData.students.slice());
             });
         },
 
         /**
-         * Deletes all records from primary tables ({@link schema.attachments}, {@link schema.sessions},
-         * {@link schema.users}, and {@link schema.subjects}).
+         * Deletes all records from primary tables ({@link schema.administrators}, {@link schema.attachments},
+         * {@link schema.sessions}, {@link schema.subjects}, {@link schema.students}, {@link schema.teachers},
+         * and {@link schema.users}).
+         *
+         * While {@link schema.students}, {@link schema.teachers}, and {@link schema.users} are technically
+         * secondary tables, they are considered primary in this context because they are directly referenced by many
+         * other tables and are essential for the integrity of the database.
          *
          * **Because these are primary tables, all secondary tables that reference these tables will also
          * be affected.**
          */
         cleanupPrimaryTables: async () => {
             await db.transaction(async (tx) => {
+                await tx.delete(schema.administrators);
+                await tx.delete(schema.students);
+                await tx.delete(schema.teachers);
                 await tx.delete(schema.attachments);
                 await tx.delete(schema.sessions);
                 await tx.delete(schema.users);
@@ -167,8 +241,7 @@ export function createDatabaseSeeder(db: DrizzleDb) {
          * Deletes all records from secondary tables ({@link schema.assignmentAttachments}, {@link schema.assignmentSubmissionAttachments},
          * {@link schema.materialAttachments}, {@link schema.assignmentSubmissions}, {@link schema.assignments},
          * {@link schema.materials}, {@link schema.notifications}, {@link schema.studentClasses}, {@link schema.schedules},
-         * {@link schema.classSubjects}, {@link schema.classes}, {@link schema.students}, {@link schema.teachers}, and
-         * {@link schema.administrators}).
+         * {@link schema.classSubjects}, and {@link schema.classes}).
          *
          * This will not affect primary tables. To clean up primary tables, use `cleanupPrimaryTables` instead.
          */
@@ -185,9 +258,6 @@ export function createDatabaseSeeder(db: DrizzleDb) {
                 await tx.delete(schema.schedules);
                 await tx.delete(schema.classSubjects);
                 await tx.delete(schema.classes);
-                await tx.delete(schema.students);
-                await tx.delete(schema.teachers);
-                await tx.delete(schema.administrators);
             });
         },
 
