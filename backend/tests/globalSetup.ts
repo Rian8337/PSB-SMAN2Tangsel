@@ -10,7 +10,7 @@ export async function setup() {
 
     setupHappened = true;
 
-    await wipeTestDb();
+    await testDbManager.cleanupAllTables();
     await testDbManager.seedPrimaryTables();
 }
 
@@ -21,11 +21,6 @@ export async function teardown() {
 
     teardownHappened = true;
 
-    await wipeTestDb();
+    await testDbManager.cleanupAllTables();
     testDb.$client.end();
-}
-
-async function wipeTestDb() {
-    await testDbManager.cleanupSecondaryTables();
-    await testDbManager.cleanupPrimaryTables();
 }

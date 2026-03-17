@@ -130,7 +130,7 @@ export const seededPrimaryData = {
 
 //#endregion
 
-//#region Database Seeders
+//#region Database Manager
 
 interface TableSeeder<T extends AnyMySqlTable> {
     /**
@@ -151,12 +151,12 @@ interface TableSeeder<T extends AnyMySqlTable> {
 }
 
 /**
- * Creates a database seeder for the given Drizzle database instance.
+ * Creates a database manager for the given Drizzle database instance. Primarily used for testing.
  *
- * @param db The Drizzle database instance to create the seeder for.
- * @returns An object containing seeders for each table in the database.
+ * @param db The Drizzle database instance to create the manager for.
+ * @returns The database manager for the given Drizzle database instance.
  */
-export function createDatabaseSeeder(db: DrizzleDb) {
+export function createDatabaseManager(db: DrizzleDb) {
     function createSeeder<T extends AnyMySqlTable>(table: T): TableSeeder<T> {
         return {
             seedOne: async (value) => {
@@ -258,6 +258,36 @@ export function createDatabaseSeeder(db: DrizzleDb) {
                 await tx.delete(schema.schedules);
                 await tx.delete(schema.classSubjects);
                 await tx.delete(schema.classes);
+            });
+        },
+
+        /**
+         * Deletes all records from all tables in the database. This is a combination of `cleanupPrimaryTables` and
+         * `cleanupSecondaryTables`.
+         */
+        cleanupAllTables: async () => {
+            await db.transaction(async (tx) => {
+                // Secondary tables
+                await tx.delete(schema.assignmentAttachments);
+                await tx.delete(schema.assignmentSubmissionAttachments);
+                await tx.delete(schema.materialAttachments);
+                await tx.delete(schema.assignmentSubmissions);
+                await tx.delete(schema.assignments);
+                await tx.delete(schema.materials);
+                await tx.delete(schema.notifications);
+                await tx.delete(schema.studentClasses);
+                await tx.delete(schema.schedules);
+                await tx.delete(schema.classSubjects);
+                await tx.delete(schema.classes);
+
+                // Primary tables
+                await tx.delete(schema.administrators);
+                await tx.delete(schema.students);
+                await tx.delete(schema.teachers);
+                await tx.delete(schema.attachments);
+                await tx.delete(schema.sessions);
+                await tx.delete(schema.users);
+                await tx.delete(schema.subjects);
             });
         },
 

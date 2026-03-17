@@ -1,7 +1,7 @@
+import { loadEnvironmentVariables } from "@/env";
 import { EnvironmentVariableKey } from "@/types";
 import { createDatabase } from "@psb/shared/database";
-import { createDatabaseSeeder } from "@psb/shared/tests";
-import { loadEnvironmentVariables } from "@/env";
+import { createDatabaseManager } from "@psb/shared/tests";
 
 loadEnvironmentVariables(true);
 
@@ -17,12 +17,8 @@ export const testDb = createDatabase({
 });
 
 /**
- * A database seeder for the test database, used to manage test data during testing.
+ * A database manager for the test database, used to manage test data during testing.
  */
-export const testDbManager = createDatabaseSeeder(testDb);
+export const testDbManager = createDatabaseManager(testDb);
 
-/**
- * The seeders from the test database manager, which can be used to seed data in the
- * database during testing.
- */
 export const { seeders } = testDbManager;
