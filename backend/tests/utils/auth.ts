@@ -16,7 +16,7 @@ export function loginStudent(agent: TestAgent) {
     const student = seededPrimaryData.students[0];
 
     return agent.post(loginEndpoint).send({
-        login: student.nisn,
+        id: student.nisn,
         password: testPassword,
     });
 }
@@ -33,7 +33,7 @@ export function loginTeacher(agent: TestAgent) {
     const teacher = seededPrimaryData.teachers[0];
 
     return agent.post(loginEndpoint).send({
-        login: teacher.staffId.toString(),
+        id: teacher.staffId.toString(),
         password: testPassword,
     });
 }
@@ -50,7 +50,7 @@ export function loginAdministrator(agent: TestAgent) {
     const admin = seededPrimaryData.administrators[0];
 
     return agent.post(loginEndpoint).send({
-        login: admin.staffId.toString(),
+        id: admin.staffId.toString(),
         password: testPassword,
     });
 }
