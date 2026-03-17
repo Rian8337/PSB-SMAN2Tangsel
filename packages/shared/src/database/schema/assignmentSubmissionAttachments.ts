@@ -1,7 +1,7 @@
-import { int, mysqlTable } from "drizzle-orm/mysql-core";
-import { attachments } from "./attachments";
-import { assignmentSubmissions } from "./assignmentSubmissions";
 import { relations } from "drizzle-orm";
+import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
+import { assignmentSubmissions } from "./assignmentSubmissions";
+import { attachments } from "./attachments";
 
 /**
  * The assignment submission attachments table.
@@ -15,19 +15,26 @@ export const assignmentSubmissionAttachments = mysqlTable(
          * The ID of the attachment this attachment is associated with, which is also the ID of the
          * corresponding attachment in the {@link attachments} table.
          */
-        attachmentId: int()
-            .references(() => attachments.id, { onDelete: "cascade" })
-            .unique("attachment_id_unique")
-            .notNull(),
+        attachmentId: int().unique("attachment_id_unique").notNull(),
 
         /**
          * The ID of the submission this attachment is associated with, which is also the ID of the
          * corresponding submission in the {@link assignmentSubmissions} table.
          */
-        submissionId: int()
-            .references(() => assignmentSubmissions.id, { onDelete: "cascade" })
-            .notNull(),
+        submissionId: int().notNull(),
     },
+    (table) => [
+        foreignKey({
+            columns: [table.attachmentId],
+            foreignColumns: [attachments.id],
+            name: "fk_assignment_submission_attachment_attachment",
+        }).onDelete("cascade"),
+        foreignKey({
+            columns: [table.submissionId],
+            foreignColumns: [assignmentSubmissions.id],
+            name: "fk_assignment_submission_attachment_submission",
+        }).onDelete("cascade"),
+    ],
 );
 
 /**

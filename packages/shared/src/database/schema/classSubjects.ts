@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { int, mysqlTable } from "drizzle-orm/mysql-core";
+import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { classes } from "./classes";
 import { materials } from "./materials";
 import { schedules } from "./schedules";
@@ -11,34 +11,48 @@ import { teachers } from "./teachers";
  *
  * This represents the subjects that are taught in a class.
  */
-export const classSubjects = mysqlTable("class_subject", {
-    /**
-     * The system-issued identification number of the class subject.
-     */
-    id: int().autoincrement().primaryKey(),
+export const classSubjects = mysqlTable(
+    "class_subject",
+    {
+        /**
+         * The system-issued identification number of the class subject.
+         */
+        id: int().autoincrement().primaryKey(),
 
-    /**
-     * The ID of the class, which is also the ID of the corresponding class in the {@link classes} table.
-     */
-    classId: int()
-        .references(() => classes.id, { onDelete: "cascade" })
-        .notNull(),
+        /**
+         * The ID of the class, which is also the ID of the corresponding class in the {@link classes} table.
+         */
+        classId: int().notNull(),
 
-    /**
-     * The ID of the subject, which is also the ID of the corresponding subject in the {@link subjects} table.
-     */
-    subjectId: int()
-        .references(() => subjects.id, { onDelete: "cascade" })
-        .notNull(),
+        /**
+         * The ID of the subject, which is also the ID of the corresponding subject in the {@link subjects} table.
+         */
+        subjectId: int().notNull(),
 
-    /**
-     * The ID of the teacher that teaches the subject in the class, which is also the ID of the corresponding
-     * teacher in the {@link teachers} table.
-     */
-    teacherId: int().references(() => teachers.userId, {
-        onDelete: "set null",
-    }),
-});
+        /**
+         * The ID of the teacher that teaches the subject in the class, which is also the ID of the corresponding
+         * teacher in the {@link teachers} table.
+         */
+        teacherId: int(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.classId],
+            foreignColumns: [classes.id],
+            name: "fk_class_subject_class",
+        }).onDelete("cascade"),
+        foreignKey({
+            columns: [table.subjectId],
+            foreignColumns: [subjects.id],
+            name: "fk_class_subject_subject",
+        }).onDelete("cascade"),
+        foreignKey({
+            columns: [table.teacherId],
+            foreignColumns: [teachers.userId],
+            name: "fk_class_subject_teacher",
+        }).onDelete("set null"),
+    ],
+);
 
 /**
  * Relations for the {@link classSubjects} table.

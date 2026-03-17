@@ -1,10 +1,14 @@
-import { text } from "drizzle-orm/mysql-core";
-import { int } from "drizzle-orm/mysql-core";
-import { boolean } from "drizzle-orm/mysql-core";
-import { bigint } from "drizzle-orm/mysql-core";
-import { mysqlTable, timestamp } from "drizzle-orm/mysql-core";
+import {
+    bigint,
+    boolean,
+    foreignKey,
+    index,
+    int,
+    mysqlTable,
+    text,
+    timestamp,
+} from "drizzle-orm/mysql-core";
 import { users } from "./users";
-import { index } from "drizzle-orm/mysql-core";
 
 /**
  * The notifications table.
@@ -46,9 +50,14 @@ export const notifications = mysqlTable(
          * The ID of the user this notification belongs to, which is also the ID of the corresponding user
          * in the {@link users} table.
          */
-        userId: int()
-            .references(() => users.id, { onDelete: "cascade" })
-            .notNull(),
+        userId: int().notNull(),
     },
-    (table) => [index("idx_notification_userId").on(table.userId)],
+    (table) => [
+        index("idx_notification_userId").on(table.userId),
+        foreignKey({
+            columns: [table.userId],
+            foreignColumns: [users.id],
+            name: "fk_notification_user",
+        }).onDelete("cascade"),
+    ],
 );

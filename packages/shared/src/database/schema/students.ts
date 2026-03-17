@@ -1,29 +1,35 @@
-import { int } from "drizzle-orm/mysql-core";
-import { mysqlTable } from "drizzle-orm/mysql-core";
-import { users } from "./users";
-import { varchar } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
-import { studentClasses } from "./studentClasses";
+import { foreignKey, int, mysqlTable, varchar } from "drizzle-orm/mysql-core";
 import { assignmentSubmissions } from "./assignmentSubmissions";
+import { studentClasses } from "./studentClasses";
+import { users } from "./users";
 
 /**
  * The student table.
  */
-export const students = mysqlTable("student", {
-    /**
-     * The ID of the student, which is also the ID of the corresponding user in the {@link users} table.
-     */
-    userId: int()
-        .primaryKey()
-        .references(() => users.id, { onDelete: "cascade" }),
+export const students = mysqlTable(
+    "student",
+    {
+        /**
+         * The ID of the student, which is also the ID of the corresponding user in the {@link users} table.
+         */
+        userId: int().primaryKey(),
 
-    /**
-     * The government-issued NISN (National Student Identification Number) of the student.
-     *
-     * It is a unique 10-digit number assigned to each student in Indonesia.
-     */
-    nisn: varchar({ length: 10 }).unique("nisn_unique").notNull(),
-});
+        /**
+         * The government-issued NISN (National Student Identification Number) of the student.
+         *
+         * It is a unique 10-digit number assigned to each student in Indonesia.
+         */
+        nisn: varchar({ length: 10 }).unique("nisn_unique").notNull(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.userId],
+            foreignColumns: [users.id],
+            name: "fk_student_user",
+        }).onDelete("cascade"),
+    ],
+);
 
 /**
  * Relations for the {@link students} table.

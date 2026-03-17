@@ -1,24 +1,32 @@
-import { int, mysqlTable } from "drizzle-orm/mysql-core";
-import { users } from "./users";
 import { relations } from "drizzle-orm";
+import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { classSubjects } from "./classSubjects";
+import { users } from "./users";
 
 /**
  * The teacher table.
  */
-export const teachers = mysqlTable("teacher", {
-    /**
-     * The ID of the teacher, which is also the ID of the corresponding user in the {@link users} table.
-     */
-    userId: int()
-        .primaryKey()
-        .references(() => users.id, { onDelete: "cascade" }),
+export const teachers = mysqlTable(
+    "teacher",
+    {
+        /**
+         * The ID of the teacher, which is also the ID of the corresponding user in the {@link users} table.
+         */
+        userId: int().primaryKey(),
 
-    /**
-     * The school-issued staff ID of the teacher.
-     */
-    staffId: int().unique("staffid_unique").notNull(),
-});
+        /**
+         * The school-issued staff ID of the teacher.
+         */
+        staffId: int().unique("staffid_unique").notNull(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.userId],
+            foreignColumns: [users.id],
+            name: "fk_teacher_user",
+        }).onDelete("cascade"),
+    ],
+);
 
 /**
  * Relations for the {@link teachers} table.

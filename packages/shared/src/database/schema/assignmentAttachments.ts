@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { int, mysqlTable } from "drizzle-orm/mysql-core";
+import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { assignments } from "./assignments";
 import { attachments } from "./attachments";
 
@@ -8,28 +8,34 @@ import { attachments } from "./attachments";
  *
  * This links assignments with their respective attachments.
  */
-export const assignmentAttachments = mysqlTable("assignment_attachment", {
-    /**
-     * The ID of the attachment this attachment is associated with, which is also the ID of the
-     * corresponding attachment in the {@link attachments} table.
-     */
-    attachmentId: int()
-        .references(() => attachments.id, {
-            onDelete: "cascade",
-        })
-        .unique("attachment_id_unique")
-        .notNull(),
+export const assignmentAttachments = mysqlTable(
+    "assignment_attachment",
+    {
+        /**
+         * The ID of the attachment this attachment is associated with, which is also the ID of the
+         * corresponding attachment in the {@link attachments} table.
+         */
+        attachmentId: int().unique("attachment_id_unique").notNull(),
 
-    /**
-     * The ID of the assignment this attachment is associated with, which is also the ID of the
-     * corresponding assignment in the {@link assignments} table.
-     */
-    assignmentId: int()
-        .references(() => assignments.id, {
-            onDelete: "cascade",
-        })
-        .notNull(),
-});
+        /**
+         * The ID of the assignment this attachment is associated with, which is also the ID of the
+         * corresponding assignment in the {@link assignments} table.
+         */
+        assignmentId: int().notNull(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.attachmentId],
+            foreignColumns: [attachments.id],
+            name: "fk_assignment_attachment_attachment",
+        }).onDelete("cascade"),
+        foreignKey({
+            columns: [table.assignmentId],
+            foreignColumns: [assignments.id],
+            name: "fk_assignment_attachment_assignment",
+        }).onDelete("cascade"),
+    ],
+);
 
 /**
  * Relations for the {@link assignmentAttachments} table.
