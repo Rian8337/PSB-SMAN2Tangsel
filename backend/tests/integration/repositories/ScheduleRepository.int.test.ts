@@ -31,8 +31,8 @@ describe("ScheduleRepository (integration)", () => {
             id: 1,
             classSubjectId: classSubject.id!,
             day: ScheduleDay.monday,
-            startTime: new Date("1970-01-01T08:00:00Z"),
-            endTime: new Date("1970-01-01T09:00:00Z"),
+            startTime: new Date(2024, 0, 1, 8),
+            endTime: new Date(2024, 0, 1, 9),
         });
     });
 
@@ -48,8 +48,8 @@ describe("ScheduleRepository (integration)", () => {
             expect(schedule[0]).toMatchObject({
                 id: 1,
                 day: ScheduleDay.monday,
-                startTime: new Date("1970-01-01T08:00:00Z").getTime(),
-                endTime: new Date("1970-01-01T09:00:00Z").getTime(),
+                startTime: new Date(2024, 0, 1, 8).getTime(),
+                endTime: new Date(2024, 0, 1, 9).getTime(),
             });
         });
 
@@ -68,8 +68,8 @@ describe("ScheduleRepository (integration)", () => {
             expect(schedule[0]).toMatchObject({
                 id: 1,
                 day: ScheduleDay.monday,
-                startTime: new Date("1970-01-01T08:00:00Z").getTime(),
-                endTime: new Date("1970-01-01T09:00:00Z").getTime(),
+                startTime: new Date(2024, 0, 1, 8).getTime(),
+                endTime: new Date(2024, 0, 1, 9).getTime(),
             });
         });
 

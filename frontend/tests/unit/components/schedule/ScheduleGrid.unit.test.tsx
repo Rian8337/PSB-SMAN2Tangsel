@@ -32,8 +32,8 @@ describe("ScheduleGrid (unit)", () => {
             {
                 id: 1,
                 day: ScheduleDay.monday,
-                startTime: new Date(1970, 0, 1, 8).getTime(),
-                endTime: new Date(1970, 0, 1, 9, 30).getTime(),
+                startTime: new Date(2024, 0, 1, 8).getTime(),
+                endTime: new Date(2024, 0, 1, 9, 30).getTime(),
                 subject: {
                     code: "MA1",
                     name: "Matematika Lanjut",
@@ -61,8 +61,8 @@ describe("ScheduleGrid (unit)", () => {
             {
                 id: 1,
                 day: ScheduleDay.wednesday,
-                startTime: new Date(1970, 0, 1, 10, 15).getTime(),
-                endTime: new Date(1970, 0, 1, 12, 45).getTime(),
+                startTime: new Date(2024, 0, 1, 10, 15).getTime(),
+                endTime: new Date(2024, 0, 1, 12, 45).getTime(),
                 subject: { code: "FA1", name: "Fisika" },
             },
         ];
