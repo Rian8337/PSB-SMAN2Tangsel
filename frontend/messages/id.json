@@ -10,8 +10,9 @@
     "login": "Masuk",
     "error": "Terjadi kesalahan. Silakan coba lagi."
   },
-  "DashboardPageHeader": {
-    "welcome": "Selamat datang, {name}!"
+  "DashboardClientView": {
+    "welcome": "Selamat datang, {name}!",
+    "downloadSchedule": "Unduh Jadwal"
   },
   "ScheduleGrid": {
     "time": "Waktu",
@@ -22,8 +23,5 @@
     "friday": "Jumat",
     "saturday": "Sabtu",
     "sunday": "Minggu"
-  },
-  "ScheduleView": {
-    "download": "Unduh"
   }
 }

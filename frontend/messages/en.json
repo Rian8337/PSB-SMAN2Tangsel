@@ -10,8 +10,9 @@
     "login": "Login",
     "error": "An error occurred. Please try again."
   },
-  "DashboardPageHeader": {
-    "welcome": "Welcome, {name}!"
+  "DashboardClientView": {
+    "welcome": "Welcome, {name}!",
+    "downloadSchedule": "Download Schedule"
   },
   "ScheduleGrid": {
     "time": "Time",
@@ -22,8 +23,5 @@
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday"
-  },
-  "ScheduleView": {
-    "download": "Download"
   }
 }

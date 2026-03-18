@@ -2,8 +2,7 @@ import {
     getServerAuthApiClient,
     getServerScheduleApiClient,
 } from "@/api/server";
-import { DashboardPageHeader } from "@/components/dashboard/DashboardPageHeader";
-import { ScheduleView } from "@/components/schedule/ScheduleView";
+import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
 import { ScheduleDTO } from "@psb/shared/types";
 
 export default async function DashboardPage() {
@@ -17,10 +16,5 @@ export default async function DashboardPage() {
 
     const firstName = user?.name.split(" ")[0] ?? "Student";
 
-    return (
-        <>
-            <DashboardPageHeader name={firstName} />
-            <ScheduleView schedules={schedules} />
-        </>
-    );
+    return <DashboardClientView name={firstName} schedules={schedules} />;
 }
