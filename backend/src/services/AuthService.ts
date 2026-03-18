@@ -34,7 +34,7 @@ export class AuthService implements IAuthService {
     private readonly authTagLength = 16;
 
     private readonly encryptionKey: Buffer;
-    private readonly isProduction: boolean;
+    private readonly requireSecureCookies: boolean;
 
     constructor(
         @inject(dependencyTokens.configService)
@@ -59,10 +59,14 @@ export class AuthService implements IAuthService {
             );
         }
 
-        this.isProduction =
+        // Secure cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
+        this.requireSecureCookies =
             this.configService.getEnvironmentVariable(
                 EnvironmentVariableKey.nodeEnv,
-            ) === "production";
+            ) === "production" &&
+            this.configService.getEnvironmentVariable(
+                EnvironmentVariableKey.isE2ETest,
+            ) === undefined;
     }
 
     async login(id: string, password: string): Promise<LoginResult> {
@@ -76,8 +80,8 @@ export class AuthService implements IAuthService {
     createSession(res: Response, data: unknown): void {
         res.cookie(this.sessionCookieName, this.encryptSession(data), {
             httpOnly: true,
-            secure: this.isProduction,
-            sameSite: this.isProduction ? "strict" : "lax",
+            secure: this.requireSecureCookies,
+            sameSite: this.requireSecureCookies ? "strict" : "lax",
             signed: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
@@ -86,8 +90,8 @@ export class AuthService implements IAuthService {
     clearSession(res: Response): void {
         res.clearCookie(this.sessionCookieName, {
             httpOnly: true,
-            secure: this.isProduction,
-            sameSite: this.isProduction ? "strict" : "lax",
+            secure: this.requireSecureCookies,
+            sameSite: this.requireSecureCookies ? "strict" : "lax",
             signed: true,
         });
     }

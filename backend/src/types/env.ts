@@ -48,4 +48,10 @@ export enum EnvironmentVariableKey {
      * The key used to encrypt user sessions.
      */
     sessionEncryptionKey = "SESSION_ENCRYPTION_KEY",
+
+    /**
+     * Whether the application is running in end-to-end test mode. This can be used to enable
+     * test-specific behavior in the codebase.
+     */
+    isE2ETest = "IS_E2E_TEST",
 }
