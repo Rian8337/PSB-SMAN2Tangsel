@@ -77,7 +77,7 @@ export class AuthService implements IAuthService {
         res.cookie(this.sessionCookieName, this.encryptSession(data), {
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: "strict",
+            sameSite: this.isProduction ? "strict" : "lax",
             signed: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
@@ -87,7 +87,7 @@ export class AuthService implements IAuthService {
         res.clearCookie(this.sessionCookieName, {
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: "strict",
+            sameSite: this.isProduction ? "strict" : "lax",
             signed: true,
         });
     }
