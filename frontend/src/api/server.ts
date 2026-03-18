@@ -1,9 +1,9 @@
-import { getLocale } from "next-intl/server";
-import { IAuthAPIClient } from "../IAuthAPIClient";
-import { AuthAPIClient } from "../AuthAPIClient";
 import { Locale } from "next-intl";
-import { IScheduleAPIClient } from "../IScheduleAPIClient";
-import { ScheduleAPIClient } from "../ScheduleAPIClient";
+import { getLocale } from "next-intl/server";
+import { AuthAPIClient } from "./AuthAPIClient";
+import { IAuthAPIClient } from "./IAuthAPIClient";
+import { IScheduleAPIClient } from "./IScheduleAPIClient";
+import { ScheduleAPIClient } from "./ScheduleAPIClient";
 
 /**
  * Server-side factory to retrieve an {@link IAuthAPIClient}.
