@@ -1,17 +1,15 @@
 import LoginPage from "@/app/[locale]/login/page";
 import { AuthApiProvider } from "@/providers/api/auth-api-provider";
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { mockAuthApiClient, mockRouter } from "@test/mocks";
-import { render, screen, waitFor } from "@testing-library/react";
+import { renderWithChakraProvider } from "@test/utils";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 function renderPage() {
-    return render(
-        <ChakraProvider value={defaultSystem}>
-            <AuthApiProvider client={mockAuthApiClient}>
-                <LoginPage />
-            </AuthApiProvider>
-        </ChakraProvider>,
+    return renderWithChakraProvider(
+        <AuthApiProvider client={mockAuthApiClient}>
+            <LoginPage />
+        </AuthApiProvider>,
     );
 }
 
