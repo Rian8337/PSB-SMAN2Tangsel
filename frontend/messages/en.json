@@ -9,5 +9,21 @@
     "password": "Password",
     "login": "Login",
     "error": "An error occurred. Please try again."
+  },
+  "DashboardPageHeader": {
+    "welcome": "Welcome, {name}!"
+  },
+  "ScheduleGrid": {
+    "time": "Time",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "ScheduleView": {
+    "download": "Download"
   }
 }

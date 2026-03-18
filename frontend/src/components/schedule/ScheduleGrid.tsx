@@ -1,16 +1,19 @@
 "use client";
 
-import { Box, Flex, Text } from "@chakra-ui/react";
 import { parseScheduleData } from "@/utils/schedule";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
+import { useTranslations } from "next-intl";
 
-const DAYS = [
-    { label: "Monday", value: ScheduleDay.monday },
-    { label: "Tuesday", value: ScheduleDay.tuesday },
-    { label: "Wednesday", value: ScheduleDay.wednesday },
-    { label: "Thursday", value: ScheduleDay.thursday },
-    { label: "Friday", value: ScheduleDay.friday },
-];
+function getDayLabels(t: ReturnType<typeof useTranslations<"ScheduleGrid">>) {
+    return [
+        { label: t("monday"), value: ScheduleDay.monday },
+        { label: t("tuesday"), value: ScheduleDay.tuesday },
+        { label: t("wednesday"), value: ScheduleDay.wednesday },
+        { label: t("thursday"), value: ScheduleDay.thursday },
+        { label: t("friday"), value: ScheduleDay.friday },
+    ];
+}
 
 const HOURS = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00"];
 
@@ -22,7 +25,9 @@ interface ScheduleGridProps {
 }
 
 export function ScheduleGrid({ data }: ScheduleGridProps) {
+    const t = useTranslations("ScheduleGrid");
     const parsedClasses = parseScheduleData(data);
+    const days = getDayLabels(t);
 
     return (
         <Box border="1px solid black" bg="white" w="full" overflowX="auto">
@@ -63,12 +68,12 @@ export function ScheduleGrid({ data }: ScheduleGridProps) {
                     ))}
                 </Box>
 
-                {DAYS.map((day, dayIdx) => (
+                {days.map((day, dayIdx) => (
                     <Box
                         key={day.value}
                         flex={1}
                         borderRight={
-                            dayIdx === DAYS.length - 1
+                            dayIdx === days.length - 1
                                 ? "none"
                                 : "1px solid black"
                         }

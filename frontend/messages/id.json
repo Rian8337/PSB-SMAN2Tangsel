@@ -9,5 +9,21 @@
     "password": "Kata sandi",
     "login": "Masuk",
     "error": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "DashboardPageHeader": {
+    "welcome": "Selamat datang, {name}!"
+  },
+  "ScheduleGrid": {
+    "time": "Waktu",
+    "monday": "Senin",
+    "tuesday": "Selasa",
+    "wednesday": "Rabu",
+    "thursday": "Kamis",
+    "friday": "Jumat",
+    "saturday": "Sabtu",
+    "sunday": "Minggu"
+  },
+  "ScheduleView": {
+    "download": "Unduh"
   }
 }
