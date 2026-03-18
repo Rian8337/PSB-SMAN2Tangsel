@@ -8,14 +8,18 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const sessionCookie = request.cookies.get("session")?.value;
-    const isLoginPage = pathname.includes("/login");
     const locale = pathname.split("/")[1] || routing.defaultLocale;
 
-    if (!sessionCookie && !isLoginPage) {
+    const isPublicPage =
+        pathname === "/" ||
+        pathname === `/${locale}` ||
+        pathname.includes("/login");
+
+    if (!sessionCookie && !isPublicPage) {
         return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
 
-    if (sessionCookie && isLoginPage) {
+    if (sessionCookie && pathname.includes("/login")) {
         return NextResponse.redirect(
             new URL(`/${locale}/dashboard`, request.url),
         );
