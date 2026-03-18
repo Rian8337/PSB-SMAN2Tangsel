@@ -1,11 +1,11 @@
 import { Mocked } from "vitest";
+import type * as navigation from "@/i18n/navigation";
+import type * as nextIntl from "next-intl";
 
 /**
  * Mock implementation of navigation's `useRouter`.
  */
-export const mockRouter: Mocked<
-    ReturnType<typeof import("@/i18n/navigation").useRouter>
-> = {
+export const mockRouter: Mocked<ReturnType<typeof navigation.useRouter>> = {
     back: vi.fn(),
     forward: vi.fn(),
     prefetch: vi.fn(),
@@ -17,9 +17,7 @@ export const mockRouter: Mocked<
 /**
  * Partial mock implementation of navigations that are locale-aware.
  */
-export const mockNavigation: Mocked<
-    Partial<typeof import("@/i18n/navigation")>
-> = {
+export const mockNavigation: Mocked<Partial<typeof navigation>> = {
     usePathname: vi.fn(() => "/"),
     useRouter: vi.fn(() => mockRouter),
 };
@@ -30,4 +28,4 @@ export const mockNavigation: Mocked<
 export const mockNextIntl = {
     useLocale: vi.fn(() => "id"),
     useTranslations: vi.fn(() => (key: string) => key),
-} satisfies Mocked<Partial<Record<keyof typeof import("next-intl"), unknown>>>;
+} satisfies Mocked<Partial<Record<keyof typeof nextIntl, unknown>>>;
