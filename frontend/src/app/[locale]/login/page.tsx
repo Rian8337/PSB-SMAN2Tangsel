@@ -32,8 +32,7 @@ export default function LoginPage() {
         try {
             await authApiClient.login(id, password);
 
-            // Redirect to home page on successful login
-            router.push("/");
+            router.push("/dashboard");
         } catch (e) {
             setError(e instanceof Error ? e.message : t("error"));
         } finally {
