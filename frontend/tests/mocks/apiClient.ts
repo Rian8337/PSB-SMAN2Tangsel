@@ -14,5 +14,6 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
  * Mock implementation of {@link IScheduleAPIClient}.
  */
 export const mockScheduleApiClient: Mocked<IScheduleAPIClient> = {
+    download: vi.fn(),
     getSchedule: vi.fn(),
 };

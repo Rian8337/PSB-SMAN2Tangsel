@@ -12,7 +12,10 @@
   },
   "DashboardClientView": {
     "welcome": "Selamat datang, {name}!",
-    "downloadSchedule": "Unduh Jadwal"
+    "downloadSchedule": "Unduh Jadwal",
+    "downloadScheduleErrorTitle": "Gagal Mengunduh Jadwal",
+    "downloadScheduleErrorMessage": "Terjadi kesalahan saat mengunduh jadwal. Silakan coba lagi.",
+    "scheduleFilename": "jadwal_pelajaran"
   },
   "ScheduleGrid": {
     "time": "Waktu",

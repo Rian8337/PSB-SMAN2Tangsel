@@ -13,4 +13,8 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
     getSchedule(): Promise<ScheduleDTO[]> {
         return this.get("/").then((res) => res.json());
     }
+
+    download(): Promise<Blob> {
+        return this.get("/download").then((res) => res.blob());
+    }
 }

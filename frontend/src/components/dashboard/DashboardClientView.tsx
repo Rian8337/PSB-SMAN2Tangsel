@@ -1,10 +1,12 @@
 "use client";
 
+import { useScheduleApiClient } from "@/providers/api/schedule-api-provider";
+import { Box, Button } from "@chakra-ui/react";
 import { ScheduleDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../layout/PageHeader";
-import { Box, Button } from "@chakra-ui/react";
 import { ScheduleGrid } from "../schedule/ScheduleGrid";
+import { toaster } from "../ui/toaster";
 
 interface DashboardClientViewProps {
     name: string;
@@ -16,6 +18,35 @@ export function DashboardClientView({
     schedules,
 }: DashboardClientViewProps) {
     const t = useTranslations("DashboardClientView");
+    const scheduleApiClient = useScheduleApiClient();
+
+    function handleDownload() {
+        scheduleApiClient
+            .download()
+            .then((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+
+                a.style.display = "none";
+                a.href = url;
+
+                a.download = `${t("scheduleFilename")}.ics`;
+                document.body.appendChild(a);
+                a.click();
+
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("downloadScheduleErrorTitle"),
+                    description: t("downloadScheduleErrorMessage"),
+                    type: "error",
+                    duration: 5000,
+                    closable: true,
+                });
+            });
+    }
 
     return (
         <>
@@ -25,6 +56,7 @@ export function DashboardClientView({
                 <Box mb={4}>
                     <Button
                         variant="outline"
+                        onClick={handleDownload}
                         borderColor="black"
                         color="black"
                         borderWidth="1px"

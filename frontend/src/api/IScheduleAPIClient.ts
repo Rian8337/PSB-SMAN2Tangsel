@@ -10,4 +10,9 @@ export interface IScheduleAPIClient {
      * @returns The weekly schedule of the user.
      */
     getSchedule(): Promise<ScheduleDTO[]>;
+
+    /**
+     * Downloads the weekly schedule of the authenticated user as an iCalendar file (`.ics`).
+     */
+    download(): Promise<Blob>;
 }

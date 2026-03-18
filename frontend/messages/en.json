@@ -12,7 +12,10 @@
   },
   "DashboardClientView": {
     "welcome": "Welcome, {name}!",
-    "downloadSchedule": "Download Schedule"
+    "downloadSchedule": "Download Schedule",
+    "downloadScheduleErrorTitle": "Failed to Download Schedule",
+    "downloadScheduleErrorMessage": "An error occurred while downloading the schedule. Please try again.",
+    "scheduleFilename": "class_schedule"
   },
   "ScheduleGrid": {
     "time": "Time",
