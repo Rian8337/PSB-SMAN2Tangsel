@@ -1,4 +1,4 @@
-import { IAuthAPIClient } from "@/api";
+import { IAuthAPIClient, IScheduleAPIClient } from "@/api";
 import { Mocked } from "vitest";
 
 /**
@@ -7,4 +7,12 @@ import { Mocked } from "vitest";
 export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
     login: vi.fn(),
     logout: vi.fn(),
+    getMe: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IScheduleAPIClient}.
+ */
+export const mockScheduleApiClient: Mocked<IScheduleAPIClient> = {
+    getSchedule: vi.fn(),
 };
