@@ -7,7 +7,10 @@ test.describe("Homepage & i18n Localization", () => {
         await page.goto("/");
 
         await expect(page).not.toHaveURL(/\/id/);
-        await expect(page.locator("h1")).toContainText("Selamat Datang");
+        await expect(page.getByRole("heading", { level: 1 })).toContainText(
+            "Selamat Datang",
+        );
+
         await expect(page.locator("p")).toContainText(
             "Portal e-learning resmi",
         );
@@ -17,13 +20,17 @@ test.describe("Homepage & i18n Localization", () => {
         await enButton.click();
 
         await expect(page).toHaveURL(/\/en/);
-        await expect(page.locator("h1")).toContainText("Welcome");
+        await expect(page.getByRole("heading", { level: 1 })).toContainText(
+            "Welcome",
+        );
 
         const idButton = page.getByRole("button", { name: "ID" });
         await expect(idButton).toBeVisible();
         await idButton.click();
 
         await expect(page).not.toHaveURL(/\/en/);
-        await expect(page.locator("h1")).toContainText("Selamat Datang");
+        await expect(page.getByRole("heading", { level: 1 })).toContainText(
+            "Selamat Datang",
+        );
     });
 });
