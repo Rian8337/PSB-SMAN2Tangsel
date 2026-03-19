@@ -23,14 +23,14 @@ export function DashboardClientView({
     function handleDownload() {
         scheduleApiClient
             .download()
-            .then((blob) => {
+            .then(({ blob, filename }) => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
 
                 a.style.display = "none";
                 a.href = url;
 
-                a.download = `${t("scheduleFilename")}.ics`;
+                a.download = filename ?? `${t("scheduleFilename")}.ics`;
                 document.body.appendChild(a);
                 a.click();
 

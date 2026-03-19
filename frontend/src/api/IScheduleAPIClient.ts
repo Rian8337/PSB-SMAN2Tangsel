@@ -14,5 +14,5 @@ export interface IScheduleAPIClient {
     /**
      * Downloads the weekly schedule of the authenticated user as an iCalendar file (`.ics`).
      */
-    download(): Promise<Blob>;
+    download(): Promise<Readonly<{ blob: Blob; filename?: string }>>;
 }

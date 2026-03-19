@@ -14,7 +14,21 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         return this.get("/").then((res) => res.json());
     }
 
-    download(): Promise<Blob> {
-        return this.get("/download").then((res) => res.blob());
+    async download(): Promise<Readonly<{ blob: Blob; filename?: string }>> {
+        const res = await this.get("/download");
+        const blob = await res.blob();
+        const disposition = res.headers.get("Content-Disposition");
+
+        let filename: string | undefined;
+
+        if (disposition?.includes("filename=")) {
+            filename = disposition
+                .split("filename=")[1]
+                .split(";")[0]
+                .trim()
+                .replace(/"/g, "");
+        }
+
+        return { blob, filename };
     }
 }
