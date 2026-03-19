@@ -68,22 +68,14 @@ export class NotificationRepository
             );
     }
 
-    async markAsRead(notificationId: number, userId: number): Promise<void> {
+    async updateReadStatus(
+        notificationId: number,
+        userId: number,
+        read: boolean,
+    ): Promise<void> {
         await this.db
             .update(notifications)
-            .set({ read: true })
-            .where(
-                and(
-                    eq(notifications.id, notificationId),
-                    eq(notifications.userId, userId),
-                ),
-            );
-    }
-
-    async markAsUnread(notificationId: number, userId: number): Promise<void> {
-        await this.db
-            .update(notifications)
-            .set({ read: false })
+            .set({ read })
             .where(
                 and(
                     eq(notifications.id, notificationId),

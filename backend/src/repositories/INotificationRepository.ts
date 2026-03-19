@@ -49,22 +49,18 @@ export interface INotificationRepository {
     ): Promise<NotificationDTO[]>;
 
     /**
-     * Marks a notification as read.
+     * Updates the read status of a notification.
      *
-     * @param notificationId The ID of the notification to mark as read.
-     * @param userId The ID of the user who marked the notification as read. This ensures that only
-     * the user who owns the notification can mark it as read.
+     * @param notificationId The ID of the notification to update.
+     * @param userId The ID of the user who owns the notification. This ensures that only the user who
+     * owns the notification can update its read status.
+     * @param read The new read status of the notification.
      */
-    markAsRead(notificationId: number, userId: number): Promise<void>;
-
-    /**
-     * Marks a notification as unread.
-     *
-     * @param notificationId The ID of the notification to mark as unread.
-     * @param userId The ID of the user who marked the notification as unread. This ensures that only
-     * the user who owns the notification can mark it as unread.
-     */
-    markAsUnread(notificationId: number, userId: number): Promise<void>;
+    updateReadStatus(
+        notificationId: number,
+        userId: number,
+        read: boolean,
+    ): Promise<void>;
 
     /**
      * Obtains the count of unread notifications of a user.
