@@ -40,7 +40,7 @@ describe("LoginPage", () => {
                 "secret",
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/");
+            expect(mockRouter.push).toHaveBeenCalledWith("/dashboard");
         });
     });
 
