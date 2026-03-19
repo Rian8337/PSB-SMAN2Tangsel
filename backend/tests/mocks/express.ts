@@ -34,7 +34,7 @@ export function createMockRequestFactory<
             query: {} as TQuery,
             body: {} as TBody,
             signedCookies: {},
-            t: vi.fn<Req["t"]>(),
+            t: vi.fn<Req["t"]>((key) => key),
             acceptsLanguages: vi.fn<Req["acceptsLanguages"]>(),
             ...overrides,
         } satisfies Partial<Req>;
