@@ -55,6 +55,8 @@ export function createMockResponse<TResponse = unknown>() {
         cookie: vi.fn<Res["cookie"]>().mockReturnThis(),
         clearCookie: vi.fn<Res["clearCookie"]>().mockReturnThis(),
         status: vi.fn<Res["status"]>().mockReturnThis(),
+        setHeader: vi.fn<Res["setHeader"]>().mockReturnThis(),
+        send: vi.fn<Res["send"]>().mockReturnThis(),
         sendStatus: vi.fn<Res["sendStatus"]>().mockReturnThis(),
         json: vi.fn<Res["json"]>().mockReturnThis(),
     } satisfies Partial<Res>;
