@@ -1,5 +1,7 @@
 export * from "./AdministratorRepository";
+export * from "./ClassRepository";
 export * from "./IAdministratorRepository";
+export * from "./IClassRepository";
 export * from "./INotificationRepository";
 export * from "./IScheduleRepository";
 export * from "./ISessionRepository";
