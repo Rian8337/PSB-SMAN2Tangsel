@@ -7,7 +7,7 @@ import {
     tinyint,
     varchar,
 } from "drizzle-orm/mysql-core";
-import { ValidSemester } from "../../types";
+import { ValidSemester, ValidSession } from "../../types";
 import { classes } from "./classes";
 
 /**
@@ -27,7 +27,7 @@ export const sessions = mysqlTable(
         /**
          * The academic session.
          */
-        session: varchar({ length: 9 }).notNull(),
+        session: varchar({ length: 9 }).$type<ValidSession>().notNull(),
 
         /**
          * The semester.
