@@ -35,7 +35,7 @@ export abstract class BaseController {
      *
      * @param req The request to verify the session data of.
      * @param res The response to send the 401 Unauthorized response with if the session data is missing.
-     * @returns Whether the request has valid session data. If this method returns, the session data is guaranteed to be present.
+     * @returns Whether the request has valid session data.
      */
     protected verifySession<
         TRequest extends Request<unknown, { error: string }>,
