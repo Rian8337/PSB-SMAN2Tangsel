@@ -1,5 +1,6 @@
 import {
     IAdministratorRepository,
+    IScheduleRepository,
     IStudentRepository,
     ITeacherRepository,
     IUserRepository,
@@ -12,6 +13,14 @@ import { Mocked } from "vitest";
 export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
     findByStaffId: vi.fn(),
     getLoginData: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IScheduleRepository}.
+ */
+export const mockScheduleRepository: Mocked<IScheduleRepository> = {
+    findByClassId: vi.fn(),
+    findByTeacherId: vi.fn(() => Promise.resolve([])),
 };
 
 /**

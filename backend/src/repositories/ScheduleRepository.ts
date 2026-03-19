@@ -1,8 +1,20 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { classSubjects, schedules, subjects } from "@psb/shared/schema";
-import { DrizzleDb, ScheduleDay, ScheduleDTO } from "@psb/shared/types";
-import { eq } from "drizzle-orm";
+import {
+    classes,
+    classSubjects,
+    schedules,
+    sessions,
+    subjects,
+} from "@psb/shared/schema";
+import {
+    DrizzleDb,
+    ScheduleDay,
+    ScheduleDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
+import { and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IScheduleRepository } from "./IScheduleRepository";
@@ -52,8 +64,26 @@ export class ScheduleRepository
         return this.mapToDTO(records);
     }
 
-    async findByTeacherId(teacherId: number): Promise<ScheduleDTO[]> {
-        const records = await this.db
+    async findByTeacherId(
+        teacherId: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
+    ): Promise<ScheduleDTO[]> {
+        const sessionJoinCondition = [
+            eq(classes.session, sessions.session),
+            eq(classes.semester, sessions.semester),
+        ];
+
+        if (session && semester) {
+            sessionJoinCondition.push(
+                eq(sessions.session, session),
+                eq(sessions.semester, semester),
+            );
+        } else {
+            sessionJoinCondition.push(eq(sessions.active, true));
+        }
+
+        const records: ScheduleQueryResult[] = await this.db
             .select({
                 id: schedules.id,
                 day: schedules.day,
@@ -68,6 +98,8 @@ export class ScheduleRepository
                 eq(schedules.classSubjectId, classSubjects.id),
             )
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+            .innerJoin(classes, eq(classSubjects.classId, classes.id))
+            .innerJoin(sessions, and(...sessionJoinCondition))
             .where(eq(classSubjects.teacherId, teacherId));
 
         return this.mapToDTO(records);

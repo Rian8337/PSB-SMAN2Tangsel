@@ -1,4 +1,4 @@
-import { ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
 
 /**
  * Defines operations for accessing and managing schedule data in the database.
@@ -19,4 +19,18 @@ export interface IScheduleRepository {
      * @returns The weekly schedule of the teacher.
      */
     findByTeacherId(teacherId: number): Promise<ScheduleDTO[]>;
+
+    /**
+     * Fetches the weekly schedule of a teacher.
+     *
+     * @param teacherId The user ID of the teacher.
+     * @param session The academic session.
+     * @param semester The semester.
+     * @returns The weekly schedule of the teacher for the specified academic session and semester.
+     */
+    findByTeacherId(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<ScheduleDTO[]>;
 }
