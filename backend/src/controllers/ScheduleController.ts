@@ -75,6 +75,7 @@ export class ScheduleController extends BaseController {
                 "Content-Disposition",
                 `attachment; filename="${icsFilename}.ics"`,
             );
+
             res.setHeader("Content-Type", "text/calendar; charset=utf-8");
 
             res.send(icsBuffer);
