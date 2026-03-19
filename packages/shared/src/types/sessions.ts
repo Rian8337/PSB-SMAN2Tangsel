@@ -1,3 +1,10 @@
+import { sessions } from "../database/schema";
+
+/**
+ * The academic session, which consists of an academic year and a semester.
+ */
+export type AcademicSession = typeof sessions.$inferSelect;
+
 /**
  * Types related to academic sessions.
  */
