@@ -1,6 +1,7 @@
 import {
     IAuthService,
     IConfigService,
+    INotificationService,
     IScheduleService,
     ISessionService,
     IUserService,
@@ -31,6 +32,17 @@ export const mockConfigService: Mocked<IConfigService> = {
 
         return value;
     }),
+};
+
+/**
+ * Mock implementation of {@link INotificationService}.
+ */
+export const mockNotificationService: Mocked<INotificationService> = {
+    getUserNotifications: vi.fn(),
+    getUnreadCount: vi.fn(),
+    publishToClass: vi.fn(),
+    publishToUser: vi.fn(),
+    updateReadStatus: vi.fn(),
 };
 
 /**

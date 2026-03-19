@@ -1,5 +1,7 @@
 import {
     IAdministratorRepository,
+    IClassRepository,
+    INotificationRepository,
     IScheduleRepository,
     ISessionRepository,
     IStudentRepository,
@@ -14,6 +16,24 @@ import { Mocked } from "vitest";
 export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
     findByStaffId: vi.fn(),
     getLoginData: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassRepository}.
+ */
+export const mockClassRepository: Mocked<IClassRepository> = {
+    getEnrolledStudentIds: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link INotificationRepository}.
+ */
+export const mockNotificationRepository: Mocked<INotificationRepository> = {
+    create: vi.fn(),
+    createBulk: vi.fn(),
+    findByUserId: vi.fn(),
+    getUnreadCount: vi.fn(),
+    updateReadStatus: vi.fn(),
 };
 
 /**
