@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IScheduleRepository,
+    ISessionRepository,
     IStudentRepository,
     ITeacherRepository,
     IUserRepository,
@@ -21,6 +22,13 @@ export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
 export const mockScheduleRepository: Mocked<IScheduleRepository> = {
     findByClassId: vi.fn(),
     findByTeacherId: vi.fn(() => Promise.resolve([])),
+};
+
+/**
+ * Mock implementation of {@link ISessionRepository}.
+ */
+export const mockSessionRepository: Mocked<ISessionRepository> = {
+    getActive: vi.fn(),
 };
 
 /**

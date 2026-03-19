@@ -1,4 +1,10 @@
-import { IAuthService, IConfigService, IUserService } from "@/services";
+import {
+    IAuthService,
+    IConfigService,
+    IScheduleService,
+    ISessionService,
+    IUserService,
+} from "@/services";
 import { Mocked } from "vitest";
 
 /**
@@ -25,6 +31,22 @@ export const mockConfigService: Mocked<IConfigService> = {
 
         return value;
     }),
+};
+
+/**
+ * Mock implementation of {@link IScheduleService}.
+ */
+export const mockScheduleService: Mocked<IScheduleService> = {
+    getClassSchedule: vi.fn(),
+    getTeacherSchedule: vi.fn(),
+    generateIcsFile: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISessionService}.
+ */
+export const mockSessionService: Mocked<ISessionService> = {
+    getActive: vi.fn(),
 };
 
 /**
