@@ -27,10 +27,10 @@ describe("ScheduleController (unit)", () => {
             res = createMockResponse();
         });
 
-        it("should return 403 if no session is present", async () => {
+        it("should return 401 if no session is present", async () => {
             await controller.getMySchedule(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(403);
+            expect(res.status).toHaveBeenCalledWith(401);
         });
 
         it("should return class schedule if user is a student", async () => {
@@ -85,10 +85,10 @@ describe("ScheduleController (unit)", () => {
             res = createMockResponse();
         });
 
-        it("should return 403 if no session is present", async () => {
+        it("should return 401 if no session is present", async () => {
             await controller.downloadSchedule(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(403);
+            expect(res.status).toHaveBeenCalledWith(401);
         });
 
         it("should attach correct headers and send buffer", async () => {
