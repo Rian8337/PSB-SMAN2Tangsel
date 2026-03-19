@@ -19,4 +19,18 @@ export interface IScheduleService {
      * @returns The weekly schedule of the teacher.
      */
     getTeacherSchedule(teacherId: number): Promise<ScheduleDTO[]>;
+
+    /**
+     * Generates an iCalendar file for a weekly schedule.
+     *
+     * @param schedules The weekly schedule to generate the iCalendar file for.
+     * @param sessionStart The date at which the weekly schedule starts.
+     * @param sessionEnd The date at which the weekly schedule ends.
+     * @returns The generated iCalendar file as a buffer.
+     */
+    generateIcsFile(
+        schedules: readonly ScheduleDTO[],
+        sessionStart: Date,
+        sessionEnd: Date,
+    ): Buffer;
 }
