@@ -40,6 +40,7 @@ export const seededPrimaryData = {
      */
     sessions: [
         {
+            active: true,
             session: "2023/2024",
             semester: 2,
             startTime: new Date("2024-02-01"),
