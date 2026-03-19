@@ -14,6 +14,10 @@ interface Localization {
         readonly inactiveAdminAccount: string;
     };
 
+    readonly scheduleController: {
+        readonly baseIcsFilename: string;
+    };
+
     readonly sessionService: {
         readonly noActiveSession: string;
     };
@@ -43,6 +47,9 @@ export const messages = {
                 "Akun administrator Anda telah dinonaktifkan. Mohon hubungi administrator lainnya.",
             sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
         },
+        scheduleController: {
+            baseIcsFilename: "jadwal_pelajaran",
+        },
         sessionService: {
             noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
         },
@@ -66,6 +73,9 @@ export const messages = {
                 "Your administrator account is inactive. Please contact another administrator.",
             sessionExpired:
                 "Your current session has expired. Please log in again.",
+        },
+        scheduleController: {
+            baseIcsFilename: "class_schedule",
         },
         sessionService: {
             noActiveSession:
