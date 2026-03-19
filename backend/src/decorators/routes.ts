@@ -5,6 +5,7 @@ export enum HttpMethod {
     get = "get",
     post = "post",
     put = "put",
+    patch = "patch",
     delete = "delete",
 }
 
@@ -70,6 +71,14 @@ export const Post = createRouteDecorator(HttpMethod.post);
  * @returns A method decorator that registers the route.
  */
 export const Put = createRouteDecorator(HttpMethod.put);
+
+/**
+ * Marks a method as a route handler for a PATCH request.
+ *
+ * @param path The path of the route.
+ * @return A method decorator that registers the route.
+ */
+export const Patch = createRouteDecorator(HttpMethod.patch);
 
 /**
  * Marks a method as a route handler for a DELETE request.
