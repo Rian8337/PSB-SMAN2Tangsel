@@ -14,23 +14,16 @@ describe("ScheduleController (unit)", () => {
     );
 
     describe("getMySchedule", () => {
-        let req: ReturnType<
-            ReturnType<
-                typeof createMockRequestFactory<
-                    "/",
-                    { error: string } | ScheduleDTO[]
-                >
-            >
-        >;
+        const createMockRequest = createMockRequestFactory<
+            "/",
+            { error: string } | ScheduleDTO[]
+        >();
 
+        let req: ReturnType<typeof createMockRequest>;
         let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
-            req = createMockRequestFactory<
-                "/",
-                { error: string } | ScheduleDTO[]
-            >()();
-
+            req = createMockRequest();
             res = createMockResponse();
         });
 
@@ -79,23 +72,16 @@ describe("ScheduleController (unit)", () => {
     });
 
     describe("downloadSchedule", () => {
-        let req: ReturnType<
-            ReturnType<
-                typeof createMockRequestFactory<
-                    "/download",
-                    { error: string } | Buffer
-                >
-            >
-        >;
+        const createMockRequest = createMockRequestFactory<
+            "/download",
+            { error: string } | Buffer
+        >();
 
+        let req: ReturnType<typeof createMockRequest>;
         let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
-            req = createMockRequestFactory<
-                "/download",
-                { error: string } | Buffer
-            >()();
-
+            req = createMockRequest();
             res = createMockResponse();
         });
 

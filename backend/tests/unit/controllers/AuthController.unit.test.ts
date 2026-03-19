@@ -1,5 +1,5 @@
 import { AuthController } from "@/controllers";
-import { LoginResponseBody } from "@/types";
+import { LoginResponseBody } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
@@ -16,7 +16,7 @@ describe("AuthController (unit)", () => {
     });
 
     describe("login", () => {
-        const mockRequestFactory = createMockRequestFactory<
+        const createMockRequest = createMockRequestFactory<
             "/login",
             LoginResponseBody,
             Partial<{ id: string; password: string }>
@@ -27,7 +27,7 @@ describe("AuthController (unit)", () => {
 
             mockAuthService.login.mockRejectedValueOnce(error);
 
-            const mockRequest = mockRequestFactory({
+            const mockRequest = createMockRequest({
                 body: { id: "C00000000", password: "password123" },
             });
 
