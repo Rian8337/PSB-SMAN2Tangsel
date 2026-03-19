@@ -1,10 +1,12 @@
-import { APIError } from "@/types";
+import { APIError, SessionData, UnauthorizedError } from "@/types";
 import { Request, Response } from "express";
 
 /**
  * Base class for controllers.
  */
 export abstract class BaseController {
+    private static readonly unauthorizedError = new UnauthorizedError();
+
     /**
      * Handles errors thrown by controller methods and sends appropriate HTTP responses.
      *
@@ -26,5 +28,26 @@ export abstract class BaseController {
         console.error("[Unhandled Error]:", error);
 
         res.status(500).json({ error: req.t("http.serverError") });
+    }
+
+    /**
+     * Verifies that a request has valid session data. If the session data is missing, a 401 Unauthorized response will be sent.
+     *
+     * @param req The request to verify the session data of.
+     * @param res The response to send the 401 Unauthorized response with if the session data is missing.
+     * @returns Whether the request has valid session data. If this method returns, the session data is guaranteed to be present.
+     */
+    protected verifySession<
+        TRequest extends Request<unknown, { error: string }>,
+    >(
+        req: TRequest,
+        res: Response<{ error: string }>,
+    ): req is TRequest & { readonly sessionData: SessionData } {
+        if (!req.sessionData) {
+            this.handleError(req, res, BaseController.unauthorizedError);
+            return false;
+        }
+
+        return true;
     }
 }

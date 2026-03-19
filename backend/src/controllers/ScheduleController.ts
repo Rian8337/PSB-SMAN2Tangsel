@@ -32,10 +32,12 @@ export class ScheduleController extends BaseController {
         req: Request<"/", { error: string } | ScheduleDTO[]>,
         res: Response<{ error: string } | ScheduleDTO[]>,
     ) {
-        const { sessionData } = req;
+        if (!this.verifySession(req, res)) {
+            return;
+        }
 
         try {
-            const schedule = await this.getSchedule(sessionData);
+            const schedule = await this.getSchedule(req.sessionData);
 
             res.json(schedule);
         } catch (e) {
@@ -53,15 +55,13 @@ export class ScheduleController extends BaseController {
         req: Request<"/download", Buffer | { error: string }>,
         res: Response<Buffer | { error: string }>,
     ) {
-        const { sessionData } = req;
+        if (!this.verifySession(req, res)) {
+            return;
+        }
 
         try {
-            if (!sessionData) {
-                throw new ForbiddenError();
-            }
-
             const activeSession = await this.sessionService.getActive();
-            const schedule = await this.getSchedule(sessionData);
+            const schedule = await this.getSchedule(req.sessionData);
 
             const icsBuffer = this.scheduleService.generateIcsFile(
                 schedule,

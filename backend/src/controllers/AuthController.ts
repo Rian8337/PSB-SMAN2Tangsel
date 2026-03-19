@@ -73,15 +73,14 @@ export class AuthController extends BaseController {
     @Get("/me")
     @Roles()
     async me(req: Request, res: Response<LoginResponseBody>) {
-        const { sessionData } = req;
-
-        if (!sessionData) {
-            res.status(401).json({ error: "Not authenticated." });
+        if (!this.verifySession(req, res)) {
             return;
         }
 
         try {
-            const user = await this.userService.findById(sessionData.userId);
+            const user = await this.userService.findById(
+                req.sessionData.userId,
+            );
 
             if (!user.active) {
                 res.status(401).json({ error: "User not found." });
