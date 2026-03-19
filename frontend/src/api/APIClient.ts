@@ -59,6 +59,21 @@ export abstract class APIClient {
     }
 
     /**
+     * Performs a PATCH request to the specified endpoint with the given options.
+     *
+     * @param endpoint The endpoint to which the request will be made.
+     * @param options Optional request options such as headers, body, etc. Headers will be automatically
+     * set to use `credentials: "include"`.
+     * @returns The response of the request.
+     */
+    protected patch(
+        endpoint: string | URL | RequestInfo,
+        options?: RequestInit,
+    ) {
+        return this.request(endpoint, { ...options, method: "PATCH" });
+    }
+
+    /**
      * Performs a DELETE request to the specified endpoint with the given options.
      *
      * @param endpoint The endpoint to which the request will be made.
