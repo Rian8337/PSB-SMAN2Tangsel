@@ -6,5 +6,6 @@ export interface NotificationDTO {
     readonly id: number;
     readonly title: string;
     readonly message: string;
+    readonly read: boolean;
     readonly url: string | null;
 }
