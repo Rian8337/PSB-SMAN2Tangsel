@@ -1,5 +1,6 @@
 interface Localization {
     readonly http: {
+        readonly badRequest: string;
         readonly unauthorized: string;
         readonly forbidden: string;
         readonly notFound: string;
@@ -12,6 +13,15 @@ interface Localization {
         readonly invalidStaffId: string;
         readonly inactiveUserAccount: string;
         readonly inactiveAdminAccount: string;
+    };
+
+    readonly notificationController: {
+        readonly invalidLimitFormat: string;
+        readonly invalidLimitRange: string;
+        readonly invalidNotificationIdFormat: string;
+        readonly invalidOffsetFormat: string;
+        readonly invalidOffsetRange: string;
+        readonly invalidReadStatusFormat: string;
     };
 
     readonly scheduleController: {
@@ -33,10 +43,11 @@ interface Localization {
 export const messages = {
     id: {
         http: {
+            badRequest: "Bad Request",
             unauthorized: "Unauthorized",
             forbidden: "Forbidden",
             notFound: "Not Found",
-            serverError: "Internal server error",
+            serverError: "Internal Server Error",
         },
         auth: {
             invalidCredentials: "Kredensial tidak valid.",
@@ -46,6 +57,20 @@ export const messages = {
             inactiveAdminAccount:
                 "Akun administrator Anda telah dinonaktifkan. Mohon hubungi administrator lainnya.",
             sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
+        },
+        notificationController: {
+            invalidLimitFormat:
+                "Parameter limit harus berupa bilangan bulat positif.",
+            invalidLimitRange:
+                "Parameter limit harus berada dalam rentang yang valid.",
+            invalidNotificationIdFormat:
+                "Parameter notificationId harus berupa bilangan bulat positif.",
+            invalidOffsetFormat:
+                "Parameter offset harus berupa bilangan bulat non-negatif.",
+            invalidOffsetRange:
+                "Parameter offset harus berada dalam rentang yang valid.",
+            invalidReadStatusFormat:
+                "Parameter read harus berupa boolean (true atau false).",
         },
         scheduleController: {
             baseIcsFilename: "jadwal_pelajaran",
@@ -59,10 +84,11 @@ export const messages = {
     },
     en: {
         http: {
+            badRequest: "Bad Request",
             unauthorized: "Unauthorized",
             forbidden: "Forbidden",
             notFound: "Not Found",
-            serverError: "Internal server error",
+            serverError: "Internal Server Error",
         },
         auth: {
             invalidCredentials: "Invalid credentials.",
@@ -73,6 +99,18 @@ export const messages = {
                 "Your administrator account is inactive. Please contact another administrator.",
             sessionExpired:
                 "Your current session has expired. Please log in again.",
+        },
+        notificationController: {
+            invalidLimitFormat: "Parameter limit must be a positive integer.",
+            invalidLimitRange: "Parameter limit must be within a valid range.",
+            invalidNotificationIdFormat:
+                "Parameter notificationId must be a positive integer.",
+            invalidOffsetFormat:
+                "Parameter offset must be a non-negative integer.",
+            invalidOffsetRange:
+                "Parameter offset must be within a valid range.",
+            invalidReadStatusFormat:
+                "Parameter read must be a boolean (true or false).",
         },
         scheduleController: {
             baseIcsFilename: "class_schedule",
