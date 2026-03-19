@@ -11,6 +11,7 @@ import {
 import {
     IAuthService,
     IConfigService,
+    INotificationService,
     IScheduleService,
     ISessionService,
     IUserService,
@@ -100,6 +101,13 @@ export const dependencyTokens = {
     configService: Symbol.for(
         "configService",
     ) as InjectionToken<IConfigService>,
+
+    /**
+     * Injection token for an {@link INotificationService}.
+     */
+    notificationService: Symbol.for(
+        "notificatinService",
+    ) as InjectionToken<INotificationService>,
 
     /**
      * Injection token for an {@link IScheduleService}.
