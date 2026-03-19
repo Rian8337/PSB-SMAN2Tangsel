@@ -1,7 +1,8 @@
 "use client";
 
 import { HStack, IconButton, Text } from "@chakra-ui/react";
-import { ArrowLeft, Bell } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { NotificationBell } from "./NotificationBell";
 
 interface PageHeaderProps {
     title: string;
@@ -30,9 +31,7 @@ export function PageHeader({ title, showBackButton = true }: PageHeaderProps) {
                 {title}
             </Text>
 
-            <IconButton aria-label="Notifications" variant="ghost">
-                <Bell size={28} color="black" fill="black" />
-            </IconButton>
+            <NotificationBell />
         </HStack>
     );
 }

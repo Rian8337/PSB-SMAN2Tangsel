@@ -26,5 +26,9 @@
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday"
+  },
+  "NotificationBell": {
+    "noNotifications": "No notifications at the moment.",
+    "title": "Notifications"
   }
 }

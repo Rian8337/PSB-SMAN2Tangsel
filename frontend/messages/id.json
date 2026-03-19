@@ -26,5 +26,9 @@
     "friday": "Jumat",
     "saturday": "Sabtu",
     "sunday": "Minggu"
+  },
+  "NotificationBell": {
+    "noNotifications": "Tidak ada notifikasi saat ini.",
+    "title": "Notifikasi"
   }
 }
