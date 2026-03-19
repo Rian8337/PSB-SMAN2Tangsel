@@ -14,6 +14,10 @@ interface Localization {
         readonly inactiveAdminAccount: string;
     };
 
+    readonly sessionService: {
+        readonly noActiveSession: string;
+    };
+
     readonly userRepository: {
         readonly userNotFound: string;
     };
@@ -39,6 +43,9 @@ export const messages = {
                 "Akun administrator Anda telah dinonaktifkan. Mohon hubungi administrator lainnya.",
             sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
         },
+        sessionService: {
+            noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
+        },
         userRepository: {
             userNotFound: "Pengguna tidak ditemukan.",
         },
@@ -59,6 +66,10 @@ export const messages = {
                 "Your administrator account is inactive. Please contact another administrator.",
             sessionExpired:
                 "Your current session has expired. Please log in again.",
+        },
+        sessionService: {
+            noActiveSession:
+                "There is no active academic session at the moment.",
         },
         userRepository: {
             userNotFound: "User not found.",

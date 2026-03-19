@@ -10,6 +10,7 @@ import {
     IAuthService,
     IConfigService,
     IScheduleService,
+    ISessionService,
     IUserService,
 } from "@/services";
 import { DrizzleDb } from "@psb/shared/types";
@@ -90,6 +91,13 @@ export const dependencyTokens = {
     scheduleService: Symbol.for(
         "scheduleService",
     ) as InjectionToken<IScheduleService>,
+
+    /**
+     * Injection token for an {@link ISessionService}.
+     */
+    sessionService: Symbol.for(
+        "sessionService",
+    ) as InjectionToken<ISessionService>,
 
     /**
      * Injection token for an {@link IUserService}.
