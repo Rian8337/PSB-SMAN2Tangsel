@@ -12,8 +12,6 @@ interface Localization {
         readonly invalidCredentials: string;
         readonly invalidSession: string;
         readonly invalidStaffId: string;
-        readonly inactiveUserAccount: string;
-        readonly inactiveAdminAccount: string;
     };
 
     readonly notificationController: {
@@ -54,10 +52,6 @@ export const messages = {
             invalidCredentials: "Kredensial tidak valid.",
             invalidSession: "Sesi tidak valid.",
             invalidStaffId: "ID staf tidak valid.",
-            inactiveUserAccount:
-                "Akun Anda telah dinonaktifkan. Mohon hubungi administrator.",
-            inactiveAdminAccount:
-                "Akun administrator Anda telah dinonaktifkan. Mohon hubungi administrator lainnya.",
             sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
         },
         notificationController: {
@@ -96,10 +90,6 @@ export const messages = {
             invalidCredentials: "Invalid credentials.",
             invalidSession: "Invalid session.",
             invalidStaffId: "Invalid staff ID.",
-            inactiveUserAccount:
-                "Your account is inactive. Please contact an administrator.",
-            inactiveAdminAccount:
-                "Your administrator account is inactive. Please contact another administrator.",
             sessionExpired:
                 "Your current session has expired. Please log in again.",
         },
