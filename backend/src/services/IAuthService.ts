@@ -1,4 +1,4 @@
-import { LoginResult } from "@/types";
+import { LoginResult, SessionData } from "@/types";
 import { UserRole } from "@psb/shared/types";
 import { RequestHandler, Response } from "express";
 
@@ -42,4 +42,23 @@ export interface IAuthService {
     verifySession(
         ...allowedRoles: UserRole[]
     ): RequestHandler<unknown, { error: string }>;
+
+    /**
+     * Encrypts a session using AES-256-GCM encryption.
+     *
+     * @param data The session data.
+     * @returns The session token.
+     */
+    encryptSession(data: unknown): string;
+
+    /**
+     * Decrypts an AES-256-GCM encrypted session token.
+     *
+     * @param token The session token.
+     * @returns The session data.
+     */
+    decryptSession(token: string): {
+        readonly data: SessionData;
+        readonly expiresAt: number;
+    };
 }

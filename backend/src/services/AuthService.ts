@@ -150,13 +150,7 @@ export class AuthService implements IAuthService {
         };
     }
 
-    /**
-     * Encrypts a session using AES-256-GCM encryption.
-     *
-     * @param data The session data.
-     * @returns The session token.
-     */
-    private encryptSession(data: unknown): string {
+    encryptSession(data: unknown): string {
         const plaintext = JSON.stringify(data);
         const iv = randomBytes(this.ivLength);
         const cipher = createCipheriv(this.algorithm, this.encryptionKey, iv);
@@ -172,13 +166,7 @@ export class AuthService implements IAuthService {
         return Buffer.concat([iv, authTag, encrypted]).toString("base64url");
     }
 
-    /**
-     * Decrypts an AES-256-GCM encrypted session token.
-     *
-     * @param token The session token.
-     * @returns The session data.
-     */
-    private decryptSession(token: string): {
+    decryptSession(token: string): {
         readonly data: SessionData;
         readonly expiresAt: number;
     } {
