@@ -16,6 +16,8 @@ export const mockAuthService: Mocked<IAuthService> = {
     createSession: vi.fn(),
     login: vi.fn(),
     verifySession: vi.fn(),
+    encryptSession: vi.fn(),
+    decryptSession: vi.fn(),
 };
 
 /**
