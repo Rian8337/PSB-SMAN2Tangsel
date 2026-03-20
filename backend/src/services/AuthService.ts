@@ -29,6 +29,7 @@ import { sessionDataValidator } from "@/validators";
 @Injectable(dependencyTokens.authService)
 export class AuthService implements IAuthService {
     private readonly sessionCookieName = "session";
+    private readonly sessionTtlMs = 2 * 60 * 60 * 1000;
     private readonly algorithm = "aes-256-gcm";
     private readonly ivLength = 12;
     private readonly authTagLength = 16;
@@ -80,12 +81,15 @@ export class AuthService implements IAuthService {
     }
 
     createSession(res: Response, data: unknown): void {
-        res.cookie(this.sessionCookieName, this.encryptSession(data), {
+        const expiresAt = Date.now() + this.sessionTtlMs;
+        const sessionData = { data, expiresAt };
+
+        res.cookie(this.sessionCookieName, this.encryptSession(sessionData), {
             httpOnly: true,
             secure: this.requireSecureCookies,
             sameSite: this.requireSecureCookies ? "strict" : "lax",
             signed: true,
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            maxAge: this.sessionTtlMs,
         });
     }
 
@@ -112,9 +116,22 @@ export class AuthService implements IAuthService {
             }
 
             try {
-                const data = this.decryptSession(token);
+                const { data, expiresAt } = this.decryptSession(token);
+
+                if (Date.now() > expiresAt) {
+                    res.status(401).json({
+                        error: req.t("auth.sessionExpired"),
+                    });
+
+                    return;
+                }
 
                 req.sessionData = data;
+
+                // Renew the session if more than 25% of the session TTL has elapsed.
+                if (expiresAt - Date.now() < this.sessionTtlMs * 0.75) {
+                    this.createSession(res, data);
+                }
 
                 if (
                     allowedRoles.length > 0 &&
@@ -126,6 +143,8 @@ export class AuthService implements IAuthService {
 
                 next();
             } catch {
+                this.clearSession(res);
+
                 res.status(401).json({ error: req.t("auth.sessionExpired") });
             }
         };
@@ -159,7 +178,10 @@ export class AuthService implements IAuthService {
      * @param token The session token.
      * @returns The session data.
      */
-    private decryptSession(token: string): SessionData {
+    private decryptSession(token: string): {
+        readonly data: SessionData;
+        readonly expiresAt: number;
+    } {
         const raw = Buffer.from(token, "base64url");
         const iv = raw.subarray(0, this.ivLength);
         const authTag = raw.subarray(
@@ -182,9 +204,29 @@ export class AuthService implements IAuthService {
             decipher.final(),
         ]);
 
-        const data = JSON.parse(decrypted.toString("utf8")) as unknown;
+        try {
+            const rawJson = JSON.parse(decrypted.toString("utf8")) as {
+                data?: unknown;
+                expiresAt?: unknown;
+            };
+            if (
+                typeof rawJson !== "object" ||
+                typeof rawJson.expiresAt !== "number" ||
+                !rawJson.data
+            ) {
+                throw new UnauthorizedError();
+            }
 
-        return sessionDataValidator.parse(data);
+            const data = sessionDataValidator.parse(rawJson.data);
+
+            return { data, expiresAt: rawJson.expiresAt };
+        } catch (e) {
+            if (e instanceof UnauthorizedError) {
+                throw e;
+            }
+
+            throw new UnauthorizedError("auth.invalidSession");
+        }
     }
 
     private async loginStudent(

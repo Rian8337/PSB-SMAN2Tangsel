@@ -10,6 +10,7 @@ interface Localization {
     readonly auth: {
         readonly sessionExpired: string;
         readonly invalidCredentials: string;
+        readonly invalidSession: string;
         readonly invalidStaffId: string;
         readonly inactiveUserAccount: string;
         readonly inactiveAdminAccount: string;
@@ -51,6 +52,7 @@ export const messages = {
         },
         auth: {
             invalidCredentials: "Kredensial tidak valid.",
+            invalidSession: "Sesi tidak valid.",
             invalidStaffId: "ID staf tidak valid.",
             inactiveUserAccount:
                 "Akun Anda telah dinonaktifkan. Mohon hubungi administrator.",
@@ -92,6 +94,7 @@ export const messages = {
         },
         auth: {
             invalidCredentials: "Invalid credentials.",
+            invalidSession: "Invalid session.",
             invalidStaffId: "Invalid staff ID.",
             inactiveUserAccount:
                 "Your account is inactive. Please contact an administrator.",
