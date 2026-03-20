@@ -12,6 +12,7 @@ interface Localization {
         readonly invalidCredentials: string;
         readonly invalidSession: string;
         readonly invalidStaffId: string;
+        readonly tooManyAttempts: string;
     };
 
     readonly notificationController: {
@@ -53,6 +54,8 @@ export const messages = {
             invalidSession: "Sesi tidak valid.",
             invalidStaffId: "ID staf tidak valid.",
             sessionExpired: "Sesi Anda telah berakhir. Mohon masuk lagi.",
+            tooManyAttempts:
+                "Terlalu banyak percobaan masuk. Mohon coba lagi nanti.",
         },
         notificationController: {
             invalidLimitFormat:
@@ -92,6 +95,7 @@ export const messages = {
             invalidStaffId: "Invalid staff ID.",
             sessionExpired:
                 "Your current session has expired. Please log in again.",
+            tooManyAttempts: "Too many login attempts. Please try again later.",
         },
         notificationController: {
             invalidLimitFormat: "Parameter limit must be a positive integer.",

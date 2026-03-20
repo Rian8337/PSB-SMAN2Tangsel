@@ -1,4 +1,5 @@
 import { Controller } from "@/decorators/controller";
+import { Use } from "@/decorators/middleware";
 import { Roles } from "@/decorators/roles";
 import { Get, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
@@ -8,6 +9,7 @@ import { LoginResponseBody } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import rateLimit from "express-rate-limit";
 
 /**
  * Controller that handles authentication endpoints.
@@ -27,6 +29,17 @@ export class AuthController extends BaseController {
      * Authenticates a user with their name and password, then creates a session cookie.
      */
     @Post("/login")
+    @Use(
+        rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 5,
+            handler: (req, res) => {
+                res.status(429).json({ error: req.t("auth.tooManyAttempts") });
+            },
+            standardHeaders: true,
+            legacyHeaders: false,
+        }),
+    )
     async login(
         req: Request<
             "/login",
