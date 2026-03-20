@@ -6,7 +6,7 @@ import { RequestHandler } from "express";
  * @param middlewares The middlewares to attach.
  * @returns A method decorator or class decorator.
  */
-export function UseMiddleware(
+export function Use(
     ...middlewares: RequestHandler[]
 ): MethodDecorator & ClassDecorator {
     return (target: object, propertyKey?: string | symbol) => {

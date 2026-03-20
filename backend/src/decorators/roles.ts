@@ -2,7 +2,7 @@ import { getContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { UserRole } from "@psb/shared/types";
 import { RequestHandler } from "express";
-import { UseMiddleware } from "./middleware";
+import { Use } from "./middleware";
 
 /**
  * Marks a method as requiring authentication and authorization.
@@ -23,6 +23,6 @@ export function Roles(...roles: UserRole[]): MethodDecorator {
             await authService.verifySession(...roles)(req, res, next);
         };
 
-        UseMiddleware(middleware)(target, propertyKey, descriptor);
+        Use(middleware)(target, propertyKey, descriptor);
     };
 }
