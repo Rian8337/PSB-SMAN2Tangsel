@@ -239,7 +239,7 @@ export class AuthService implements IAuthService {
         id: string,
         password: string,
     ): Promise<LoginResult> {
-        if (!/^[1-9]\d+$/.test(id)) {
+        if (!/^[1-9]\d*$/.test(id)) {
             throw new UnauthorizedError("auth.invalidStaffId");
         }
 
