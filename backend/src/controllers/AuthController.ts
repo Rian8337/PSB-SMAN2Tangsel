@@ -42,7 +42,7 @@ export class AuthController extends BaseController {
     )
     async login(
         req: Request<
-            "/login",
+            unknown,
             LoginResponseBody,
             Partial<{ id: string; password: string }>
         >,

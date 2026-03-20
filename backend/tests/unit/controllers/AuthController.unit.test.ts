@@ -17,7 +17,7 @@ describe("AuthController (unit)", () => {
 
     describe("login", () => {
         const createMockRequest = createMockRequestFactory<
-            "/login",
+            unknown,
             LoginResponseBody,
             Partial<{ id: string; password: string }>
         >();

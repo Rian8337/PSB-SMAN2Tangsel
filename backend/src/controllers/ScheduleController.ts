@@ -29,7 +29,7 @@ export class ScheduleController extends BaseController {
     @Get("/")
     @Roles(UserRole.student, UserRole.teacher)
     async getMySchedule(
-        req: Request<"/", { error: string } | ScheduleDTO[]>,
+        req: Request<unknown, { error: string } | ScheduleDTO[]>,
         res: Response<{ error: string } | ScheduleDTO[]>,
     ) {
         if (!this.verifySession(req, res)) {
@@ -52,7 +52,7 @@ export class ScheduleController extends BaseController {
     @Get("/download")
     @Roles(UserRole.student, UserRole.teacher)
     async downloadSchedule(
-        req: Request<"/download", Buffer | { error: string }>,
+        req: Request<unknown, Buffer | { error: string }>,
         res: Response<Buffer | { error: string }>,
     ) {
         if (!this.verifySession(req, res)) {

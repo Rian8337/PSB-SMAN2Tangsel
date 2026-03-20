@@ -28,7 +28,7 @@ export class NotificationController extends BaseController {
     @Roles()
     async getMyNotifications(
         req: Request<
-            "/",
+            unknown,
             { error: string } | NotificationDTO[],
             unknown,
             Partial<{ limit?: string; offset?: string }>
@@ -95,7 +95,7 @@ export class NotificationController extends BaseController {
     @Get("/unread-count")
     @Roles()
     async getUnreadCount(
-        req: Request<"/unread-count", { error: string } | { count: number }>,
+        req: Request<unknown, { error: string } | { count: number }>,
         res: Response<{ error: string } | { count: number }>,
     ) {
         if (!this.verifySession(req, res)) {

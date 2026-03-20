@@ -12,7 +12,7 @@ describe("NotificationController (unit)", () => {
 
     describe("getMyNotifications", () => {
         const createMockRequest = createMockRequestFactory<
-            "/",
+            unknown,
             { error: string } | NotificationDTO[]
         >();
 

@@ -15,7 +15,7 @@ describe("ScheduleController (unit)", () => {
 
     describe("getMySchedule", () => {
         const createMockRequest = createMockRequestFactory<
-            "/",
+            unknown,
             { error: string } | ScheduleDTO[]
         >();
 
@@ -73,7 +73,7 @@ describe("ScheduleController (unit)", () => {
 
     describe("downloadSchedule", () => {
         const createMockRequest = createMockRequestFactory<
-            "/download",
+            unknown,
             { error: string } | Buffer
         >();
 

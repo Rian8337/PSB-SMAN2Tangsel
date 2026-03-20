@@ -11,12 +11,12 @@ interface ParamsDictionary {
  * @returns A factory to create mock request objects with default values and the provided overrides.
  */
 export function createMockRequestFactory<
-    TPath = ParamsDictionary,
+    TParams = ParamsDictionary,
     TResponse = unknown,
     TBody extends Record<string, unknown> = Record<string, unknown>,
     TQuery extends Record<string, string> = Record<string, string>,
 >() {
-    type Req = Request<TPath, TResponse, TBody, TQuery>;
+    type Req = Request<TParams, TResponse, TBody, TQuery>;
 
     /**
      * Creates a mock request object with default values and the provided overrides.
@@ -30,7 +30,7 @@ export function createMockRequestFactory<
         overrides: TOverrides = {} as TOverrides,
     ) => {
         const mock = {
-            params: {} as TPath,
+            params: {} as TParams,
             query: {} as TQuery,
             body: {} as TBody,
             signedCookies: {},
