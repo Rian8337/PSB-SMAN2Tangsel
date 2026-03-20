@@ -26,7 +26,7 @@ export function registerDependencies(container = getContainer()) {
 
         if (!token) {
             throw new Error(
-                `Class ${cls.name} is missing a registration token. Please use the @Service or @Repository decorator.`,
+                `Class ${cls.name} is missing a registration token. Please use the @Controller or @Injectable decorator.`,
             );
         }
 
