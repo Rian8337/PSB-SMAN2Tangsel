@@ -11,7 +11,8 @@ import { i18nMiddleware } from "./i18n";
 export function createApp() {
     const app = express();
 
-    app.use(express.json())
+    app.set("trust proxy", 1)
+        .use(express.json())
         .use(express.urlencoded({ extended: true }))
         .use(cookieParser(process.env.COOKIE_SECRET))
         .use(
