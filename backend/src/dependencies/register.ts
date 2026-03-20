@@ -36,6 +36,9 @@ export function registerDependencies(container = getContainer()) {
     // We only want to create and register the database instance once (otherwise we would create
     // multiple connection pools), so we check if it's already registered before creating it.
     if (!container.isRegistered(dependencyTokens.db)) {
-        container.registerInstance(dependencyTokens.db, createDatabase());
+        container.registerInstance(
+            dependencyTokens.db,
+            createDatabase(container),
+        );
     }
 }
