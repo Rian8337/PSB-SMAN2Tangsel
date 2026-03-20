@@ -18,6 +18,7 @@ import { RequestHandler, Response } from "express";
 import { inject } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { IConfigService } from "./IConfigService";
+import { sessionDataValidator } from "@/validators";
 
 /**
  * A service that handles authentication using encrypted, signed session cookies.
@@ -181,7 +182,9 @@ export class AuthService implements IAuthService {
             decipher.final(),
         ]);
 
-        return JSON.parse(decrypted.toString("utf8")) as SessionData;
+        const data = JSON.parse(decrypted.toString("utf8")) as unknown;
+
+        return sessionDataValidator.parse(data);
     }
 
     private async loginStudent(
