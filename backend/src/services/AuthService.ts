@@ -66,7 +66,7 @@ export class AuthService implements IAuthService {
             ) === "production" &&
             this.configService.getEnvironmentVariable(
                 EnvironmentVariableKey.isE2ETest,
-            ) === undefined;
+            ) === "true";
     }
 
     async login(id: string, password: string): Promise<LoginResult> {
