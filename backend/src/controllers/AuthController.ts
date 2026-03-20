@@ -2,14 +2,16 @@ import { Controller } from "@/decorators/controller";
 import { Use } from "@/decorators/middleware";
 import { Roles } from "@/decorators/roles";
 import { Get, Post } from "@/decorators/routes";
+import { getContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
 import { IAuthService } from "@/services/IAuthService";
+import { EnvironmentVariableKey } from "@/types";
 import { LoginResponseBody } from "@psb/shared/types";
 import { Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
-import rateLimit from "express-rate-limit";
 
 /**
  * Controller that handles authentication endpoints.
@@ -33,6 +35,18 @@ export class AuthController extends BaseController {
         rateLimit({
             windowMs: 15 * 60 * 1000,
             max: 5,
+            // Don't apply rate limiting if we're running in E2E test mode, to avoid interfering with tests
+            skip: () => {
+                const configService = getContainer().resolve(
+                    dependencyTokens.configService,
+                );
+
+                return (
+                    configService.getEnvironmentVariable(
+                        EnvironmentVariableKey.isE2ETest,
+                    ) === "true"
+                );
+            },
             handler: (req, res) => {
                 res.status(429).json({ error: req.t("auth.tooManyAttempts") });
             },
