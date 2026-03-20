@@ -37,6 +37,7 @@ export function NotificationBell() {
                             position="absolute"
                             top={1}
                             right={1}
+                            pointerEvents="none"
                             bg="red.500"
                             color="white"
                             fontSize="xs"
