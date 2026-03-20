@@ -7,13 +7,12 @@ import {
 } from "@/repositories";
 import {
     EnvironmentVariableKey,
-    ForbiddenError,
     LoginResult,
     SessionData,
     UnauthorizedError,
 } from "@/types";
 import { User, UserRole } from "@psb/shared/types";
-import { compare } from "bcrypt";
+import { compare, hashSync } from "bcrypt";
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import { RequestHandler, Response } from "express";
 import { inject } from "tsyringe";
@@ -32,6 +31,8 @@ export class AuthService implements IAuthService {
     private readonly algorithm = "aes-256-gcm";
     private readonly ivLength = 12;
     private readonly authTagLength = 16;
+
+    private readonly dummyHash = hashSync(randomBytes(32).toString("hex"), 12);
 
     private readonly encryptionKey: Buffer;
     private readonly requireSecureCookies: boolean;
@@ -191,6 +192,8 @@ export class AuthService implements IAuthService {
             await this.studentRepository.getLoginData(nisn);
 
         if (!studentLoginData) {
+            await this.simulatePasswordHashingDelay();
+
             throw new UnauthorizedError("auth.invalidCredentials");
         }
 
@@ -223,6 +226,7 @@ export class AuthService implements IAuthService {
             await this.administratorRepository.getLoginData(staffId);
 
         if (!administratorLoginData) {
+            await this.simulatePasswordHashingDelay();
             throw new UnauthorizedError("auth.invalidCredentials");
         }
 
@@ -232,18 +236,22 @@ export class AuthService implements IAuthService {
     }
 
     private async validateCredentials(user: User, password: string) {
-        if (!user.active) {
-            throw new ForbiddenError(
-                user.role === UserRole.administrator
-                    ? "auth.inactiveAdminAccount"
-                    : "auth.inactiveUserAccount",
-            );
+        let isPasswordValid = false;
+
+        if (user.active) {
+            isPasswordValid = await compare(password, user.password);
+        } else {
+            await this.simulatePasswordHashingDelay();
         }
 
-        const isPasswordValid = await compare(password, user.password);
-
-        if (!isPasswordValid) {
+        if (!user.active || !isPasswordValid) {
             throw new UnauthorizedError("auth.invalidCredentials");
         }
+    }
+
+    private async simulatePasswordHashingDelay() {
+        // Perform a dummy hash comparison to simulate the time taken by bcrypt hashing,
+        // preventing user enumeration through timing attacks.
+        await compare("dummyPassword", this.dummyHash);
     }
 }
