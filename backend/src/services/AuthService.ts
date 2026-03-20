@@ -119,6 +119,8 @@ export class AuthService implements IAuthService {
                 const { data, expiresAt } = this.decryptSession(token);
 
                 if (Date.now() > expiresAt) {
+                    this.clearSession(res);
+
                     res.status(401).json({
                         error: req.t("auth.sessionExpired"),
                     });
