@@ -62,11 +62,11 @@ export class StudentRepository
             })
             .from(students)
             .innerJoin(users, eq(students.userId, users.id))
-            .innerJoin(
+            .leftJoin(
                 studentClasses,
                 eq(studentClasses.studentId, students.userId),
             )
-            .innerJoin(classes, eq(classes.id, studentClasses.classId))
+            .leftJoin(classes, eq(classes.id, studentClasses.classId))
             .where(eq(students.nisn, nisn))
             .limit(1)
             .then((res) => {
@@ -87,7 +87,7 @@ export class StudentRepository
                         userId: data.user.id,
                     },
                     sessionData: {
-                        classId: data.classId,
+                        classId: data.classId ?? undefined,
                         nisn,
                         role: UserRole.student,
                         userId: data.user.id,
