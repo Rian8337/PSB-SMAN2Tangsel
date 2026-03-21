@@ -34,6 +34,7 @@ export class NotificationAPIClient
     ): Promise<void> {
         await this.patch(`/${notificationId.toString()}/read-status`, {
             body: JSON.stringify({ read }),
+            headers: { "Content-Type": "application/json" },
         });
     }
 }
