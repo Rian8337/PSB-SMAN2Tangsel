@@ -1,4 +1,4 @@
-import LoginPage from "@/app/[locale]/login/page";
+import LoginPage from "@/app/[locale]/(public)/login/page";
 import { AuthApiProvider } from "@/providers/api/auth-api-provider";
 import { mockAuthApiClient, mockRouter } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
