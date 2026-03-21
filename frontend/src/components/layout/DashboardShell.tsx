@@ -1,12 +1,22 @@
 "use client";
 
-import { Box, Flex, IconButton, VStack } from "@chakra-ui/react";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { Box, Flex, IconButton, Menu, VStack } from "@chakra-ui/react";
 import { Book, Globe, Home } from "lucide-react";
+import { Locale, useLocale } from "next-intl";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { Avatar } from "../ui/avatar";
 
 export function DashboardShell(props: PropsWithChildren) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const locale = useLocale();
+
+    function changeLocale(nextLocale: Locale) {
+        router.replace({ pathname }, { locale: nextLocale });
+    }
+
     return (
         <Flex h="100vh" w="100vw" overflow="hidden" bg="white">
             {/* Sidebar */}
@@ -58,13 +68,41 @@ export function DashboardShell(props: PropsWithChildren) {
 
                 {/* Bottom Navigation Icons */}
                 <VStack spaceY={6}>
-                    <IconButton
-                        aria-label="Change Language"
-                        variant="ghost"
-                        _hover={{ bg: "blackAlpha.200" }}
-                    >
-                        <Globe size={28} color="black" />
-                    </IconButton>
+                    <Menu.Root positioning={{ placement: "right" }}>
+                        <Menu.Trigger asChild>
+                            <IconButton
+                                aria-label="Change Language"
+                                variant="ghost"
+                                _hover={{ bg: "blackAlpha.200" }}
+                                cursor="pointer"
+                            >
+                                <Globe size={28} color="black" />
+                            </IconButton>
+                        </Menu.Trigger>
+
+                        <Menu.Content>
+                            <Menu.Item
+                                value="id"
+                                onClick={() => {
+                                    changeLocale("id");
+                                }}
+                                fontWeight={locale === "id" ? "bold" : "normal"}
+                                cursor="pointer"
+                            >
+                                Bahasa Indonesia
+                            </Menu.Item>
+                            <Menu.Item
+                                value="en"
+                                onClick={() => {
+                                    changeLocale("en");
+                                }}
+                                fontWeight={locale === "en" ? "bold" : "normal"}
+                                cursor="pointer"
+                            >
+                                English
+                            </Menu.Item>
+                        </Menu.Content>
+                    </Menu.Root>
 
                     {/* User Avatar */}
                     <Avatar
