@@ -37,6 +37,7 @@ export class AuthService implements IAuthService {
     private readonly dummyHash = hashSync(randomBytes(32).toString("hex"), 12);
 
     private readonly encryptionKey: Buffer;
+    private readonly requireSameSiteCookies: boolean;
     private readonly requireSecureCookies: boolean;
 
     constructor(
@@ -62,6 +63,15 @@ export class AuthService implements IAuthService {
             );
         }
 
+        // SameSite cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
+        this.requireSameSiteCookies =
+            this.configService.getEnvironmentVariable(
+                EnvironmentVariableKey.nodeEnv,
+            ) === "production" &&
+            this.configService.getEnvironmentVariable(
+                EnvironmentVariableKey.isE2ETest,
+            ) === "true";
+
         // Secure cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
         this.requireSecureCookies =
             this.configService.getEnvironmentVariable(
@@ -69,7 +79,7 @@ export class AuthService implements IAuthService {
             ) === "production" &&
             this.configService.getEnvironmentVariable(
                 EnvironmentVariableKey.isE2ETest,
-            ) === "true";
+            ) !== "true";
     }
 
     async login(id: string, password: string): Promise<LoginResult> {
@@ -87,7 +97,7 @@ export class AuthService implements IAuthService {
         res.cookie(this.sessionCookieName, this.encryptSession(sessionData), {
             httpOnly: true,
             secure: this.requireSecureCookies,
-            sameSite: this.requireSecureCookies ? "strict" : "lax",
+            sameSite: this.requireSameSiteCookies ? "strict" : "lax",
             signed: true,
             maxAge: this.sessionTtlMs,
         });
@@ -97,7 +107,7 @@ export class AuthService implements IAuthService {
         res.clearCookie(this.sessionCookieName, {
             httpOnly: true,
             secure: this.requireSecureCookies,
-            sameSite: this.requireSecureCookies ? "strict" : "lax",
+            sameSite: this.requireSameSiteCookies ? "strict" : "lax",
             signed: true,
         });
     }
