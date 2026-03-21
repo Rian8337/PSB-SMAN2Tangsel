@@ -1,7 +1,8 @@
 {
   "HomePage": {
     "title": "Selamat Datang di SMAN 2 Tangerang Selatan",
-    "description": "Portal e-learning resmi."
+    "description": "Portal e-learning resmi.",
+    "loginButton": "Masuk"
   },
   "LoginPage": {
     "title": "Masuk",

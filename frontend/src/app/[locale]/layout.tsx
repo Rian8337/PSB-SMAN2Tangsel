@@ -1,4 +1,3 @@
-import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { Provider } from "@/components/ui/provider";
 import { routing } from "@/i18n/routing";
 import { AppProviders } from "@/providers/providers";
@@ -26,10 +25,7 @@ export default async function LocaleLayout(props: PropsWithChildren<Props>) {
             <body>
                 <NextIntlClientProvider messages={messages}>
                     <Provider>
-                        <AppProviders>
-                            <LocaleSwitcher />
-                            <main style={{ padding: "1rem" }}>{children}</main>
-                        </AppProviders>
+                        <AppProviders>{children}</AppProviders>
                     </Provider>
                 </NextIntlClientProvider>
             </body>
