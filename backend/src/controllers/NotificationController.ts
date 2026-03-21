@@ -116,7 +116,7 @@ export class NotificationController extends BaseController {
     /**
      * Updates the read status of a notification. Only the user who owns the notification can update its read status.
      */
-    @Patch("/:id/read")
+    @Patch("/:id/read-status")
     @Roles()
     async updateReadStatus(
         req: Request<{ id: string }, { error: string }, { read: boolean }>,
