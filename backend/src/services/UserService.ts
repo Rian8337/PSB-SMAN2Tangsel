@@ -3,7 +3,7 @@ import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "./IUserService";
 import { inject } from "tsyringe";
 import { IUserRepository } from "@/repositories";
-import { User } from "@psb/shared/types";
+import { User, UserListItem } from "@psb/shared/types";
 import { NotFoundError } from "@/types";
 
 /**
@@ -24,5 +24,9 @@ export class UserService implements IUserService {
         }
 
         return user;
+    }
+
+    listUsers(limit?: number, offset?: number): Promise<UserListItem[]> {
+        return this.userRepository.listUsers(limit, offset);
     }
 }

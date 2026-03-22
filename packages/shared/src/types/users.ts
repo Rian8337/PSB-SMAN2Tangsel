@@ -28,3 +28,13 @@ export type Teacher = User & typeof teachers.$inferSelect;
  * The type of a student user.
  */
 export type Student = User & typeof students.$inferSelect;
+
+/**
+ * A user item for listing users in the UI.
+ */
+export interface UserListItem {
+    readonly id: number;
+    readonly name: string;
+    readonly role: UserRole;
+    readonly identifier: string;
+}
