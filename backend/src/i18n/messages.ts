@@ -15,12 +15,15 @@ interface Localization {
         readonly tooManyAttempts: string;
     };
 
-    readonly notificationController: {
+    readonly controller: {
         readonly invalidLimitFormat: string;
         readonly invalidLimitRange: string;
-        readonly invalidNotificationIdFormat: string;
         readonly invalidOffsetFormat: string;
         readonly invalidOffsetRange: string;
+    };
+
+    readonly notificationController: {
+        readonly invalidNotificationIdFormat: string;
         readonly invalidReadStatusFormat: string;
     };
 
@@ -57,17 +60,19 @@ export const messages = {
             tooManyAttempts:
                 "Terlalu banyak percobaan masuk. Mohon coba lagi nanti.",
         },
-        notificationController: {
+        controller: {
             invalidLimitFormat:
                 "Parameter limit harus berupa bilangan bulat positif.",
             invalidLimitRange:
                 "Parameter limit harus berada dalam rentang yang valid.",
-            invalidNotificationIdFormat:
-                "Parameter notificationId harus berupa bilangan bulat positif.",
             invalidOffsetFormat:
                 "Parameter offset harus berupa bilangan bulat non-negatif.",
             invalidOffsetRange:
                 "Parameter offset harus berada dalam rentang yang valid.",
+        },
+        notificationController: {
+            invalidNotificationIdFormat:
+                "Parameter notificationId harus berupa bilangan bulat positif.",
             invalidReadStatusFormat:
                 "Parameter read harus berupa boolean (true atau false).",
         },
@@ -97,15 +102,17 @@ export const messages = {
                 "Your current session has expired. Please log in again.",
             tooManyAttempts: "Too many login attempts. Please try again later.",
         },
-        notificationController: {
+        controller: {
             invalidLimitFormat: "Parameter limit must be a positive integer.",
             invalidLimitRange: "Parameter limit must be within a valid range.",
-            invalidNotificationIdFormat:
-                "Parameter notificationId must be a positive integer.",
             invalidOffsetFormat:
                 "Parameter offset must be a non-negative integer.",
             invalidOffsetRange:
                 "Parameter offset must be within a valid range.",
+        },
+        notificationController: {
+            invalidNotificationIdFormat:
+                "Parameter notificationId must be a positive integer.",
             invalidReadStatusFormat:
                 "Parameter read must be a boolean (true or false).",
         },

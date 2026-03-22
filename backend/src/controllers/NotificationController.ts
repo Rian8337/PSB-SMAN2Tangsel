@@ -50,29 +50,21 @@ export class NotificationController extends BaseController {
 
             if (limit !== undefined) {
                 if (Number.isNaN(limit)) {
-                    throw new BadRequestError(
-                        "notificationController.invalidLimitFormat",
-                    );
+                    throw new BadRequestError("controller.invalidLimitFormat");
                 }
 
                 if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError(
-                        "notificationController.invalidLimitRange",
-                    );
+                    throw new BadRequestError("controller.invalidLimitRange");
                 }
             }
 
             if (offset !== undefined) {
                 if (Number.isNaN(offset)) {
-                    throw new BadRequestError(
-                        "notificationController.invalidOffsetFormat",
-                    );
+                    throw new BadRequestError("controller.invalidOffsetFormat");
                 }
 
                 if (offset < 0) {
-                    throw new BadRequestError(
-                        "notificationController.invalidOffsetRange",
-                    );
+                    throw new BadRequestError("controller.invalidOffsetRange");
                 }
             }
 
