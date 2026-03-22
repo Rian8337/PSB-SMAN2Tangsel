@@ -53,10 +53,10 @@ describe("NotificationController (unit)", () => {
             });
 
             it.each<[string, MessageKey]>([
-                ["abc", "notificationController.invalidLimitFormat"],
-                ["0", "notificationController.invalidLimitRange"],
-                ["-5", "notificationController.invalidLimitRange"],
-                ["51", "notificationController.invalidLimitRange"],
+                ["abc", "controller.invalidLimitFormat"],
+                ["0", "controller.invalidLimitRange"],
+                ["-5", "controller.invalidLimitRange"],
+                ["51", "controller.invalidLimitRange"],
             ])(
                 "should return 400 for invalid limit: %s",
                 async (limit, errorKey) => {
@@ -70,8 +70,8 @@ describe("NotificationController (unit)", () => {
             );
 
             it.each<[string, MessageKey]>([
-                ["abc", "notificationController.invalidOffsetFormat"],
-                ["-1", "notificationController.invalidOffsetRange"],
+                ["abc", "controller.invalidOffsetFormat"],
+                ["-1", "controller.invalidOffsetRange"],
             ])(
                 "should return 400 for invalid offset: %s",
                 async (offset, errorKey) => {
