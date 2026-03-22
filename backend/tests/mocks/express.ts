@@ -13,7 +13,7 @@ interface ParamsDictionary {
 export function createMockRequestFactory<
     TParams = ParamsDictionary,
     TResponse = unknown,
-    TBody extends Record<string, unknown> = Record<string, unknown>,
+    TBody = unknown,
     TQuery extends Record<string, string> = Record<string, string>,
 >() {
     type Req = Request<TParams, TResponse, TBody, TQuery>;
