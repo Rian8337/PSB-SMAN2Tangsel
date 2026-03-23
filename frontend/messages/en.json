@@ -1,4 +1,17 @@
 {
+  "AccountSettings": {
+    "title": "Account Settings",
+    "currentPasswordLabel": "Current Password",
+    "newPasswordLabel": "New Password",
+    "passwordRequirements": "Password must be at least 8 characters with 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.",
+    "passwordFormSubmit": "Update Password",
+    "formMissingFields": "Please fill in all required fields.",
+    "invalidNewPassword": "Invalid new password. Must be at least 8 characters with 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.",
+    "passwordToastSuccessTitle": "Password Updated",
+    "passwordToastSuccessMessage": "Your password has been successfully updated.",
+    "passwordToastErrorTitle": "Failed to Update Password",
+    "passwordToastErrorMessage": "An error occurred while updating the password. Please try again."
+  },
   "HomePage": {
     "title": "Welcome to SMAN 2 Tangerang Selatan",
     "description": "The official e-learning portal.",
@@ -17,6 +30,10 @@
     "downloadScheduleErrorTitle": "Failed to Download Schedule",
     "downloadScheduleErrorMessage": "An error occurred while downloading the schedule. Please try again.",
     "scheduleFilename": "class_schedule"
+  },
+  "DashboardShell": {
+    "accountSettings": "Account Settings",
+    "logout": "Logout"
   },
   "ScheduleGrid": {
     "time": "Time",

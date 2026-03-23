@@ -1,14 +1,15 @@
 "use client";
 
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Box, Flex, IconButton, Menu, VStack } from "@chakra-ui/react";
 import { Book, Globe, Home } from "lucide-react";
-import { Locale, useLocale } from "next-intl";
+import { Locale, useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { Avatar } from "../ui/avatar";
 
 export function DashboardShell(props: PropsWithChildren) {
+    const t = useTranslations("DashboardShell");
     const router = useRouter();
     const pathname = usePathname();
     const locale = useLocale();
@@ -18,8 +19,7 @@ export function DashboardShell(props: PropsWithChildren) {
     }
 
     return (
-        <Flex h="100vh" w="100vw" overflow="hidden" bg="white">
-            {/* Sidebar */}
+        <Flex h="100dvh" w="full" overflow="hidden" bg="white">
             <VStack
                 w="80px"
                 display={{ base: "none", md: "flex" }}
@@ -31,7 +31,6 @@ export function DashboardShell(props: PropsWithChildren) {
                 zIndex={10}
             >
                 <VStack spaceY={8}>
-                    {/* School Logo */}
                     <Box
                         w="50px"
                         h="50px"
@@ -47,7 +46,6 @@ export function DashboardShell(props: PropsWithChildren) {
                         />
                     </Box>
 
-                    {/* Top Navigation Icons */}
                     <IconButton
                         aria-label="Home"
                         variant="ghost"
@@ -66,7 +64,6 @@ export function DashboardShell(props: PropsWithChildren) {
                     </IconButton>
                 </VStack>
 
-                {/* Bottom Navigation Icons */}
                 <VStack spaceY={6}>
                     <Menu.Root positioning={{ placement: "right" }}>
                         <Menu.Trigger asChild>
@@ -104,17 +101,50 @@ export function DashboardShell(props: PropsWithChildren) {
                         </Menu.Content>
                     </Menu.Root>
 
-                    {/* User Avatar */}
-                    <Avatar
-                        size="sm"
-                        name="Reza"
-                        src="/pas-foto.jpg"
-                        border="2px solid white"
-                    />
+                    <Menu.Root
+                        positioning={{
+                            placement: "right-end",
+                            offset: { mainAxis: 20 },
+                        }}
+                    >
+                        <Menu.Trigger asChild>
+                            <Box cursor="pointer">
+                                <Avatar
+                                    size="sm"
+                                    name="Reza"
+                                    src="/pas-foto.jpg"
+                                    border="2px solid white"
+                                    _hover={{ opacity: 0.8 }}
+                                />
+                            </Box>
+                        </Menu.Trigger>
+
+                        <Menu.Positioner zIndex={1500}>
+                            <Menu.Content minW="150px">
+                                <Menu.Item
+                                    value="settings"
+                                    asChild
+                                    cursor="pointer"
+                                >
+                                    <Link href="/settings">
+                                        {t("accountSettings")}
+                                    </Link>
+                                </Menu.Item>
+
+                                <Menu.Item
+                                    value="logout"
+                                    asChild
+                                    color="red.500"
+                                    cursor="pointer"
+                                >
+                                    <Link href="/logout">{t("logout")}</Link>
+                                </Menu.Item>
+                            </Menu.Content>
+                        </Menu.Positioner>
+                    </Menu.Root>
                 </VStack>
             </VStack>
 
-            {/* Main Content */}
             <Flex flex={1} direction="column" overflow="hidden">
                 {props.children}
             </Flex>
