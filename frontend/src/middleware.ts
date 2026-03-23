@@ -1,3 +1,4 @@
+import { Locale } from "next-intl";
 import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -8,7 +9,12 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const sessionCookie = request.cookies.get("session")?.value;
-    const locale = pathname.split("/")[1] || routing.defaultLocale;
+
+    const firstSegment = pathname.split("/")[1];
+
+    const locale = routing.locales.includes(firstSegment as Locale)
+        ? firstSegment
+        : routing.defaultLocale;
 
     const isPublicPage =
         pathname === "/" ||
