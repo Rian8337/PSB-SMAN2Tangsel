@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ScheduleDay } from "@psb/shared/types";
 import { seeders, testDbManager } from "./utils/db";
+import { loginStudent } from "./utils/login";
 
 test.describe("Student Dashboard Schedule", () => {
     const student = seededPrimaryData.students[0];
@@ -42,11 +43,7 @@ test.describe("Student Dashboard Schedule", () => {
     test.afterAll(testDbManager.cleanupSecondaryTables);
 
     test.beforeEach(async ({ page }) => {
-        await page.goto("/login");
-        await page.fill('input[name="id"]', student.nisn);
-        await page.fill('input[name="password"]', "password123");
-        await page.click('button[type="submit"]');
-        await page.waitForURL("**/dashboard");
+        await loginStudent(page);
     });
 
     test("should log in as a student and display the scheduled class", async ({
