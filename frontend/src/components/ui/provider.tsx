@@ -3,6 +3,7 @@
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { ThemeProvider } from "next-themes";
 import { PropsWithChildren } from "react";
+import { Toaster } from "./toaster";
 
 export function Provider({ children }: PropsWithChildren) {
     return (
@@ -13,6 +14,7 @@ export function Provider({ children }: PropsWithChildren) {
                 forcedTheme="light"
             >
                 {children}
+                <Toaster />
             </ThemeProvider>
         </ChakraProvider>
     );
