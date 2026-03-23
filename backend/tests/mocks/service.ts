@@ -69,4 +69,7 @@ export const mockSessionService: Mocked<ISessionService> = {
 export const mockUserService: Mocked<IUserService> = {
     findById: vi.fn(),
     listUsers: vi.fn(),
+    create: vi.fn(),
+    updateActiveState: vi.fn(),
+    updatePassword: vi.fn(),
 };

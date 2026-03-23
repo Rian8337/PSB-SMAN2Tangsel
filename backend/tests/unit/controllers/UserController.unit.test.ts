@@ -108,4 +108,190 @@ describe("UserController (unit)", () => {
             });
         });
     });
+
+    describe("createUser", () => {
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            { error: string },
+            Partial<{
+                name: string;
+                password: string;
+                role: UserRole;
+                identifier: string;
+            }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.administrator,
+                    staffId: 1,
+                },
+                body: {
+                    name: "John Doe",
+                    password: "Password123!",
+                    role: UserRole.student,
+                    identifier: "1234567890",
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should return 201 on successful user creation", async () => {
+            mockUserService.create.mockResolvedValue(undefined);
+
+            await controller.createUser(req, res);
+
+            expect(mockUserService.create).toHaveBeenCalledWith(
+                "John Doe",
+                "Password123!",
+                UserRole.student,
+                "1234567890",
+            );
+
+            expect(res.sendStatus).toHaveBeenCalledWith(201);
+        });
+
+        it.each([
+            // Invalid name type
+            { name: 123 },
+            // Missing name
+            { name: undefined },
+            // Invalid password type
+            { password: null },
+            // Wrong role type
+            { role: "student" },
+            // Wrong identifier type
+            { identifier: 1234567890 },
+        ])("should return 400 for invalid body: %o", async (invalidBody) => {
+            req.body = { ...req.body, ...invalidBody } as typeof req.body;
+
+            await controller.createUser(req, res);
+
+            expect(mockUserService.create).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
+    describe("updateActiveState", () => {
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            { error: string },
+            Partial<{ userId: number; active: boolean }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.administrator,
+                    staffId: 1,
+                },
+                body: {
+                    userId: 2,
+                    active: false,
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should return 200 on successful state update", async () => {
+            mockUserService.updateActiveState.mockResolvedValue(undefined);
+
+            await controller.updateActiveState(req, res);
+
+            expect(mockUserService.updateActiveState).toHaveBeenCalledWith(
+                2,
+                false,
+            );
+
+            expect(res.sendStatus).toHaveBeenCalledWith(200);
+        });
+
+        it.each([
+            // Wrong userId type
+            { userId: "-2" },
+            // Negative userId
+            { userId: -1 },
+            // Zero userId
+            { userId: 0 },
+            // NaN userId
+            { userId: Number.NaN },
+            // Wrong active type
+            { active: "false" },
+            // Wrong active type
+            { active: null },
+        ])("should return 400 for invalid body: %o", async (invalidBody) => {
+            req.body = { ...req.body, ...invalidBody } as typeof req.body;
+
+            await controller.updateActiveState(req, res);
+
+            expect(mockUserService.updateActiveState).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
+    describe("updatePassword", () => {
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            { error: string },
+            Partial<{ currentPassword: string; newPassword: string }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.administrator,
+                    staffId: 1,
+                },
+                body: {
+                    currentPassword: "OldPassword123!",
+                    newPassword: "NewPassword123!",
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should return 200 on successful password update", async () => {
+            mockUserService.updatePassword.mockResolvedValue(undefined);
+
+            await controller.updatePassword(req, res);
+
+            expect(mockUserService.updatePassword).toHaveBeenCalledWith(
+                1,
+                "OldPassword123!",
+                "NewPassword123!",
+            );
+
+            expect(res.sendStatus).toHaveBeenCalledWith(200);
+        });
+
+        it.each([
+            { currentPassword: 123 },
+            { currentPassword: undefined },
+            { newPassword: ["array"] },
+            { newPassword: null },
+        ])("should return 400 for invalid body: %o", async (invalidBody) => {
+            req.body = { ...req.body, ...invalidBody } as typeof req.body;
+
+            await controller.updatePassword(req, res);
+
+            expect(mockUserService.updatePassword).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
 });
