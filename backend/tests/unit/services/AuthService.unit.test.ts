@@ -77,7 +77,7 @@ describe("AuthService (unit)", () => {
             it("should throw if NISN is not found", async () => {
                 mockStudentRepository.getLoginData.mockResolvedValue(null);
 
-                await expect(() =>
+                await expect(
                     service.login(studentLoginData.user.nisn, "test"),
                 ).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
@@ -115,13 +115,13 @@ describe("AuthService (unit)", () => {
             });
 
             it("should throw if staff ID format is invalid", async () => {
-                await expect(() =>
-                    service.login("123a", "test"),
-                ).rejects.toThrow(new UnauthorizedError("auth.invalidStaffId"));
+                await expect(service.login("123a", "test")).rejects.toThrow(
+                    new UnauthorizedError("auth.invalidStaffId"),
+                );
 
-                await expect(() =>
-                    service.login("012", "test"),
-                ).rejects.toThrow(new UnauthorizedError("auth.invalidStaffId"));
+                await expect(service.login("012", "test")).rejects.toThrow(
+                    new UnauthorizedError("auth.invalidStaffId"),
+                );
             });
 
             it("should throw if staff ID is not found", async () => {
@@ -131,7 +131,7 @@ describe("AuthService (unit)", () => {
 
                 mockTeacherRepository.getLoginData.mockResolvedValue(null);
 
-                await expect(() => service.login("1", "test")).rejects.toThrow(
+                await expect(service.login("1", "test")).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
                 );
             });
@@ -139,7 +139,7 @@ describe("AuthService (unit)", () => {
             it("should throw if administrator account is inactive", async () => {
                 administratorLoginData.user.active = false;
 
-                await expect(() =>
+                await expect(
                     service.login(
                         administratorLoginData.user.staffId.toString(),
                         "test",
@@ -184,7 +184,7 @@ describe("AuthService (unit)", () => {
             it("should throw if user is inactive", async () => {
                 studentLoginData.user.active = false;
 
-                await expect(() =>
+                await expect(
                     service.login(studentLoginData.user.nisn, "test"),
                 ).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
@@ -192,7 +192,7 @@ describe("AuthService (unit)", () => {
             });
 
             it("should throw if password is incorrect", async () => {
-                await expect(() =>
+                await expect(
                     service.login(studentLoginData.user.nisn, "test2"),
                 ).rejects.toThrow(
                     new UnauthorizedError("auth.invalidCredentials"),
