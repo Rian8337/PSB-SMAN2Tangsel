@@ -6,6 +6,8 @@ import { IScheduleAPIClient } from "./IScheduleAPIClient";
 import { ScheduleAPIClient } from "./ScheduleAPIClient";
 import { NotificationAPIClient } from "./NotificationAPIClient";
 import { INotificationAPIClient } from "./INotificationAPIClient";
+import { IUserAPIClient } from "./IUserAPIClient";
+import { UserAPIClient } from "./UserAPIClient";
 
 /**
  * Server-side factory to retrieve an {@link IAuthAPIClient}.
@@ -44,4 +46,17 @@ export async function getServerScheduleApiClient(
     locale?: Locale,
 ): Promise<IScheduleAPIClient> {
     return new ScheduleAPIClient(locale ?? (await getLocale()));
+}
+
+/**
+ * Server-side factory to retrieve an {@link IUserAPIClient}.
+ *
+ * @param locale Optional locale to initialize the {@link IUserAPIClient} with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link IUserAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerUserApiClient(
+    locale?: Locale,
+): Promise<IUserAPIClient> {
+    return new UserAPIClient(locale ?? (await getLocale()));
 }

@@ -3,5 +3,7 @@ export * from "./AuthAPIClient";
 export * from "./IAuthAPIClient";
 export * from "./INotificationAPIClient";
 export * from "./IScheduleAPIClient";
+export * from "./IUserAPIClient";
 export * from "./NotificationAPIClient";
 export * from "./ScheduleAPIClient";
+export * from "./UserAPIClient";
