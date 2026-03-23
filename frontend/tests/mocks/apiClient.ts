@@ -1,4 +1,9 @@
-import { IAuthAPIClient, IScheduleAPIClient } from "@/api";
+import {
+    IAuthAPIClient,
+    INotificationAPIClient,
+    IScheduleAPIClient,
+    IUserAPIClient,
+} from "@/api";
 import { Mocked } from "vitest";
 
 /**
@@ -11,9 +16,28 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
 };
 
 /**
+ * Mock implementation of {@link INotificationAPIClient}.
+ */
+export const mockNotificationApiClient: Mocked<INotificationAPIClient> = {
+    getNotifications: vi.fn(),
+    getUnreadCount: vi.fn(),
+    updateReadStatus: vi.fn(),
+};
+
+/**
  * Mock implementation of {@link IScheduleAPIClient}.
  */
 export const mockScheduleApiClient: Mocked<IScheduleAPIClient> = {
     download: vi.fn(),
     getSchedule: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IUserAPIClient}.
+ */
+export const mockUserApiClient: Mocked<IUserAPIClient> = {
+    listUsers: vi.fn(),
+    createUser: vi.fn(),
+    updateActiveState: vi.fn(),
+    updatePassword: vi.fn(),
 };
