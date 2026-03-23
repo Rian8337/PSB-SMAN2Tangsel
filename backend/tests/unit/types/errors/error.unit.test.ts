@@ -1,7 +1,13 @@
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "@/types";
+import {
+    BadRequestError,
+    ForbiddenError,
+    NotFoundError,
+    UnauthorizedError,
+} from "@/types";
 
 describe("Errors (unit)", () => {
     it.each([
+        [BadRequestError, 400],
         [UnauthorizedError, 401],
         [ForbiddenError, 403],
         [NotFoundError, 404],
