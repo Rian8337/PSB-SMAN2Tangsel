@@ -25,7 +25,7 @@ export class UserService implements IUserService {
         const user = await this.userRepository.findById(id);
 
         if (!user) {
-            throw new NotFoundError("userRepository.userNotFound");
+            throw new NotFoundError("userService.userNotFound");
         }
 
         return user;

@@ -35,10 +35,6 @@ interface Localization {
         readonly noActiveSession: string;
     };
 
-    readonly userRepository: {
-        readonly userNotFound: string;
-    };
-
     readonly userService: {
         readonly invalidUsername: string;
         readonly duplicatePassword: string;
@@ -92,9 +88,6 @@ export const messages = {
         sessionService: {
             noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
         },
-        userRepository: {
-            userNotFound: "Pengguna tidak ditemukan.",
-        },
         userService: {
             invalidIdentifier: "Identifikasi tidak valid.",
             duplicatePassword:
@@ -144,9 +137,6 @@ export const messages = {
         sessionService: {
             noActiveSession:
                 "There is no active academic session at the moment.",
-        },
-        userRepository: {
-            userNotFound: "User not found.",
         },
         userService: {
             invalidIdentifier: "Invalid identifier.",
