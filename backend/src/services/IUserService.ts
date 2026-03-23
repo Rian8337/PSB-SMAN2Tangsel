@@ -35,4 +35,17 @@ export interface IUserService {
         role: UserRole,
         identifier: string,
     ): Promise<void>;
+
+    /**
+     * Updates the password of an existing user.
+     *
+     * @param userId The ID of the user whose password is to be updated.
+     * @param currentPassword The current password of the user for verification.
+     * @param newPassword The new password to be set for the user.
+     */
+    updatePassword(
+        userId: number,
+        currentPassword: string,
+        newPassword: string,
+    ): Promise<void>;
 }

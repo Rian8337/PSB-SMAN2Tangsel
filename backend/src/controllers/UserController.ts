@@ -3,7 +3,7 @@ import { BaseController } from "./BaseController";
 import { inject } from "tsyringe";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
-import { Get, Post } from "@/decorators/routes";
+import { Get, Patch, Post } from "@/decorators/routes";
 import { Roles } from "@/decorators/roles";
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
@@ -102,12 +102,48 @@ export class UserController extends BaseController {
             const { name, password, role, identifier } = req.body;
 
             if (!name || !password || role === undefined || !identifier) {
-                throw new BadRequestError("http.badRequest");
+                throw new BadRequestError();
             }
 
             await this.userService.create(name, password, role, identifier);
 
             res.sendStatus(201);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Updates the password of the currently authenticated user.
+     */
+    @Patch("/update-password")
+    @Roles()
+    async updatePassword(
+        req: Request<
+            unknown,
+            { error: string },
+            Partial<{ currentPassword: string; newPassword: string }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const { currentPassword, newPassword } = req.body;
+
+            if (!currentPassword || !newPassword) {
+                throw new BadRequestError();
+            }
+
+            await this.userService.updatePassword(
+                req.sessionData.userId,
+                currentPassword,
+                newPassword,
+            );
+
+            res.sendStatus(200);
         } catch (e) {
             this.handleError(req, res, e);
         }

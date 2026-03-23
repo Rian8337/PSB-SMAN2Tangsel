@@ -5,7 +5,7 @@ import { inject } from "tsyringe";
 import { IUserRepository } from "@/repositories";
 import { User, UserListItem, UserRole } from "@psb/shared/types";
 import { BadRequestError, NotFoundError } from "@/types";
-import { hash } from "bcrypt";
+import { compare, hash } from "bcrypt";
 
 /**
  * A service that is responsible for handling user-related operations.
@@ -85,6 +85,42 @@ export class UserService implements IUserService {
             await hash(password, 12),
             role,
             identifier,
+        );
+    }
+
+    async updatePassword(
+        userId: number,
+        currentPassword: string,
+        newPassword: string,
+    ): Promise<void> {
+        const user = await this.userRepository.findById(userId);
+
+        if (!user) {
+            throw new NotFoundError("userService.userNotFound");
+        }
+
+        const passwordMatch = await compare(currentPassword, user.password);
+
+        if (!passwordMatch) {
+            throw new BadRequestError("userService.invalidPassword");
+        }
+
+        if (
+            newPassword.trim().length === 0 ||
+            !this.passwordRegex.test(newPassword)
+        ) {
+            throw new BadRequestError("userService.invalidPassword");
+        }
+
+        const samePassword = await compare(newPassword, user.password);
+
+        if (samePassword) {
+            throw new BadRequestError("userService.duplicatePassword");
+        }
+
+        await this.userRepository.updatePassword(
+            userId,
+            await hash(newPassword, 12),
         );
     }
 }

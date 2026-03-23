@@ -35,4 +35,12 @@ export interface IUserRepository {
         role: UserRole,
         identifier: string,
     ): Promise<void>;
+
+    /**
+     * Updates the password hash of an existing user.
+     *
+     * @param userId The ID of the user whose password is to be updated.
+     * @param newPasswordHash The new hashed password to be set for the user.
+     */
+    updatePassword(userId: number, newPasswordHash: string): Promise<void>;
 }

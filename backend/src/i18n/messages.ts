@@ -41,9 +41,12 @@ interface Localization {
 
     readonly userService: {
         readonly invalidUsername: string;
+        readonly duplicatePassword: string;
+        readonly invalidCurrentPassword: string;
         readonly invalidPassword: string;
         readonly invalidIdentifier: string;
         readonly invalidRole: string;
+        readonly userNotFound: string;
     };
 }
 
@@ -94,11 +97,15 @@ export const messages = {
         },
         userService: {
             invalidIdentifier: "Identifikasi tidak valid.",
+            duplicatePassword:
+                "Kata sandi baru tidak boleh sama dengan kata sandi lama.",
+            invalidCurrentPassword: "Kata sandi saat ini tidak valid.",
             invalidPassword:
                 "Kata sandi tidak valid. Kata sandi harus terdiri dari minimal 8 karakter, dengan setidaknya 1 huruf kapital, 1 huruf kecil, 1 angka, dan 1 simbol.",
             invalidUsername:
                 "Nama pengguna tidak valid. Nama pengguna harus terdiri dari 1-100 karakter.",
             invalidRole: "Peran pengguna tidak valid.",
+            userNotFound: "Pengguna tidak ditemukan.",
         },
     },
     en: {
@@ -143,11 +150,15 @@ export const messages = {
         },
         userService: {
             invalidIdentifier: "Invalid identifier.",
+            duplicatePassword:
+                "New password must be different from the old password.",
+            invalidCurrentPassword: "Invalid current password.",
             invalidPassword:
                 "Invalid password. Password must be at least 8 characters long with at least 1 capital letter, 1 lowercase letter, 1 number, and 1 symbol.",
             invalidUsername:
                 "Invalid username. Username must be between 1 and 100 characters long.",
             invalidRole: "Invalid user role.",
+            userNotFound: "User not found.",
         },
     },
 } as const satisfies Record<string, Localization>;

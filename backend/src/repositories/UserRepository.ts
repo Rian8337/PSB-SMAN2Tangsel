@@ -97,4 +97,14 @@ export class UserRepository
             }
         });
     }
+
+    async updatePassword(
+        userId: number,
+        newPasswordHash: string,
+    ): Promise<void> {
+        await this.db
+            .update(users)
+            .set({ password: newPasswordHash })
+            .where(eq(users.id, userId));
+    }
 }
