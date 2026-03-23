@@ -3,14 +3,19 @@ import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "./IUserService";
 import { inject } from "tsyringe";
 import { IUserRepository } from "@/repositories";
-import { User, UserListItem } from "@psb/shared/types";
-import { NotFoundError } from "@/types";
+import { User, UserListItem, UserRole } from "@psb/shared/types";
+import { BadRequestError, NotFoundError } from "@/types";
+import { hash } from "bcrypt";
 
 /**
  * A service that is responsible for handling user-related operations.
  */
 @Injectable(dependencyTokens.userService)
 export class UserService implements IUserService {
+    // Passwords must be at least 8 characters long with 1 capital letter, 1 lowercase letter, 1 number, and 1 symbol.
+    private readonly passwordRegex =
+        /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/;
+
     constructor(
         @inject(dependencyTokens.userRepository)
         private readonly userRepository: IUserRepository,
@@ -28,5 +33,58 @@ export class UserService implements IUserService {
 
     listUsers(limit?: number, offset?: number): Promise<UserListItem[]> {
         return this.userRepository.listUsers(limit, offset);
+    }
+
+    async create(
+        name: string,
+        password: string,
+        role: UserRole,
+        identifier: string,
+    ): Promise<void> {
+        name = name.trim();
+        identifier = identifier.trim();
+
+        if (
+            name.length === 0 ||
+            name.length > 100 ||
+            !/^[a-zA-Z\s]+$/.test(name)
+        ) {
+            throw new BadRequestError("userService.invalidUsername");
+        }
+
+        if (
+            password.trim().length === 0 ||
+            !this.passwordRegex.test(password)
+        ) {
+            throw new BadRequestError("userService.invalidPassword");
+        }
+
+        if (identifier.length === 0) {
+            throw new BadRequestError("userService.invalidIdentifier");
+        }
+
+        switch (role) {
+            case UserRole.student:
+                if (!/^\d{10}$/.test(identifier)) {
+                    throw new BadRequestError("userService.invalidIdentifier");
+                }
+                break;
+
+            case UserRole.teacher:
+                if (!/^[1-9]\d*$/.test(identifier)) {
+                    throw new BadRequestError("userService.invalidIdentifier");
+                }
+                break;
+
+            default:
+                throw new BadRequestError("userService.invalidRole");
+        }
+
+        return this.userRepository.create(
+            name,
+            await hash(password, 12),
+            role,
+            identifier,
+        );
     }
 }

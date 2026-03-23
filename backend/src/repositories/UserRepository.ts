@@ -2,8 +2,8 @@ import { Injectable } from "@/decorators/injectable";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IUserRepository } from "./IUserRepository";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { DrizzleDb, User, UserListItem } from "@psb/shared/types";
-import { students, teachers, users } from "@psb/shared/schema";
+import { DrizzleDb, User, UserListItem, UserRole } from "@psb/shared/types";
+import { administrators, students, teachers, users } from "@psb/shared/schema";
 import { eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 
@@ -52,5 +52,49 @@ export class UserRepository
                     identifier: r.nisn ?? r.staffId?.toString() ?? "N/A",
                 })),
             );
+    }
+
+    async create(
+        name: string,
+        passwordHash: string,
+        role: UserRole,
+        identifier: string,
+    ): Promise<void> {
+        await this.db.transaction(async (tx) => {
+            const [userResult] = await tx.insert(users).values({
+                name,
+                password: passwordHash,
+                role,
+                active: true,
+            });
+
+            const userId = userResult.insertId;
+
+            switch (role) {
+                case UserRole.student:
+                    await tx.insert(students).values({
+                        userId,
+                        nisn: identifier,
+                    });
+                    break;
+
+                case UserRole.teacher:
+                    await tx.insert(teachers).values({
+                        userId,
+                        staffId: parseInt(identifier, 10),
+                    });
+                    break;
+
+                case UserRole.administrator:
+                    await tx.insert(administrators).values({
+                        userId,
+                        staffId: parseInt(identifier, 10),
+                    });
+                    break;
+
+                default:
+                    throw new Error("Invalid user role");
+            }
+        });
     }
 }

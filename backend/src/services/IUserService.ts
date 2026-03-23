@@ -1,4 +1,4 @@
-import { User, UserListItem } from "@psb/shared/types";
+import { User, UserListItem, UserRole } from "@psb/shared/types";
 
 /**
  * A service that is responsible for handling user-related operations.
@@ -20,4 +20,19 @@ export interface IUserService {
      * @returns A list of user items containing basic information about each user.
      */
     listUsers(limit?: number, offset?: number): Promise<UserListItem[]>;
+
+    /**
+     * Registers a new user.
+     *
+     * @param name The name of the user.
+     * @param password The password of the user.
+     * @param role The role of the user.
+     * @param identifier The unique identifier for the user.
+     */
+    create(
+        name: string,
+        password: string,
+        role: UserRole,
+        identifier: string,
+    ): Promise<void>;
 }

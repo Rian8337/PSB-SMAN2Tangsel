@@ -1,4 +1,4 @@
-import { User, UserListItem } from "@psb/shared/types";
+import { User, UserListItem, UserRole } from "@psb/shared/types";
 
 /**
  * Defines operations for accessing and managing user data in the database.
@@ -20,4 +20,19 @@ export interface IUserRepository {
      * @returns A list of user items containing basic information about each user.
      */
     listUsers(limit?: number, offset?: number): Promise<UserListItem[]>;
+
+    /**
+     * Registers a new user in the database.
+     *
+     * @param name The name of the user.
+     * @param passwordHash The hashed password of the user.
+     * @param role The role of the user.
+     * @param identifier The unique identifier for the user.
+     */
+    create(
+        name: string,
+        passwordHash: string,
+        role: UserRole,
+        identifier: string,
+    ): Promise<void>;
 }
