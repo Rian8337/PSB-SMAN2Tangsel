@@ -1,21 +1,18 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { IUserService } from "./IUserService";
-import { inject } from "tsyringe";
 import { IUserRepository } from "@/repositories";
-import { User, UserListItem, UserRole } from "@psb/shared/types";
 import { BadRequestError, NotFoundError } from "@/types";
+import { User, UserListItem, UserRole } from "@psb/shared/types";
+import { passwordRegex } from "@psb/shared/validator";
 import { compare, hash } from "bcrypt";
+import { inject } from "tsyringe";
+import { IUserService } from "./IUserService";
 
 /**
  * A service that is responsible for handling user-related operations.
  */
 @Injectable(dependencyTokens.userService)
 export class UserService implements IUserService {
-    // Passwords must be at least 8 characters long with 1 capital letter, 1 lowercase letter, 1 number, and 1 symbol.
-    private readonly passwordRegex =
-        /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/;
-
     constructor(
         @inject(dependencyTokens.userRepository)
         private readonly userRepository: IUserRepository,
@@ -52,10 +49,7 @@ export class UserService implements IUserService {
             throw new BadRequestError("userService.invalidUsername");
         }
 
-        if (
-            password.trim().length === 0 ||
-            !this.passwordRegex.test(password)
-        ) {
+        if (password.trim().length === 0 || !passwordRegex.test(password)) {
             throw new BadRequestError("userService.invalidPassword");
         }
 
@@ -111,7 +105,7 @@ export class UserService implements IUserService {
 
         if (
             newPassword.trim().length === 0 ||
-            !this.passwordRegex.test(newPassword)
+            !passwordRegex.test(newPassword)
         ) {
             throw new BadRequestError("userService.invalidPassword");
         }
