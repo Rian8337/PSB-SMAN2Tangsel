@@ -98,6 +98,10 @@ export class UserRepository
         });
     }
 
+    async updateActiveState(userId: number, active: boolean): Promise<void> {
+        await this.db.update(users).set({ active }).where(eq(users.id, userId));
+    }
+
     async updatePassword(
         userId: number,
         newPasswordHash: string,

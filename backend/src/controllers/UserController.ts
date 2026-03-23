@@ -119,6 +119,43 @@ export class UserController extends BaseController {
     }
 
     /**
+     * Updates the active state of an existing user.
+     */
+    @Patch("/update-active-state")
+    @Roles(UserRole.administrator)
+    async updateActiveState(
+        req: Request<
+            unknown,
+            { error: string },
+            Partial<{ userId: number; active: boolean }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const { userId, active } = req.body;
+
+            if (
+                typeof userId !== "number" ||
+                Number.isNaN(userId) ||
+                userId <= 0 ||
+                typeof active !== "boolean"
+            ) {
+                throw new BadRequestError();
+            }
+
+            await this.userService.updateActiveState(userId, active);
+
+            res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
      * Updates the password of the currently authenticated user.
      */
     @Patch("/update-password")

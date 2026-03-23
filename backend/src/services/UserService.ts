@@ -88,6 +88,10 @@ export class UserService implements IUserService {
         );
     }
 
+    updateActiveState(userId: number, active: boolean): Promise<void> {
+        return this.userRepository.updateActiveState(userId, active);
+    }
+
     async updatePassword(
         userId: number,
         currentPassword: string,
