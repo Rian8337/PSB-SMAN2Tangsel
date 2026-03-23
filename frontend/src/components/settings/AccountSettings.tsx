@@ -99,6 +99,7 @@ export function AccountSettings() {
                         type="password"
                         required
                         value={currentPassword}
+                        placeholder={t("currentPasswordPlaceholder")}
                         onChange={(e) => {
                             setCurrentPassword(e.target.value);
                         }}
@@ -118,6 +119,7 @@ export function AccountSettings() {
                         type="password"
                         required
                         value={newPassword}
+                        placeholder={t("newPasswordPlaceholder")}
                         onChange={(e) => {
                             setNewPassword(e.target.value);
                         }}

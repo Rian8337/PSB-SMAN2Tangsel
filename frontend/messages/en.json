@@ -2,7 +2,9 @@
   "AccountSettings": {
     "title": "Account Settings",
     "currentPasswordLabel": "Current Password",
+    "currentPasswordPlaceholder": "Enter current password",
     "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
     "passwordRequirements": "Password must be at least 8 characters with 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.",
     "passwordFormSubmit": "Update Password",
     "formMissingFields": "Please fill in all required fields.",

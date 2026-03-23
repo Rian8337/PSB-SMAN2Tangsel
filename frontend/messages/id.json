@@ -2,7 +2,9 @@
   "AccountSettings": {
     "title": "Pengaturan Akun",
     "currentPasswordLabel": "Kata sandi saat ini",
+    "currentPasswordPlaceholder": "Masukkan kata sandi saat ini",
     "newPasswordLabel": "Kata sandi baru",
+    "newPasswordPlaceholder": "Masukkan kata sandi baru",
     "passwordRequirements": "Kata sandi harus setidaknya 8 karakter dengan 1 huruf kapital, 1 huruf kecil, 1 angka, dan 1 simbol.",
     "passwordFormSubmit": "Perbarui Kata Sandi",
     "formMissingFields": "Harap isi semua bidang yang diperlukan.",
