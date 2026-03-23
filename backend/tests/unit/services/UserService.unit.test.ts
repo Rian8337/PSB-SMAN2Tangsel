@@ -1,0 +1,274 @@
+import { UserService } from "@/services";
+import { BadRequestError, NotFoundError } from "@/types";
+import { User, UserRole } from "@psb/shared/types";
+import { mockUserRepository } from "@test/mocks";
+
+const bcryptMock = vi.hoisted(() => ({
+    hash: vi.fn(),
+    compare: vi.fn(),
+}));
+
+vi.mock("bcrypt", () => bcryptMock);
+
+describe("UserService (unit)", () => {
+    const service = new UserService(mockUserRepository);
+
+    describe("findById", () => {
+        it("should return a user if found", async () => {
+            const mockUser: User = {
+                id: 1,
+                name: "John Doe",
+                role: UserRole.student,
+                active: true,
+                password: "idk",
+            };
+
+            mockUserRepository.findById.mockResolvedValue(mockUser);
+
+            const result = await service.findById(mockUser.id);
+
+            expect(mockUserRepository.findById).toHaveBeenCalledWith(
+                mockUser.id,
+            );
+
+            expect(result).toEqual(mockUser);
+        });
+
+        it("should throw if user is not found", async () => {
+            mockUserRepository.findById.mockResolvedValue(null);
+
+            await expect(service.findById(999)).rejects.toThrow(
+                new NotFoundError("userService.userNotFound"),
+            );
+        });
+    });
+
+    describe("create", () => {
+        const validPassword = "StrongPassword123!";
+
+        it("should hash the password and create a new user", async () => {
+            bcryptMock.hash.mockResolvedValue("hashedPassword");
+            mockUserRepository.create.mockResolvedValue(undefined);
+
+            await service.create(
+                "John Doe",
+                validPassword,
+                UserRole.student,
+                "1234567890",
+            );
+
+            expect(bcryptMock.hash).toHaveBeenCalledWith(validPassword, 12);
+
+            expect(mockUserRepository.create).toHaveBeenCalledWith(
+                "John Doe",
+                "hashedPassword",
+                UserRole.student,
+                "1234567890",
+            );
+        });
+
+        it("should trim inputs before validation and creation", async () => {
+            bcryptMock.hash.mockResolvedValue("hashedPassword");
+
+            await service.create(
+                "   John Doe   ",
+                validPassword,
+                UserRole.student,
+                "  1234567890   ",
+            );
+
+            expect(mockUserRepository.create).toHaveBeenCalledWith(
+                "John Doe",
+                "hashedPassword",
+                UserRole.student,
+                "1234567890",
+            );
+        });
+
+        it.each([
+            // Empty username
+            [""],
+            // Too long
+            ["A".repeat(101)],
+            // Contains numbers
+            ["John123"],
+            // Contains symbols
+            ["John_Doe"],
+        ])("should throw for invalid username: %s", async (invalidUsername) => {
+            await expect(
+                service.create(
+                    invalidUsername,
+                    validPassword,
+                    UserRole.student,
+                    "1234567890",
+                ),
+            ).rejects.toThrow(
+                new BadRequestError("userService.invalidUsername"),
+            );
+        });
+
+        it.each([
+            // Empty password
+            [""],
+            // No capital letter, number, or symbol
+            ["weakpassword"],
+            // No symbol
+            ["NoSymbol123"],
+            // Too short
+            ["N0Sym"],
+        ])("should throw for invalid password: %s", async (invalidPassword) => {
+            await expect(
+                service.create(
+                    "John Doe",
+                    invalidPassword,
+                    UserRole.student,
+                    "1234567890",
+                ),
+            ).rejects.toThrow(
+                new BadRequestError("userService.invalidPassword"),
+            );
+        });
+
+        it.each([
+            // Too short
+            ["12345"],
+            // Too long
+            ["12345678901"],
+            // Letters included
+            ["12345ABCDE"],
+        ])(
+            "should throw for invalid student identifier: %s",
+            async (invalidIdentifier) => {
+                await expect(
+                    service.create(
+                        "John Doe",
+                        validPassword,
+                        UserRole.student,
+                        invalidIdentifier,
+                    ),
+                ).rejects.toThrow(
+                    new BadRequestError("userService.invalidIdentifier"),
+                );
+            },
+        );
+
+        it.each([
+            // Leading zero
+            ["0123"],
+            // Letters
+            ["abc"],
+            // Negative
+            ["-100"],
+        ])(
+            "should throw for invalid teacher identifier: %s",
+            async (invalidIdentifier) => {
+                await expect(
+                    service.create(
+                        "John Doe",
+                        validPassword,
+                        UserRole.teacher,
+                        invalidIdentifier,
+                    ),
+                ).rejects.toThrow(
+                    new BadRequestError("userService.invalidIdentifier"),
+                );
+            },
+        );
+
+        it("should throw for unsupported roles", async () => {
+            await expect(
+                service.create(
+                    "John Doe",
+                    validPassword,
+                    UserRole.administrator,
+                    "12345",
+                ),
+            ).rejects.toThrow(new BadRequestError("userService.invalidRole"));
+        });
+    });
+
+    describe("updateActiveState", () => {
+        it("should delegate to UserRepository.updateActiveState", async () => {
+            mockUserRepository.updateActiveState.mockResolvedValue(undefined);
+
+            await service.updateActiveState(1, false);
+
+            expect(mockUserRepository.updateActiveState).toHaveBeenCalledWith(
+                1,
+                false,
+            );
+        });
+    });
+
+    describe("updatePassword", () => {
+        const mockUser: User = {
+            id: 1,
+            active: true,
+            name: "John Doe",
+            password: "oldHashedPassword",
+            role: UserRole.student,
+        };
+
+        const newPassword = "NewStrongPassword123!";
+
+        beforeEach(() => {
+            mockUserRepository.findById.mockResolvedValue(mockUser);
+        });
+
+        it("should update password if all validations pass", async () => {
+            // Old password matches
+            bcryptMock.compare.mockResolvedValueOnce(true);
+            // New password is not the same as old
+            bcryptMock.compare.mockResolvedValueOnce(false);
+
+            bcryptMock.hash.mockResolvedValue("newHashedPassword");
+            mockUserRepository.updatePassword.mockResolvedValue(undefined);
+
+            await service.updatePassword(1, "oldPassword", newPassword);
+
+            expect(mockUserRepository.updatePassword).toHaveBeenCalledWith(
+                1,
+                "newHashedPassword",
+            );
+        });
+
+        it("should throw if user is not found", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(null);
+
+            await expect(
+                service.updatePassword(999, "anyPassword", newPassword),
+            ).rejects.toThrow(new NotFoundError("userService.userNotFound"));
+        });
+
+        it("should throw if current password is incorrect", async () => {
+            bcryptMock.compare.mockResolvedValueOnce(false);
+
+            await expect(
+                service.updatePassword(1, "wrongPassword", newPassword),
+            ).rejects.toThrow(
+                new BadRequestError("userService.invalidPassword"),
+            );
+        });
+
+        it("should throw if new password fails validation", async () => {
+            bcryptMock.compare.mockResolvedValueOnce(true);
+
+            await expect(
+                service.updatePassword(1, "oldPassword", "weak"),
+            ).rejects.toThrow(
+                new BadRequestError("userService.invalidPassword"),
+            );
+        });
+
+        it("should throw if new password is the same as current password", async () => {
+            bcryptMock.compare.mockResolvedValueOnce(true);
+            bcryptMock.compare.mockResolvedValueOnce(true);
+
+            await expect(
+                service.updatePassword(1, "oldP@ssword1", "oldP@ssword1"),
+            ).rejects.toThrow(
+                new BadRequestError("userService.duplicatePassword"),
+            );
+        });
+    });
+});

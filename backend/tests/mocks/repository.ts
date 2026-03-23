@@ -72,4 +72,8 @@ export const mockTeacherRepository: Mocked<ITeacherRepository> = {
  */
 export const mockUserRepository: Mocked<IUserRepository> = {
     findById: vi.fn(),
+    listUsers: vi.fn(),
+    create: vi.fn(),
+    updateActiveState: vi.fn(),
+    updatePassword: vi.fn(),
 };
