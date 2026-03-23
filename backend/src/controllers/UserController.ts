@@ -101,7 +101,12 @@ export class UserController extends BaseController {
         try {
             const { name, password, role, identifier } = req.body;
 
-            if (!name || !password || role === undefined || !identifier) {
+            if (
+                typeof name !== "string" ||
+                typeof password !== "string" ||
+                typeof role !== "number" ||
+                typeof identifier !== "string"
+            ) {
                 throw new BadRequestError();
             }
 
@@ -133,7 +138,10 @@ export class UserController extends BaseController {
         try {
             const { currentPassword, newPassword } = req.body;
 
-            if (!currentPassword || !newPassword) {
+            if (
+                typeof currentPassword !== "string" ||
+                typeof newPassword !== "string"
+            ) {
                 throw new BadRequestError();
             }
 
