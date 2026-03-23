@@ -1,10 +1,12 @@
 import "@testing-library/jest-dom";
 import { createElement, PropsWithChildren } from "react";
 
-vi.mock("@/i18n/navigation", async () => {
+vi.mock("@/i18n/navigation", async (importOriginal) => {
+    const original = await importOriginal<typeof import("@/i18n/navigation")>();
     const { mockNavigation } = await import("./mocks");
 
     return {
+        ...original,
         ...mockNavigation,
 
         // Provide a dummy Link component so tests using <Link> don't break
@@ -19,10 +21,24 @@ vi.mock("@/i18n/navigation", async () => {
     >;
 });
 
-vi.mock("next-intl", async () => {
+vi.mock("next-intl", async (importOriginal) => {
+    const original = await importOriginal<typeof import("next-intl")>();
     const { mockNextIntl } = await import("./mocks");
 
-    return mockNextIntl satisfies Partial<
-        Record<keyof typeof import("next-intl"), unknown>
-    >;
+    return {
+        ...original,
+        ...mockNextIntl,
+    };
+});
+
+vi.mock("@/components/ui/toaster", async (importOriginal) => {
+    const original =
+        await importOriginal<typeof import("@/components/ui/toaster")>();
+
+    const { mockToaster } = await import("./mocks");
+
+    return {
+        ...original,
+        toaster: mockToaster,
+    };
 });
