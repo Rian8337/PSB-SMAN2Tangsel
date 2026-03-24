@@ -1,4 +1,33 @@
 {
+  "AccountManagement": {
+    "title": "Manajemen Akun",
+    "searchPlaceholder": "Cari pengguna berdasarkan nama atau ID...",
+    "registerButton": "Daftar Pengguna",
+    "fetchUserToast": {
+      "errorTitle": "Gagal Mengambil Pengguna",
+      "errorMessage": "Terjadi kesalahan saat mengambil pengguna. Silakan coba lagi."
+    },
+    "columns": {
+      "name": "Nama",
+      "identifier": "NISN / NIP",
+      "role": "Peran",
+      "status": "Status",
+      "actions": "Aksi"
+    },
+    "roles": {
+      "0": "Siswa",
+      "1": "Guru",
+      "2": "Admin"
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Nonaktif"
+    },
+    "actions": {
+      "view": "Lihat"
+    },
+    "emptyState": "Tidak ada pengguna yang ditemukan."
+  },
   "AccountSettings": {
     "title": "Pengaturan Akun",
     "currentPasswordLabel": "Kata sandi saat ini",

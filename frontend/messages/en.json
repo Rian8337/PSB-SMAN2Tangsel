@@ -1,4 +1,33 @@
 {
+  "AccountManagement": {
+    "title": "Account Management",
+    "searchPlaceholder": "Search users by name or ID...",
+    "registerButton": "Register User",
+    "fetchUserToast": {
+      "errorTitle": "Failed to Fetch Users",
+      "errorMessage": "An error occurred while fetching users. Please try again."
+    },
+    "columns": {
+      "name": "Name",
+      "identifier": "NISN / NIP",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "roles": {
+      "0": "Student",
+      "1": "Teacher",
+      "2": "Admin"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "emptyState": "No users found."
+  },
   "AccountSettings": {
     "title": "Account Settings",
     "currentPasswordLabel": "Current Password",
