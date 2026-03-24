@@ -131,7 +131,10 @@ function SidebarContent({
 
             <VStack spaceY={6}>
                 <Menu.Root
-                    positioning={{ placement: isDesktop ? "right" : "top" }}
+                    positioning={{
+                        placement: isDesktop ? "right" : "top",
+                        offset: { mainAxis: 20 },
+                    }}
                 >
                     <Menu.Trigger asChild>
                         <IconButton
@@ -144,28 +147,30 @@ function SidebarContent({
                         </IconButton>
                     </Menu.Trigger>
 
-                    <Menu.Content>
-                        <Menu.Item
-                            value="id"
-                            onClick={() => {
-                                changeLocale("id");
-                            }}
-                            fontWeight={locale === "id" ? "bold" : "normal"}
-                            cursor="pointer"
-                        >
-                            Bahasa Indonesia
-                        </Menu.Item>
-                        <Menu.Item
-                            value="en"
-                            onClick={() => {
-                                changeLocale("en");
-                            }}
-                            fontWeight={locale === "en" ? "bold" : "normal"}
-                            cursor="pointer"
-                        >
-                            English
-                        </Menu.Item>
-                    </Menu.Content>
+                    <Menu.Positioner zIndex={1500}>
+                        <Menu.Content minW="150px">
+                            <Menu.Item
+                                value="id"
+                                onClick={() => {
+                                    changeLocale("id");
+                                }}
+                                fontWeight={locale === "id" ? "bold" : "normal"}
+                                cursor="pointer"
+                            >
+                                Bahasa Indonesia
+                            </Menu.Item>
+                            <Menu.Item
+                                value="en"
+                                onClick={() => {
+                                    changeLocale("en");
+                                }}
+                                fontWeight={locale === "en" ? "bold" : "normal"}
+                                cursor="pointer"
+                            >
+                                English
+                            </Menu.Item>
+                        </Menu.Content>
+                    </Menu.Positioner>
                 </Menu.Root>
 
                 <Menu.Root
