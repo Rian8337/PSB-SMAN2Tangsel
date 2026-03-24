@@ -37,6 +37,9 @@
     "accountSettings": "Pengaturan Akun",
     "logout": "Keluar"
   },
+  "Global": {
+    "appName": "PSB SMAN 2 Tangerang Selatan"
+  },
   "ScheduleGrid": {
     "time": "Waktu",
     "monday": "Senin",
