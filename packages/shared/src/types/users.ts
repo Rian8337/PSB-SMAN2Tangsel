@@ -36,5 +36,6 @@ export interface UserListItem {
     readonly id: number;
     readonly name: string;
     readonly role: UserRole;
+    readonly active: boolean;
     readonly identifier: string;
 }

@@ -36,6 +36,7 @@ export class UserRepository
                 id: users.id,
                 name: users.name,
                 role: users.role,
+                active: users.active,
                 nisn: students.nisn,
                 staffId: teachers.staffId,
             })
@@ -49,6 +50,7 @@ export class UserRepository
                     id: r.id,
                     name: r.name,
                     role: r.role,
+                    active: r.active,
                     identifier: r.nisn ?? r.staffId?.toString() ?? "N/A",
                 })),
             );
