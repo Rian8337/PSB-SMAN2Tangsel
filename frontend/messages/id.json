@@ -33,9 +33,20 @@
     "downloadScheduleErrorMessage": "Terjadi kesalahan saat mengunduh jadwal. Silakan coba lagi.",
     "scheduleFilename": "jadwal_pelajaran"
   },
+  "BaseShell": {
+    "logout": "Keluar",
+    "settings": "Pengaturan"
+  },
+  "AdminDashboardShell": {
+    "accountManagement": "Manajemen Akun",
+    "dashboard": "Dasbor",
+    "mobileTitle": "Admin | PSB SMAN 2 Tangerang Selatan",
+    "academicYear": "Tahun Ajaran"
+  },
   "DashboardShell": {
-    "accountSettings": "Pengaturan Akun",
-    "logout": "Keluar"
+    "mobileTitle": "Dasbor | PSB SMAN 2 Tangerang Selatan",
+    "home": "Beranda",
+    "schedule": "Jadwal"
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"

@@ -33,9 +33,20 @@
     "downloadScheduleErrorMessage": "An error occurred while downloading the schedule. Please try again.",
     "scheduleFilename": "class_schedule"
   },
+  "BaseShell": {
+    "logout": "Logout",
+    "settings": "Settings"
+  },
+  "AdminDashboardShell": {
+    "accountManagement": "Account Management",
+    "dashboard": "Dashboard",
+    "mobileTitle": "Admin | PSB SMAN 2 Tangerang Selatan",
+    "academicYear": "Academic Year"
+  },
   "DashboardShell": {
-    "accountSettings": "Account Settings",
-    "logout": "Logout"
+    "mobileTitle": "Dashboard | PSB SMAN 2 Tangerang Selatan",
+    "home": "Home",
+    "schedule": "Schedule"
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
