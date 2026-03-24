@@ -1,13 +1,21 @@
 import { AccountSettings } from "@/components/settings/AccountSettings";
-import { Locale } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
-    params: { locale },
+    params,
 }: {
-    params: { locale: Locale };
+    params: Promise<{ locale: string }>;
 }) {
-    const t = await getTranslations({ locale, namespace: "AccountSettings" });
+    const { locale } = await params;
+
+    const t = await getTranslations({
+        locale: hasLocale(routing.locales, locale)
+            ? locale
+            : routing.defaultLocale,
+        namespace: "AccountSettings",
+    });
 
     return { title: t("title") };
 }

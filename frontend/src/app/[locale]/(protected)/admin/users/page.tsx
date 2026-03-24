@@ -1,14 +1,19 @@
 import { AccountManagement } from "@/components/admin/AccountManagement";
-import { Locale } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
     params,
 }: {
-    params: { locale: Locale };
+    params: Promise<{ locale: string }>;
 }) {
+    const { locale } = await params;
+
     const t = await getTranslations({
-        locale: params.locale,
+        locale: hasLocale(routing.locales, locale)
+            ? locale
+            : routing.defaultLocale,
         namespace: "AccountManagement",
     });
 

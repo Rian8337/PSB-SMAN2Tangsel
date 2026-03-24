@@ -1,7 +1,7 @@
 import { Provider } from "@/components/ui/provider";
 import { routing } from "@/i18n/routing";
 import { AppProviders } from "@/providers/providers";
-import { hasLocale, Locale, NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { PropsWithChildren } from "react";
@@ -9,10 +9,14 @@ import { PropsWithChildren } from "react";
 export async function generateMetadata({
     params,
 }: {
-    params: { locale: Locale };
+    params: Promise<{ locale: string }>;
 }) {
+    const { locale } = await params;
+
     const t = await getTranslations({
-        locale: params.locale,
+        locale: hasLocale(routing.locales, locale)
+            ? locale
+            : routing.defaultLocale,
         namespace: "Global",
     });
 
@@ -25,7 +29,7 @@ export async function generateMetadata({
 }
 
 interface Props {
-    params: Promise<{ locale: Locale }>;
+    params: Promise<{ locale: string }>;
 }
 
 export default async function LocaleLayout(props: PropsWithChildren<Props>) {
