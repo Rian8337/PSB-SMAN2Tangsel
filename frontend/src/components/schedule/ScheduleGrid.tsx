@@ -44,7 +44,7 @@ export function ScheduleGrid({ data }: ScheduleGridProps) {
                         justifyContent="center"
                     >
                         <Text fontWeight="bold" color="black">
-                            Time
+                            {t("time")}
                         </Text>
                     </Box>
 
