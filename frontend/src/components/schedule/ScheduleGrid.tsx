@@ -1,5 +1,6 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { parseScheduleData } from "@/utils/schedule";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
@@ -22,9 +23,10 @@ const START_HOUR = 6;
 
 interface ScheduleGridProps {
     data: ScheduleDTO[];
+    editMode?: boolean;
 }
 
-export function ScheduleGrid({ data }: ScheduleGridProps) {
+export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
     const t = useTranslations("ScheduleGrid");
     const parsedClasses = parseScheduleData(data);
     const days = getDayLabels(t);
@@ -114,6 +116,21 @@ export function ScheduleGrid({ data }: ScheduleGridProps) {
                                         (cls.endDecimal - cls.startDecimal) *
                                         ROW_HEIGHT_REM;
 
+                                    const text = (
+                                        <Text
+                                            fontWeight="bold"
+                                            color="#0000FF"
+                                            textDecoration="underline"
+                                            textAlign="center"
+                                            fontSize={{
+                                                base: "sm",
+                                                md: "md",
+                                            }}
+                                        >
+                                            {cls.subject.name}
+                                        </Text>
+                                    );
+
                                     return (
                                         <Box
                                             key={cls.id}
@@ -131,19 +148,42 @@ export function ScheduleGrid({ data }: ScheduleGridProps) {
                                             justifyContent="center"
                                             zIndex={2}
                                             overflow="hidden"
+                                            _hover={
+                                                editMode
+                                                    ? {
+                                                          bg: "#dadd00",
+                                                          shadow: "md",
+                                                      }
+                                                    : undefined
+                                            }
+                                            transition="all 0.2s"
                                         >
-                                            <Text
-                                                fontWeight="bold"
-                                                color="#0000FF"
-                                                textDecoration="underline"
-                                                textAlign="center"
-                                                fontSize={{
-                                                    base: "sm",
-                                                    md: "md",
-                                                }}
-                                            >
-                                                {cls.subject.name}
-                                            </Text>
+                                            {editMode ? (
+                                                <Link
+                                                    href={`/admin/schedules/edit/${cls.id.toString()}`}
+                                                    style={{
+                                                        display: "flex",
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                            "center",
+                                                        padding: "0.5rem",
+                                                    }}
+                                                >
+                                                    {text}
+                                                </Link>
+                                            ) : (
+                                                <Flex
+                                                    w="full"
+                                                    h="full"
+                                                    align="center"
+                                                    justify="center"
+                                                    p={2}
+                                                >
+                                                    {text}
+                                                </Flex>
+                                            )}
                                         </Box>
                                     );
                                 })}
