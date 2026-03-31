@@ -91,7 +91,9 @@
   },
   "BaseShell": {
     "logout": "Logout",
-    "settings": "Settings"
+    "settings": "Settings",
+    "logoutErrorTitle": "Failed to Logout",
+    "logoutErrorMessage": "An error occurred while logging out. Please try again."
   },
   "AdminDashboardShell": {
     "accountManagement": "Account Management",

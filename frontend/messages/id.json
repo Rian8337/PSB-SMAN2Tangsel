@@ -91,7 +91,9 @@
   },
   "BaseShell": {
     "logout": "Keluar",
-    "settings": "Pengaturan"
+    "settings": "Pengaturan",
+    "logoutErrorTitle": "Gagal Keluar",
+    "logoutErrorMessage": "Terjadi kesalahan saat keluar. Silakan coba lagi."
   },
   "AdminDashboardShell": {
     "accountManagement": "Manajemen Akun",

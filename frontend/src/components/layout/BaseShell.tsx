@@ -16,6 +16,8 @@ import { Globe, MenuIcon } from "lucide-react";
 import { Locale, useLocale, useTranslations } from "next-intl";
 import { PropsWithChildren, useState } from "react";
 import { Avatar } from "../ui/avatar";
+import { useAuthApiClient } from "@/providers/api/auth-api-provider";
+import { toaster } from "../ui/toaster";
 
 export interface NavItem {
     readonly label: string;
@@ -42,12 +44,28 @@ function SidebarContent({
     props: BaseShellProps;
 }) {
     const t = useTranslations("BaseShell");
+    const authApiClient = useAuthApiClient();
     const router = useRouter();
     const pathname = usePathname();
     const locale = useLocale();
 
     function changeLocale(nextLocale: Locale) {
         router.replace({ pathname }, { locale: nextLocale });
+    }
+
+    function logout() {
+        authApiClient
+            .logout()
+            .then(() => {
+                router.push("/login");
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("logoutErrorTitle"),
+                    description: t("logoutErrorMessage"),
+                    type: "error",
+                });
+            });
     }
 
     const isActive = (href: string, exact: boolean) =>
@@ -202,8 +220,12 @@ function SidebarContent({
                                     {t("settings")}
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item value="logout" asChild cursor="pointer">
-                                <Link href="/logout">{t("logout")}</Link>
+                            <Menu.Item
+                                value="logout"
+                                cursor="pointer"
+                                onClick={logout}
+                            >
+                                {t("logout")}
                             </Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>
