@@ -17,10 +17,10 @@ export const mockRouter: Mocked<ReturnType<typeof navigation.useRouter>> = {
 /**
  * Partial mock implementation of navigations that are locale-aware.
  */
-export const mockNavigation: Mocked<Partial<typeof navigation>> = {
+export const mockNavigation = {
     usePathname: vi.fn(() => "/"),
     useRouter: vi.fn(() => mockRouter),
-};
+} satisfies Mocked<Partial<typeof navigation>>;
 
 /**
  * Partial mock implementation of `next-intl`.

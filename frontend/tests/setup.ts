@@ -1,6 +1,43 @@
 import "@testing-library/jest-dom";
 import { createElement, PropsWithChildren } from "react";
 
+Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: (query: string) => ({
+        // Match Chakra UI's desktop-sized breakpoints.
+        matches: query.includes("min-width") || query.includes("md"),
+        media: query,
+        onchange: null,
+        addListener: () => {
+            /* empty */
+        },
+        removeListener: () => {
+            /* empty */
+        },
+        addEventListener: () => {
+            /* empty */
+        },
+        removeEventListener: () => {
+            /* empty */
+        },
+        dispatchEvent: () => false,
+    }),
+});
+
+class ResizeObserverMock implements ResizeObserver {
+    disconnect() {
+        // Mock
+    }
+    observe() {
+        // Mock
+    }
+    unobserve() {
+        // Mock
+    }
+}
+
+global.ResizeObserver = ResizeObserverMock;
+
 vi.mock("@/i18n/navigation", async () => {
     const { mockNavigation } = await import("./mocks");
 
