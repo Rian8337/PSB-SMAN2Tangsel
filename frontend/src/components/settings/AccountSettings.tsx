@@ -17,6 +17,7 @@ import { useState } from "react";
 import { toaster } from "../ui/toaster";
 
 export function AccountSettings() {
+    const formT = useTranslations("Form");
     const t = useTranslations("AccountSettings");
     const userApiClient = useUserApiClient();
     const [currentPassword, setCurrentPassword] = useState("");
@@ -29,7 +30,7 @@ export function AccountSettings() {
         setError(null);
 
         if (!currentPassword || !newPassword) {
-            setError(t("formMissingFields"));
+            setError(formT("missingFields"));
             return;
         }
 
@@ -130,7 +131,7 @@ export function AccountSettings() {
                     />
 
                     <Text fontSize="xs" color="gray.500" mt={2}>
-                        {t("passwordRequirements")}
+                        {formT("passwordRequirements")}
                     </Text>
                 </Box>
 
