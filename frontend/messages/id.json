@@ -61,6 +61,27 @@
         "errorTitle": "Gagal Menghapus Pengguna",
         "errorMessage": "Terjadi kesalahan saat menghapus pengguna. Silakan coba lagi."
       }
+    },
+    "createUser": {
+      "dialog": {
+        "title": "Daftar Pengguna Baru",
+        "nameLabel": "Nama Lengkap",
+        "namePlaceholder": "Masukkan nama lengkap",
+        "identifierLabel": "NISN / NIP",
+        "identifierPlaceholder": "Masukkan NISN atau NIP",
+        "roleLabel": "Peran",
+        "rolePlaceholder": "Pilih peran pengguna",
+        "passwordLabel": "Kata Sandi Awal",
+        "passwordPlaceholder": "Masukkan kata sandi awal",
+        "cancelButton": "Batal",
+        "submitButton": "Buat Pengguna"
+      },
+      "toast": {
+        "successTitle": "Pengguna Berhasil Dibuat",
+        "successMessage": "Pengguna \"{name}\" telah berhasil dibuat.",
+        "errorTitle": "Gagal Membuat Pengguna",
+        "errorMessage": "Terjadi kesalahan saat membuat pengguna. Silakan coba lagi."
+      }
     }
   },
   "Form": {

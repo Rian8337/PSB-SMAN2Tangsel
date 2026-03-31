@@ -1,10 +1,6 @@
 "use client";
 
 import { useUserApiClient } from "@/providers/api/user-api-provider";
-import { UserListItem, UserRole } from "@psb/shared/types";
-import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
-import { toaster } from "../ui/toaster";
 import {
     Badge,
     Box,
@@ -15,7 +11,12 @@ import {
     Spinner,
     Table,
 } from "@chakra-ui/react";
+import { UserListItem, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useState } from "react";
+import { toaster } from "../ui/toaster";
+import { CreateUserModal } from "./CreateUserModal";
 
 interface AccountManagementProps {
     currentUserId: number;
@@ -28,6 +29,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const [users, setUsers] = useState<UserListItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
@@ -134,6 +136,9 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     bg="blue.600"
                     color="white"
                     _hover={{ bg: "blue.700" }}
+                    onClick={() => {
+                        setIsCreateModalOpen(true);
+                    }}
                 >
                     <Plus size={18} style={{ marginRight: "8px" }} />
                     {t("registerButton")}
@@ -265,6 +270,16 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     </Table.Root>
                 )}
             </Box>
+
+            <CreateUserModal
+                isOpen={isCreateModalOpen}
+                onClose={() => {
+                    setIsCreateModalOpen(false);
+                }}
+                onSuccess={() => {
+                    void fetchUsers();
+                }}
+            />
         </Box>
     );
 }

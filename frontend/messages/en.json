@@ -61,6 +61,27 @@
         "errorTitle": "Failed to Delete User",
         "errorMessage": "An error occurred while deleting the user. Please try again."
       }
+    },
+    "createUser": {
+      "dialog": {
+        "title": "Register New User",
+        "nameLabel": "Full Name",
+        "namePlaceholder": "Enter full name",
+        "identifierLabel": "NISN / NIP",
+        "identifierPlaceholder": "Enter NISN or NIP",
+        "roleLabel": "Role",
+        "rolePlaceholder": "Select role",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter password",
+        "cancelButton": "Cancel",
+        "submitButton": "Create User"
+      },
+      "toast": {
+        "successTitle": "User Created",
+        "successMessage": "User \"{name}\" has been successfully created.",
+        "errorTitle": "Failed to Create User",
+        "errorMessage": "An error occurred while creating the user. Please try again."
+      }
     }
   },
   "Form": {
