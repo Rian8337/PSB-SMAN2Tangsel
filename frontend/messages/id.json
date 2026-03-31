@@ -52,7 +52,16 @@
     "actions": {
       "view": "Lihat"
     },
-    "emptyState": "Tidak ada pengguna yang ditemukan."
+    "emptyState": "Tidak ada pengguna yang ditemukan.",
+    "deleteUser": {
+      "confirmation": "Apakah Anda yakin ingin menghapus pengguna \"{name}\"? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Pengguna Berhasil Dihapus",
+        "successMessage": "Pengguna \"{name}\" telah berhasil dihapus.",
+        "errorTitle": "Gagal Menghapus Pengguna",
+        "errorMessage": "Terjadi kesalahan saat menghapus pengguna. Silakan coba lagi."
+      }
+    }
   },
   "AccountSettings": {
     "title": "Pengaturan Akun",

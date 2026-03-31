@@ -52,7 +52,16 @@
     "actions": {
       "view": "View"
     },
-    "emptyState": "No users found."
+    "emptyState": "No users found.",
+    "deleteUser": {
+      "confirmation": "Are you sure you want to delete user \"{name}\"? This action cannot be undone.",
+      "toast": {
+        "successTitle": "User Deleted",
+        "successMessage": "User \"{name}\" has been successfully deleted.",
+        "errorTitle": "Failed to Delete User",
+        "errorMessage": "An error occurred while deleting the user. Please try again."
+      }
+    }
   },
   "AccountSettings": {
     "title": "Account Settings",

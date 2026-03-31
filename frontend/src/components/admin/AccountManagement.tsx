@@ -15,9 +15,13 @@ import {
     Spinner,
     Table,
 } from "@chakra-ui/react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 
-export function AccountManagement() {
+interface AccountManagementProps {
+    currentUserId: number;
+}
+
+export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const t = useTranslations("AccountManagement");
     const userApiClient = useUserApiClient();
 
@@ -46,6 +50,29 @@ export function AccountManagement() {
     useEffect(() => {
         void fetchUsers();
     }, [fetchUsers]);
+
+    const handleDelete = async (userId: number, userName: string) => {
+        if (!confirm(t("deleteUser.confirmation", { name: userName }))) {
+            return;
+        }
+
+        try {
+            // TODO: delete user
+            toaster.create({
+                title: t("deleteUser.toast.successTitle"),
+                description: t("deleteUser.toast.successMessage", {
+                    name: userName,
+                }),
+                type: "success",
+            });
+        } catch {
+            toaster.create({
+                title: t("deleteUser.toast.errorTitle"),
+                description: t("deleteUser.toast.errorMessage"),
+                type: "error",
+            });
+        }
+    };
 
     const filteredUsers = users.filter((user) => {
         const query = searchQuery.toLowerCase();
@@ -103,7 +130,7 @@ export function AccountManagement() {
 
                 <Button
                     w={{ base: "full", md: "auto" }}
-                    colorScheme="blue"
+                    colorPalette="blue"
                     bg="blue.600"
                     color="white"
                     _hover={{ bg: "blue.700" }}
@@ -165,7 +192,7 @@ export function AccountManagement() {
 
                                         <Table.Cell>
                                             <Badge
-                                                colorScheme={
+                                                colorPalette={
                                                     user.role ===
                                                     UserRole.administrator
                                                         ? "purple"
@@ -183,7 +210,7 @@ export function AccountManagement() {
 
                                         <Table.Cell>
                                             <Badge
-                                                colorScheme={
+                                                colorPalette={
                                                     user.active
                                                         ? "green"
                                                         : "red"
@@ -203,6 +230,22 @@ export function AccountManagement() {
                                             >
                                                 {t("actions.view")}
                                             </Button>
+
+                                            {user.id !== currentUserId && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    colorPalette="red"
+                                                    onClick={() => {
+                                                        void handleDelete(
+                                                            user.id,
+                                                            user.name,
+                                                        );
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            )}
                                         </Table.Cell>
                                     </Table.Row>
                                 ))
