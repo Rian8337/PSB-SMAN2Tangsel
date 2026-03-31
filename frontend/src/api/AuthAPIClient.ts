@@ -14,11 +14,11 @@ export class AuthAPIClient extends APIClient implements IAuthAPIClient {
         return super.baseURL + "/auth";
     }
 
-    async login(id: string, password: string): Promise<void> {
-        await this.post("/login", {
+    async login(id: string, password: string): Promise<LoginResponseBody> {
+        return this.post("/login", {
             body: JSON.stringify({ id, password }),
             headers: { "Content-Type": "application/json" },
-        });
+        }).then((res) => res.json() as Promise<LoginResponseBody>);
     }
 
     async logout(): Promise<void> {

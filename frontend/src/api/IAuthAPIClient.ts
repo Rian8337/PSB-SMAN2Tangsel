@@ -1,4 +1,4 @@
-import { SuccessfulLoginResponse } from "@psb/shared/types";
+import { LoginResponseBody, SuccessfulLoginResponse } from "@psb/shared/types";
 
 /**
  * Provides operations for authentication-related API calls.
@@ -9,9 +9,9 @@ export interface IAuthAPIClient {
      *
      * @param id The ID of the user to log in.
      * @param password The password of the user to log in.
-     * @returns A promise that resolves when the login is successful, or rejects with an error if the login fails.
+     * @returns The login response.
      */
-    login(id: string, password: string): Promise<void>;
+    login(id: string, password: string): Promise<LoginResponseBody>;
 
     /**
      * Logs out the currently authenticated user.

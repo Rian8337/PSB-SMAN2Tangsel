@@ -11,6 +11,7 @@ import {
     Stack,
     Text,
 } from "@chakra-ui/react";
+import { isSuccessfulLogin, UserRole } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -30,9 +31,22 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            await authApiClient.login(id, password);
+            const loginResponse = await authApiClient.login(id, password);
 
-            router.push("/dashboard");
+            if (isSuccessfulLogin(loginResponse)) {
+                switch (loginResponse.role) {
+                    case UserRole.student:
+                    case UserRole.teacher:
+                        router.push("/dashboard");
+                        break;
+
+                    case UserRole.administrator:
+                        router.push("/admin");
+                        break;
+                }
+            } else {
+                setError(loginResponse.error);
+            }
         } catch (e) {
             setError(e instanceof Error ? e.message : t("error"));
         } finally {
