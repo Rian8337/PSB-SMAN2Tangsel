@@ -21,7 +21,7 @@ export default function HomePage() {
                     {t("description")}
                 </Text>
 
-                <Button asChild colorScheme="blue" size="lg" mt={4} w="full">
+                <Button asChild colorPalette="blue" size="lg" mt={4} w="full">
                     <Link href="/login">{t("loginButton")}</Link>
                 </Button>
             </VStack>

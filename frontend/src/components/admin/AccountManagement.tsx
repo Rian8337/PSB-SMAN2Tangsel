@@ -226,7 +226,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                                         <Table.Cell textAlign="right">
                                             <Button
                                                 variant="ghost"
-                                                colorScheme="blue"
+                                                colorPalette="blue"
                                             >
                                                 {t("actions.view")}
                                             </Button>
