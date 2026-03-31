@@ -16,7 +16,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toaster } from "../ui/toaster";
 
-interface CreateUserModalProps {
+export interface CreateUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
@@ -111,7 +111,7 @@ export function CreateUserModal({
 
             <Dialog.Content>
                 <Dialog.Header>
-                    <Dialog.Title>Register New User</Dialog.Title>
+                    <Dialog.Title>{t("createUser.dialog.title")}</Dialog.Title>
                 </Dialog.Header>
 
                 <Dialog.Body>
