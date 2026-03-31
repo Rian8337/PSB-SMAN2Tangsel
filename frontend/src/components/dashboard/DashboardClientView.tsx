@@ -17,7 +17,7 @@ export function DashboardClientView({
     name,
     schedules,
 }: DashboardClientViewProps) {
-    const t = useTranslations("DashboardClientView");
+    const t = useTranslations("Dashboard");
     const scheduleApiClient = useScheduleApiClient();
 
     function handleDownload() {

@@ -81,7 +81,8 @@
     "login": "Masuk",
     "error": "Terjadi kesalahan. Silakan coba lagi."
   },
-  "DashboardClientView": {
+  "Dashboard": {
+    "title": "Dasbor",
     "welcome": "Selamat datang, {name}!",
     "downloadSchedule": "Unduh Jadwal",
     "downloadScheduleErrorTitle": "Gagal Mengunduh Jadwal",
