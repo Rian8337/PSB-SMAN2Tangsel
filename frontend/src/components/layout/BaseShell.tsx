@@ -114,6 +114,7 @@ function SidebarContent({
                             >
                                 <IconButton
                                     aria-label={item.label}
+                                    aria-current={active ? "page" : undefined}
                                     variant={active ? "solid" : "ghost"}
                                     bg={
                                         active
