@@ -46,10 +46,11 @@ describe("ScheduleGrid (unit)", () => {
         const classBlock = screen.getByText(/matematika lanjut/i);
         expect(classBlock).toBeInTheDocument();
 
+        const innerFlex = classBlock.closest("div");
+        const parentBox = innerFlex?.parentElement;
+
         // Start is 8:00 (start hour is 6), so top offset should be (8 - 6) * 5rem = 10rem.
         // End is 9:30 (1.5 hours), so height should be 1.5 * 5rem = 7.5rem.
-        const parentBox = classBlock.closest("div");
-
         expect(parentBox).toHaveStyle({
             top: "10rem",
             height: "7.5rem",
@@ -70,7 +71,8 @@ describe("ScheduleGrid (unit)", () => {
         renderScheduleGrid(mockSchedule);
 
         const classBlock = screen.getByText(/fisika/i);
-        const parentBox = classBlock.closest("div");
+        const innerFlex = classBlock.closest("div");
+        const parentBox = innerFlex?.parentElement;
 
         // 10:15 is 10.25 in decimal. Top: (10.25 - 6) * 5 = 4.25 * 5 = 21.25rem
         // 12:45 is 12.75 in decimal. Height: (12.75 - 10.25) * 5 = 2.5 * 5 = 12.5rem
