@@ -104,9 +104,7 @@ function SidebarContent({
                         <Link
                             key={item.href}
                             href={item.href}
-                            onClick={() => {
-                                onClose?.();
-                            }}
+                            onClick={onClose}
                         >
                             <Flex
                                 align="center"
