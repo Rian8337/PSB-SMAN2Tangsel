@@ -1,4 +1,30 @@
 {
+  "AdminDashboard": {
+    "title": "Ikhtisar Admin",
+    "welcome": "Selamat datang, {name}!",
+    "cards": {
+      "users": {
+        "title": "Manajemen Akun",
+        "description": "Buat, edit, dan kelola akun siswa, guru, dan admin."
+      },
+      "academicYears": {
+        "title": "Tahun Ajaran",
+        "description": "Konfigurasi semester dan tahun ajaran aktif."
+      },
+      "subjects": {
+        "title": "Mata Pelajaran",
+        "description": "Kelola daftar mata pelajaran yang diajarkan di sekolah."
+      },
+      "classes": {
+        "title": "Kelas",
+        "description": "Atur ruang kelas, kapasitas, dan tetapkan wali kelas."
+      },
+      "schedules": {
+        "title": "Jadwal",
+        "description": "Buat dan edit jadwal kelas mingguan serta mata pelajaran."
+      }
+    }
+  },
   "AccountManagement": {
     "title": "Manajemen Akun",
     "searchPlaceholder": "Cari pengguna berdasarkan nama atau ID...",

@@ -1,4 +1,30 @@
 {
+  "AdminDashboard": {
+    "title": "Admin Overview",
+    "welcome": "Welcome back, {name}!",
+    "cards": {
+      "users": {
+        "title": "Account Management",
+        "description": "Create, edit, and manage student, teacher, and admin accounts."
+      },
+      "academicYears": {
+        "title": "Academic Years",
+        "description": "Configure semesters, terms, and active school years."
+      },
+      "subjects": {
+        "title": "Subjects",
+        "description": "Manage the list of subjects taught at the school."
+      },
+      "classes": {
+        "title": "Classes",
+        "description": "Set up classrooms, capacities, and assign homeroom teachers."
+      },
+      "schedules": {
+        "title": "Schedules",
+        "description": "Create and edit weekly class schedules and subjects."
+      }
+    }
+  },
   "AccountManagement": {
     "title": "Account Management",
     "searchPlaceholder": "Search users by name or ID...",
