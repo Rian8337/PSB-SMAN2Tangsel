@@ -1,5 +1,6 @@
 import LoginPage from "@/app/[locale]/(public)/login/page";
 import { AuthApiProvider } from "@/providers/api/auth-api-provider";
+import { UserRole } from "@psb/shared/types";
 import { mockAuthApiClient, mockRouter } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -26,7 +27,11 @@ describe("LoginPage", () => {
     });
 
     it("sends credentials to the API on submit", async () => {
-        mockAuthApiClient.login.mockResolvedValueOnce(undefined);
+        mockAuthApiClient.login.mockResolvedValueOnce({
+            id: 1234567890,
+            name: "John Doe",
+            role: UserRole.student,
+        });
 
         renderPage();
 
@@ -39,10 +44,35 @@ describe("LoginPage", () => {
                 "1234567890",
                 "secret",
             );
-
-            expect(mockRouter.push).toHaveBeenCalledWith("/dashboard");
         });
     });
+
+    it.each([
+        { role: UserRole.student, expectedPath: "/dashboard" },
+        { role: UserRole.teacher, expectedPath: "/dashboard" },
+        { role: UserRole.administrator, expectedPath: "/admin" },
+    ])(
+        "navigates to $expectedPath for $role",
+        async ({ role, expectedPath }) => {
+            mockAuthApiClient.login.mockResolvedValueOnce({
+                id: 1234567890,
+                name: "John Doe",
+                role,
+            });
+
+            renderPage();
+
+            await userEvent.type(screen.getByLabelText("id"), "1234567890");
+            await userEvent.type(screen.getByLabelText("password"), "secret");
+            await userEvent.click(
+                screen.getByRole("button", { name: "login" }),
+            );
+
+            await waitFor(() => {
+                expect(mockRouter.push).toHaveBeenCalledWith(expectedPath);
+            });
+        },
+    );
 
     it("shows an error on failed login", async () => {
         mockAuthApiClient.login.mockRejectedValueOnce(
