@@ -168,6 +168,11 @@ export function createDatabaseManager(db: DrizzleDb) {
 
     return {
         /**
+         * The Drizzle database instance that the manager is connected to.
+         */
+        db,
+
+        /**
          * Seeds primary tables ({@link schema.administrators}, {@link schema.attachments}, {@link schema.sessions},
          * {@link schema.subjects}, {@link schema.students}, {@link schema.teachers}, and {@link schema.users})
          * with {@link seededPrimaryData}.
