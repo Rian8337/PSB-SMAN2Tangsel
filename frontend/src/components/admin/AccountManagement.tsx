@@ -121,6 +121,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     </Box>
 
                     <Input
+                        name="search"
                         pl={10}
                         placeholder={t("searchPlaceholder")}
                         value={searchQuery}

@@ -138,6 +138,7 @@ export function CreateUserModal({
                             </Field.Label>
 
                             <Input
+                                name="name"
                                 value={name}
                                 onChange={(e) => {
                                     setName(e.target.value);
@@ -152,6 +153,7 @@ export function CreateUserModal({
                             <Field.Label>{t("columns.identifier")}</Field.Label>
 
                             <Input
+                                name="identifier"
                                 value={identifier}
                                 onChange={(e) => {
                                     setIdentifier(e.target.value);
@@ -169,6 +171,7 @@ export function CreateUserModal({
 
                             <NativeSelect.Root>
                                 <NativeSelect.Field
+                                    name="role"
                                     value={role.toString()}
                                     onChange={(e) => {
                                         setRole(
@@ -202,6 +205,7 @@ export function CreateUserModal({
                             </Field.Label>
 
                             <Input
+                                name="password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => {
