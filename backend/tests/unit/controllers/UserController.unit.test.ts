@@ -294,4 +294,57 @@ describe("UserController (unit)", () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
     });
+
+    describe("deleteUser", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            { error: string }
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.administrator,
+                    staffId: 1,
+                },
+                params: {
+                    id: "2",
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should return 204 on successful user deletion", async () => {
+            mockUserService.delete.mockResolvedValue(undefined);
+
+            await controller.deleteUser(req, res);
+
+            expect(mockUserService.delete).toHaveBeenCalledWith(2);
+            expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])(
+            "should return 400 for invalid params: %o",
+            async (invalidParams) => {
+                req.params = invalidParams;
+
+                await controller.deleteUser(req, res);
+
+                expect(mockUserService.delete).not.toHaveBeenCalled();
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+    });
 });
