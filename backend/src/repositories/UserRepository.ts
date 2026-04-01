@@ -2,7 +2,13 @@ import { Injectable } from "@/decorators/injectable";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IUserRepository } from "./IUserRepository";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { DrizzleDb, User, UserListItem, UserRole } from "@psb/shared/types";
+import {
+    DrizzleDb,
+    Transaction,
+    User,
+    UserListItem,
+    UserRole,
+} from "@psb/shared/types";
 import { administrators, students, teachers, users } from "@psb/shared/schema";
 import { eq } from "drizzle-orm";
 import { inject } from "tsyringe";
@@ -112,5 +118,11 @@ export class UserRepository
             .update(users)
             .set({ password: newPasswordHash })
             .where(eq(users.id, userId));
+    }
+
+    async delete(userId: number, tx?: Transaction): Promise<void> {
+        const ctx = tx ?? this.db;
+
+        await ctx.delete(users).where(eq(users.id, userId));
     }
 }

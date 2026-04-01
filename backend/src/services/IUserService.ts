@@ -56,4 +56,11 @@ export interface IUserService {
         currentPassword: string,
         newPassword: string,
     ): Promise<void>;
+
+    /**
+     * Deletes an existing user.
+     *
+     * @param userId The ID of the user to be deleted.
+     */
+    delete(userId: number): Promise<void>;
 }

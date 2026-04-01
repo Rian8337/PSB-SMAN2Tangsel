@@ -3,7 +3,7 @@ import { BaseController } from "./BaseController";
 import { inject } from "tsyringe";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
-import { Get, Patch, Post } from "@/decorators/routes";
+import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { Roles } from "@/decorators/roles";
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
@@ -189,6 +189,34 @@ export class UserController extends BaseController {
             );
 
             res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Deletes a user.
+     */
+    @Delete("/:id")
+    @Roles(UserRole.administrator)
+    async deleteUser(
+        req: Request<{ id: string }, { error: string }>,
+        res: Response<{ error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const userId = parseInt(req.params.id, 10);
+
+            if (Number.isNaN(userId) || userId <= 0) {
+                throw new BadRequestError();
+            }
+
+            await this.userService.delete(userId);
+
+            res.sendStatus(204);
         } catch (e) {
             this.handleError(req, res, e);
         }

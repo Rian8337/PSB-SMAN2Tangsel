@@ -1,4 +1,4 @@
-import { User, UserListItem, UserRole } from "@psb/shared/types";
+import { Transaction, User, UserListItem, UserRole } from "@psb/shared/types";
 
 /**
  * Defines operations for accessing and managing user data in the database.
@@ -51,4 +51,12 @@ export interface IUserRepository {
      * @param newPasswordHash The new hashed password to be set for the user.
      */
     updatePassword(userId: number, newPasswordHash: string): Promise<void>;
+
+    /**
+     * Deletes an existing user from the database.
+     *
+     * @param userId The ID of the user to be deleted.
+     * @param tx An optional transaction object to execute the delete operation within a transaction. If not provided, the delete operation will be executed without a transaction.
+     */
+    delete(userId: number, tx?: Transaction): Promise<void>;
 }

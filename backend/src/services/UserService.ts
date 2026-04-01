@@ -1,6 +1,6 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { IUserRepository } from "@/repositories";
+import { ITransactionManager, IUserRepository } from "@/repositories";
 import { BadRequestError, NotFoundError } from "@/types";
 import { User, UserListItem, UserRole } from "@psb/shared/types";
 import { passwordRegex } from "@psb/shared/validator";
@@ -14,6 +14,8 @@ import { IUserService } from "./IUserService";
 @Injectable(dependencyTokens.userService)
 export class UserService implements IUserService {
     constructor(
+        @inject(dependencyTokens.transactionManager)
+        private readonly transactionManager: ITransactionManager,
         @inject(dependencyTokens.userRepository)
         private readonly userRepository: IUserRepository,
     ) {}
@@ -120,5 +122,20 @@ export class UserService implements IUserService {
             userId,
             await hash(newPassword, 12),
         );
+    }
+
+    async delete(userId: number): Promise<void> {
+        const user = await this.userRepository.findById(userId);
+
+        if (!user) {
+            throw new NotFoundError("userService.userNotFound");
+        }
+
+        await this.transactionManager.execute(async (tx) => {
+            // TODO: delete user's related data (e.g. assignment submissions) in a transaction when the corresponding repositories are implemented
+            await this.userRepository.delete(user.id, tx);
+        });
+
+        // TODO: delete assignment submission files for students
     }
 }
