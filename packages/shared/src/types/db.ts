@@ -1,10 +1,9 @@
-import { MySql2Database } from "drizzle-orm/mysql2";
-import * as schema from "../database/schema";
+import { createDatabase } from "../database";
 
 /**
  * The type of the Drizzle database.
  */
-export type DrizzleDb = MySql2Database<typeof schema>;
+export type DrizzleDb = ReturnType<typeof createDatabase>;
 
 /**
  * The type of a Drizzle transaction, which is the parameter of the callback function passed to `db.transaction()`.
