@@ -19,10 +19,27 @@ export async function loginTeacher(page: Page) {
     await loginUser(page, seededPrimaryData.teachers[0].staffId.toString());
 }
 
-async function loginUser(page: Page, identifier: string) {
+/**
+ * Logs in as the first seeded administrator and waits for the dashboard to load.
+ *
+ * @param page The Playwright page object to perform actions on.
+ */
+export async function loginAdministrator(page: Page) {
+    await loginUser(
+        page,
+        seededPrimaryData.administrators[0].staffId.toString(),
+        "**/admin",
+    );
+}
+
+async function loginUser(
+    page: Page,
+    identifier: string,
+    waitURL = "**/dashboard",
+) {
     await page.goto("/login");
     await page.fill('input[name="id"]', identifier);
     await page.fill('input[name="password"]', "password123");
     await page.click('button[type="submit"]');
-    await page.waitForURL("**/dashboard");
+    await page.waitForURL(waitURL);
 }
