@@ -1,16 +1,15 @@
+import { relations } from "drizzle-orm";
 import {
     boolean,
     int,
     mysqlTable,
-    text,
     tinyint,
     varchar,
 } from "drizzle-orm/mysql-core";
 import { UserRole } from "../../types";
-import { relations } from "drizzle-orm";
+import { administrators } from "./administrators";
 import { students } from "./students";
 import { teachers } from "./teachers";
-import { administrators } from "./administrators";
 
 /**
  * Base table for all users.
@@ -29,7 +28,7 @@ export const users = mysqlTable("user", {
     /**
      * The name of the user.
      */
-    name: text().notNull(),
+    name: varchar({ length: 100 }).notNull(),
 
     /**
      * The encrypted password of the user. The maximum length is 72 characters, which is the maximum length of a bcrypt hash.

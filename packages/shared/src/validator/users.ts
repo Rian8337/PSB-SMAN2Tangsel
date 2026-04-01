@@ -5,7 +5,10 @@ import { users } from "../database/schema";
  * The Zod schema for validating user insertion data.
  */
 export const insertUserSchema = createInsertSchema(users, {
-    name: (schema) => schema.min(1, "Name is required"),
+    name: (schema) =>
+        schema
+            .min(1, "Name is required")
+            .max(100, "Name must be at most 100 characters long"),
     password: (schema) =>
         schema
             .min(1, "Password is required")
