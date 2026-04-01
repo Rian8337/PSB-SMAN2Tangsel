@@ -10,7 +10,11 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         return super.baseURL + "/users";
     }
 
-    listUsers(limit?: number, offset?: number): Promise<UserListItem[]> {
+    listUsers(
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<UserListItem[]> {
         const url = new URL(this.baseURL + "/list");
 
         if (limit !== undefined) {

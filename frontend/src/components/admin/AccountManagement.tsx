@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
 import { CreateUserModal } from "./CreateUserModal";
+import { useDebounce } from "@/hooks";
 
 interface AccountManagementProps {
     currentUserId: number;
@@ -31,27 +32,31 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    const fetchUsers = useCallback(async () => {
-        setIsLoading(true);
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-        try {
-            const data = await userApiClient.listUsers();
+    const fetchUsers = useCallback(
+        async (query?: string) => {
+            setIsLoading(true);
 
-            setUsers(data);
-        } catch {
-            toaster.create({
-                title: t("fetchUserToast.errorTitle"),
-                description: t("fetchUserToast.errorMessage"),
-                type: "error",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }, [userApiClient, t]);
+            try {
+                const data = await userApiClient.listUsers(query);
+                setUsers(data);
+            } catch {
+                toaster.create({
+                    title: t("fetchUserToast.errorTitle"),
+                    description: t("fetchUserToast.errorMessage"),
+                    type: "error",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [userApiClient, t],
+    );
 
     useEffect(() => {
-        void fetchUsers();
-    }, [fetchUsers]);
+        void fetchUsers(debouncedSearchQuery);
+    }, [fetchUsers, debouncedSearchQuery]);
 
     const handleDelete = (userId: number, userName: string) => {
         if (!confirm(t("deleteUser.confirmation", { name: userName }))) {
@@ -79,15 +84,6 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                 });
             });
     };
-
-    const filteredUsers = users.filter((user) => {
-        const query = searchQuery.toLowerCase();
-
-        return (
-            user.name.toLowerCase().includes(query) ||
-            user.identifier.toLowerCase().includes(query)
-        );
-    });
 
     return (
         <Box
@@ -189,8 +185,8 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                         </Table.Header>
 
                         <Table.Body>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user) => (
+                            {users.length > 0 ? (
+                                users.map((user) => (
                                     <Table.Row key={user.id}>
                                         <Table.Cell fontWeight="medium">
                                             {user.name}
