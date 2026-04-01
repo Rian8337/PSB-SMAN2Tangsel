@@ -1,6 +1,7 @@
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import * as schema from "../database/schema";
 import { DrizzleDb, UserRole } from "../types";
+import { sql } from "drizzle-orm";
 
 //#region Global Database Seeding
 
@@ -219,7 +220,7 @@ export function createDatabaseManager(db: DrizzleDb) {
          * {@link schema.sessions}, {@link schema.subjects}, {@link schema.students}, {@link schema.teachers},
          * and {@link schema.users}).
          *
-         * While {@link schema.students}, {@link schema.teachers}, and {@link schema.users} are technically
+         * While {@link schema.students}, {@link schema.teachers}, and {@link schema.administrators} are technically
          * secondary tables, they are considered primary in this context because they are directly referenced by many
          * other tables and are essential for the integrity of the database.
          *
@@ -235,6 +236,18 @@ export function createDatabaseManager(db: DrizzleDb) {
                 await tx.delete(schema.sessions);
                 await tx.delete(schema.users);
                 await tx.delete(schema.subjects);
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.users} AUTO_INCREMENT = 1`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.subjects} AUTO_INCREMENT = 1`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.attachments} AUTO_INCREMENT = 1`,
+                );
             });
         },
 
@@ -259,6 +272,34 @@ export function createDatabaseManager(db: DrizzleDb) {
                 await tx.delete(schema.schedules);
                 await tx.delete(schema.classSubjects);
                 await tx.delete(schema.classes);
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.assignmentSubmissions} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.assignments} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.materials} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.notifications} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.schedules} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.classSubjects} AUTO_INCREMENT = 1;`,
+                );
+
+                await tx.execute(
+                    sql`ALTER TABLE ${schema.classes} AUTO_INCREMENT = 1;`,
+                );
             });
         },
 
@@ -268,27 +309,43 @@ export function createDatabaseManager(db: DrizzleDb) {
          */
         cleanupAllTables: async () => {
             await db.transaction(async (tx) => {
+                await tx.execute(sql`SET FOREIGN_KEY_CHECKS = 0;`);
+
                 // Secondary tables
-                await tx.delete(schema.assignmentAttachments);
-                await tx.delete(schema.assignmentSubmissionAttachments);
-                await tx.delete(schema.materialAttachments);
-                await tx.delete(schema.assignmentSubmissions);
-                await tx.delete(schema.assignments);
-                await tx.delete(schema.materials);
-                await tx.delete(schema.notifications);
-                await tx.delete(schema.studentClasses);
-                await tx.delete(schema.schedules);
-                await tx.delete(schema.classSubjects);
-                await tx.delete(schema.classes);
+                await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.assignmentAttachments}`,
+                );
+
+                await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.assignmentSubmissionAttachments}`,
+                );
+
+                await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.materialAttachments}`,
+                );
+
+                await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.assignmentSubmissions}`,
+                );
+
+                await tx.execute(sql`TRUNCATE TABLE ${schema.assignments}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.materials}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.notifications}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.studentClasses}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.schedules}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.classSubjects}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.classes}`);
 
                 // Primary tables
-                await tx.delete(schema.administrators);
-                await tx.delete(schema.students);
-                await tx.delete(schema.teachers);
-                await tx.delete(schema.attachments);
-                await tx.delete(schema.sessions);
-                await tx.delete(schema.users);
-                await tx.delete(schema.subjects);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.administrators}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.students}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.teachers}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.attachments}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.sessions}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.users}`);
+                await tx.execute(sql`TRUNCATE TABLE ${schema.subjects}`);
+
+                await tx.execute(sql`SET FOREIGN_KEY_CHECKS = 1;`);
             });
         },
 
