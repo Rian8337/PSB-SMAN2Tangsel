@@ -43,6 +43,16 @@ export const users = mysqlTable("user", {
      * - 2: administrator
      */
     role: tinyint().$type<UserRole>().notNull().default(0),
+
+    /**
+     * The identifier of the user.
+     *
+     * For students, this is the government-issued NISN (National Student Identification Number), which is a unique 10-digit
+     * number assigned to each student in Indonesia.
+     *
+     * For teachers and administrators, this is a school-issued staff ID.
+     */
+    identifier: varchar({ length: 50 }).unique("identifier_unique").notNull(),
 });
 
 /**

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { foreignKey, int, mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { assignmentSubmissions } from "./assignmentSubmissions";
 import { studentClasses } from "./studentClasses";
 import { users } from "./users";
@@ -14,13 +14,6 @@ export const students = mysqlTable(
          * The ID of the student, which is also the ID of the corresponding user in the {@link users} table.
          */
         userId: int().primaryKey(),
-
-        /**
-         * The government-issued NISN (National Student Identification Number) of the student.
-         *
-         * It is a unique 10-digit number assigned to each student in Indonesia.
-         */
-        nisn: varchar({ length: 10 }).unique("nisn_unique").notNull(),
     },
     (table) => [
         foreignKey({

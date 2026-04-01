@@ -12,11 +12,6 @@ export const administrators = mysqlTable(
          * The ID of the administrator, which is also the ID of the corresponding user in the {@link users} table.
          */
         userId: int().primaryKey(),
-
-        /**
-         * The school-issued staff ID of the administrator.
-         */
-        staffId: int().unique("staffid_unique").notNull(),
     },
     (table) => [
         foreignKey({

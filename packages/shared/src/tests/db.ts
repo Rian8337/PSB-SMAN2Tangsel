@@ -18,12 +18,9 @@ export const seededPrimaryData = {
     /**
      * The seeded administrators.
      */
-    administrators: [
-        {
-            userId: 1,
-            staffId: 1,
-        },
-    ] as const satisfies readonly Insert<typeof schema.administrators>[],
+    administrators: [{ userId: 1 }] as const satisfies readonly Insert<
+        typeof schema.administrators
+    >[],
 
     /**
      * The seeded attachments.
@@ -74,26 +71,16 @@ export const seededPrimaryData = {
     /**
      * The seeded students.
      */
-    students: [
-        {
-            nisn: "0012345678",
-            userId: 3,
-        },
-        {
-            nisn: "0012345679",
-            userId: 4,
-        },
-    ] as const satisfies readonly Insert<typeof schema.students>[],
+    students: [{ userId: 3 }, { userId: 4 }] as const satisfies readonly Insert<
+        typeof schema.students
+    >[],
 
     /**
      * The seeded teachers.
      */
-    teachers: [
-        {
-            userId: 2,
-            staffId: 2,
-        },
-    ] as const satisfies readonly Insert<typeof schema.teachers>[],
+    teachers: [{ userId: 2 }] as const satisfies readonly Insert<
+        typeof schema.teachers
+    >[],
 
     /**
      * The seeded users.
@@ -105,6 +92,7 @@ export const seededPrimaryData = {
             name: "Administrator",
             password: testPasswordHash,
             role: UserRole.administrator,
+            identifier: "1",
         },
         {
             active: true,
@@ -112,6 +100,7 @@ export const seededPrimaryData = {
             id: 2,
             password: testPasswordHash,
             role: UserRole.teacher,
+            identifier: "2",
         },
         {
             active: true,
@@ -119,6 +108,7 @@ export const seededPrimaryData = {
             id: 3,
             password: testPasswordHash,
             role: UserRole.student,
+            identifier: "0012345678",
         },
         {
             active: false,
@@ -126,6 +116,7 @@ export const seededPrimaryData = {
             id: 4,
             password: testPasswordHash,
             role: UserRole.student,
+            identifier: "0012345679",
         },
     ] as const satisfies readonly Insert<typeof schema.users>[],
 } as const;

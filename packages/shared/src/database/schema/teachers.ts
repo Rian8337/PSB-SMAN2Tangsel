@@ -13,11 +13,6 @@ export const teachers = mysqlTable(
          * The ID of the teacher, which is also the ID of the corresponding user in the {@link users} table.
          */
         userId: int().primaryKey(),
-
-        /**
-         * The school-issued staff ID of the teacher.
-         */
-        staffId: int().unique("staffid_unique").notNull(),
     },
     (table) => [
         foreignKey({
