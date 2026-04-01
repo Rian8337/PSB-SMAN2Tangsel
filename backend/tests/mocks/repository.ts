@@ -76,4 +76,5 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     create: vi.fn(),
     updateActiveState: vi.fn(),
     updatePassword: vi.fn(),
+    delete: vi.fn(),
 };

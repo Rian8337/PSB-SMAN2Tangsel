@@ -72,4 +72,5 @@ export const mockUserService: Mocked<IUserService> = {
     create: vi.fn(),
     updateActiveState: vi.fn(),
     updatePassword: vi.fn(),
+    delete: vi.fn(),
 };
