@@ -54,6 +54,6 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
     }
 
     async deleteUser(userId: number): Promise<void> {
-        await this.delete(`/delete/${userId.toString()}`);
+        await this.delete(`/${userId.toString()}`);
     }
 }
