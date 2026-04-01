@@ -44,6 +44,20 @@ describe("UserService (unit)", () => {
         });
     });
 
+    describe("listUsers", () => {
+        it("should delegate to UserRepository.listUsers with correct parameters", async () => {
+            mockUserRepository.listUsers.mockResolvedValue([]);
+
+            await service.listUsers("Test", 10, 20);
+
+            expect(mockUserRepository.listUsers).toHaveBeenCalledWith(
+                "Test",
+                10,
+                20,
+            );
+        });
+    });
+
     describe("create", () => {
         const validPassword = "StrongPassword123!";
 
