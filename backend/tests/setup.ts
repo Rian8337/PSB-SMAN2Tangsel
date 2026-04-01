@@ -14,6 +14,9 @@ const baseDbName =
 
 const workerDbName = `${baseDbName}_${workerId}`;
 
+// Overwrite database name in environment variables to ensure that all code uses the correct test database for this worker.
+process.env[EnvironmentVariableKey.databaseName] = workerDbName;
+
 let setupHappened = false;
 let rootConnection: Awaited<ReturnType<typeof createConnection>>;
 
@@ -38,10 +41,7 @@ beforeAll(async () => {
     );
 
     execSync("pnpm push-db:test", {
-        env: {
-            ...process.env,
-            [EnvironmentVariableKey.databaseName]: workerDbName,
-        },
+        env: process.env,
         stdio: "ignore",
     });
 

@@ -32,7 +32,7 @@ declare global {
             /**
              * The name of the database to connect to on the database server.
              */
-            readonly DB_NAME?: string;
+            DB_NAME?: string;
 
             /**
              * The secret key used for signing cookies.
