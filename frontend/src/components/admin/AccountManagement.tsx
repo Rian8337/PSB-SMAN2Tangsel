@@ -68,6 +68,8 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     }),
                     type: "success",
                 });
+
+                void fetchUsers();
             })
             .catch(() => {
                 toaster.create({
