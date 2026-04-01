@@ -67,6 +67,7 @@ export default defineConfig(
     ...nextVitals.map((config) => ({
         ...config,
         files: ["frontend/**/*.{ts,tsx}"],
+        ignores: ["frontend/tests/**/*.{ts,tsx}"],
         settings: {
             ...config.settings,
             next: {
@@ -77,6 +78,7 @@ export default defineConfig(
     ...nextTs.map((config) => ({
         ...config,
         files: ["frontend/**/*.{ts,tsx}"],
+        ignores: ["frontend/tests/**/*.{ts,tsx}"],
         settings: {
             ...config.settings,
             next: {
