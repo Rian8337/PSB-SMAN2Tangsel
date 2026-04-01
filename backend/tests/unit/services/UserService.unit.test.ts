@@ -1,7 +1,7 @@
 import { UserService } from "@/services";
 import { BadRequestError, NotFoundError } from "@/types";
 import { User, UserRole } from "@psb/shared/types";
-import { mockUserRepository } from "@test/mocks";
+import { mockTransactionManager, mockUserRepository } from "@test/mocks";
 
 const bcryptMock = vi.hoisted(() => ({
     hash: vi.fn(),
@@ -11,7 +11,7 @@ const bcryptMock = vi.hoisted(() => ({
 vi.mock("bcrypt", () => bcryptMock);
 
 describe("UserService (unit)", () => {
-    const service = new UserService(mockUserRepository);
+    const service = new UserService(mockTransactionManager, mockUserRepository);
 
     describe("findById", () => {
         it("should return a user if found", async () => {

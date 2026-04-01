@@ -6,9 +6,26 @@ import {
     ISessionRepository,
     IStudentRepository,
     ITeacherRepository,
+    ITransactionManager,
     IUserRepository,
 } from "@/repositories";
 import { Mocked } from "vitest";
+
+/**
+ * Mock implementation of {@link ITransactionManager}.
+ */
+export const mockTransactionManager: Mocked<ITransactionManager> = {
+    execute: vi.fn(
+        (callback) =>
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            callback(
+                {} as unknown as Parameters<
+                    Parameters<ITransactionManager["execute"]>[0]
+                >[0],
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ) as any,
+    ),
+};
 
 /**
  * Mock implementation of {@link IAdministratorRepository}.
