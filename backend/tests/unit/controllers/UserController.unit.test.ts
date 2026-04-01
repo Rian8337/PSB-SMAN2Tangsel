@@ -26,7 +26,7 @@ describe("UserController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     role: UserRole.administrator,
-                    staffId: 1,
+                    identifier: "1",
                 },
             });
 
@@ -135,7 +135,7 @@ describe("UserController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     role: UserRole.administrator,
-                    staffId: 1,
+                    identifier: "1",
                 },
                 body: {
                     name: "John Doe",
@@ -199,7 +199,7 @@ describe("UserController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     role: UserRole.administrator,
-                    staffId: 1,
+                    identifier: "1",
                 },
                 body: {
                     userId: 2,
@@ -261,7 +261,7 @@ describe("UserController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     role: UserRole.administrator,
-                    staffId: 1,
+                    identifier: "1",
                 },
                 body: {
                     currentPassword: "OldPassword123!",
@@ -315,7 +315,7 @@ describe("UserController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     role: UserRole.administrator,
-                    staffId: 1,
+                    identifier: "1",
                 },
                 params: {
                     id: "2",

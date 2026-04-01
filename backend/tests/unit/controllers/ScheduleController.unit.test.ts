@@ -38,7 +38,7 @@ describe("ScheduleController (unit)", () => {
 
             req.sessionData = {
                 classId: 1,
-                nisn: "1234567890",
+                identifier: "1234567890",
                 role: UserRole.student,
                 userId: 1,
             };
@@ -57,7 +57,7 @@ describe("ScheduleController (unit)", () => {
 
             req.sessionData = {
                 role: UserRole.teacher,
-                staffId: 1,
+                identifier: "1",
                 userId: 1,
             };
 
@@ -94,7 +94,7 @@ describe("ScheduleController (unit)", () => {
         it("should attach correct headers and send buffer", async () => {
             req.sessionData = {
                 classId: 1,
-                nisn: "1234567890",
+                identifier: "1234567890",
                 role: UserRole.student,
                 userId: 1,
             };
