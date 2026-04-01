@@ -31,7 +31,7 @@ export class UserController extends BaseController {
             unknown,
             UserListItem[] | { error: string },
             unknown,
-            Partial<{ limit?: string; offset?: string }>
+            Partial<{ query?: string; limit?: string; offset?: string }>
         >,
         res: Response<UserListItem[] | { error: string }>,
     ) {
@@ -40,6 +40,8 @@ export class UserController extends BaseController {
         }
 
         try {
+            const { query } = req.query;
+
             const limit = req.query.limit
                 ? parseInt(req.query.limit, 10)
                 : undefined;
@@ -47,6 +49,10 @@ export class UserController extends BaseController {
             const offset = req.query.offset
                 ? parseInt(req.query.offset, 10)
                 : undefined;
+
+            if (query !== undefined && typeof query !== "string") {
+                throw new BadRequestError("userController.invalidQueryFormat");
+            }
 
             if (limit !== undefined) {
                 if (Number.isNaN(limit)) {
@@ -68,7 +74,11 @@ export class UserController extends BaseController {
                 }
             }
 
-            const users = await this.userService.listUsers(limit, offset);
+            const users = await this.userService.listUsers(
+                query,
+                limit,
+                offset,
+            );
 
             res.json(users);
         } catch (e) {

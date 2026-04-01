@@ -30,8 +30,12 @@ export class UserService implements IUserService {
         return user;
     }
 
-    listUsers(limit?: number, offset?: number): Promise<UserListItem[]> {
-        return this.userRepository.listUsers(limit, offset);
+    listUsers(
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<UserListItem[]> {
+        return this.userRepository.listUsers(query, limit, offset);
     }
 
     async create(

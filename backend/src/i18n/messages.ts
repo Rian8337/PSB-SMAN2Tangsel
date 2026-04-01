@@ -35,6 +35,10 @@ interface Localization {
         readonly noActiveSession: string;
     };
 
+    readonly userController: {
+        readonly invalidQueryFormat: string;
+    };
+
     readonly userService: {
         readonly invalidUsername: string;
         readonly duplicatePassword: string;
@@ -88,6 +92,10 @@ export const messages = {
         sessionService: {
             noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
         },
+        userController: {
+            invalidQueryFormat:
+                "Parameter query harus berupa string jika disertakan.",
+        },
         userService: {
             invalidIdentifier: "Identifikasi tidak valid.",
             duplicatePassword:
@@ -137,6 +145,9 @@ export const messages = {
         sessionService: {
             noActiveSession:
                 "There is no active academic session at the moment.",
+        },
+        userController: {
+            invalidQueryFormat: "Parameter query must be a string if provided.",
         },
         userService: {
             invalidIdentifier: "Invalid identifier.",

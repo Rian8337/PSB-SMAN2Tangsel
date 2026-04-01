@@ -10,7 +10,7 @@ import {
     UserRole,
 } from "@psb/shared/types";
 import { administrators, students, teachers, users } from "@psb/shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, like, or } from "drizzle-orm";
 import { inject } from "tsyringe";
 
 /**
@@ -36,8 +36,8 @@ export class UserRepository
             .then((res) => res.at(0) ?? null);
     }
 
-    listUsers(limit = 5, offset = 0): Promise<UserListItem[]> {
-        return this.db
+    listUsers(query?: string, limit = 5, offset = 0): Promise<UserListItem[]> {
+        let builder = this.db
             .select({
                 id: users.id,
                 name: users.name,
@@ -45,11 +45,20 @@ export class UserRepository
                 active: users.active,
                 identifier: users.identifier,
             })
-            .from(users)
-            .leftJoin(students, eq(users.id, students.userId))
-            .leftJoin(teachers, eq(users.id, teachers.userId))
-            .limit(limit)
-            .offset(offset);
+            .from(users);
+
+        if (query) {
+            const searchParam = `%${query.trim()}%`;
+
+            builder = builder.where(
+                or(
+                    like(users.name, searchParam),
+                    like(users.identifier, searchParam),
+                ),
+            ) as typeof builder;
+        }
+
+        return builder.limit(limit).offset(offset);
     }
 
     async create(
