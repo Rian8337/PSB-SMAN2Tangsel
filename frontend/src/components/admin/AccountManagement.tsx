@@ -53,27 +53,29 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
         void fetchUsers();
     }, [fetchUsers]);
 
-    const handleDelete = async (userId: number, userName: string) => {
+    const handleDelete = (userId: number, userName: string) => {
         if (!confirm(t("deleteUser.confirmation", { name: userName }))) {
             return;
         }
 
-        try {
-            // TODO: delete user
-            toaster.create({
-                title: t("deleteUser.toast.successTitle"),
-                description: t("deleteUser.toast.successMessage", {
-                    name: userName,
-                }),
-                type: "success",
+        userApiClient
+            .deleteUser(userId)
+            .then(() => {
+                toaster.create({
+                    title: t("deleteUser.toast.successTitle"),
+                    description: t("deleteUser.toast.successMessage", {
+                        name: userName,
+                    }),
+                    type: "success",
+                });
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("deleteUser.toast.errorTitle"),
+                    description: t("deleteUser.toast.errorMessage"),
+                    type: "error",
+                });
             });
-        } catch {
-            toaster.create({
-                title: t("deleteUser.toast.errorTitle"),
-                description: t("deleteUser.toast.errorMessage"),
-                type: "error",
-            });
-        }
     };
 
     const filteredUsers = users.filter((user) => {
@@ -242,7 +244,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                                                     variant="ghost"
                                                     colorPalette="red"
                                                     onClick={() => {
-                                                        void handleDelete(
+                                                        handleDelete(
                                                             user.id,
                                                             user.name,
                                                         );

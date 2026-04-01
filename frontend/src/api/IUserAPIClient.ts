@@ -43,4 +43,11 @@ export interface IUserAPIClient {
      * @param newPassword The new password to be set for the user.
      */
     updatePassword(currentPassword: string, newPassword: string): Promise<void>;
+
+    /**
+     * Deletes an existing user.
+     *
+     * @param userId The ID of the user to be deleted.
+     */
+    deleteUser(userId: number): Promise<void>;
 }

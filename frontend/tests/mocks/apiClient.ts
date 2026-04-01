@@ -40,4 +40,5 @@ export const mockUserApiClient: Mocked<IUserAPIClient> = {
     createUser: vi.fn(),
     updateActiveState: vi.fn(),
     updatePassword: vi.fn(),
+    deleteUser: vi.fn(),
 };
