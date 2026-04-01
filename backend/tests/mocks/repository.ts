@@ -13,6 +13,8 @@ import { Mocked } from "vitest";
 
 /**
  * Mock implementation of {@link ITransactionManager}.
+ *
+ * By default, calls the provided callback with an empty object.
  */
 export const mockTransactionManager: Mocked<ITransactionManager> = {
     execute: vi.fn(
