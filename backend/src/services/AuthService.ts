@@ -1,24 +1,20 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import {
-    IAdministratorRepository,
-    IStudentRepository,
-    ITeacherRepository,
-} from "@/repositories";
+import { IStudentRepository, IUserRepository } from "@/repositories";
 import {
     EnvironmentVariableKey,
     LoginResult,
     SessionData,
     UnauthorizedError,
 } from "@/types";
-import { User, UserRole } from "@psb/shared/types";
+import { sessionDataValidator } from "@/validators";
+import { UserRole } from "@psb/shared/types";
 import { compare, hashSync } from "bcrypt";
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import { RequestHandler, Response } from "express";
 import { inject } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { IConfigService } from "./IConfigService";
-import { sessionDataValidator } from "@/validators";
 
 /**
  * A service that handles authentication using encrypted, signed session cookies.
@@ -43,12 +39,10 @@ export class AuthService implements IAuthService {
     constructor(
         @inject(dependencyTokens.configService)
         private readonly configService: IConfigService,
+        @inject(dependencyTokens.userRepository)
+        private readonly userRepository: IUserRepository,
         @inject(dependencyTokens.studentRepository)
         private readonly studentRepository: IStudentRepository,
-        @inject(dependencyTokens.teacherRepository)
-        private readonly teacherRepository: ITeacherRepository,
-        @inject(dependencyTokens.administratorRepository)
-        private readonly administratorRepository: IAdministratorRepository,
     ) {
         const keyHex = this.configService.getEnvironmentVariable(
             EnvironmentVariableKey.sessionEncryptionKey,
@@ -83,11 +77,44 @@ export class AuthService implements IAuthService {
     }
 
     async login(id: string, password: string): Promise<LoginResult> {
-        if (/^\d{10}$/.test(id)) {
-            return this.loginStudent(id, password);
+        const user = await this.userRepository.findByIdentifier(id);
+
+        if (!user?.active) {
+            await this.simulatePasswordHashingDelay();
+            throw new UnauthorizedError("auth.invalidCredentials");
         }
 
-        return this.loginStaff(id, password);
+        const isPasswordValid = await compare(password, user.password);
+
+        if (!isPasswordValid) {
+            throw new UnauthorizedError("auth.invalidCredentials");
+        }
+
+        let sessionData: SessionData;
+
+        switch (user.role) {
+            case UserRole.student:
+                sessionData = {
+                    userId: user.id,
+                    identifier: user.identifier,
+                    role: user.role,
+                    classId:
+                        (await this.studentRepository.getClassId(user.id)) ??
+                        undefined,
+                };
+                break;
+
+            case UserRole.teacher:
+            case UserRole.administrator:
+                sessionData = {
+                    userId: user.id,
+                    identifier: user.identifier,
+                    role: user.role,
+                };
+                break;
+        }
+
+        return { user, sessionData };
     }
 
     createSession(res: Response, data: unknown): void {
@@ -226,71 +253,6 @@ export class AuthService implements IAuthService {
             }
 
             throw new UnauthorizedError("auth.invalidSession");
-        }
-    }
-
-    private async loginStudent(
-        nisn: string,
-        password: string,
-    ): Promise<LoginResult> {
-        const studentLoginData =
-            await this.studentRepository.getLoginData(nisn);
-
-        if (!studentLoginData) {
-            await this.simulatePasswordHashingDelay();
-
-            throw new UnauthorizedError("auth.invalidCredentials");
-        }
-
-        await this.validateCredentials(studentLoginData.user, password);
-
-        return studentLoginData;
-    }
-
-    private async loginStaff(
-        id: string,
-        password: string,
-    ): Promise<LoginResult> {
-        if (!/^[1-9]\d*$/.test(id)) {
-            throw new UnauthorizedError("auth.invalidStaffId");
-        }
-
-        const staffId = parseInt(id, 10);
-
-        // Attempt teacher login first in case of ID conflicts with administrator.
-        const teacherLoginData =
-            await this.teacherRepository.getLoginData(staffId);
-
-        if (teacherLoginData) {
-            await this.validateCredentials(teacherLoginData.user, password);
-
-            return teacherLoginData;
-        }
-
-        const administratorLoginData =
-            await this.administratorRepository.getLoginData(staffId);
-
-        if (!administratorLoginData) {
-            await this.simulatePasswordHashingDelay();
-            throw new UnauthorizedError("auth.invalidCredentials");
-        }
-
-        await this.validateCredentials(administratorLoginData.user, password);
-
-        return administratorLoginData;
-    }
-
-    private async validateCredentials(user: User, password: string) {
-        let isPasswordValid = false;
-
-        if (user.active) {
-            isPasswordValid = await compare(password, user.password);
-        } else {
-            await this.simulatePasswordHashingDelay();
-        }
-
-        if (!user.active || !isPasswordValid) {
-            throw new UnauthorizedError("auth.invalidCredentials");
         }
     }
 

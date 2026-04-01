@@ -7,7 +7,7 @@ import z from "zod";
 export const studentSessionDataValidator = z.object({
     userId: z.number().int().min(1),
     role: z.literal(UserRole.student),
-    nisn: z.string().length(10),
+    identifier: z.string().length(10),
     classId: z.number().int().min(1).optional(),
 });
 
@@ -17,7 +17,7 @@ export const studentSessionDataValidator = z.object({
 export const teacherSessionDataValidator = z.object({
     userId: z.number().int().min(1),
     role: z.literal(UserRole.teacher),
-    staffId: z.number().int().min(1),
+    identifier: z.string().min(1),
 });
 
 /**
@@ -26,7 +26,7 @@ export const teacherSessionDataValidator = z.object({
 export const administratorSessionDataValidator = z.object({
     userId: z.number().int().min(1),
     role: z.literal(UserRole.administrator),
-    staffId: z.number().int().min(1),
+    identifier: z.string().min(1),
 });
 
 /**

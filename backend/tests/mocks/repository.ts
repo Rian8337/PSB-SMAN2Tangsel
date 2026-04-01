@@ -34,7 +34,6 @@ export const mockTransactionManager: Mocked<ITransactionManager> = {
  */
 export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
     findByStaffId: vi.fn(),
-    getLoginData: vi.fn(),
 };
 
 /**
@@ -74,8 +73,7 @@ export const mockSessionRepository: Mocked<ISessionRepository> = {
  * Mock implementation of {@link IStudentRepository}.
  */
 export const mockStudentRepository: Mocked<IStudentRepository> = {
-    findByNISN: vi.fn(),
-    getLoginData: vi.fn(),
+    getClassId: vi.fn(() => Promise.resolve(null)),
 };
 
 /**
@@ -83,7 +81,6 @@ export const mockStudentRepository: Mocked<IStudentRepository> = {
  */
 export const mockTeacherRepository: Mocked<ITeacherRepository> = {
     findByStaffId: vi.fn(),
-    getLoginData: vi.fn(),
 };
 
 /**
@@ -91,6 +88,7 @@ export const mockTeacherRepository: Mocked<ITeacherRepository> = {
  */
 export const mockUserRepository: Mocked<IUserRepository> = {
     findById: vi.fn(),
+    findByIdentifier: vi.fn(),
     listUsers: vi.fn(),
     create: vi.fn(),
     updateActiveState: vi.fn(),

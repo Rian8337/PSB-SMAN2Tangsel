@@ -8,9 +8,17 @@ export interface IUserRepository {
      * Finds a user by their ID.
      *
      * @param id The ID of the user.
-     * @return The user with the specified ID, or `null` if no such user exists.
+     * @returns The user with the specified ID, or `null` if no such user exists.
      */
     findById(id: number): Promise<User | null>;
+
+    /**
+     * Finds a user by their unique identifier (NISN for students, staff ID for teachers and administrators).
+     *
+     * @param identifier The unique identifier of the user.
+     * @returns The user with the specified identifier, or `null` if no such user exists.
+     */
+    findByIdentifier(identifier: string): Promise<User | null>;
 
     /**
      * Fetches a list of users for display in the UI.

@@ -1,25 +1,28 @@
-import { LoginResult, StudentSessionData } from "@/types";
-import { Student } from "@psb/shared/types";
+import { ValidSemester, ValidSession } from "@psb/shared/types";
 
 /**
  * Defines operations for accessing and managing student data in the database.
  */
 export interface IStudentRepository {
     /**
-     * Finds a student by their NISN (National Student Identification Number).
+     * Obtains the ID of the class that a student with the given userID is enrolled to in the currently active academic session.
      *
-     * @param nisn The NISN of the student to find.
-     * @returns The student with the specified NISN, or `null` if no such student exists.
+     * @param id The user ID of the student.
+     * @returns The ID of the class that the student is enrolled to, or `null` if the student is not enrolled to any class in the active academic session, or if there is no active academic session.
      */
-    findByNISN(nisn: string): Promise<Student | null>;
+    getClassId(id: number): Promise<number | null>;
 
     /**
-     * Fetches data necessary to create a login session for a student.
+     * Obtains the ID of the class that a student with the given user ID is enrolled to in a specific academic session.
      *
-     * @param nisn The NISN of the student.
-     * @returns The login session data of the student, or `null` if no such student exists.
+     * @param id The user ID of the student.
+     * @param session The academic session in the format "YYYY/YYYY".
+     * @param semester The semester of the academic session (1 or 2).
+     * @returns The ID of the class that the student is enrolled to, or `null` if the student is not enrolled to any class in the specified academic session, or if the specified academic session does not exist.
      */
-    getLoginData(
-        nisn: string,
-    ): Promise<LoginResult<Student, StudentSessionData> | null>;
+    getClassId(
+        id: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<number | null>;
 }

@@ -10,6 +10,13 @@ interface BaseSessionData<TRole extends UserRole> {
     readonly userId: number;
 
     /**
+     * The identifier of the authenticated user.
+     *
+     * For students, this is the NISN. For teachers and administrators, this is the staff ID.
+     */
+    readonly identifier: string;
+
+    /**
      * The role of the authenticated user.
      */
     readonly role: TRole;
@@ -20,11 +27,6 @@ interface BaseSessionData<TRole extends UserRole> {
  */
 export interface StudentSessionData extends BaseSessionData<UserRole.student> {
     /**
-     * The NISN of the student.
-     */
-    readonly nisn: string;
-
-    /**
      * The ID of the class the student is enrolled to.
      */
     readonly classId?: number;
@@ -33,22 +35,12 @@ export interface StudentSessionData extends BaseSessionData<UserRole.student> {
 /**
  * Session data for a teacher.
  */
-export interface TeacherSessionData extends BaseSessionData<UserRole.teacher> {
-    /**
-     * The staff ID of the teacher.
-     */
-    readonly staffId: number;
-}
+export type TeacherSessionData = BaseSessionData<UserRole.teacher>;
 
 /**
  * Session data for an administrator.
  */
-export interface AdministratorSessionData extends BaseSessionData<UserRole.administrator> {
-    /**
-     * The staff ID of the administrator.
-     */
-    readonly staffId: number;
-}
+export type AdministratorSessionData = BaseSessionData<UserRole.administrator>;
 
 /**
  * All session data.

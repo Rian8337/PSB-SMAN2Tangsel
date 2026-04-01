@@ -36,6 +36,14 @@ export class UserRepository
             .then((res) => res.at(0) ?? null);
     }
 
+    findByIdentifier(identifier: string): Promise<User | null> {
+        return this.db
+            .select()
+            .from(users)
+            .where(eq(users.identifier, identifier))
+            .then((res) => res.at(0) ?? null);
+    }
+
     listUsers(query?: string, limit = 5, offset = 0): Promise<UserListItem[]> {
         let builder = this.db
             .select({

@@ -1,9 +1,8 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { LoginResult, StudentSessionData } from "@/types";
-import { classes, studentClasses, students, users } from "@psb/shared/schema";
-import { DrizzleDb, Student, UserRole } from "@psb/shared/types";
-import { eq } from "drizzle-orm";
+import { classes, sessions, studentClasses } from "@psb/shared/schema";
+import { DrizzleDb, ValidSemester, ValidSession } from "@psb/shared/types";
+import { and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IStudentRepository } from "./IStudentRepository";
@@ -23,76 +22,26 @@ export class StudentRepository
         super(db);
     }
 
-    findByNISN(nisn: string): Promise<Student | null> {
+    getClassId(
+        id: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
+    ): Promise<number | null> {
+        const sessionConditions = [
+            eq(sessions.session, session ?? classes.session),
+            eq(sessions.semester, semester ?? classes.semester),
+        ];
+
+        if (!session || !semester) {
+            sessionConditions.push(eq(sessions.active, true));
+        }
+
         return this.db
-            .select({
-                user: users,
-                student: students,
-            })
-            .from(students)
-            .innerJoin(users, eq(students.userId, users.id))
-            .where(eq(users.identifier, nisn))
-            .limit(1)
-            .then((result) => {
-                const res = result.at(0);
-
-                if (!res) {
-                    return null;
-                }
-
-                return {
-                    active: res.user.active,
-                    id: res.user.id,
-                    name: res.user.name,
-                    identifier: res.user.identifier,
-                    password: res.user.password,
-                    role: res.user.role,
-                    userId: res.student.userId,
-                };
-            });
-    }
-
-    getLoginData(
-        nisn: string,
-    ): Promise<LoginResult<Student, StudentSessionData> | null> {
-        return this.db
-            .select({
-                user: users,
-                classId: classes.id,
-            })
-            .from(students)
-            .innerJoin(users, eq(students.userId, users.id))
-            .leftJoin(
-                studentClasses,
-                eq(studentClasses.studentId, students.userId),
-            )
-            .leftJoin(classes, eq(classes.id, studentClasses.classId))
-            .where(eq(users.identifier, nisn))
-            .limit(1)
-            .then((res) => {
-                const data = res.at(0);
-
-                if (!data) {
-                    return null;
-                }
-
-                return {
-                    user: {
-                        active: data.user.active,
-                        id: data.user.id,
-                        name: data.user.name,
-                        identifier: data.user.identifier,
-                        password: data.user.password,
-                        role: data.user.role,
-                        userId: data.user.id,
-                    },
-                    sessionData: {
-                        classId: data.classId ?? undefined,
-                        nisn,
-                        role: UserRole.student,
-                        userId: data.user.id,
-                    },
-                } satisfies LoginResult<Student, StudentSessionData>;
-            });
+            .select({ classId: classes.id })
+            .from(studentClasses)
+            .innerJoin(classes, eq(studentClasses.classId, classes.id))
+            .innerJoin(sessions, and(...sessionConditions))
+            .where(eq(studentClasses.studentId, id))
+            .then((res) => res.at(0)?.classId ?? null);
     }
 }
