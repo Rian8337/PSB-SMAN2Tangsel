@@ -271,4 +271,45 @@ describe("UserService (unit)", () => {
             );
         });
     });
+
+    describe("delete", () => {
+        const mockUser: User = {
+            id: 1,
+            active: true,
+            name: "John Doe",
+            password: "hashedPassword",
+            role: UserRole.student,
+        };
+
+        it("should execute transaction and delete the user", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(mockUser);
+            mockUserRepository.delete.mockResolvedValueOnce(undefined);
+
+            await service.delete(mockUser.id);
+
+            expect(mockUserRepository.findById).toHaveBeenCalledWith(
+                mockUser.id,
+            );
+
+            expect(mockTransactionManager.execute).toHaveBeenCalledOnce();
+
+            expect(mockUserRepository.delete).toHaveBeenCalledWith(
+                mockUser.id,
+                // Transaction object
+                expect.anything(),
+            );
+        });
+
+        it("should throw if user is not found", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(null);
+
+            await expect(service.delete(999)).rejects.toThrow(
+                new NotFoundError("userService.userNotFound"),
+            );
+
+            expect(mockUserRepository.findById).toHaveBeenCalledWith(999);
+            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
+            expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+    });
 });
