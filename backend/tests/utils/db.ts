@@ -5,6 +5,12 @@ import { createDatabaseManager } from "@psb/shared/tests";
 
 loadEnvironmentVariables(true);
 
+const workerId = process.env.VITEST_POOL_ID ?? "1";
+const baseDbName =
+    process.env[EnvironmentVariableKey.databaseName] ?? "psb_sman2_test";
+
+const workerDbName = `${baseDbName}_${workerId}`;
+
 /**
  * A Drizzle database instance for testing purposes, connected to the test database.
  */
@@ -12,7 +18,7 @@ export const testDb = createDatabase({
     host: process.env[EnvironmentVariableKey.databaseHost],
     user: process.env[EnvironmentVariableKey.databaseUser],
     password: process.env[EnvironmentVariableKey.databasePassword],
-    database: process.env[EnvironmentVariableKey.databaseName],
+    database: workerDbName,
     port: parseInt(process.env[EnvironmentVariableKey.databasePort] ?? "3306"),
 });
 

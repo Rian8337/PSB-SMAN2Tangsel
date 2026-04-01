@@ -56,6 +56,9 @@ importers:
       ics:
         specifier: ^3.8.1
         version: 3.8.1
+      mysql2:
+        specifier: ^3.17.2
+        version: 3.17.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -5770,7 +5773,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@types/node@20.19.33)(@vitest/ui@4.0.18)(jsdom@28.1.0(@noble/hashes@1.8.0))(tsx@4.21.0)
+      vitest: 4.0.18(@types/node@25.3.0)(@vitest/ui@4.0.18)(jsdom@28.1.0(@noble/hashes@1.8.0))(tsx@4.21.0)
 
   '@vitest/utils@4.0.18':
     dependencies:

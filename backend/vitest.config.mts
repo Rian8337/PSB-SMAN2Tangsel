@@ -10,8 +10,6 @@ export default defineConfig({
         ],
         globals: true,
         setupFiles: "./tests/setup.ts",
-        globalSetup: "./tests/globalSetup.ts",
-        fileParallelism: false,
         silent: "passed-only",
         passWithNoTests: true,
         mockReset: true,
