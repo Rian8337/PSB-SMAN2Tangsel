@@ -241,6 +241,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
 
                                             {user.id !== currentUserId && (
                                                 <Button
+                                                    aria-label={`delete-${user.identifier}`}
                                                     size="sm"
                                                     variant="ghost"
                                                     colorPalette="red"
