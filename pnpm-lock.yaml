@@ -56,9 +56,6 @@ importers:
       ics:
         specifier: ^3.8.1
         version: 3.8.1
-      mysql2:
-        specifier: ^3.17.2
-        version: 3.17.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -99,6 +96,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.9
         version: 0.31.9
+      mysql2:
+        specifier: ^3.17.2
+        version: 3.17.2
       supertest:
         specifier: ^7.2.2
         version: 7.2.2
@@ -181,6 +181,9 @@ importers:
       jsdom:
         specifier: ^28.1.0
         version: 28.1.0(@noble/hashes@1.8.0)
+      mysql2:
+        specifier: ^3.17.2
+        version: 3.17.2
       typescript:
         specifier: ^5
         version: 5.9.3

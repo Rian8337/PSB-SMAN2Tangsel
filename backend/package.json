@@ -26,6 +26,7 @@
     "@vitest/ui": "^4.0.18",
     "cross-env": "^10.1.0",
     "drizzle-kit": "^0.31.9",
+    "mysql2": "^3.17.2",
     "supertest": "^7.2.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
@@ -42,7 +43,6 @@
     "express-form-data": "^3.0.1",
     "express-rate-limit": "^8.3.1",
     "ics": "^3.8.1",
-    "mysql2": "^3.17.2",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "zod": "^4.3.6"
