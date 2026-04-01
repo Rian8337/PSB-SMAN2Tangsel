@@ -31,7 +31,7 @@ export class StudentRepository
             })
             .from(students)
             .innerJoin(users, eq(students.userId, users.id))
-            .where(eq(students.nisn, nisn))
+            .where(eq(users.identifier, nisn))
             .limit(1)
             .then((result) => {
                 const res = result.at(0);
@@ -44,7 +44,7 @@ export class StudentRepository
                     active: res.user.active,
                     id: res.user.id,
                     name: res.user.name,
-                    nisn: res.student.nisn,
+                    identifier: res.user.identifier,
                     password: res.user.password,
                     role: res.user.role,
                     userId: res.student.userId,
@@ -67,7 +67,7 @@ export class StudentRepository
                 eq(studentClasses.studentId, students.userId),
             )
             .leftJoin(classes, eq(classes.id, studentClasses.classId))
-            .where(eq(students.nisn, nisn))
+            .where(eq(users.identifier, nisn))
             .limit(1)
             .then((res) => {
                 const data = res.at(0);
@@ -81,7 +81,7 @@ export class StudentRepository
                         active: data.user.active,
                         id: data.user.id,
                         name: data.user.name,
-                        nisn,
+                        identifier: data.user.identifier,
                         password: data.user.password,
                         role: data.user.role,
                         userId: data.user.id,

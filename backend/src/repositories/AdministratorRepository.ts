@@ -31,7 +31,7 @@ export class AdministratorRepository
             })
             .from(administrators)
             .innerJoin(users, eq(administrators.userId, users.id))
-            .where(eq(administrators.staffId, staffId))
+            .where(eq(users.identifier, staffId.toString()))
             .limit(1)
             .then((result) => {
                 const res = result.at(0);
@@ -46,7 +46,7 @@ export class AdministratorRepository
                     name: res.user.name,
                     password: res.user.password,
                     role: res.user.role,
-                    staffId: res.admin.staffId,
+                    identifier: res.user.identifier,
                     userId: res.admin.userId,
                 };
             });
@@ -59,7 +59,7 @@ export class AdministratorRepository
             .select({ user: users })
             .from(administrators)
             .innerJoin(users, eq(administrators.userId, users.id))
-            .where(eq(administrators.staffId, staffId))
+            .where(eq(users.identifier, staffId.toString()))
             .limit(1)
             .then((result) => {
                 const res = result.at(0);
@@ -76,7 +76,7 @@ export class AdministratorRepository
                         password: res.user.password,
                         role: res.user.role,
                         userId: res.user.id,
-                        staffId,
+                        identifier: res.user.identifier,
                     },
                     sessionData: {
                         role: UserRole.administrator,

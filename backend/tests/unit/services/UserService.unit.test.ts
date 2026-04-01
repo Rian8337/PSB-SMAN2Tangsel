@@ -21,6 +21,7 @@ describe("UserService (unit)", () => {
                 role: UserRole.student,
                 active: true,
                 password: "idk",
+                identifier: "1234567890",
             };
 
             mockUserRepository.findById.mockResolvedValue(mockUser);
@@ -207,6 +208,7 @@ describe("UserService (unit)", () => {
             name: "John Doe",
             password: "oldHashedPassword",
             role: UserRole.student,
+            identifier: "1234567890",
         };
 
         const newPassword = "NewStrongPassword123!";
@@ -279,6 +281,7 @@ describe("UserService (unit)", () => {
             name: "John Doe",
             password: "hashedPassword",
             role: UserRole.student,
+            identifier: "1234567890",
         };
 
         it("should execute transaction and delete the user", async () => {

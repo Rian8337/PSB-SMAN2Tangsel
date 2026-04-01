@@ -43,23 +43,13 @@ export class UserRepository
                 name: users.name,
                 role: users.role,
                 active: users.active,
-                nisn: students.nisn,
-                staffId: teachers.staffId,
+                identifier: users.identifier,
             })
             .from(users)
             .leftJoin(students, eq(users.id, students.userId))
             .leftJoin(teachers, eq(users.id, teachers.userId))
             .limit(limit)
-            .offset(offset)
-            .then((res) =>
-                res.map((r) => ({
-                    id: r.id,
-                    name: r.name,
-                    role: r.role,
-                    active: r.active,
-                    identifier: r.nisn ?? r.staffId?.toString() ?? "N/A",
-                })),
-            );
+            .offset(offset);
     }
 
     async create(
@@ -73,6 +63,7 @@ export class UserRepository
                 name,
                 password: passwordHash,
                 role,
+                identifier,
                 active: true,
             });
 
@@ -80,24 +71,15 @@ export class UserRepository
 
             switch (role) {
                 case UserRole.student:
-                    await tx.insert(students).values({
-                        userId,
-                        nisn: identifier,
-                    });
+                    await tx.insert(students).values({ userId });
                     break;
 
                 case UserRole.teacher:
-                    await tx.insert(teachers).values({
-                        userId,
-                        staffId: parseInt(identifier, 10),
-                    });
+                    await tx.insert(teachers).values({ userId });
                     break;
 
                 case UserRole.administrator:
-                    await tx.insert(administrators).values({
-                        userId,
-                        staffId: parseInt(identifier, 10),
-                    });
+                    await tx.insert(administrators).values({ userId });
                     break;
 
                 default:

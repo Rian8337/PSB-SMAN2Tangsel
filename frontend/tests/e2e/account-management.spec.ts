@@ -11,7 +11,7 @@ test.describe("Account Management", () => {
         const registeredUser: Student = {
             active: true,
             id: 0,
-            nisn: `99999${Date.now().toString().slice(-5)}`,
+            identifier: `99999${Date.now().toString().slice(-5)}`,
             name: `End to End Test User`,
             password: "StrongPassword!23",
             role: UserRole.student,
@@ -40,7 +40,7 @@ test.describe("Account Management", () => {
         await nameInput.pressSequentially(registeredUser.name);
 
         await identifierInput.click();
-        await identifierInput.pressSequentially(registeredUser.nisn);
+        await identifierInput.pressSequentially(registeredUser.identifier);
 
         await roleSelect.selectOption(UserRole.student.toString());
 
@@ -66,7 +66,7 @@ test.describe("Account Management", () => {
         const userRow = page.getByRole("row", { name: registeredUser.name });
 
         await expect(userRow).toBeVisible();
-        await expect(userRow).toContainText(registeredUser.nisn);
+        await expect(userRow).toContainText(registeredUser.identifier);
 
         // Delete user
         page.once("dialog", async (confirmDialog) => {
@@ -76,7 +76,7 @@ test.describe("Account Management", () => {
         });
 
         const deleteButton = userRow.getByRole("button", {
-            name: `delete-${registeredUser.nisn}`,
+            name: `delete-${registeredUser.identifier}`,
         });
 
         await deleteButton.click();

@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
+import { UserRole } from "@psb/shared/types";
 
 /**
  * Logs in as the first seeded student and waits for the dashboard to load.
@@ -7,7 +8,7 @@ import { seededPrimaryData } from "@psb/shared/tests";
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginStudent(page: Page) {
-    await loginUser(page, seededPrimaryData.students[0].nisn);
+    await loginUser(page, UserRole.student);
 }
 
 /**
@@ -16,7 +17,7 @@ export async function loginStudent(page: Page) {
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginTeacher(page: Page) {
-    await loginUser(page, seededPrimaryData.teachers[0].staffId.toString());
+    await loginUser(page, UserRole.teacher);
 }
 
 /**
@@ -25,21 +26,22 @@ export async function loginTeacher(page: Page) {
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginAdministrator(page: Page) {
-    await loginUser(
-        page,
-        seededPrimaryData.administrators[0].staffId.toString(),
-        "**/admin",
-    );
+    await loginUser(page, UserRole.administrator);
 }
 
-async function loginUser(
-    page: Page,
-    identifier: string,
-    waitURL = "**/dashboard",
-) {
+async function loginUser(page: Page, role: UserRole) {
+    const user = seededPrimaryData.users.find((u) => u.role === role);
+
+    if (!user) {
+        throw new Error(`No seeded user found for role ${role.toString()}`);
+    }
+
     await page.goto("/login");
-    await page.fill('input[name="id"]', identifier);
+    await page.fill('input[name="id"]', user.identifier);
     await page.fill('input[name="password"]', "password123");
     await page.click('button[type="submit"]');
-    await page.waitForURL(waitURL);
+
+    await page.waitForURL(
+        user.role === UserRole.administrator ? "**/admin" : "**/dashboard",
+    );
 }

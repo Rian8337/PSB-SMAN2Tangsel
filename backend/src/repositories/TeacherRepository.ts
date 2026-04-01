@@ -31,7 +31,7 @@ export class TeacherRepository
             })
             .from(teachers)
             .innerJoin(users, eq(teachers.userId, users.id))
-            .where(eq(teachers.staffId, staffId))
+            .where(eq(users.identifier, staffId.toString()))
             .limit(1)
             .then((result) => {
                 const res = result.at(0);
@@ -46,7 +46,7 @@ export class TeacherRepository
                     name: res.user.name,
                     password: res.user.password,
                     role: res.user.role,
-                    staffId: res.teacher.staffId,
+                    identifier: res.user.identifier,
                     userId: res.teacher.userId,
                 };
             });
@@ -59,7 +59,7 @@ export class TeacherRepository
             .select({ user: users })
             .from(teachers)
             .innerJoin(users, eq(teachers.userId, users.id))
-            .where(eq(teachers.staffId, staffId))
+            .where(eq(users.identifier, staffId.toString()))
             .limit(1)
             .then((result) => {
                 const res = result.at(0);
@@ -76,7 +76,7 @@ export class TeacherRepository
                         password: res.user.password,
                         role: res.user.role,
                         userId: res.user.id,
-                        staffId,
+                        identifier: res.user.identifier,
                     },
                     sessionData: {
                         role: UserRole.teacher,
