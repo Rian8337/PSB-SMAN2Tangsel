@@ -41,7 +41,7 @@ describe("AccountSettings (unit)", () => {
 
         fireEvent.submit(form);
 
-        expect(screen.getByText("formMissingFields")).toBeInTheDocument();
+        expect(screen.getByText("missingFields")).toBeInTheDocument();
         expect(mockUserApiClient.updatePassword).not.toHaveBeenCalled();
     });
 
