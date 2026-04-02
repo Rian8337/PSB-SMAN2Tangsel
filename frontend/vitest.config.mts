@@ -16,6 +16,9 @@ export default defineConfig({
         silent: "passed-only",
         passWithNoTests: true,
         mockReset: true,
-        reporters: ["default", ["html", { outputFile: "./html/test-results.html" }]],
+        reporters: [
+            "default",
+            ["html", { outputFile: "./html/test-results.html" }],
+        ],
     },
 });
