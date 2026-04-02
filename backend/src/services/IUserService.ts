@@ -42,12 +42,13 @@ export interface IUserService {
     ): Promise<void>;
 
     /**
-     * Updates the active state of an existing user.
+     * Updates the name and active state of an existing user.
      *
-     * @param userId The ID of the user whose active state is to be updated.
-     * @param active The new active state to be set for the user.
+     * @param userId The ID of the user to update.
+     * @param name The updated name.
+     * @param active The updated active state.
      */
-    updateActiveState(userId: number, active: boolean): Promise<void>;
+    update(userId: number, name: string, active: boolean): Promise<void>;
 
     /**
      * Updates the password of an existing user.

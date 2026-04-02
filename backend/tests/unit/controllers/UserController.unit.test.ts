@@ -252,11 +252,11 @@ describe("UserController (unit)", () => {
         });
     });
 
-    describe("updateActiveState", () => {
+    describe("updateUser", () => {
         const createMockRequest = createMockRequestFactory<
-            unknown,
+            { id: string },
             { error: string },
-            Partial<{ userId: number; active: boolean }>
+            Partial<{ name: string; active: boolean }>
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -269,8 +269,9 @@ describe("UserController (unit)", () => {
                     role: UserRole.administrator,
                     identifier: "1",
                 },
+                params: { id: "2" },
                 body: {
-                    userId: 2,
+                    name: "Jane Doe",
                     active: false,
                 },
             });
@@ -279,12 +280,13 @@ describe("UserController (unit)", () => {
         });
 
         it("should return 200 on successful state update", async () => {
-            mockUserService.updateActiveState.mockResolvedValue(undefined);
+            mockUserService.update.mockResolvedValue(undefined);
 
-            await controller.updateActiveState(req, res);
+            await controller.updateUser(req, res);
 
-            expect(mockUserService.updateActiveState).toHaveBeenCalledWith(
+            expect(mockUserService.update).toHaveBeenCalledWith(
                 2,
+                "Jane Doe",
                 false,
             );
 
@@ -293,25 +295,51 @@ describe("UserController (unit)", () => {
 
         it.each([
             // Wrong userId type
-            { userId: "-2" },
+            { id: "-2" },
             // Negative userId
-            { userId: -1 },
+            { id: "-1" },
             // Zero userId
-            { userId: 0 },
+            { id: "0" },
             // NaN userId
-            { userId: Number.NaN },
-            // Wrong active type
-            { active: "false" },
-            // Wrong active type
-            { active: null },
-        ])("should return 400 for invalid body: %o", async (invalidBody) => {
-            req.body = { ...req.body, ...invalidBody } as typeof req.body;
+            { id: "NaN" },
+        ])("should return 400 for invalid user ID: %o", async ({ id }) => {
+            req.params.id = id;
 
-            await controller.updateActiveState(req, res);
+            await controller.updateUser(req, res);
 
-            expect(mockUserService.updateActiveState).not.toHaveBeenCalled();
+            expect(mockUserService.update).not.toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(400);
         });
+
+        it.each([
+            // Invalid name type
+            { name: 123 },
+            // Missing name
+            { name: undefined },
+        ])("should return 400 for invalid name: %o", async ({ name }) => {
+            req.body.name = name as unknown as string;
+
+            await controller.updateUser(req, res);
+
+            expect(mockUserService.update).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it.each([
+            // Invalid active type
+            { active: "true" },
+            { active: null },
+        ])(
+            "should return 400 for invalid active state: %o",
+            async ({ active }) => {
+                req.body.active = active as unknown as boolean;
+
+                await controller.updateUser(req, res);
+
+                expect(mockUserService.update).not.toHaveBeenCalled();
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
     });
 
     describe("updatePassword", () => {

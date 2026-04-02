@@ -13,17 +13,17 @@ vi.mock("bcrypt", () => bcryptMock);
 describe("UserService (unit)", () => {
     const service = new UserService(mockTransactionManager, mockUserRepository);
 
+    const mockUser: User = {
+        id: 1,
+        name: "John Doe",
+        role: UserRole.student,
+        active: true,
+        password: "idk",
+        identifier: "1234567890",
+    };
+
     describe("findById", () => {
         it("should return a user if found", async () => {
-            const mockUser: User = {
-                id: 1,
-                name: "John Doe",
-                role: UserRole.student,
-                active: true,
-                password: "idk",
-                identifier: "1234567890",
-            };
-
             mockUserRepository.findById.mockResolvedValue(mockUser);
 
             const result = await service.findById(mockUser.id);
@@ -202,15 +202,45 @@ describe("UserService (unit)", () => {
         });
     });
 
-    describe("updateActiveState", () => {
-        it("should delegate to UserRepository.updateActiveState", async () => {
-            mockUserRepository.updateActiveState.mockResolvedValue(undefined);
+    describe("update", () => {
+        beforeEach(() => {
+            mockUserRepository.findById.mockResolvedValue(mockUser);
+        });
 
-            await service.updateActiveState(1, false);
+        it("should trim the name before validation and updating", async () => {
+            mockUserRepository.update.mockResolvedValue(undefined);
 
-            expect(mockUserRepository.updateActiveState).toHaveBeenCalledWith(
+            await service.update(1, "   John Doe   ", true);
+
+            expect(mockUserRepository.update).toHaveBeenCalledWith(
                 1,
-                false,
+                "John Doe",
+                true,
+            );
+        });
+
+        it.each([
+            // Empty username
+            [""],
+            // Too long
+            ["A".repeat(101)],
+            // Contains numbers
+            ["John123"],
+            // Contains symbols
+            ["John_Doe"],
+        ])("should throw for invalid username: %s", async (invalidUsername) => {
+            await expect(
+                service.update(1, invalidUsername, true),
+            ).rejects.toThrow(
+                new BadRequestError("userService.invalidUsername"),
+            );
+        });
+
+        it("should throw if user is not found", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(null);
+
+            await expect(service.update(999, "John Doe", true)).rejects.toThrow(
+                new NotFoundError("userService.userNotFound"),
             );
         });
     });

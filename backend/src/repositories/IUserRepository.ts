@@ -50,12 +50,13 @@ export interface IUserRepository {
     ): Promise<void>;
 
     /**
-     * Updates the active state of an existing user.
+     * Updates an existing user's name and active state.
      *
-     * @param userId The ID of the user whose active state is to be updated.
-     * @param active The new active state to be set for the user.
+     * @param userId The ID of the user to update.
+     * @param name The updated user name.
+     * @param active The updated active state.
      */
-    updateActiveState(userId: number, active: boolean): Promise<void>;
+    update(userId: number, name: string, active: boolean): Promise<void>;
 
     /**
      * Updates the password hash of an existing user.

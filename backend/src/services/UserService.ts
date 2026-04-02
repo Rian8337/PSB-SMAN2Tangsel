@@ -47,13 +47,7 @@ export class UserService implements IUserService {
         name = name.trim();
         identifier = identifier.trim();
 
-        if (
-            name.length === 0 ||
-            name.length > 100 ||
-            !/^[a-zA-Z\s]+$/.test(name)
-        ) {
-            throw new BadRequestError("userService.invalidUsername");
-        }
+        this.verifyName(name);
 
         if (password.trim().length === 0 || !passwordRegex.test(password)) {
             throw new BadRequestError("userService.invalidPassword");
@@ -88,8 +82,18 @@ export class UserService implements IUserService {
         );
     }
 
-    updateActiveState(userId: number, active: boolean): Promise<void> {
-        return this.userRepository.updateActiveState(userId, active);
+    async update(userId: number, name: string, active: boolean): Promise<void> {
+        name = name.trim();
+
+        this.verifyName(name);
+
+        const user = await this.userRepository.findById(userId);
+
+        if (!user) {
+            throw new NotFoundError("userService.userNotFound");
+        }
+
+        await this.userRepository.update(userId, name, active);
     }
 
     async updatePassword(
@@ -141,5 +145,15 @@ export class UserService implements IUserService {
         });
 
         // TODO: delete assignment submission files for students
+    }
+
+    private verifyName(name: string) {
+        if (
+            name.trim().length === 0 ||
+            name.length > 100 ||
+            !/^[a-zA-Z\s]+$/.test(name)
+        ) {
+            throw new BadRequestError("userService.invalidUsername");
+        }
     }
 }

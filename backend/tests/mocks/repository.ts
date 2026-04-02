@@ -91,7 +91,7 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     findByIdentifier: vi.fn(),
     listUsers: vi.fn(),
     create: vi.fn(),
-    updateActiveState: vi.fn(),
+    update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
 };

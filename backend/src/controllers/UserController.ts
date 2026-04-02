@@ -22,40 +22,6 @@ export class UserController extends BaseController {
     }
 
     /**
-     * Obtains detailed information about a specific user by their ID.
-     */
-    @Get("/:id")
-    @Roles(UserRole.administrator)
-    async getUser(
-        req: Request<{ id: string }, UserListItem | { error: string }>,
-        res: Response<UserListItem | { error: string }>,
-    ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
-        try {
-            const userId = parseInt(req.params.id, 10);
-
-            if (Number.isNaN(userId) || userId <= 0) {
-                throw new BadRequestError("userController.invalidUserId");
-            }
-
-            const user = await this.userService.findById(userId);
-
-            res.json({
-                id: user.id,
-                active: user.active,
-                name: user.name,
-                role: user.role,
-                identifier: user.identifier,
-            });
-        } catch (e) {
-            this.handleError(req, res, e);
-        }
-    }
-
-    /**
      * Lists users for display in the UI.
      */
     @Get("/list")
@@ -121,6 +87,40 @@ export class UserController extends BaseController {
     }
 
     /**
+     * Obtains detailed information about a specific user by their ID.
+     */
+    @Get("/:id")
+    @Roles(UserRole.administrator)
+    async getUser(
+        req: Request<{ id: string }, UserListItem | { error: string }>,
+        res: Response<UserListItem | { error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const userId = parseInt(req.params.id, 10);
+
+            if (Number.isNaN(userId) || userId <= 0) {
+                throw new BadRequestError("userController.invalidUserId");
+            }
+
+            const user = await this.userService.findById(userId);
+
+            res.json({
+                id: user.id,
+                active: user.active,
+                name: user.name,
+                role: user.role,
+                identifier: user.identifier,
+            });
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
      * Registers a new user.
      */
     @Post("/create")
@@ -163,43 +163,6 @@ export class UserController extends BaseController {
     }
 
     /**
-     * Updates the active state of an existing user.
-     */
-    @Patch("/update-active-state")
-    @Roles(UserRole.administrator)
-    async updateActiveState(
-        req: Request<
-            unknown,
-            { error: string },
-            Partial<{ userId: number; active: boolean }>
-        >,
-        res: Response<{ error: string }>,
-    ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
-        try {
-            const { userId, active } = req.body;
-
-            if (
-                typeof userId !== "number" ||
-                Number.isNaN(userId) ||
-                userId <= 0 ||
-                typeof active !== "boolean"
-            ) {
-                throw new BadRequestError();
-            }
-
-            await this.userService.updateActiveState(userId, active);
-
-            res.sendStatus(200);
-        } catch (e) {
-            this.handleError(req, res, e);
-        }
-    }
-
-    /**
      * Updates the password of the currently authenticated user.
      */
     @Patch("/update-password")
@@ -231,6 +194,44 @@ export class UserController extends BaseController {
                 currentPassword,
                 newPassword,
             );
+
+            res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Updates a user's name and active state.
+     */
+    @Patch("/:id")
+    @Roles(UserRole.administrator)
+    async updateUser(
+        req: Request<
+            { id: string },
+            { error: string },
+            Partial<{ name: string; active: boolean }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const userId = parseInt(req.params.id, 10);
+            const { name, active } = req.body;
+
+            if (
+                Number.isNaN(userId) ||
+                userId <= 0 ||
+                typeof name !== "string" ||
+                typeof active !== "boolean"
+            ) {
+                throw new BadRequestError();
+            }
+
+            await this.userService.update(userId, name, active);
 
             res.sendStatus(200);
         } catch (e) {
