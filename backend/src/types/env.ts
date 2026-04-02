@@ -8,6 +8,11 @@ export enum EnvironmentVariableKey {
     cookieSecret = "COOKIE_SECRET",
 
     /**
+     * Comma-separated list of additional allowed CORS origins.
+     */
+    corsOrigins = "CORS_ORIGINS",
+
+    /**
      * The name of the database to connect to.
      */
     databaseName = "DB_NAME",

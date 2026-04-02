@@ -40,6 +40,11 @@ declare global {
             readonly COOKIE_SECRET?: string;
 
             /**
+             * A comma-separated list of additional allowed CORS origins.
+             */
+            readonly CORS_ORIGINS?: string;
+
+            /**
              * The key used to encrypt user sessions.
              */
             readonly SESSION_ENCRYPTION_KEY?: string;
