@@ -12,11 +12,11 @@ import {
     Heading,
     HStack,
     Input,
-    Switch,
     Text,
     VStack,
 } from "@chakra-ui/react";
 import { APIError } from "@/api";
+import { Switch } from "../ui/switch";
 
 export interface EditUserFormProps {
     readonly user: UserListItem;
@@ -138,18 +138,13 @@ export function EditUserForm({ user }: EditUserFormProps) {
                         </Text>
                     </HStack>
 
-                    <Switch.Root
+                    <Switch
                         colorPalette="blue"
                         checked={isActive}
                         onCheckedChange={(e) => {
                             setIsActive(e.checked);
                         }}
-                    >
-                        <Switch.HiddenInput />
-                        <Switch.Control>
-                            <Switch.Thumb />
-                        </Switch.Control>
-                    </Switch.Root>
+                    />
                 </Box>
 
                 <Button
