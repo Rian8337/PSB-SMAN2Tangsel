@@ -4,8 +4,18 @@ import "./controllers";
 import { RouteDefinition } from "./decorators/routes";
 import { getContainer } from "./dependencies/container";
 
-export function createRouter() {
-    const container = getContainer();
+/**
+ * Creates an Express router by scanning for controller classes and their route definitions.
+ *
+ * This function looks for classes decorated as controllers, retrieves their base paths and route definitions,
+ * and registers them with the Express router. It also applies any controller-level and route-level middlewares
+ * defined via decorators.
+ *
+ * @param container The dependency injection container to use for resolving controller instances. If not provided,
+ * the default container will be used.
+ * @returns The configured Express router with all controller routes registered.
+ */
+export function createRouter(container = getContainer()) {
     const router = Router();
 
     const controllers =
