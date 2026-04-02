@@ -83,7 +83,10 @@ test.describe("Notifications", () => {
 
         await bellTrigger.click();
 
-        const popoverBody = page.getByRole("dialog");
+        const popoverBody = page.locator(
+            '[role="dialog"][data-scope="popover"][data-state="open"]',
+        );
+
         await expect(popoverBody).toBeVisible();
 
         const actionButtons = popoverBody.getByRole("button", {
@@ -130,7 +133,10 @@ test.describe("Notifications", () => {
 
         await bellTrigger.click();
 
-        const popoverBody = page.getByRole("dialog");
+        const popoverBody = page.locator(
+            '[role="dialog"][data-scope="popover"][data-state="open"]',
+        );
+
         const tn1Text = popoverBody.getByText("TN1");
         const notificationContainer = tn1Text.locator("..");
 

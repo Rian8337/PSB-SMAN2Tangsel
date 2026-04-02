@@ -30,7 +30,7 @@ test.describe("Account Management", () => {
             name: /daftar|register/i,
         });
 
-        const dialog = page.getByRole("dialog");
+        const dialog = page.locator('[role="dialog"][data-state="open"]');
 
         await expect(async () => {
             await openCreateUserDialogButton.click();
