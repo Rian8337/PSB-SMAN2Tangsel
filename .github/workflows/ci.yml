@@ -52,7 +52,7 @@ jobs:
         image: mariadb:12.2.2
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: psb-sman2
+          MYSQL_DATABASE: psb_sman2_test
           MYSQL_USER: user
           MYSQL_PASSWORD: password
         ports:
@@ -69,7 +69,7 @@ jobs:
       DB_PORT: 3306
       DB_USER: user
       DB_PASSWORD: password
-      DB_NAME: psb-sman2
+      DB_NAME: psb_sman2_test
       COOKIE_SECRET: f3a2007d-6344-49f4-8705-f1f9818a86d9
       SESSION_ENCRYPTION_KEY: 6e0eb1287fc4afdc22df1fb5f5c205709347cacbe5ed687bec17a48bf511b995
 
@@ -88,10 +88,6 @@ jobs:
         working-directory: .
         shell: bash
         run: pnpm --filter backend... build
-
-      - name: Push database schema
-        shell: bash
-        run: pnpm drizzle-kit push --force
 
       - name: Run tests
         shell: bash
