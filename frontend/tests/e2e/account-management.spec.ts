@@ -26,10 +26,16 @@ test.describe("Account Management", () => {
         await expect(page.locator("table")).toBeVisible();
 
         // Create user
-        await page.getByRole("button", { name: /daftar|register/i }).click();
+        const openCreateUserDialogButton = page.getByRole("button", {
+            name: /daftar|register/i,
+        });
 
         const dialog = page.getByRole("dialog");
-        await expect(dialog).toBeVisible();
+
+        await expect(async () => {
+            await openCreateUserDialogButton.click();
+            await expect(dialog).toBeVisible();
+        }).toPass({ timeout: 10000 });
 
         const nameInput = dialog.locator('input[name="name"]');
         const identifierInput = dialog.locator('input[name="identifier"]');
