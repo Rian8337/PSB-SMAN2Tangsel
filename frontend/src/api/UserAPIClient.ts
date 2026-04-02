@@ -17,6 +17,10 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
     ): Promise<UserListItem[]> {
         const url = new URL(this.baseURL + "/list");
 
+        if (typeof query === "string" && query.trim().length > 0) {
+            url.searchParams.append("query", query.trim());
+        }
+
         if (limit !== undefined) {
             url.searchParams.append("limit", limit.toString());
         }
