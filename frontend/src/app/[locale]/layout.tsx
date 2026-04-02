@@ -42,9 +42,19 @@ export default async function LocaleLayout(props: PropsWithChildren<Props>) {
 
     const messages = await getMessages();
 
+    const runtimeApiBaseUrl =
+        process.env.API_BASE_URL ??
+        process.env.NEXT_PUBLIC_API_URL ??
+        "http://127.0.0.1:3001";
+
+    const runtimeApiScript = `window.__API_BASE_URL__=${JSON.stringify(runtimeApiBaseUrl)};`;
+
     return (
         <html lang={locale} suppressHydrationWarning>
             <body>
+                <script
+                    dangerouslySetInnerHTML={{ __html: runtimeApiScript }}
+                />
                 <NextIntlClientProvider messages={messages}>
                     <Provider>
                         <AppProviders>{children}</AppProviders>

@@ -9,7 +9,24 @@ export abstract class APIClient {
      * The base URL of the backend server. All API requests will be made to this URL.
      */
     protected get baseURL(): string {
-        return process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+        const fallbackBaseUrl =
+            process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+
+        if (typeof window !== "undefined") {
+            const runtimeBaseUrlCandidate = (globalThis as Record<
+                string,
+                unknown
+            >).__API_BASE_URL__;
+
+            const runtimeBaseUrl =
+                typeof runtimeBaseUrlCandidate === "string"
+                    ? runtimeBaseUrlCandidate
+                    : undefined;
+
+            return runtimeBaseUrl ?? fallbackBaseUrl;
+        }
+
+        return process.env.API_BASE_URL ?? fallbackBaseUrl;
     }
 
     constructor(
