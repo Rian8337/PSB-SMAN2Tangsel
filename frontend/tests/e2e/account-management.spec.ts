@@ -67,21 +67,54 @@ test.describe("Account Management", () => {
         const searchInput = page.locator('input[name="search"]');
 
         await searchInput.click();
-        await searchInput.pressSequentially(registeredUser.name);
+        await searchInput.pressSequentially(registeredUser.name, { delay: 50 });
 
         const userRow = page.getByRole("row", { name: registeredUser.name });
 
         await expect(userRow).toBeVisible();
         await expect(userRow).toContainText(registeredUser.identifier);
 
-        // Delete user
-        page.once("dialog", async (confirmDialog) => {
-            expect(confirmDialog.message()).toContain(registeredUser.name);
+        // Edit user
+        await userRow.getByRole("link", { name: /edit/i }).click();
+        await expect(page).toHaveURL(/\/admin\/users\/\d+/);
 
+        const editNameInput = page.locator('input[name="name"]');
+        await expect(editNameInput).toBeVisible();
+
+        const updatedName = `${registeredUser.name} Updated`;
+
+        await editNameInput.clear();
+        await editNameInput.click();
+        await editNameInput.pressSequentially(updatedName);
+
+        const activeSwitch = page.getByRole("checkbox");
+        await activeSwitch.click({ force: true });
+
+        const updateButton = page.getByRole("button", {
+            name: /update|perbarui/i,
+        });
+
+        await updateButton.click();
+
+        const updateToast = page.getByText(/berhasil|success/i).first();
+        await expect(updateToast).toBeVisible();
+        await expect(page).toHaveURL(/\/admin\/users/);
+        await expect(updateToast).toBeHidden();
+
+        // Delete user
+        await searchInput.clear();
+        await searchInput.click();
+        await searchInput.pressSequentially(updatedName, { delay: 50 });
+
+        const updatedRow = page.getByRole("row", { name: updatedName });
+        await expect(updatedRow).toBeVisible();
+
+        page.once("dialog", async (confirmDialog) => {
+            expect(confirmDialog.message()).toContain(updatedName);
             await confirmDialog.accept();
         });
 
-        const deleteButton = userRow.getByRole("button", {
+        const deleteButton = updatedRow.getByRole("button", {
             name: `delete-${registeredUser.identifier}`,
         });
 
@@ -90,7 +123,7 @@ test.describe("Account Management", () => {
         const deleteToast = page.getByText(/berhasil|success/i).last();
 
         await expect(deleteToast).toBeVisible();
-        await expect(userRow).toBeHidden();
+        await expect(updatedRow).toBeHidden();
 
         // Search is still applied, so no users should be found
         await expect(page.locator("table")).toContainText(
