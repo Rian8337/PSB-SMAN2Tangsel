@@ -1,5 +1,5 @@
 import { UserController } from "@/controllers";
-import { UserListItem, UserRole } from "@psb/shared/types";
+import { User, UserListItem, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
@@ -8,6 +8,74 @@ import {
 
 describe("UserController (unit)", () => {
     const controller = new UserController(mockUserService);
+
+    describe("getUser", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            UserListItem | { error: string }
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.administrator,
+                    identifier: "1",
+                },
+                params: { id: "2" },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should return user details for valid ID", async () => {
+            const mockUser: User = {
+                active: true,
+                id: 2,
+                password: "testpassword",
+                identifier: "1234567890",
+                name: "John Doe",
+                role: UserRole.student,
+            };
+
+            mockUserService.findById.mockResolvedValue(mockUser);
+
+            await controller.getUser(req, res);
+
+            expect(mockUserService.findById).toHaveBeenCalledWith(2);
+
+            expect(res.json).toHaveBeenCalledWith({
+                id: mockUser.id,
+                active: mockUser.active,
+                name: mockUser.name,
+                role: mockUser.role,
+                identifier: mockUser.identifier,
+            });
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])("should return 400 for invalid user ID: %s", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.getUser(req, res);
+
+            expect(mockUserService.findById).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+
+            expect(res.json).toHaveBeenCalledWith({
+                error: "userController.invalidUserId",
+            });
+        });
+    });
 
     describe("listUsers", () => {
         const createMockRequest = createMockRequestFactory<
