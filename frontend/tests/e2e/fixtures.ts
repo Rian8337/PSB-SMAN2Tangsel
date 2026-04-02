@@ -7,6 +7,27 @@ const STARTUP_RETRY_COUNT = 30;
 const STARTUP_RETRY_DELAY_MS = 500;
 const STARTUP_PROBE_TIMEOUT_MS = 2000;
 
+function readBooleanEnv(name: string, fallback: boolean) {
+    const value = process.env[name];
+
+    if (value == null) {
+        return fallback;
+    }
+
+    const normalized = value.trim().toLowerCase();
+    return normalized === "1" || normalized === "true";
+}
+
+const shouldUseWorkerDatabase = readBooleanEnv(
+    "TEST_DB_PER_WORKER",
+    !process.env.CI,
+);
+
+const shouldManageDatabaseLifecycle = readBooleanEnv(
+    "TEST_DB_MANAGE_LIFECYCLE",
+    shouldUseWorkerDatabase,
+);
+
 interface WorkerFixture {
     readonly workerSetup: {
         readonly backendPort: number;
@@ -23,25 +44,34 @@ export const test = base.extend<{}, WorkerFixture>({
         // Required by Playwright.
         // eslint-disable-next-line no-empty-pattern
         async ({}, use, workerInfo) => {
-            // Setup separate database and server instances for each worker to allow tests to run in parallel
-            // without interfering with each other.
+            // Setup separate database and server instances for each worker when worker DB mode is enabled.
             const workerId = workerInfo.workerIndex;
             const backendPort = 4000 + workerId;
             const frontendPort = 3000 + workerId;
-            const dbName = `${process.env.DB_NAME!}_e2e_${workerId.toString()}`;
+            const baseDbName = process.env.DB_NAME;
 
-            const setupConnection = await createConnection({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASSWORD,
-                port: parseInt(process.env.DB_PORT ?? "3306"),
-            });
+            if (!baseDbName) {
+                throw new Error("DB_NAME must be set for e2e tests.");
+            }
 
-            await setupConnection.query(
-                `CREATE DATABASE IF NOT EXISTS \`${dbName}\``,
-            );
+            const dbName = shouldUseWorkerDatabase
+                ? `${baseDbName}_e2e_${workerId.toString()}`
+                : baseDbName;
 
-            await setupConnection.end();
+            if (shouldManageDatabaseLifecycle) {
+                const setupConnection = await createConnection({
+                    host: process.env.DB_HOST,
+                    user: process.env.DB_USER,
+                    password: process.env.DB_PASSWORD,
+                    port: parseInt(process.env.DB_PORT ?? "3306"),
+                });
+
+                await setupConnection.query(
+                    `CREATE DATABASE IF NOT EXISTS \`${dbName}\``,
+                );
+
+                await setupConnection.end();
+            }
 
             execSync("pnpm push-db:test", {
                 cwd: "../backend",
@@ -230,18 +260,20 @@ export const test = base.extend<{}, WorkerFixture>({
                 });
             });
 
-            const teardownConnection = await createConnection({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASSWORD,
-                port: parseInt(process.env.DB_PORT ?? "3306"),
-            });
+            if (shouldManageDatabaseLifecycle) {
+                const teardownConnection = await createConnection({
+                    host: process.env.DB_HOST,
+                    user: process.env.DB_USER,
+                    password: process.env.DB_PASSWORD,
+                    port: parseInt(process.env.DB_PORT ?? "3306"),
+                });
 
-            await teardownConnection.query(
-                `DROP DATABASE IF EXISTS \`${dbName}\``,
-            );
+                await teardownConnection.query(
+                    `DROP DATABASE IF EXISTS \`${dbName}\``,
+                );
 
-            await teardownConnection.end();
+                await teardownConnection.end();
+            }
         },
         { scope: "worker", auto: true, timeout: 120000 },
     ],
