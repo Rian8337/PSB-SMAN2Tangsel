@@ -119,7 +119,7 @@ export function EditUserForm({ user }: EditUserFormProps) {
 
                     <Input
                         name="name"
-                        value={user.name}
+                        value={name}
                         placeholder={t("fields.name.placeholder")}
                         bg="gray.200"
                         border="none"
