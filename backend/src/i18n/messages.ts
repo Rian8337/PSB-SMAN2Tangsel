@@ -36,6 +36,7 @@ interface Localization {
     };
 
     readonly userController: {
+        readonly invalidUserId: string;
         readonly invalidQueryFormat: string;
     };
 
@@ -93,6 +94,8 @@ export const messages = {
             noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
         },
         userController: {
+            invalidUserId:
+                "Parameter userId harus berupa bilangan bulat positif.",
             invalidQueryFormat:
                 "Parameter query harus berupa string jika disertakan.",
         },
@@ -147,6 +150,7 @@ export const messages = {
                 "There is no active academic session at the moment.",
         },
         userController: {
+            invalidUserId: "Parameter userId must be a positive integer.",
             invalidQueryFormat: "Parameter query must be a string if provided.",
         },
         userService: {

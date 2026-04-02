@@ -22,6 +22,40 @@ export class UserController extends BaseController {
     }
 
     /**
+     * Obtains detailed information about a specific user by their ID.
+     */
+    @Get("/:id")
+    @Roles(UserRole.administrator)
+    async getUser(
+        req: Request<{ id: string }, UserListItem | { error: string }>,
+        res: Response<UserListItem | { error: string }>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const userId = parseInt(req.params.id, 10);
+
+            if (Number.isNaN(userId) || userId <= 0) {
+                throw new BadRequestError("userController.invalidUserId");
+            }
+
+            const user = await this.userService.findById(userId);
+
+            res.json({
+                id: user.id,
+                active: user.active,
+                name: user.name,
+                role: user.role,
+                identifier: user.identifier,
+            });
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
      * Lists users for display in the UI.
      */
     @Get("/list")
