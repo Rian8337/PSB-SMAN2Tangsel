@@ -1,14 +1,14 @@
-import { test, expect } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ScheduleDay } from "@psb/shared/types";
-import { seeders, testDbManager } from "./utils/db";
+import { expect, test } from "./fixtures";
 import { loginStudent } from "./utils/login";
 
 test.describe("Student Dashboard Schedule", () => {
     const student = seededPrimaryData.students[0];
     const subject = seededPrimaryData.subjects[0];
 
-    test.beforeAll(async () => {
+    test.beforeAll(async ({ workerSetup }) => {
+        const { seeders } = workerSetup.dbManager;
         const teacher = seededPrimaryData.teachers[0];
         const session = seededPrimaryData.sessions[0];
 
@@ -40,7 +40,9 @@ test.describe("Student Dashboard Schedule", () => {
         });
     });
 
-    test.afterAll(testDbManager.cleanupSecondaryTables);
+    test.afterAll(async ({ workerSetup }) => {
+        await workerSetup.dbManager.cleanupSecondaryTables();
+    });
 
     test.beforeEach(async ({ page }) => {
         await loginStudent(page);

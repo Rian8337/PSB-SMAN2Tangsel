@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test.describe("Homepage & i18n Localization", () => {
     test("Should default to Indonesian and allow switching to English", async ({

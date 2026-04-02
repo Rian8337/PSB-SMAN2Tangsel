@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
 import { Student, UserRole } from "@psb/shared/types";
+import { expect, test } from "./fixtures";
 import { loginAdministrator } from "./utils/login";
 
 test.describe("Account Management", () => {

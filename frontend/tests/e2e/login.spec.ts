@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test.describe("Login Page", () => {
     test("renders the login form with Indonesian labels by default", async ({

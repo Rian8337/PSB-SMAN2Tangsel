@@ -8,19 +8,21 @@ if (!process.env.CI) {
 }
 
 /**
- * A Drizzle database instance for testing purposes, connected to the test database.
+ * Creates a database manager for the given database name.
+ *
+ * This is useful for creating database managers for multiple test databases when running tests in parallel.
+ *
+ * @param dbName The name of the database to create the manager for.
+ * @returns A database manager connected to the specified database.
  */
-export const testDb = createDatabase({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: parseInt(process.env.DB_PORT ?? "3306"),
-});
-
-/**
- * A database manager for the test database, used to manage test data during testing.
- */
-export const testDbManager = createDatabaseManager(testDb);
-
-export const { seeders } = testDbManager;
+export function createTestDatabaseManager(dbName: string) {
+    return createDatabaseManager(
+        createDatabase({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: dbName,
+            port: parseInt(process.env.DB_PORT ?? "3306"),
+        }),
+    );
+}
