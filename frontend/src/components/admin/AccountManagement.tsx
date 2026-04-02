@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
 import { CreateUserModal } from "./CreateUserModal";
 import { useDebounce } from "@/hooks";
+import { Link } from "@/i18n/navigation";
 
 interface AccountManagementProps {
     currentUserId: number;
@@ -231,10 +232,15 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
 
                                         <Table.Cell textAlign="right">
                                             <Button
+                                                asChild
                                                 variant="ghost"
                                                 colorPalette="blue"
                                             >
-                                                {t("actions.view")}
+                                                <Link
+                                                    href={`/admin/users/${user.id.toString()}`}
+                                                >
+                                                    {t("actions.edit")}
+                                                </Link>
                                             </Button>
 
                                             {user.id !== currentUserId && (

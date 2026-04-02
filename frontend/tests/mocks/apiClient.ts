@@ -36,9 +36,10 @@ export const mockScheduleApiClient: Mocked<IScheduleAPIClient> = {
  * Mock implementation of {@link IUserAPIClient}.
  */
 export const mockUserApiClient: Mocked<IUserAPIClient> = {
+    getUser: vi.fn(),
     listUsers: vi.fn(),
     createUser: vi.fn(),
-    updateActiveState: vi.fn(),
+    updateUser: vi.fn(),
     updatePassword: vi.fn(),
     deleteUser: vi.fn(),
 };

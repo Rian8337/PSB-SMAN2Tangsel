@@ -10,6 +10,10 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         return super.baseURL + "/users";
     }
 
+    getUser(id: number): Promise<UserListItem> {
+        return this.get(`/${id.toString()}`).then((res) => res.json());
+    }
+
     listUsers(
         query?: string,
         limit?: number,
@@ -44,9 +48,13 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         });
     }
 
-    async updateActiveState(userId: number, active: boolean): Promise<void> {
-        await this.patch("/update-active-state", {
-            body: JSON.stringify({ userId, active }),
+    async updateUser(
+        userId: number,
+        name: string,
+        active: boolean,
+    ): Promise<void> {
+        await this.patch(`/${userId.toString()}`, {
+            body: JSON.stringify({ name, active }),
             headers: { "Content-Type": "application/json" },
         });
     }

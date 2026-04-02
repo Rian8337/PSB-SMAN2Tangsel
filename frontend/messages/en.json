@@ -50,6 +50,7 @@
       "inactive": "Inactive"
     },
     "actions": {
+      "edit": "Edit",
       "view": "View"
     },
     "emptyState": "No users found.",
@@ -154,5 +155,27 @@
   "NotificationBell": {
     "noNotifications": "No notifications at the moment.",
     "title": "Notifications"
+  },
+  "EditUser": {
+    "title": "Edit User",
+    "fields": {
+      "active": {
+        "label": "Active User"
+      },
+      "name": {
+        "label": "Full Name",
+        "placeholder": "Enter full name"
+      },
+      "identifier": {
+        "label": "NISN / NIP"
+      }
+    },
+    "updateButton": "Update User",
+    "toast": {
+      "successTitle": "User Updated",
+      "successMessage": "User \"{name}\" has been successfully updated.",
+      "errorTitle": "Failed to Update User",
+      "errorMessage": "An error occurred while updating the user. Please try again."
+    }
   }
 }

@@ -50,7 +50,7 @@
       "inactive": "Nonaktif"
     },
     "actions": {
-      "view": "Lihat"
+      "edit": "Edit"
     },
     "emptyState": "Tidak ada pengguna yang ditemukan.",
     "deleteUser": {
@@ -154,5 +154,27 @@
   "NotificationBell": {
     "noNotifications": "Tidak ada notifikasi saat ini.",
     "title": "Notifikasi"
+  },
+  "EditUser": {
+    "title": "Edit Pengguna",
+    "fields": {
+      "active": {
+        "label": "Pengguna Aktif"
+      },
+      "name": {
+        "label": "Nama Lengkap",
+        "placeholder": "Masukkan nama lengkap"
+      },
+      "identifier": {
+        "label": "NISN / NIP"
+      }
+    },
+    "updateButton": "Perbarui Pengguna",
+    "toast": {
+      "successTitle": "Pengguna Berhasil Diperbarui",
+      "successMessage": "Pengguna \"{name}\" telah berhasil diperbarui.",
+      "errorTitle": "Gagal Memperbarui Pengguna",
+      "errorMessage": "Terjadi kesalahan saat memperbarui pengguna. Silakan coba lagi."
+    }
   }
 }

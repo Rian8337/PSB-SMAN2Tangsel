@@ -5,6 +5,14 @@ import { UserListItem, UserRole } from "@psb/shared/types";
  */
 export interface IUserAPIClient {
     /**
+     * Obtains detailed information about a specific user by their ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @returns The user item containing detailed information about the user.
+     */
+    getUser(id: number): Promise<UserListItem>;
+
+    /**
      * Lists users for display in the UI.
      *
      * @param query The search query to filter users by name or identifier.
@@ -34,12 +42,13 @@ export interface IUserAPIClient {
     ): Promise<void>;
 
     /**
-     * Updates the active state of an existing user.
+     * Updates the details of an existing user.
      *
-     * @param userId The ID of the user whose active state is to be updated.
-     * @param active The new active state to be set for the user.
+     * @param userId The ID of the user.
+     * @param name The new name of the user.
+     * @param active Whether the user is active.
      */
-    updateActiveState(userId: number, active: boolean): Promise<void>;
+    updateUser(userId: number, name: string, active: boolean): Promise<void>;
 
     /**
      * Updates the password of the currently authenticated user.
