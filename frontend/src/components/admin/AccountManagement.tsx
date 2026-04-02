@@ -74,7 +74,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     type: "success",
                 });
 
-                void fetchUsers();
+                void fetchUsers(searchQuery);
             })
             .catch(() => {
                 toaster.create({
@@ -279,7 +279,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
-                    void fetchUsers();
+                    void fetchUsers(searchQuery);
                 }}
             />
         </Box>
