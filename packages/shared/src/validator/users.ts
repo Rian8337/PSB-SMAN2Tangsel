@@ -1,16 +1,19 @@
 import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 import { users } from "../database/schema";
 
 /**
  * The Zod schema for validating user insertion data.
  */
 export const insertUserSchema = createInsertSchema(users, {
-    name: (schema) =>
-        schema
+    name: () =>
+        z
+            .string()
             .min(1, "Name is required")
             .max(100, "Name must be at most 100 characters long"),
-    password: (schema) =>
-        schema
+    password: () =>
+        z
+            .string()
             .min(1, "Password is required")
             .max(72, "Password must be at most 72 characters long"),
 });
