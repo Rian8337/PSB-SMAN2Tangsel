@@ -25,4 +25,12 @@ export class SessionService implements ISessionService {
 
         return active;
     }
+
+    listSessions(
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<AcademicSession[]> {
+        return this.sessionRepository.listSessions(query, limit, offset);
+    }
 }

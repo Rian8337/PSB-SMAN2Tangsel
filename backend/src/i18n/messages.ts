@@ -16,6 +16,7 @@ interface Localization {
     };
 
     readonly controller: {
+        readonly invalidQueryFormat: string;
         readonly invalidLimitFormat: string;
         readonly invalidLimitRange: string;
         readonly invalidOffsetFormat: string;
@@ -37,7 +38,6 @@ interface Localization {
 
     readonly userController: {
         readonly invalidUserId: string;
-        readonly invalidQueryFormat: string;
     };
 
     readonly userService: {
@@ -72,6 +72,8 @@ export const messages = {
                 "Terlalu banyak percobaan masuk. Mohon coba lagi nanti.",
         },
         controller: {
+            invalidQueryFormat:
+                "Parameter query harus berupa string jika disertakan.",
             invalidLimitFormat:
                 "Parameter limit harus berupa bilangan bulat positif.",
             invalidLimitRange:
@@ -96,8 +98,6 @@ export const messages = {
         userController: {
             invalidUserId:
                 "Parameter userId harus berupa bilangan bulat positif.",
-            invalidQueryFormat:
-                "Parameter query harus berupa string jika disertakan.",
         },
         userService: {
             invalidIdentifier: "Identifikasi tidak valid.",
@@ -129,6 +129,7 @@ export const messages = {
             tooManyAttempts: "Too many login attempts. Please try again later.",
         },
         controller: {
+            invalidQueryFormat: "Parameter query must be a string if provided.",
             invalidLimitFormat: "Parameter limit must be a positive integer.",
             invalidLimitRange: "Parameter limit must be within a valid range.",
             invalidOffsetFormat:
@@ -151,7 +152,6 @@ export const messages = {
         },
         userController: {
             invalidUserId: "Parameter userId must be a positive integer.",
-            invalidQueryFormat: "Parameter query must be a string if provided.",
         },
         userService: {
             invalidIdentifier: "Invalid identifier.",

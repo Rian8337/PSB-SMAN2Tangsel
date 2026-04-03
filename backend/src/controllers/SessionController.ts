@@ -1,0 +1,112 @@
+import { Controller } from "@/decorators/controller";
+import { Roles } from "@/decorators/roles";
+import { Get } from "@/decorators/routes";
+import { dependencyTokens } from "@/dependencies/tokens";
+import { ISessionService } from "@/services";
+import { BadRequestError } from "@/types";
+import { AcademicSessionDTO, UserRole } from "@psb/shared/types";
+import { Request, Response } from "express";
+import { inject } from "tsyringe";
+import { BaseController } from "./BaseController";
+
+/**
+ * Controller that handles academic session endpoints.
+ */
+@Controller("/sessions")
+export class SessionController extends BaseController {
+    constructor(
+        @inject(dependencyTokens.sessionService)
+        private readonly sessionService: ISessionService,
+    ) {
+        super();
+    }
+
+    /**
+     * Obtains the currently active academic session.
+     */
+    @Get("/active")
+    @Roles()
+    async getActive(
+        req: Request<unknown, AcademicSessionDTO | { error: string }>,
+        res: Response<AcademicSessionDTO | { error: string }>,
+    ) {
+        try {
+            const active = await this.sessionService.getActive();
+
+            res.json({
+                ...active,
+                startTime: active.startTime.getTime(),
+                endTime: active.endTime.getTime(),
+            });
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Lists academic sessions and semesters for display in the UI.
+     */
+    @Get("/list")
+    @Roles(UserRole.administrator)
+    async listSessions(
+        req: Request<
+            unknown,
+            AcademicSessionDTO[] | { error: string },
+            unknown,
+            Partial<{ query?: string; limit?: string; offset?: string }>
+        >,
+        res: Response<AcademicSessionDTO[] | { error: string }>,
+    ) {
+        try {
+            const { query } = req.query;
+
+            const limit = req.query.limit
+                ? parseInt(req.query.limit, 10)
+                : undefined;
+
+            const offset = req.query.offset
+                ? parseInt(req.query.offset, 10)
+                : undefined;
+
+            if (query !== undefined && typeof query !== "string") {
+                throw new BadRequestError("controller.invalidQueryFormat");
+            }
+
+            if (limit !== undefined) {
+                if (Number.isNaN(limit)) {
+                    throw new BadRequestError("controller.invalidLimitFormat");
+                }
+
+                if (limit <= 0 || limit > 50) {
+                    throw new BadRequestError("controller.invalidLimitRange");
+                }
+            }
+
+            if (offset !== undefined) {
+                if (Number.isNaN(offset)) {
+                    throw new BadRequestError("controller.invalidOffsetFormat");
+                }
+
+                if (offset < 0) {
+                    throw new BadRequestError("controller.invalidOffsetRange");
+                }
+            }
+
+            const sessions = await this.sessionService.listSessions(
+                query,
+                limit,
+                offset,
+            );
+
+            res.json(
+                sessions.map((session) => ({
+                    ...session,
+                    startTime: session.startTime.getTime(),
+                    endTime: session.endTime.getTime(),
+                })),
+            );
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+}

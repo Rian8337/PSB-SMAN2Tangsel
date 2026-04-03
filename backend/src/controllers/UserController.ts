@@ -51,7 +51,7 @@ export class UserController extends BaseController {
                 : undefined;
 
             if (query !== undefined && typeof query !== "string") {
-                throw new BadRequestError("userController.invalidQueryFormat");
+                throw new BadRequestError("controller.invalidQueryFormat");
             }
 
             if (limit !== undefined) {
