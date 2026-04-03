@@ -1,8 +1,13 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { sessions } from "@psb/shared/schema";
-import { AcademicSession, DrizzleDb, ValidSession } from "@psb/shared/types";
-import { eq } from "drizzle-orm";
+import {
+    AcademicSession,
+    DrizzleDb,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
+import { and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { ISessionRepository } from "./ISessionRepository";
@@ -44,5 +49,20 @@ export class SessionRepository
         }
 
         return builder.limit(limit).offset(offset);
+    }
+
+    async deleteSession(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<void> {
+        await this.db
+            .delete(sessions)
+            .where(
+                and(
+                    eq(sessions.session, session),
+                    eq(sessions.semester, semester),
+                    eq(sessions.active, null),
+                ),
+            );
     }
 }

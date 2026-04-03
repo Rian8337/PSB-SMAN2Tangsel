@@ -3,7 +3,11 @@ import { ISessionService } from "./ISessionService";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { inject } from "tsyringe";
 import { ISessionRepository } from "@/repositories";
-import { AcademicSession } from "@psb/shared/types";
+import {
+    AcademicSession,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { NotFoundError } from "@/types";
 
 /**
@@ -32,5 +36,12 @@ export class SessionService implements ISessionService {
         offset?: number,
     ): Promise<AcademicSession[]> {
         return this.sessionRepository.listSessions(query, limit, offset);
+    }
+
+    deleteSession(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<void> {
+        return this.sessionRepository.deleteSession(session, semester);
     }
 }

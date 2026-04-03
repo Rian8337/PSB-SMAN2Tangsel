@@ -1,6 +1,6 @@
 import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
-import { Get } from "@/decorators/routes";
+import { Delete, Get } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { ISessionService } from "@/services";
 import { BadRequestError } from "@/types";
@@ -8,6 +8,7 @@ import { AcademicSessionDTO, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import { validSemesterSchema, validSessionSchema } from "@psb/shared/validator";
 
 /**
  * Controller that handles academic session endpoints.
@@ -105,6 +106,40 @@ export class SessionController extends BaseController {
                     endTime: session.endTime.getTime(),
                 })),
             );
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Deletes the specified academic session and semester.
+     */
+    @Delete("/")
+    @Roles(UserRole.administrator)
+    async deleteSession(
+        req: Request<
+            unknown,
+            unknown,
+            Partial<{ session: string; semester: number }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        try {
+            const { session, semester } = req.body;
+
+            if (typeof session !== "string" || typeof semester !== "number") {
+                throw new BadRequestError();
+            }
+
+            const parsedSession = validSessionSchema.parse(session);
+            const parsedSemester = validSemesterSchema.parse(semester);
+
+            await this.sessionService.deleteSession(
+                parsedSession,
+                parsedSemester,
+            );
+
+            res.sendStatus(204);
         } catch (e) {
             this.handleError(req, res, e);
         }

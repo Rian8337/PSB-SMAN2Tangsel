@@ -1,4 +1,8 @@
-import { AcademicSession } from "@psb/shared/types";
+import {
+    AcademicSession,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 
 /**
  * A service that is responsible for handling academic session related operations.
@@ -24,4 +28,15 @@ export interface ISessionService {
         limit?: number,
         offset?: number,
     ): Promise<AcademicSession[]>;
+
+    /**
+     * Deletes the specified academic session and semester. They must not be active.
+     *
+     * @param session The session of the academic session to delete.
+     * @param semester The semester of the academic session to delete.
+     */
+    deleteSession(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<void>;
 }
