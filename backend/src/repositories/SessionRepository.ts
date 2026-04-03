@@ -7,7 +7,7 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { ISessionRepository } from "./ISessionRepository";
@@ -45,6 +45,12 @@ export class SessionRepository
         if (query) {
             builder = builder.where(
                 eq(sessions.session, query as ValidSession),
+            ) as typeof builder;
+        } else {
+            // If there is no query, we want to order by start time and active status to show the most relevant sessions first.
+            builder = builder.orderBy(
+                desc(sessions.startTime),
+                desc(sessions.active),
             ) as typeof builder;
         }
 
