@@ -1,0 +1,281 @@
+"use client";
+
+import { useDebounce } from "@/hooks";
+import { useSessionApiClient } from "@/providers/api/session-api-provider";
+import {
+    Badge,
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Input,
+    Spinner,
+    Table,
+} from "@chakra-ui/react";
+import {
+    AcademicSessionDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
+import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useState } from "react";
+import { toaster } from "../ui/toaster";
+import { Check, Plus, Search, Trash2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+
+export function AcademicSessionManagement() {
+    const t = useTranslations("AcademicSession");
+    const sessionApiClient = useSessionApiClient();
+
+    const [sessions, setSessions] = useState<AcademicSessionDTO[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
+
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+    const fetchSessions = useCallback(
+        async (query?: string) => {
+            setIsLoading(true);
+
+            try {
+                const data = await sessionApiClient.listSessions(query);
+                setSessions(data);
+            } catch {
+                toaster.create({
+                    title: t("fetchToast.errorTitle"),
+                    description: t("fetchToast.errorMessage"),
+                    type: "error",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [sessionApiClient, t],
+    );
+
+    useEffect(() => {
+        void fetchSessions(debouncedSearchQuery);
+    }, [fetchSessions, debouncedSearchQuery]);
+
+    const handleDelete = (session: ValidSession, semester: ValidSemester) => {
+        const tOptions = { session, semester: semester.toString() };
+
+        if (!confirm(t("delete.confirmation", tOptions))) {
+            return;
+        }
+
+        sessionApiClient
+            .deleteSession(session, semester)
+            .then(() => {
+                toaster.create({
+                    title: t("delete.toast.successTitle"),
+                    description: t("delete.toast.successMessage", tOptions),
+                    type: "success",
+                });
+
+                void fetchSessions(debouncedSearchQuery);
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("delete.toast.errorTitle"),
+                    description: t("delete.toast.errorMessage"),
+                    type: "error",
+                });
+            });
+    };
+
+    const formatDate = (timestamp: number) =>
+        new Date(timestamp).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+
+    return (
+        <Box
+            p={{ base: 4, md: 8 }}
+            w="full"
+            h="full"
+            display="flex"
+            flexDirection="column"
+        >
+            <Heading as="h2" size={{ base: "lg", md: "xl" }} mb={6}>
+                {t("title")}
+            </Heading>
+
+            <Flex
+                direction={{ base: "column", md: "row" }}
+                justify="space-between"
+                align={{ base: "stretch", md: "center" }}
+                gap={4}
+                mb={6}
+            >
+                <Box
+                    position="relative"
+                    maxW={{ base: "full", md: "400px" }}
+                    w="full"
+                >
+                    <Box
+                        position="absolute"
+                        left={3}
+                        top="50%"
+                        transform="translateY(-50%)"
+                    >
+                        <Search size={18} />
+                    </Box>
+
+                    <Input
+                        name="search"
+                        pl={10}
+                        placeholder={t("searchPlaceholder")}
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                        }}
+                        bg="white"
+                        borderRadius="md"
+                    />
+                </Box>
+
+                <Button
+                    w={{ base: "full", md: "auto" }}
+                    colorPalette="blue"
+                    bg="blue.600"
+                    color="white"
+                    _hover={{ bg: "blue.700" }}
+                    onClick={() => {
+                        setisCreateModalOpen(true);
+                    }}
+                >
+                    <Plus size={18} style={{ marginRight: "8px" }} />
+                    {t("addButton")}
+                </Button>
+            </Flex>
+
+            <Box
+                bg="white"
+                borderRadius="md"
+                borderWidth="1px"
+                overflowX="auto"
+                flex={1}
+                w="full"
+            >
+                {isLoading ? (
+                    <Flex justify="center" align="center" h="200px">
+                        <Spinner size="xl" />
+                    </Flex>
+                ) : (
+                    <Table.Root variant="line" minW="800px">
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.ColumnHeader>
+                                    {t("columns.session")}
+                                </Table.ColumnHeader>
+
+                                <Table.ColumnHeader textAlign="center">
+                                    {t("columns.semester")}
+                                </Table.ColumnHeader>
+
+                                <Table.ColumnHeader>
+                                    {t("columns.startDate")}
+                                </Table.ColumnHeader>
+
+                                <Table.ColumnHeader>
+                                    {t("columns.endDate")}
+                                </Table.ColumnHeader>
+
+                                <Table.ColumnHeader textAlign="center">
+                                    {t("columns.active")}
+                                </Table.ColumnHeader>
+
+                                <Table.ColumnHeader textAlign="right">
+                                    {t("columns.actions")}
+                                </Table.ColumnHeader>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {sessions.length > 0 ? (
+                                sessions.map((session) => (
+                                    <Table.Row
+                                        key={`${session.session}-${session.semester.toString()}`}
+                                    >
+                                        <Table.Cell fontWeight="medium">
+                                            {session.session}
+                                        </Table.Cell>
+
+                                        <Table.Cell textAlign="center">
+                                            {session.semester}
+                                        </Table.Cell>
+
+                                        <Table.Cell color="gray.600">
+                                            {formatDate(session.startTime)}
+                                        </Table.Cell>
+
+                                        <Table.Cell color="gray.600">
+                                            {formatDate(session.endTime)}
+                                        </Table.Cell>
+
+                                        <Table.Cell textAlign="center">
+                                            {session.active && (
+                                                <Badge
+                                                    colorPalette="green"
+                                                    variant="subtle"
+                                                >
+                                                    <Check size={16} />
+                                                </Badge>
+                                            )}
+                                        </Table.Cell>
+
+                                        <Table.Cell textAlign="right">
+                                            <Button
+                                                asChild
+                                                variant="ghost"
+                                                colorPalette="blue"
+                                            >
+                                                <Link
+                                                    href={`/admin/academic-year/edit?session=${encodeURIComponent(session.session)}&semester=${session.semester.toString()}`}
+                                                >
+                                                    {t("actions.edit")}
+                                                </Link>
+                                            </Button>
+
+                                            {!session.active && (
+                                                <Button
+                                                    aria-label={`delete-${session.session}-semester-${session.semester.toString()}`}
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    colorPalette="red"
+                                                    onClick={() => {
+                                                        handleDelete(
+                                                            session.session,
+                                                            session.semester,
+                                                        );
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            )}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))
+                            ) : (
+                                <Table.Row>
+                                    <Table.Cell
+                                        colSpan={6}
+                                        textAlign="center"
+                                        py={8}
+                                        color="gray.500"
+                                    >
+                                        {t("emptyState")}
+                                    </Table.Cell>
+                                </Table.Row>
+                            )}
+                        </Table.Body>
+                    </Table.Root>
+                )}
+            </Box>
+        </Box>
+    );
+}

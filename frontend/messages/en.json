@@ -1,4 +1,36 @@
 {
+  "AcademicSession": {
+    "title": "Academic Session Management",
+    "description": "Configure semesters, terms, and active school years.",
+    "searchPlaceholder": "Search academic sessions...",
+    "addButton": "Add Academic Session",
+    "columns": {
+      "session": "Academic Session",
+      "semester": "Semester",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "active": "Active",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "emptyState": "No academic sessions found.",
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Academic Session",
+      "errorMessage": "An error occurred while fetching the academic session. Please try again."
+    },
+    "delete": {
+      "confirmation": "Are you sure you want to delete the academic session \"{session} {semester}\"? This action cannot be undone.",
+      "toast": {
+        "successTitle": "Academic Session Deleted",
+        "successMessage": "The academic session \"{session} {semester}\" has been successfully deleted.",
+        "errorTitle": "Failed to Delete Academic Session",
+        "errorMessage": "An error occurred while deleting the academic session. Please try again."
+      }
+    }
+  },
   "AdminDashboard": {
     "title": "Admin Overview",
     "welcome": "Welcome back, {name}!",

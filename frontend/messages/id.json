@@ -1,4 +1,36 @@
 {
+  "AcademicSession": {
+    "title": "Tahun Ajaran",
+    "description": "Konfigurasi semester dan tahun ajaran aktif.",
+    "searchPlaceholder": "Cari tahun ajaran...",
+    "addButton": "Tambah Tahun Ajaran",
+    "columns": {
+      "session": "Tahun Ajaran",
+      "semester": "Semester",
+      "startDate": "Tanggal Mulai",
+      "endDate": "Tanggal Selesai",
+      "active": "Aktif",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Hapus"
+    },
+    "emptyState": "Tidak ada tahun ajaran yang ditemukan.",
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Tahun Ajaran",
+      "errorMessage": "Terjadi kesalahan saat mengambil tahun ajaran. Silakan coba lagi."
+    },
+    "delete": {
+      "confirmation": "Apakah Anda yakin ingin menghapus tahun ajaran \"{session} {semester}\"? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Tahun Ajaran Berhasil Dihapus",
+        "successMessage": "Tahun ajaran \"{session} {semester}\" telah berhasil dihapus.",
+        "errorTitle": "Gagal Menghapus Tahun Ajaran",
+        "errorMessage": "Terjadi kesalahan saat menghapus tahun ajaran. Silakan coba lagi."
+      }
+    }
+  },
   "AdminDashboard": {
     "title": "Ikhtisar Admin",
     "welcome": "Selamat datang, {name}!",
