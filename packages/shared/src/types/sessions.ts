@@ -14,3 +14,14 @@ export type ValidSession = `${number}/${number}`;
  * Semesters that are valid.
  */
 export type ValidSemester = 1 | 2;
+
+/**
+ * Academic session data transferred between frontend and backend.
+ */
+export interface AcademicSessionDTO {
+    readonly session: ValidSession;
+    readonly active: true | null;
+    readonly semester: ValidSemester;
+    readonly startTime: number;
+    readonly endTime: number;
+}
