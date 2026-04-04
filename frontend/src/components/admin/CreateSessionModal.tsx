@@ -217,7 +217,6 @@ export function CreateSessionModal({
                             <Input
                                 name="startTime"
                                 type="date"
-                                required
                                 value={startTime}
                                 onChange={(e) => {
                                     setStartTime(e.target.value);
@@ -233,7 +232,6 @@ export function CreateSessionModal({
                             <Input
                                 name="endTime"
                                 type="date"
-                                required
                                 value={endTime}
                                 onChange={(e) => {
                                     setEndTime(e.target.value);
