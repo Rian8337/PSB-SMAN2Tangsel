@@ -31,6 +31,70 @@
       }
     }
   },
+  "EditAcademicSession": {
+    "title": "Edit Academic Session",
+    "fields": {
+      "session": {
+        "label": "Academic Session"
+      },
+      "semester": {
+        "label": "Semester"
+      },
+      "startDate": {
+        "label": "Start Date"
+      },
+      "endDate": {
+        "label": "End Date"
+      },
+      "active": {
+        "label": "Activate This Academic Session"
+      }
+    },
+    "create": {
+      "dialog": {
+        "title": "Create New Academic Session",
+        "session": {
+          "label": "Academic Session (format: YYYY/YYYY)",
+          "placeholder": "Enter academic session (e.g., 2023/2024)"
+        },
+        "semester": {
+          "label": "Semester",
+          "placeholder": "Select semester",
+          "options": {
+            "odd": "Odd",
+            "even": "Even"
+          }
+        },
+        "startDate": {
+          "label": "Start Date",
+          "placeholder": "Select start date"
+        },
+        "endDate": {
+          "label": "End Date",
+          "placeholder": "Select end date"
+        },
+        "cancelButton": "Cancel",
+        "submitButton": "Create Academic Session"
+      },
+      "validation": {
+        "invalidSessionFormat": "Invalid academic session format. Must be in YYYY/YYYY format.",
+        "invalidSessionRange": "The second year must immediately follow the first year (e.g., 2023/2024)."
+      },
+      "toast": {
+        "successTitle": "Academic Session Created",
+        "successMessage": "The academic session \"{session} {semester}\" has been successfully created.",
+        "errorTitle": "Failed to Create Academic Session",
+        "errorMessage": "An error occurred while creating the academic session. Please try again."
+      }
+    },
+    "updateButton": "Update Academic Session",
+    "toast": {
+      "successTitle": "Academic Session Updated",
+      "successMessage": "The academic session \"{session} {semester}\" has been successfully updated.",
+      "errorTitle": "Failed to Update Academic Session",
+      "errorMessage": "An error occurred while updating the academic session. Please try again."
+    }
+  },
   "AdminDashboard": {
     "title": "Admin Overview",
     "welcome": "Welcome back, {name}!",
@@ -118,6 +182,8 @@
     }
   },
   "Form": {
+    "invalidDate": "The entered date is invalid.",
+    "invalidDateRange": "Start date must be before end date.",
     "missingFields": "Please fill in all required fields.",
     "passwordRequirements": "Password must be at least 8 characters with 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol."
   },

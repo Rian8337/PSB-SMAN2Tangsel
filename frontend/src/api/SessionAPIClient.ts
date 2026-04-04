@@ -24,6 +24,43 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         });
     }
 
+    getSession(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<AcademicSessionDTO | null> {
+        const url = new URL(this.baseURL + "/");
+
+        url.searchParams.append("session", encodeURIComponent(session));
+        url.searchParams.append("semester", semester.toString());
+
+        return this.get(url).then((res) => {
+            if (res.status === 404) {
+                return null;
+            }
+
+            return res.json();
+        });
+    }
+
+    async createSession(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: number,
+        endTime: number,
+        active: boolean,
+    ): Promise<void> {
+        await this.post("/", {
+            body: JSON.stringify({
+                session,
+                semester,
+                startTime,
+                endTime,
+                active,
+            }),
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+
     listSessions(
         query?: string,
         limit?: number,
@@ -44,6 +81,25 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         }
 
         return this.get(url).then((res) => res.json());
+    }
+
+    async updateSession(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: number,
+        endTime: number,
+        active: boolean,
+    ): Promise<void> {
+        await this.put("/", {
+            body: JSON.stringify({
+                session,
+                semester,
+                startTime,
+                endTime,
+                active,
+            }),
+            headers: { "Content-Type": "application/json" },
+        });
     }
 
     async deleteSession(

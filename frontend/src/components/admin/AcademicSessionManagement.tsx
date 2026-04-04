@@ -22,6 +22,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
 import { Check, Plus, Search, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { CreateSessionModal } from "./CreateSessionModal";
 
 export function AcademicSessionManagement() {
     const t = useTranslations("AcademicSession");
@@ -276,6 +277,16 @@ export function AcademicSessionManagement() {
                     </Table.Root>
                 )}
             </Box>
+
+            <CreateSessionModal
+                isOpen={isCreateModalOpen}
+                onClose={() => {
+                    setisCreateModalOpen(false);
+                }}
+                onSuccess={() => {
+                    void fetchSessions(debouncedSearchQuery);
+                }}
+            />
         </Box>
     );
 }

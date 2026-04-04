@@ -2,11 +2,13 @@ import { Locale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { AuthAPIClient } from "./AuthAPIClient";
 import { IAuthAPIClient } from "./IAuthAPIClient";
-import { IScheduleAPIClient } from "./IScheduleAPIClient";
-import { ScheduleAPIClient } from "./ScheduleAPIClient";
-import { NotificationAPIClient } from "./NotificationAPIClient";
 import { INotificationAPIClient } from "./INotificationAPIClient";
+import { IScheduleAPIClient } from "./IScheduleAPIClient";
+import { ISessionAPIClient } from "./ISessionAPIClient";
 import { IUserAPIClient } from "./IUserAPIClient";
+import { NotificationAPIClient } from "./NotificationAPIClient";
+import { ScheduleAPIClient } from "./ScheduleAPIClient";
+import { SessionAPIClient } from "./SessionAPIClient";
 import { UserAPIClient } from "./UserAPIClient";
 
 /**
@@ -46,6 +48,19 @@ export async function getServerScheduleApiClient(
     locale?: Locale,
 ): Promise<IScheduleAPIClient> {
     return new ScheduleAPIClient(locale ?? (await getLocale()));
+}
+
+/**
+ * Server-side factory to retrieve an {@link ISessionAPIClient}.
+ *
+ * @param locale Optional locale to initialize the {@link ISessionAPIClient} with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link ISessionAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerSessionApiClient(
+    locale?: Locale,
+): Promise<ISessionAPIClient> {
+    return new SessionAPIClient(locale ?? (await getLocale()));
 }
 
 /**

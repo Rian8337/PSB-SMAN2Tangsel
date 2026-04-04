@@ -31,6 +31,71 @@
       }
     }
   },
+  "EditAcademicSession": {
+    "title": "Edit Tahun Ajaran",
+    "fields": {
+      "session": {
+        "label": "Tahun Ajaran"
+      },
+      "semester": {
+        "label": "Semester"
+      },
+      "startDate": {
+        "label": "Tanggal Mulai"
+      },
+      "endDate": {
+        "label": "Tanggal Selesai"
+      },
+      "active": {
+        "label": "Aktifkan Tahun Ajaran Ini"
+      }
+    },
+    "create": {
+      "dialog": {
+        "title": "Daftar Tahun Ajaran Baru",
+        "session": {
+          "label": "Tahun Ajaran (format: YYYY/YYYY)",
+          "placeholder": "Masukkan tahun ajaran (misal: 2023/2024)"
+        },
+        "semester": {
+          "label": "Semester",
+          "placeholder": "Pilih semester",
+          "options": {
+            "odd": "Ganjil",
+            "even": "Genap"
+          }
+        },
+        "startDate": {
+          "label": "Tanggal Mulai",
+          "placeholder": "Pilih tanggal mulai"
+        },
+        "endDate": {
+          "label": "Tanggal Selesai",
+          "placeholder": "Pilih tanggal selesai"
+        },
+        "activeLabel": "Aktifkan Tahun Ajaran Ini",
+        "cancelButton": "Batal",
+        "submitButton": "Buat Tahun Ajaran"
+      },
+      "validation": {
+        "invalidSessionFormat": "Format tahun ajaran tidak valid. Harus dalam format YYYY/YYYY.",
+        "invalidSessionRange": "Tahun kedua harus tepat mengikuti tahun pertama (misalnya, 2023/2024)."
+      },
+      "toast": {
+        "successTitle": "Tahun Ajaran Berhasil Dibuat",
+        "successMessage": "Tahun ajaran \"{session} {semester}\" telah berhasil dibuat.",
+        "errorTitle": "Gagal Membuat Tahun Ajaran",
+        "errorMessage": "Terjadi kesalahan saat membuat tahun ajaran. Silakan coba lagi."
+      }
+    },
+    "updateButton": "Perbarui Tahun Ajaran",
+    "toast": {
+      "successTitle": "Tahun Ajaran Berhasil Diperbarui",
+      "successMessage": "Tahun ajaran \"{session} {semester}\" telah berhasil diperbarui.",
+      "errorTitle": "Gagal Memperbarui Tahun Ajaran",
+      "errorMessage": "Terjadi kesalahan saat memperbarui tahun ajaran. Silakan coba lagi."
+    }
+  },
   "AdminDashboard": {
     "title": "Ikhtisar Admin",
     "welcome": "Selamat datang, {name}!",
@@ -117,6 +182,8 @@
     }
   },
   "Form": {
+    "invalidDateRange": "Tanggal mulai harus sebelum tanggal selesai.",
+    "invalidDate": "Tanggal yang dimasukkan tidak valid.",
     "missingFields": "Harap isi semua bidang yang diperlukan.",
     "passwordRequirements": "Kata sandi harus setidaknya 8 karakter dengan 1 huruf kapital, 1 huruf kecil, 1 angka, dan 1 simbol."
   },
