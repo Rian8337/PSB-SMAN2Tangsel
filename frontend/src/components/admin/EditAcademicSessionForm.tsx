@@ -154,7 +154,6 @@ export function EditAcademicSessionForm({
                     <Input
                         name="startTime"
                         type="date"
-                        required
                         value={startTime}
                         bg="gray.200"
                         border="none"
@@ -176,7 +175,6 @@ export function EditAcademicSessionForm({
                     <Input
                         name="endTime"
                         type="date"
-                        required
                         value={endTime}
                         bg="gray.200"
                         border="none"
