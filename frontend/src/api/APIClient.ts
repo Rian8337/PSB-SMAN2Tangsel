@@ -13,10 +13,9 @@ export abstract class APIClient {
             process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
 
         if (typeof window !== "undefined") {
-            const runtimeBaseUrlCandidate = (globalThis as Record<
-                string,
-                unknown
-            >).__API_BASE_URL__;
+            const runtimeBaseUrlCandidate = (
+                globalThis as Record<string, unknown>
+            ).__API_BASE_URL__;
 
             const runtimeBaseUrl =
                 typeof runtimeBaseUrlCandidate === "string"
