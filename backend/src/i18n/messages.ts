@@ -4,6 +4,7 @@ interface Localization {
         readonly unauthorized: string;
         readonly forbidden: string;
         readonly notFound: string;
+        readonly conflict: string;
         readonly serverError: string;
     };
 
@@ -33,7 +34,10 @@ interface Localization {
     };
 
     readonly sessionService: {
+        readonly duplicateSession: string;
         readonly noActiveSession: string;
+        readonly sessionNotFound: string;
+        readonly invalidSessionTime: string;
     };
 
     readonly userController: {
@@ -61,6 +65,7 @@ export const messages = {
             unauthorized: "Unauthorized",
             forbidden: "Forbidden",
             notFound: "Not Found",
+            conflict: "Conflict",
             serverError: "Internal Server Error",
         },
         auth: {
@@ -93,7 +98,11 @@ export const messages = {
             baseIcsFilename: "jadwal_pelajaran",
         },
         sessionService: {
+            duplicateSession:
+                "Tahun pelajaran dengan sesi dan semester yang sama sudah ada.",
             noActiveSession: "Tidak ada tahun pelajaran yang aktif saat ini.",
+            sessionNotFound: "Tahun pelajaran tidak ditemukan.",
+            invalidSessionTime: "Waktu tahun pelajaran tidak valid.",
         },
         userController: {
             invalidUserId:
@@ -118,6 +127,7 @@ export const messages = {
             unauthorized: "Unauthorized",
             forbidden: "Forbidden",
             notFound: "Not Found",
+            conflict: "Conflict",
             serverError: "Internal Server Error",
         },
         auth: {
@@ -147,8 +157,12 @@ export const messages = {
             baseIcsFilename: "class_schedule",
         },
         sessionService: {
+            duplicateSession:
+                "An academic session with the same session and semester already exists.",
             noActiveSession:
                 "There is no active academic session at the moment.",
+            sessionNotFound: "Academic session not found.",
+            invalidSessionTime: "Invalid academic session time.",
         },
         userController: {
             invalidUserId: "Parameter userId must be a positive integer.",

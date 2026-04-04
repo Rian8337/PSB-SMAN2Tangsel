@@ -7,7 +7,7 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { ISessionRepository } from "./ISessionRepository";
@@ -35,11 +35,23 @@ export class SessionRepository
             .then((res) => res.at(0) ?? null);
     }
 
-    listSessions(
-        query?: string,
-        limit = 5,
-        offset = 0,
-    ): Promise<AcademicSession[]> {
+    get(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<AcademicSession | null> {
+        return this.db
+            .select()
+            .from(sessions)
+            .where(
+                and(
+                    eq(sessions.session, session),
+                    eq(sessions.semester, semester),
+                ),
+            )
+            .then((res) => res.at(0) ?? null);
+    }
+
+    list(query?: string, limit = 5, offset = 0): Promise<AcademicSession[]> {
         let builder = this.db.select().from(sessions);
 
         if (query) {
@@ -57,17 +69,76 @@ export class SessionRepository
         return builder.limit(limit).offset(offset);
     }
 
-    async deleteSession(
+    async create(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: Date,
+        endTime: Date,
+        active: boolean,
+    ): Promise<void> {
+        await this.db.transaction(async (tx) => {
+            if (active) {
+                // Deactivate any currently active session.
+                await tx
+                    .update(sessions)
+                    .set({ active: null })
+                    .where(eq(sessions.active, true));
+            }
+
+            await tx.insert(sessions).values({
+                session,
+                semester,
+                startTime,
+                endTime,
+                active: active ? true : null,
+            });
+        });
+    }
+
+    async update(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: Date,
+        endTime: Date,
+        active: boolean,
+    ): Promise<void> {
+        await this.db.transaction(async (tx) => {
+            if (active) {
+                // Deactivate any currently active session.
+                await tx
+                    .update(sessions)
+                    .set({ active: null })
+                    .where(eq(sessions.active, true));
+            }
+
+            await tx
+                .update(sessions)
+                .set({
+                    startTime,
+                    endTime,
+                    active: active ? true : null,
+                })
+                .where(
+                    and(
+                        eq(sessions.session, session),
+                        eq(sessions.semester, semester),
+                    ),
+                );
+        });
+    }
+
+    async delete(
         session: ValidSession,
         semester: ValidSemester,
     ): Promise<void> {
+        // TODO: delete all data related to this session that are not stored in the database (e.g., attachments in the file system)
         await this.db
             .delete(sessions)
             .where(
                 and(
                     eq(sessions.session, session),
                     eq(sessions.semester, semester),
-                    eq(sessions.active, null),
+                    isNull(sessions.active),
                 ),
             );
     }

@@ -1,14 +1,14 @@
 import { Injectable } from "@/decorators/injectable";
-import { ISessionService } from "./ISessionService";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { inject } from "tsyringe";
 import { ISessionRepository } from "@/repositories";
+import { BadRequestError, ConflictError, NotFoundError } from "@/types";
 import {
     AcademicSession,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { NotFoundError } from "@/types";
+import { inject } from "tsyringe";
+import { ISessionService } from "./ISessionService";
 
 /**
  * A service that is responsible for handling academic session related operations.
@@ -30,18 +30,101 @@ export class SessionService implements ISessionService {
         return active;
     }
 
+    async getSession(
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<AcademicSession> {
+        const academicSession = await this.sessionRepository.get(
+            session,
+            semester,
+        );
+
+        if (!academicSession) {
+            throw new NotFoundError("sessionService.sessionNotFound");
+        }
+
+        return academicSession;
+    }
+
     listSessions(
         query?: string,
         limit?: number,
         offset?: number,
     ): Promise<AcademicSession[]> {
-        return this.sessionRepository.listSessions(query, limit, offset);
+        return this.sessionRepository.list(query, limit, offset);
     }
 
-    deleteSession(
+    async createSession(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: Date,
+        endTime: Date,
+        active: boolean,
+    ): Promise<void> {
+        if (startTime >= endTime) {
+            throw new BadRequestError("sessionService.invalidSessionTime");
+        }
+
+        const existingSession = await this.sessionRepository.get(
+            session,
+            semester,
+        );
+
+        if (existingSession) {
+            throw new ConflictError("sessionService.duplicateSession");
+        }
+
+        return this.sessionRepository.create(
+            session,
+            semester,
+            startTime,
+            endTime,
+            active,
+        );
+    }
+
+    async updateSession(
+        session: ValidSession,
+        semester: ValidSemester,
+        startTime: Date,
+        endTime: Date,
+        active: boolean,
+    ): Promise<void> {
+        if (startTime >= endTime) {
+            throw new BadRequestError("sessionService.invalidSessionTime");
+        }
+
+        const existingSession = await this.sessionRepository.get(
+            session,
+            semester,
+        );
+
+        if (!existingSession) {
+            throw new NotFoundError("sessionService.sessionNotFound");
+        }
+
+        return this.sessionRepository.update(
+            session,
+            semester,
+            startTime,
+            endTime,
+            active,
+        );
+    }
+
+    async deleteSession(
         session: ValidSession,
         semester: ValidSemester,
     ): Promise<void> {
-        return this.sessionRepository.deleteSession(session, semester);
+        const existingSession = await this.sessionRepository.get(
+            session,
+            semester,
+        );
+
+        if (!existingSession) {
+            throw new NotFoundError("sessionService.sessionNotFound");
+        }
+
+        return this.sessionRepository.delete(session, semester);
     }
 }
