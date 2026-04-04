@@ -41,7 +41,7 @@ export function EditAcademicSessionForm({
 
     const [startTime, setStartTime] = useState(formatDate(session.startTime));
     const [endTime, setEndTime] = useState(formatDate(session.endTime));
-    const [isActive, setIsActive] = useState(session.active ?? false);
+    const [isActive, setIsActive] = useState(session.active);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

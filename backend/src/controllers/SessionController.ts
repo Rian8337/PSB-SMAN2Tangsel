@@ -38,6 +38,7 @@ export class SessionController extends BaseController {
                 ...active,
                 startTime: active.startTime.getTime(),
                 endTime: active.endTime.getTime(),
+                active: active.active ?? false,
             });
         } catch (e) {
             this.handleError(req, res, e);
@@ -104,6 +105,7 @@ export class SessionController extends BaseController {
                     ...session,
                     startTime: session.startTime.getTime(),
                     endTime: session.endTime.getTime(),
+                    active: session.active ?? false,
                 })),
             );
         } catch (e) {

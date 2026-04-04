@@ -20,7 +20,7 @@ export type ValidSemester = 1 | 2;
  */
 export interface AcademicSessionDTO {
     readonly session: ValidSession;
-    readonly active: true | null;
+    readonly active: boolean;
     readonly semester: ValidSemester;
     readonly startTime: number;
     readonly endTime: number;
