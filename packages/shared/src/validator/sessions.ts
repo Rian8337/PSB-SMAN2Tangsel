@@ -19,3 +19,20 @@ export const validSessionSchema = z
  * Zod schema for validating valid semesters (1 or 2).
  */
 export const validSemesterSchema = z.union([z.literal(1), z.literal(2)]);
+
+/**
+ * Zod schema for validating `AcademicSessionDTO`s.
+ */
+export const academicSessionDtoSchema = z.object({
+    session: validSessionSchema,
+    semester: validSemesterSchema,
+    active: z.boolean(),
+    startTime: z
+        .number()
+        .transform((val) => new Date(val))
+        .refine((d) => !Number.isNaN(d.getTime()), "Invalid start time"),
+    endTime: z
+        .number()
+        .transform((val) => new Date(val))
+        .refine((d) => !Number.isNaN(d.getTime()), "Invalid end time"),
+});
