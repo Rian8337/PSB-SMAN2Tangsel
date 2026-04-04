@@ -73,6 +73,7 @@
           "label": "End Date",
           "placeholder": "Select end date"
         },
+        "activeLabel": "Activate This Academic Session",
         "cancelButton": "Cancel",
         "submitButton": "Create Academic Session"
       },
