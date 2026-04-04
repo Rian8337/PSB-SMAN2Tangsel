@@ -61,6 +61,11 @@ export const mockScheduleService: Mocked<IScheduleService> = {
  */
 export const mockSessionService: Mocked<ISessionService> = {
     getActive: vi.fn(),
+    getSession: vi.fn(),
+    listSessions: vi.fn(),
+    createSession: vi.fn(),
+    updateSession: vi.fn(),
+    deleteSession: vi.fn(),
 };
 
 /**

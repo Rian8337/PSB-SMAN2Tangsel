@@ -67,6 +67,11 @@ export const mockScheduleRepository: Mocked<IScheduleRepository> = {
  */
 export const mockSessionRepository: Mocked<ISessionRepository> = {
     getActive: vi.fn(),
+    get: vi.fn(),
+    list: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
 };
 
 /**
