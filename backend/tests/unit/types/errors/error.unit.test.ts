@@ -1,5 +1,6 @@
 import {
     BadRequestError,
+    ConflictError,
     ForbiddenError,
     NotFoundError,
     UnauthorizedError,
@@ -11,6 +12,7 @@ describe("Errors (unit)", () => {
         [UnauthorizedError, 401],
         [ForbiddenError, 403],
         [NotFoundError, 404],
+        [ConflictError, 409],
     ])("Returns the correct status code for %o: %i", (errorConstruct, code) => {
         const error = new errorConstruct();
         expect(error.statusCode).toBe(code);
