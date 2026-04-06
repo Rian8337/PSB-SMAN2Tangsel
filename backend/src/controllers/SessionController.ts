@@ -63,16 +63,23 @@ export class SessionController extends BaseController {
         res: Response<AcademicSessionDTO | { error: string }>,
     ) {
         try {
-            const { session } = req.query;
-            const semester = parseInt(req.query.semester ?? "", 10);
+            const { session, semester } = req.query;
 
-            const parsedSession = validSessionSchema.safeParse(session);
+            if (typeof session !== "string" || typeof semester !== "string") {
+                throw new BadRequestError();
+            }
+
+            const parsedSession = validSessionSchema.safeParse(
+                decodeURIComponent(session),
+            );
 
             if (!parsedSession.success) {
                 throw new BadRequestError();
             }
 
-            const parsedSemester = validSemesterSchema.safeParse(semester);
+            const parsedSemester = validSemesterSchema.safeParse(
+                parseInt(semester, 10),
+            );
 
             if (!parsedSemester.success) {
                 throw new BadRequestError();
@@ -236,7 +243,10 @@ export class SessionController extends BaseController {
                 throw new BadRequestError();
             }
 
-            const parsedSession = validSessionSchema.parse(session);
+            const parsedSession = validSessionSchema.parse(
+                decodeURIComponent(session),
+            );
+
             const parsedSemester = validSemesterSchema.parse(semester);
 
             await this.sessionService.deleteSession(
