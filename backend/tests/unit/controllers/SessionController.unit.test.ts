@@ -1,4 +1,4 @@
-import { SessionController } from "@/controllers/SessionController";
+import { SessionController } from "@/controllers";
 import { MessageKey } from "@/i18n";
 import { AcademicSession, AcademicSessionDTO } from "@psb/shared/types";
 import {
