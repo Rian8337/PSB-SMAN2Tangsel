@@ -63,7 +63,9 @@ export class SessionController extends BaseController {
         res: Response<AcademicSessionDTO | { error: string }>,
     ) {
         try {
-            const { session, semester } = req.query;
+            const { session } = req.query;
+            const semester = parseInt(req.query.semester ?? "", 10);
+
             const parsedSession = validSessionSchema.safeParse(session);
 
             if (!parsedSession.success) {
