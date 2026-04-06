@@ -185,11 +185,6 @@ jobs:
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-app
 
-      - name: Build
-        working-directory: .
-        shell: bash
-        run: pnpm build
-
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
