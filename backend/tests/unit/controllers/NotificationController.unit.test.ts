@@ -34,7 +34,7 @@ describe("NotificationController (unit)", () => {
             beforeEach(() => {
                 req.sessionData = {
                     classId: 1,
-                    nisn: "1234567890",
+                    identifier: "1234567890",
                     role: UserRole.student,
                     userId: 1,
                 };
@@ -110,7 +110,7 @@ describe("NotificationController (unit)", () => {
             beforeEach(() => {
                 req.sessionData = {
                     classId: 1,
-                    nisn: "1234567890",
+                    identifier: "1234567890",
                     role: UserRole.student,
                     userId: 1,
                 };
@@ -155,7 +155,7 @@ describe("NotificationController (unit)", () => {
             beforeEach(() => {
                 req.sessionData = {
                     classId: 1,
-                    nisn: "1234567890",
+                    identifier: "1234567890",
                     role: UserRole.student,
                     userId: 1,
                 };
