@@ -222,7 +222,7 @@ export class SessionController extends BaseController {
     async deleteSession(
         req: Request<
             unknown,
-            unknown,
+            { error: string },
             Partial<{ session: string; semester: number }>
         >,
         res: Response<{ error: string }>,
