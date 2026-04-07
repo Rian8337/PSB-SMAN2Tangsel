@@ -40,7 +40,9 @@ export class UserController extends BaseController {
         }
 
         try {
-            const { query } = req.query;
+            const query = req.query.query
+                ? decodeURIComponent(req.query.query)
+                : undefined;
 
             const limit = req.query.limit
                 ? parseInt(req.query.limit, 10)
