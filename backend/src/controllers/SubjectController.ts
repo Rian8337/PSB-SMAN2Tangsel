@@ -158,6 +158,8 @@ export class SubjectController extends BaseController {
                 parsedData.data.name,
                 parsedData.data.active ?? true,
             );
+
+            res.sendStatus(200);
         } catch (e) {
             this.handleError(req, res, e);
         }
