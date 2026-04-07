@@ -40,6 +40,16 @@ interface Localization {
         readonly invalidSessionTime: string;
     };
 
+    readonly subjectController: {
+        readonly invalidSubjectId: string;
+    };
+
+    readonly subjectService: {
+        readonly cannotDeleteSubjectWithClasses: string;
+        readonly duplicateCode: string;
+        readonly subjectNotFound: string;
+    };
+
     readonly userController: {
         readonly invalidUserId: string;
     };
@@ -104,6 +114,16 @@ export const messages = {
             sessionNotFound: "Tahun pelajaran tidak ditemukan.",
             invalidSessionTime: "Waktu tahun pelajaran tidak valid.",
         },
+        subjectController: {
+            invalidSubjectId:
+                "Parameter subjectId harus berupa bilangan bulat positif.",
+        },
+        subjectService: {
+            cannotDeleteSubjectWithClasses:
+                "Mata pelajaran yang memiliki kelas tidak dapat dihapus.",
+            duplicateCode: "Kode mata pelajaran sudah ada.",
+            subjectNotFound: "Mata pelajaran tidak ditemukan.",
+        },
         userController: {
             invalidUserId:
                 "Parameter userId harus berupa bilangan bulat positif.",
@@ -163,6 +183,15 @@ export const messages = {
                 "There is no active academic session at the moment.",
             sessionNotFound: "Academic session not found.",
             invalidSessionTime: "Invalid academic session time.",
+        },
+        subjectController: {
+            invalidSubjectId: "Parameter subjectId must be a positive integer.",
+        },
+        subjectService: {
+            cannotDeleteSubjectWithClasses:
+                "Subject with associated classes cannot be deleted.",
+            duplicateCode: "Subject code already exists.",
+            subjectNotFound: "Subject not found.",
         },
         userController: {
             invalidUserId: "Parameter userId must be a positive integer.",

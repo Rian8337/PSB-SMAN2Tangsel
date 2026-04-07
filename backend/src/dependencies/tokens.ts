@@ -5,6 +5,7 @@ import {
     IScheduleRepository,
     ISessionRepository,
     IStudentRepository,
+    ISubjectRepository,
     ITeacherRepository,
     ITransactionManager,
     IUserRepository,
@@ -15,6 +16,7 @@ import {
     INotificationService,
     IScheduleService,
     ISessionService,
+    ISubjectService,
     IUserService,
 } from "@/services";
 import { DrizzleDb } from "@psb/shared/types";
@@ -74,6 +76,13 @@ export const dependencyTokens = {
     ) as InjectionToken<ISessionRepository>,
 
     /**
+     * Injection token for an {@link ISubjectRepository}.
+     */
+    subjectRepository: Symbol.for(
+        "subjectRepository",
+    ) as InjectionToken<ISubjectRepository>,
+
+    /**
      * Injection token for an {@link IStudentRepository}.
      */
     studentRepository: Symbol.for(
@@ -130,6 +139,13 @@ export const dependencyTokens = {
     sessionService: Symbol.for(
         "sessionService",
     ) as InjectionToken<ISessionService>,
+
+    /**
+     * Injection token for an {@link ISubjectService}.
+     */
+    subjectService: Symbol.for(
+        "subjectService",
+    ) as InjectionToken<ISubjectService>,
 
     /**
      * Injection token for an {@link IUserService}.
