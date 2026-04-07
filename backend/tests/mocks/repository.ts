@@ -5,6 +5,7 @@ import {
     IScheduleRepository,
     ISessionRepository,
     IStudentRepository,
+    ISubjectRepository,
     ITeacherRepository,
     ITransactionManager,
     IUserRepository,
@@ -71,6 +72,19 @@ export const mockSessionRepository: Mocked<ISessionRepository> = {
     list: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISubjectRepository}.
+ */
+export const mockSubjectRepository: Mocked<ISubjectRepository> = {
+    getById: vi.fn(),
+    getByCode: vi.fn(),
+    list: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    hasClasses: vi.fn(),
     delete: vi.fn(),
 };
 

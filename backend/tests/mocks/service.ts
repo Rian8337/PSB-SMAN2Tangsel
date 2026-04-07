@@ -4,6 +4,7 @@ import {
     INotificationService,
     IScheduleService,
     ISessionService,
+    ISubjectService,
     IUserService,
 } from "@/services";
 import { Mocked } from "vitest";
@@ -66,6 +67,18 @@ export const mockSessionService: Mocked<ISessionService> = {
     createSession: vi.fn(),
     updateSession: vi.fn(),
     deleteSession: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISubjectService}.
+ */
+export const mockSubjectService: Mocked<ISubjectService> = {
+    findById: vi.fn(),
+    findByCode: vi.fn(),
+    listSubjects: vi.fn(),
+    createSubject: vi.fn(),
+    updateSubject: vi.fn(),
+    deleteSubject: vi.fn(),
 };
 
 /**
