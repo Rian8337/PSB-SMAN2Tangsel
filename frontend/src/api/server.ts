@@ -10,6 +10,9 @@ import { NotificationAPIClient } from "./NotificationAPIClient";
 import { ScheduleAPIClient } from "./ScheduleAPIClient";
 import { SessionAPIClient } from "./SessionAPIClient";
 import { UserAPIClient } from "./UserAPIClient";
+import { SubjectAPIClient } from "./SubjectAPIClient";
+import { ISubjectAPIClient } from "./ISubjectAPIClient";
+import { APIClient } from "./APIClient";
 
 /**
  * Server-side factory to retrieve an {@link IAuthAPIClient}.
@@ -21,7 +24,7 @@ import { UserAPIClient } from "./UserAPIClient";
 export async function getServerAuthApiClient(
     locale?: Locale,
 ): Promise<IAuthAPIClient> {
-    return new AuthAPIClient(locale ?? (await getLocale()));
+    return initializeClient(AuthAPIClient, locale);
 }
 
 /**
@@ -34,7 +37,7 @@ export async function getServerAuthApiClient(
 export async function getServerNotificationApiClient(
     locale?: Locale,
 ): Promise<INotificationAPIClient> {
-    return new NotificationAPIClient(locale ?? (await getLocale()));
+    return initializeClient(NotificationAPIClient, locale);
 }
 
 /**
@@ -47,7 +50,7 @@ export async function getServerNotificationApiClient(
 export async function getServerScheduleApiClient(
     locale?: Locale,
 ): Promise<IScheduleAPIClient> {
-    return new ScheduleAPIClient(locale ?? (await getLocale()));
+    return initializeClient(ScheduleAPIClient, locale);
 }
 
 /**
@@ -60,7 +63,20 @@ export async function getServerScheduleApiClient(
 export async function getServerSessionApiClient(
     locale?: Locale,
 ): Promise<ISessionAPIClient> {
-    return new SessionAPIClient(locale ?? (await getLocale()));
+    return initializeClient(SessionAPIClient, locale);
+}
+
+/**
+ * Server-side factory to retrieve an {@link ISubjectAPIClient}.
+ *
+ * @param locale Optional locale to initialize the {@link ISubjectAPIClient} with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link ISubjectAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerSubjectApiClient(
+    locale?: Locale,
+): Promise<ISubjectAPIClient> {
+    return initializeClient(SubjectAPIClient, locale);
 }
 
 /**
@@ -73,5 +89,12 @@ export async function getServerSessionApiClient(
 export async function getServerUserApiClient(
     locale?: Locale,
 ): Promise<IUserAPIClient> {
-    return new UserAPIClient(locale ?? (await getLocale()));
+    return initializeClient(UserAPIClient, locale);
+}
+
+async function initializeClient<T extends APIClient>(
+    constructor: new (locale?: Locale) => T,
+    locale?: Locale,
+): Promise<T> {
+    return new constructor(locale ?? (await getLocale()));
 }

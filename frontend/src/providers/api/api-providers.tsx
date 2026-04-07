@@ -3,6 +3,7 @@ import { AuthApiProvider } from "./auth-api-provider";
 import { NotificationApiProvider } from "./notification-api-provider";
 import { ScheduleApiProvider } from "./schedule-api-provider";
 import { SessionApiProvider } from "./session-api-provider";
+import { SubjectApiProvider } from "./subject-api-provider";
 import { UserApiProvider } from "./user-api-provider";
 
 /**
@@ -13,5 +14,6 @@ export const ApiProviders = composeProviders(
     NotificationApiProvider,
     ScheduleApiProvider,
     SessionApiProvider,
+    SubjectApiProvider,
     UserApiProvider,
 );
