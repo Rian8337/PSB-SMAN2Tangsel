@@ -60,10 +60,18 @@ export class SubjectService implements ISubjectService {
         name: string,
         active: boolean,
     ): Promise<void> {
-        const existing = await this.subjectRepository.getByCode(code);
+        const existing = await this.subjectRepository.getById(id);
 
-        if (existing && existing.id !== id) {
-            throw new ConflictError("subjectService.duplicateCode");
+        if (!existing) {
+            throw new NotFoundError("subjectService.subjectNotFound");
+        }
+
+        if (existing.code !== code) {
+            const another = await this.subjectRepository.getByCode(code);
+
+            if (another) {
+                throw new ConflictError("subjectService.duplicateCode");
+            }
         }
 
         return this.subjectRepository.update(id, code, name, active);
