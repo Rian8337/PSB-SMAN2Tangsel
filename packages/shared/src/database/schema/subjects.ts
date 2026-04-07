@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { int, mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mysqlTable, varchar } from "drizzle-orm/mysql-core";
 import { classSubjects } from "./classSubjects";
 
 /**
@@ -20,6 +20,14 @@ export const subjects = mysqlTable("subject", {
      * The name of the subject.
      */
     name: varchar({ length: 50 }).notNull(),
+
+    /**
+     * Whether the subject is active.
+     *
+     * Inactive subjects will not appear in the subject selection dropdown when assigning subjects to a class, but will
+     * still be visible in the subject management page.
+     */
+    active: boolean().$type<true | null>().default(true),
 });
 
 /**
