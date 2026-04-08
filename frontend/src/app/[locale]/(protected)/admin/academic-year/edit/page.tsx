@@ -38,9 +38,7 @@ export default async function EditAcademicYearPage({
         notFound();
     }
 
-    const parsedSession = validSessionSchema.safeParse(
-        decodeURIComponent(session),
-    );
+    const parsedSession = validSessionSchema.safeParse(session);
 
     if (!parsedSession.success) {
         notFound();

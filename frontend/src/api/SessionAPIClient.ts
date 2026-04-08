@@ -25,7 +25,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
     ): Promise<AcademicSessionDTO> {
         const url = new URL(this.baseURL + "/");
 
-        url.searchParams.append("session", encodeURIComponent(session));
+        url.searchParams.append("session", session);
         url.searchParams.append("semester", semester.toString());
 
         return this.get(url, { signal }).then((res) => res.json());
