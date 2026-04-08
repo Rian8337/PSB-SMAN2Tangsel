@@ -9,16 +9,15 @@ import {
     Button,
     Flex,
     Heading,
-    HStack,
     Input,
     Spinner,
     Table,
-    Text,
 } from "@chakra-ui/react";
 import { Subject } from "@psb/shared/types";
 import { Check, Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateSubjectModal } from "./CreateSubjectModal";
 
@@ -277,35 +276,17 @@ export function SubjectManagement() {
                 )}
             </Box>
 
-            <Flex justify="space-between" align="center" mt={4}>
-                <Text fontSize="sm" color="gray.500">
-                    {t("pagination.info", { page: page.toString() })}
-                </Text>
-
-                <HStack gap={2}>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={page === 1 || isLoading}
-                        onClick={() => {
-                            setPage((p) => p - 1);
-                        }}
-                    >
-                        {t("pagination.previous")}
-                    </Button>
-
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={subjects.length < limit || isLoading}
-                        onClick={() => {
-                            setPage((p) => p + 1);
-                        }}
-                    >
-                        {t("pagination.next")}
-                    </Button>
-                </HStack>
-            </Flex>
+            <Pagination
+                page={page}
+                hasMore={subjects.length >= limit}
+                isLoading={isLoading}
+                onPrevPage={() => {
+                    setPage((p) => p - 1);
+                }}
+                onNextPage={() => {
+                    setPage((p) => p + 1);
+                }}
+            />
 
             <CreateSubjectModal
                 isOpen={isCreateModalOpen}

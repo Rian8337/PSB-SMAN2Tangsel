@@ -312,15 +312,15 @@
       }
     },
     "emptyState": "Tidak ada mata pelajaran yang ditemukan.",
-    "pagination": {
-      "previous": "Sebelumnya",
-      "next": "Berikutnya",
-      "info": "Halaman {page}"
-    },
     "fetchToast": {
       "errorTitle": "Gagal Mengambil Mata Pelajaran",
       "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran. Silakan coba lagi."
     }
+  },
+  "Pagination": {
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "info": "Halaman {page}"
   },
   "NotificationBell": {
     "noNotifications": "Tidak ada notifikasi saat ini.",

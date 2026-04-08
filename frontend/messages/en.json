@@ -313,15 +313,15 @@
       }
     },
     "emptyState": "No subjects found.",
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "info": "Page {page}"
-    },
     "fetchToast": {
       "errorTitle": "Failed to Fetch Subjects",
       "errorMessage": "An error occurred while fetching subjects. Please try again."
     }
+  },
+  "Pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "info": "Page {page}"
   },
   "NotificationBell": {
     "noNotifications": "No notifications at the moment.",
