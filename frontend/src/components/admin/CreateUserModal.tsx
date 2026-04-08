@@ -2,18 +2,13 @@
 
 import { APIError } from "@/api";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
-import {
-    Button,
-    Dialog,
-    Field,
-    Input,
-    NativeSelect,
-    VStack,
-} from "@chakra-ui/react";
+import { Input, NativeSelect } from "@chakra-ui/react";
 import { UserRole } from "@psb/shared/types";
 import { passwordRegex } from "@psb/shared/validator";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { FormDialog } from "../ui/FormDialog";
+import { FormField } from "../ui/FormField";
 import { toaster } from "../ui/toaster";
 
 export interface CreateUserModalProps {
@@ -99,144 +94,75 @@ export function CreateUserModal({
     };
 
     return (
-        <Dialog.Root
-            open={isOpen}
-            onOpenChange={(e) => {
-                if (!e.open) {
-                    handleClose();
-                }
-            }}
-            placement="center"
+        <FormDialog
+            isOpen={isOpen}
+            onClose={handleClose}
+            title={t("createUser.dialog.title")}
+            formId="create-user-form"
+            onSubmit={handleSubmit}
+            submitLabel={t("createUser.dialog.submitButton")}
+            cancelLabel={t("createUser.dialog.cancelButton")}
+            error={error}
+            isLoading={isLoading}
         >
-            <Dialog.Backdrop />
+            <FormField label={t("createUser.dialog.nameLabel")}>
+                <Input
+                    name="name"
+                    value={name}
+                    onChange={(e) => {
+                        setName(e.target.value);
+                    }}
+                    placeholder={t("createUser.dialog.namePlaceholder")}
+                />
+            </FormField>
 
-            <Dialog.Content>
-                <Dialog.Header>
-                    <Dialog.Title>{t("createUser.dialog.title")}</Dialog.Title>
-                </Dialog.Header>
+            <FormField label={t("columns.identifier")}>
+                <Input
+                    name="identifier"
+                    value={identifier}
+                    onChange={(e) => {
+                        setIdentifier(e.target.value);
+                    }}
+                    placeholder={t("createUser.dialog.identifierPlaceholder")}
+                />
+            </FormField>
 
-                <Dialog.Body>
-                    <VStack
-                        as="form"
-                        id="create-user-form"
-                        spaceY={4}
-                        onSubmit={handleSubmit}
-                        align="stretch"
+            <FormField label={t("createUser.dialog.roleLabel")}>
+                <NativeSelect.Root>
+                    <NativeSelect.Field
+                        name="role"
+                        value={role.toString()}
+                        onChange={(e) => {
+                            setRole(Number(e.target.value) as UserRole);
+                        }}
+                        placeholder={t("createUser.dialog.rolePlaceholder")}
                     >
-                        {error && (
-                            <Dialog.Description
-                                color="red.500"
-                                fontSize="sm"
-                                fontWeight="medium"
-                            >
-                                {error}
-                            </Dialog.Description>
-                        )}
+                        <option value={UserRole.student.toString()}>
+                            {t("roles.0")}
+                        </option>
 
-                        <Field.Root>
-                            <Field.Label>
-                                {t("createUser.dialog.nameLabel")}
-                            </Field.Label>
+                        <option value={UserRole.teacher.toString()}>
+                            {t("roles.1")}
+                        </option>
 
-                            <Input
-                                name="name"
-                                value={name}
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
-                                placeholder={t(
-                                    "createUser.dialog.namePlaceholder",
-                                )}
-                            />
-                        </Field.Root>
+                        <option value={UserRole.administrator.toString()}>
+                            {t("roles.2")}
+                        </option>
+                    </NativeSelect.Field>
+                </NativeSelect.Root>
+            </FormField>
 
-                        <Field.Root>
-                            <Field.Label>{t("columns.identifier")}</Field.Label>
-
-                            <Input
-                                name="identifier"
-                                value={identifier}
-                                onChange={(e) => {
-                                    setIdentifier(e.target.value);
-                                }}
-                                placeholder={t(
-                                    "createUser.dialog.identifierPlaceholder",
-                                )}
-                            />
-                        </Field.Root>
-
-                        <Field.Root>
-                            <Field.Label>
-                                {t("createUser.dialog.roleLabel")}
-                            </Field.Label>
-
-                            <NativeSelect.Root>
-                                <NativeSelect.Field
-                                    name="role"
-                                    value={role.toString()}
-                                    onChange={(e) => {
-                                        setRole(
-                                            Number(e.target.value) as UserRole,
-                                        );
-                                    }}
-                                    placeholder={t(
-                                        "createUser.dialog.rolePlaceholder",
-                                    )}
-                                >
-                                    <option value={UserRole.student.toString()}>
-                                        {t("roles.0")}
-                                    </option>
-
-                                    <option value={UserRole.teacher.toString()}>
-                                        {t("roles.1")}
-                                    </option>
-
-                                    <option
-                                        value={UserRole.administrator.toString()}
-                                    >
-                                        {t("roles.2")}
-                                    </option>
-                                </NativeSelect.Field>
-                            </NativeSelect.Root>
-                        </Field.Root>
-
-                        <Field.Root>
-                            <Field.Label>
-                                {t("createUser.dialog.passwordLabel")}
-                            </Field.Label>
-
-                            <Input
-                                name="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
-                                placeholder={t(
-                                    "createUser.dialog.passwordPlaceholder",
-                                )}
-                            />
-                        </Field.Root>
-                    </VStack>
-                </Dialog.Body>
-
-                <Dialog.Footer>
-                    <Button variant="outline" onClick={handleClose} mr={3}>
-                        {t("createUser.dialog.cancelButton")}
-                    </Button>
-
-                    <Button
-                        type="submit"
-                        form="create-user-form"
-                        colorPalette="blue"
-                        loading={isLoading}
-                    >
-                        {t("createUser.dialog.submitButton")}
-                    </Button>
-                </Dialog.Footer>
-
-                <Dialog.CloseTrigger />
-            </Dialog.Content>
-        </Dialog.Root>
+            <FormField label={t("createUser.dialog.passwordLabel")}>
+                <Input
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                    placeholder={t("createUser.dialog.passwordPlaceholder")}
+                />
+            </FormField>
+        </FormDialog>
     );
 }

@@ -2,19 +2,14 @@
 
 import { APIError } from "@/api";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
-import {
-    Button,
-    Dialog,
-    Field,
-    Input,
-    NativeSelect,
-    VStack,
-} from "@chakra-ui/react";
+import { Input, NativeSelect } from "@chakra-ui/react";
 import { ValidSemester, ValidSession } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toaster } from "../ui/toaster";
+import { FormDialog } from "../ui/FormDialog";
+import { FormField } from "../ui/FormField";
 import { Switch } from "../ui/switch";
+import { toaster } from "../ui/toaster";
 
 export interface CreateSessionModalProps {
     readonly isOpen: boolean;
@@ -131,146 +126,82 @@ export function CreateSessionModal({
     };
 
     return (
-        <Dialog.Root
-            open={isOpen}
-            onOpenChange={(e) => {
-                if (!e.open) {
-                    handleClose();
-                }
-            }}
-            placement="center"
+        <FormDialog
+            isOpen={isOpen}
+            onClose={handleClose}
+            title={t("dialog.title")}
+            formId="create-session-form"
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+            error={error}
+            submitLabel={t("dialog.submitButton")}
+            cancelLabel={t("dialog.cancelButton")}
         >
-            <Dialog.Backdrop />
+            <FormField label={t("dialog.session.label")}>
+                <Input
+                    name="session"
+                    value={session}
+                    onChange={(e) => {
+                        setSession(e.target.value as ValidSession);
+                    }}
+                    placeholder={t("dialog.session.placeholder")}
+                />
+            </FormField>
 
-            <Dialog.Content>
-                <Dialog.Header>
-                    <Dialog.Title>{t("dialog.title")}</Dialog.Title>
-                </Dialog.Header>
-
-                <Dialog.Body>
-                    <VStack
-                        as="form"
-                        id="create-session-form"
-                        spaceY={4}
-                        onSubmit={handleSubmit}
-                        align="stretch"
+            <FormField label={t("dialog.semester.label")}>
+                <NativeSelect.Root>
+                    <NativeSelect.Field
+                        name="semester"
+                        value={semester}
+                        onChange={(e) => {
+                            setSemester(
+                                parseInt(e.target.value, 10) as ValidSemester,
+                            );
+                        }}
                     >
-                        {error && (
-                            <Dialog.Description
-                                color="red.500"
-                                fontSize="sm"
-                                fontWeight="medium"
-                            >
-                                {error}
-                            </Dialog.Description>
-                        )}
+                        <option value="1">
+                            {t("dialog.semester.options.odd")}
+                        </option>
 
-                        <Field.Root>
-                            <Field.Label>
-                                {t("dialog.session.label")}
-                            </Field.Label>
+                        <option value="2">
+                            {t("dialog.semester.options.even")}
+                        </option>
+                    </NativeSelect.Field>
+                </NativeSelect.Root>
+            </FormField>
 
-                            <Input
-                                name="session"
-                                value={session}
-                                onChange={(e) => {
-                                    setSession(e.target.value as ValidSession);
-                                }}
-                                placeholder={t("dialog.session.placeholder")}
-                            />
-                        </Field.Root>
+            <FormField label={t("dialog.startDate.label")}>
+                <Input
+                    name="startTime"
+                    type="date"
+                    value={startTime}
+                    onChange={(e) => {
+                        setStartTime(e.target.value);
+                    }}
+                />
+            </FormField>
 
-                        <Field.Root>
-                            <Field.Label>
-                                {t("dialog.semester.label")}
-                            </Field.Label>
+            <FormField label={t("dialog.endDate.label")}>
+                <Input
+                    name="endTime"
+                    type="date"
+                    value={endTime}
+                    onChange={(e) => {
+                        setEndTime(e.target.value);
+                    }}
+                />
+            </FormField>
 
-                            <NativeSelect.Root>
-                                <NativeSelect.Field
-                                    name="semester"
-                                    value={semester}
-                                    onChange={(e) => {
-                                        setSemester(
-                                            parseInt(
-                                                e.target.value,
-                                                10,
-                                            ) as ValidSemester,
-                                        );
-                                    }}
-                                >
-                                    <option value="1">
-                                        {t("dialog.semester.options.odd")}
-                                    </option>
-
-                                    <option value="2">
-                                        {t("dialog.semester.options.even")}
-                                    </option>
-                                </NativeSelect.Field>
-                            </NativeSelect.Root>
-                        </Field.Root>
-
-                        <Field.Root>
-                            <Field.Label>
-                                {t("dialog.startDate.label")}
-                            </Field.Label>
-
-                            <Input
-                                name="startTime"
-                                type="date"
-                                value={startTime}
-                                onChange={(e) => {
-                                    setStartTime(e.target.value);
-                                }}
-                            />
-                        </Field.Root>
-
-                        <Field.Root>
-                            <Field.Label>
-                                {t("dialog.endDate.label")}
-                            </Field.Label>
-
-                            <Input
-                                name="endTime"
-                                type="date"
-                                value={endTime}
-                                onChange={(e) => {
-                                    setEndTime(e.target.value);
-                                }}
-                            />
-                        </Field.Root>
-
-                        <Field.Root>
-                            <Field.Label>{t("dialog.activeLabel")}</Field.Label>
-
-                            <Switch
-                                name="active"
-                                colorPalette="blue"
-                                checked={isActive}
-                                onCheckedChange={(e) => {
-                                    setIsActive(e.checked);
-                                }}
-                            />
-                        </Field.Root>
-                    </VStack>
-                </Dialog.Body>
-
-                <Dialog.Footer>
-                    <Button variant="outline" onClick={handleClose} mr={3}>
-                        {t("dialog.cancelButton")}
-                    </Button>
-
-                    <Button
-                        type="submit"
-                        form="create-session-form"
-                        colorPalette="blue"
-                        loading={isLoading}
-                    >
-                        {t("dialog.submitButton")}
-                    </Button>
-                </Dialog.Footer>
-
-                <Dialog.CloseTrigger />
-            </Dialog.Content>
-        </Dialog.Root>
+            <FormField label={t("dialog.activeLabel")}>
+                <Switch
+                    name="active"
+                    colorPalette="blue"
+                    checked={isActive}
+                    onCheckedChange={(e) => {
+                        setIsActive(e.checked);
+                    }}
+                />
+            </FormField>
+        </FormDialog>
     );
 }

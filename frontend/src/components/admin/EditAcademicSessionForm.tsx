@@ -1,22 +1,16 @@
 "use client";
 
+import { APIError } from "@/api";
 import { useRouter } from "@/i18n/navigation";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
+import { Input } from "@chakra-ui/react";
 import { AcademicSessionDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
-import { toaster } from "../ui/toaster";
-import { APIError } from "@/api";
-import {
-    Box,
-    Button,
-    Heading,
-    HStack,
-    Input,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { useState } from "react";
+import { FormField } from "../ui/FormField";
+import { PageForm } from "../ui/PageForm";
 import { Switch } from "../ui/switch";
+import { toaster } from "../ui/toaster";
 
 export interface EditAcademicSessionFormProps {
     readonly session: AcademicSessionDTO;
@@ -107,114 +101,67 @@ export function EditAcademicSessionForm({
     };
 
     return (
-        <Box p={8} maxW="md">
-            <VStack
-                align="flex-start"
-                spaceY={6}
-                as="form"
-                onSubmit={handleSubmit}
-            >
-                <Heading as="h2" size="xl">
-                    {t("title")}
-                </Heading>
-
-                {error && (
-                    <Text color="red.500" fontSize="sm" fontWeight="medium">
-                        {error}
-                    </Text>
-                )}
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.session.label")}
-                        </Text>
-
-                        <Input
-                            name="session"
-                            value={`${session.session} - ${t("fields.semester.label")} ${session.semester.toString()}`}
-                            readOnly
-                            disabled
-                            bg="gray.200"
-                            border="none"
-                            borderRadius="sm"
-                            color="gray.500"
-                            cursor="not-allowed"
-                        />
-                    </HStack>
-                </Box>
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.startDate.label")}
-                        </Text>
-                    </HStack>
-
-                    <Input
-                        name="startTime"
-                        type="date"
-                        value={startTime}
-                        bg="gray.200"
-                        border="none"
-                        borderRadius="sm"
-                        onChange={(e) => {
-                            setStartTime(e.target.value);
-                        }}
-                        _focus={{ ring: 2, ringColor: "blue.500" }}
-                    />
-                </Box>
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.endDate.label")}
-                        </Text>
-                    </HStack>
-
-                    <Input
-                        name="endTime"
-                        type="date"
-                        value={endTime}
-                        bg="gray.200"
-                        border="none"
-                        borderRadius="sm"
-                        onChange={(e) => {
-                            setEndTime(e.target.value);
-                        }}
-                        _focus={{ ring: 2, ringColor: "blue.500" }}
-                    />
-                </Box>
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.active.label")}
-                        </Text>
-                    </HStack>
-
-                    <Switch
-                        name="active"
-                        colorPalette="blue"
-                        checked={isActive}
-                        onCheckedChange={(e) => {
-                            setIsActive(e.checked);
-                        }}
-                    />
-                </Box>
-
-                <Button
-                    type="submit"
-                    variant="outline"
-                    borderColor="black"
-                    color="black"
+        <PageForm
+            title={t("title")}
+            onSubmit={handleSubmit}
+            error={error}
+            isLoading={isLoading}
+            submitLabel={t("updateButton")}
+        >
+            <FormField label={t("fields.session.label")}>
+                <Input
+                    name="session"
+                    value={`${session.session} - ${t("fields.semester.label")} ${session.semester.toString()}`}
+                    readOnly
+                    disabled
+                    bg="gray.200"
+                    border="none"
                     borderRadius="sm"
-                    loading={isLoading}
-                    _hover={{ bg: "gray.50" }}
-                >
-                    {t("updateButton")}
-                </Button>
-            </VStack>
-        </Box>
+                    color="gray.500"
+                    cursor="not-allowed"
+                />
+            </FormField>
+
+            <FormField label={t("fields.startDate.label")}>
+                <Input
+                    name="startTime"
+                    type="date"
+                    value={startTime}
+                    bg="gray.200"
+                    border="none"
+                    borderRadius="sm"
+                    onChange={(e) => {
+                        setStartTime(e.target.value);
+                    }}
+                    _focus={{ ring: 2, ringColor: "blue.500" }}
+                />
+            </FormField>
+
+            <FormField label={t("fields.endDate.label")}>
+                <Input
+                    name="endTime"
+                    type="date"
+                    value={endTime}
+                    bg="gray.200"
+                    border="none"
+                    borderRadius="sm"
+                    onChange={(e) => {
+                        setEndTime(e.target.value);
+                    }}
+                    _focus={{ ring: 2, ringColor: "blue.500" }}
+                />
+            </FormField>
+
+            <FormField label={t("fields.active.label")}>
+                <Switch
+                    name="active"
+                    colorPalette="blue"
+                    checked={isActive}
+                    onCheckedChange={(e) => {
+                        setIsActive(e.checked);
+                    }}
+                />
+            </FormField>
+        </PageForm>
     );
 }

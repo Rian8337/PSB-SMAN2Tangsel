@@ -1,22 +1,16 @@
 "use client";
 
+import { APIError } from "@/api";
 import { useRouter } from "@/i18n/navigation";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
+import { Input } from "@chakra-ui/react";
 import { UserListItem } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
-import { toaster } from "../ui/toaster";
-import {
-    Box,
-    Button,
-    Heading,
-    HStack,
-    Input,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
-import { APIError } from "@/api";
+import { useState } from "react";
+import { FormField } from "../ui/FormField";
+import { PageForm } from "../ui/PageForm";
 import { Switch } from "../ui/switch";
+import { toaster } from "../ui/toaster";
 
 export interface EditUserFormProps {
     readonly user: UserListItem;
@@ -73,92 +67,51 @@ export function EditUserForm({ user }: EditUserFormProps) {
     };
 
     return (
-        <Box p={8} maxW="md">
-            <VStack
-                align="flex-start"
-                spaceY={6}
-                as="form"
-                onSubmit={handleSubmit}
-            >
-                <Heading as="h2" size="xl">
-                    {t("title")}
-                </Heading>
-
-                {error && (
-                    <Text color="red.500" fontSize="sm" fontWeight="medium">
-                        {error}
-                    </Text>
-                )}
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.identifier.label")}
-                        </Text>
-                    </HStack>
-
-                    <Input
-                        name="identifier"
-                        value={user.identifier}
-                        readOnly
-                        disabled
-                        bg="gray.200"
-                        border="none"
-                        borderRadius="sm"
-                        color="gray"
-                        cursor="not-allowed"
-                    />
-                </Box>
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.name.label")}
-                        </Text>
-                    </HStack>
-
-                    <Input
-                        name="name"
-                        value={name}
-                        placeholder={t("fields.name.placeholder")}
-                        bg="gray.200"
-                        border="none"
-                        borderRadius="sm"
-                        onChange={(e) => {
-                            setName(e.target.value);
-                        }}
-                        _focus={{ ring: 2, ringColor: "blue.500" }}
-                    />
-                </Box>
-
-                <Box w="full">
-                    <HStack justify="space-between" mb={2}>
-                        <Text fontWeight="medium">
-                            {t("fields.active.label")}
-                        </Text>
-                    </HStack>
-
-                    <Switch
-                        colorPalette="blue"
-                        checked={isActive}
-                        onCheckedChange={(e) => {
-                            setIsActive(e.checked);
-                        }}
-                    />
-                </Box>
-
-                <Button
-                    type="submit"
-                    variant="outline"
-                    borderColor="black"
-                    color="black"
+        <PageForm
+            title={t("title")}
+            onSubmit={handleSubmit}
+            error={error}
+            isLoading={isLoading}
+            submitLabel={t("updateButton")}
+        >
+            <FormField label={t("fields.identifier.label")}>
+                <Input
+                    name="identifier"
+                    value={user.identifier}
+                    readOnly
+                    disabled
+                    bg="gray.200"
+                    border="none"
                     borderRadius="sm"
-                    loading={isLoading}
-                    _hover={{ bg: "gray.50" }}
-                >
-                    {t("updateButton")}
-                </Button>
-            </VStack>
-        </Box>
+                    color="gray"
+                    cursor="not-allowed"
+                />
+            </FormField>
+
+            <FormField label={t("fields.name.label")}>
+                <Input
+                    name="name"
+                    value={name}
+                    placeholder={t("fields.name.placeholder")}
+                    bg="gray.200"
+                    border="none"
+                    borderRadius="sm"
+                    onChange={(e) => {
+                        setName(e.target.value);
+                    }}
+                    _focus={{ ring: 2, ringColor: "blue.500" }}
+                />
+            </FormField>
+
+            <FormField label={t("fields.active.label")}>
+                <Switch
+                    colorPalette="blue"
+                    checked={isActive}
+                    onCheckedChange={(e) => {
+                        setIsActive(e.checked);
+                    }}
+                />
+            </FormField>
+        </PageForm>
     );
 }
