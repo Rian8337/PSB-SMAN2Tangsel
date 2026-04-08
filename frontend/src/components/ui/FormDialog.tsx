@@ -31,7 +31,7 @@ export function FormDialog({
         <Dialog.Root
             open={isOpen}
             onOpenChange={(e) => {
-                if (!e.open) {
+                if (!e.open && !isLoading) {
                     onClose();
                 }
             }}
@@ -67,7 +67,12 @@ export function FormDialog({
                 </Dialog.Body>
 
                 <Dialog.Footer>
-                    <Button variant="outline" onClick={onClose} mr={3}>
+                    <Button
+                        variant="outline"
+                        onClick={onClose}
+                        mr={3}
+                        disabled={isLoading}
+                    >
                         {cancelLabel}
                     </Button>
 
@@ -76,12 +81,13 @@ export function FormDialog({
                         form={formId}
                         colorPalette="blue"
                         loading={isLoading}
+                        disabled={isLoading}
                     >
                         {submitLabel}
                     </Button>
                 </Dialog.Footer>
 
-                <Dialog.CloseTrigger />
+                <Dialog.CloseTrigger disabled={isLoading} />
             </Dialog.Content>
         </Dialog.Root>
     );
