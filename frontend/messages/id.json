@@ -270,8 +270,7 @@
         "successMessage": "Mata pelajaran \"{name}\" telah berhasil dibuat.",
         "errorTitle": "Gagal Membuat Mata Pelajaran",
         "errorMessage": "Terjadi kesalahan saat membuat mata pelajaran. Silakan coba lagi."
-      },
-      "invalidCode": "Kode hanya boleh berisi huruf kapital, angka, dan strip."
+      }
     },
     "title": "Manajemen Mata Pelajaran",
     "searchPlaceholder": "Cari mata pelajaran berdasarkan kode atau nama...",
@@ -284,6 +283,9 @@
     },
     "actions": {
       "edit": "Edit"
+    },
+    "validation": {
+      "invalidCode": "Kode hanya boleh berisi huruf kapital, angka, dan strip."
     },
     "delete": {
       "confirmation": "Apakah Anda yakin ingin menghapus mata pelajaran \"{code}\"? Tindakan ini tidak dapat dibatalkan.",

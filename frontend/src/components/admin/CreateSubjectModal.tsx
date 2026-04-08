@@ -21,7 +21,7 @@ export function CreateSubjectModal({
     onSuccess,
 }: CreateSubjectModalProps) {
     const formT = useTranslations("Form");
-    const t = useTranslations("SubjectManagement.create");
+    const t = useTranslations("SubjectManagement");
     const apiClient = useSubjectApiClient();
 
     const [code, setCode] = useState("");
@@ -50,7 +50,7 @@ export function CreateSubjectModal({
         }
 
         if (!/^[A-Z0-9-]+$/.test(code)) {
-            setError(t("invalidCode"));
+            setError(t("validation.invalidCode"));
             return;
         }
 
@@ -60,8 +60,8 @@ export function CreateSubjectModal({
             .createSubject(code, name)
             .then(() => {
                 toaster.create({
-                    title: t("toast.successTitle"),
-                    description: t("toast.successMessage", { name }),
+                    title: t("create.toast.successTitle"),
+                    description: t("create.toast.successMessage", { name }),
                     type: "success",
                 });
 
@@ -70,12 +70,14 @@ export function CreateSubjectModal({
             })
             .catch((e: unknown) => {
                 setError(
-                    e instanceof APIError ? e.message : t("toast.errorMessage"),
+                    e instanceof APIError
+                        ? e.message
+                        : t("create.toast.errorMessage"),
                 );
 
                 toaster.create({
-                    title: t("toast.errorTitle"),
-                    description: t("toast.errorMessage"),
+                    title: t("create.toast.errorTitle"),
+                    description: t("create.toast.errorMessage"),
                     type: "error",
                 });
             })
@@ -88,33 +90,33 @@ export function CreateSubjectModal({
         <FormDialog
             isOpen={isOpen}
             onClose={handleClose}
-            title={t("dialog.title")}
+            title={t("create.dialog.title")}
             formId="create-subject-form"
             onSubmit={handleSubmit}
             isLoading={isLoading}
             error={error}
-            submitLabel={t("dialog.submitButton")}
-            cancelLabel={t("dialog.cancelButton")}
+            submitLabel={t("create.dialog.submitButton")}
+            cancelLabel={t("create.dialog.cancelButton")}
         >
-            <FormField label={t("dialog.code.label")}>
+            <FormField label={t("create.dialog.code.label")}>
                 <Input
                     name="code"
                     value={code}
                     onChange={(e) => {
                         setCode(e.target.value.toUpperCase());
                     }}
-                    placeholder={t("dialog.code.placeholder")}
+                    placeholder={t("create.dialog.code.placeholder")}
                 />
             </FormField>
 
-            <FormField label={t("dialog.name.label")}>
+            <FormField label={t("create.dialog.name.label")}>
                 <Input
                     name="name"
                     value={name}
                     onChange={(e) => {
                         setName(e.target.value);
                     }}
-                    placeholder={t("dialog.name.placeholder")}
+                    placeholder={t("create.dialog.name.placeholder")}
                 />
             </FormField>
         </FormDialog>

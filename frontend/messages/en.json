@@ -271,8 +271,7 @@
         "successMessage": "Subject \"{name}\" has been successfully created.",
         "errorTitle": "Failed to Create Subject",
         "errorMessage": "An error occurred while creating the subject. Please try again."
-      },
-      "invalidCode": "Invalid subject code. Must only contain uppercase letters, numbers, and hyphens."
+      }
     },
     "title": "Subject Management",
     "searchPlaceholder": "Search subjects by code or name...",
@@ -285,6 +284,9 @@
     },
     "actions": {
       "edit": "Edit"
+    },
+    "validation": {
+      "invalidCode": "Invalid subject code. Must only contain uppercase letters, numbers, and hyphens."
     },
     "delete": {
       "confirmation": "Are you sure you want to delete the subject \"{code}\"? This action cannot be undone.",
