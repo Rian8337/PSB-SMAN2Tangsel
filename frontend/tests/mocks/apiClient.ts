@@ -3,6 +3,7 @@ import {
     INotificationAPIClient,
     IScheduleAPIClient,
     ISessionAPIClient,
+    ISubjectAPIClient,
     IUserAPIClient,
 } from "@/api";
 import { Mocked } from "vitest";
@@ -43,6 +44,17 @@ export const mockSessionApiClient: Mocked<ISessionAPIClient> = {
     listSessions: vi.fn(),
     updateSession: vi.fn(),
     deleteSession: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISubjectAPIClient}.
+ */
+export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
+    getSubject: vi.fn(),
+    listSubjects: vi.fn(),
+    createSubject: vi.fn(),
+    updateSubject: vi.fn(),
+    deleteSubject: vi.fn(),
 };
 
 /**
