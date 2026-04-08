@@ -8,9 +8,10 @@ export interface IUserAPIClient {
      * Obtains detailed information about a specific user by their ID.
      *
      * @param id The ID of the user to retrieve.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to retrieve the user details.
      * @returns The user item containing detailed information about the user.
      */
-    getUser(id: number): Promise<UserListItem>;
+    getUser(id: number, signal?: AbortSignal): Promise<UserListItem>;
 
     /**
      * Lists users for display in the UI.
@@ -18,12 +19,14 @@ export interface IUserAPIClient {
      * @param query The search query to filter users by name or identifier.
      * @param limit The maximum number of users to return. Defaults to 5.
      * @param offset The number of users to skip before starting to collect the result set. Defaults to 0.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list users.
      * @returns A list of user items containing basic information about each user.
      */
     listUsers(
         query?: string,
         limit?: number,
         offset?: number,
+        signal?: AbortSignal,
     ): Promise<UserListItem[]>;
 
     /**

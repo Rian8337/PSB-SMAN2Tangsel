@@ -10,14 +10,17 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         return super.baseURL + "/users";
     }
 
-    getUser(id: number): Promise<UserListItem> {
-        return this.get(`/${id.toString()}`).then((res) => res.json());
+    getUser(id: number, signal?: AbortSignal): Promise<UserListItem> {
+        return this.get(`/${id.toString()}`, { signal }).then((res) =>
+            res.json(),
+        );
     }
 
     listUsers(
         query?: string,
         limit?: number,
         offset?: number,
+        signal?: AbortSignal,
     ): Promise<UserListItem[]> {
         const url = new URL(this.baseURL + "/list");
 
@@ -33,7 +36,7 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
             url.searchParams.append("offset", offset.toString());
         }
 
-        return this.get(url).then((res) => res.json());
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     async createUser(

@@ -10,14 +10,17 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
         return super.baseURL + "/subjects";
     }
 
-    getSubject(id: number): Promise<Subject> {
-        return this.get(`/${id.toString()}`).then((res) => res.json());
+    getSubject(id: number, signal?: AbortSignal): Promise<Subject> {
+        return this.get(`/${id.toString()}`, { signal }).then((res) =>
+            res.json(),
+        );
     }
 
     listSubjects(
         query?: string,
         limit?: number,
         offset?: number,
+        signal?: AbortSignal,
     ): Promise<Subject[]> {
         const url = new URL(this.baseURL + "/list");
 
@@ -33,7 +36,7 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
             url.searchParams.append("offset", offset.toString());
         }
 
-        return this.get(url).then((res) => res.json());
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     async createSubject(code: string, name: string): Promise<void> {

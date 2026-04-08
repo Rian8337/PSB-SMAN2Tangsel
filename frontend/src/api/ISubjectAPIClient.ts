@@ -8,9 +8,10 @@ export interface ISubjectAPIClient {
      * Retrieves the details of a specific subject by its ID.
      *
      * @param id The unique identifier of the subject to retrieve.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to retrieve the subject details.
      * @returns The details of the subject with the specified ID.
      */
-    getSubject(id: number): Promise<Subject>;
+    getSubject(id: number, signal?: AbortSignal): Promise<Subject>;
 
     /**
      * Lists subjects for display in the UI.
@@ -18,12 +19,14 @@ export interface ISubjectAPIClient {
      * @param query The search query to filter subjects by name or code.
      * @param limit The maximum number of subjects to return. Defaults to 5.
      * @param offset The number of subjects to skip before starting to collect the result set. Defaults to 0.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list subjects.
      * @returns A list of subjects matching the search query.
      */
     listSubjects(
         query?: string,
         limit?: number,
         offset?: number,
+        signal?: AbortSignal,
     ): Promise<Subject[]>;
 
     /**

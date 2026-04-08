@@ -13,17 +13,21 @@ export class NotificationAPIClient
         return super.baseURL + "/notifications";
     }
 
-    getNotifications(limit = 5, offset = 0): Promise<NotificationDTO[]> {
+    getNotifications(
+        limit = 5,
+        offset = 0,
+        signal?: AbortSignal,
+    ): Promise<NotificationDTO[]> {
         const url = new URL(this.baseURL + "/");
 
         url.searchParams.append("limit", limit.toString());
         url.searchParams.append("offset", offset.toString());
 
-        return this.get(url).then((res) => res.json());
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
-    getUnreadCount(): Promise<number> {
-        return this.get("/unread-count")
+    getUnreadCount(signal?: AbortSignal): Promise<number> {
+        return this.get("/unread-count", { signal })
             .then((res) => res.json() as Promise<{ count: number }>)
             .then((data) => data.count);
     }

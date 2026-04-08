@@ -10,12 +10,14 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         return super.baseURL + "/schedule";
     }
 
-    getSchedule(): Promise<ScheduleDTO[]> {
-        return this.get("/").then((res) => res.json());
+    getSchedule(signal?: AbortSignal): Promise<ScheduleDTO[]> {
+        return this.get("/", { signal }).then((res) => res.json());
     }
 
-    async download(): Promise<Readonly<{ blob: Blob; filename?: string }>> {
-        const res = await this.get("/download");
+    async download(
+        signal?: AbortSignal,
+    ): Promise<Readonly<{ blob: Blob; filename?: string }>> {
+        const res = await this.get("/download", { signal });
         const blob = await res.blob();
         const disposition = res.headers.get("Content-Disposition");
 

@@ -14,32 +14,21 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         return super.baseURL + "/sessions";
     }
 
-    getActive(): Promise<AcademicSessionDTO | null> {
-        return this.get("/active").then((res) => {
-            if (res.status === 404) {
-                return null;
-            }
-
-            return res.json();
-        });
+    getActive(signal?: AbortSignal): Promise<AcademicSessionDTO> {
+        return this.get("/active", { signal }).then((res) => res.json());
     }
 
     getSession(
         session: ValidSession,
         semester: ValidSemester,
-    ): Promise<AcademicSessionDTO | null> {
+        signal?: AbortSignal,
+    ): Promise<AcademicSessionDTO> {
         const url = new URL(this.baseURL + "/");
 
         url.searchParams.append("session", encodeURIComponent(session));
         url.searchParams.append("semester", semester.toString());
 
-        return this.get(url).then((res) => {
-            if (res.status === 404) {
-                return null;
-            }
-
-            return res.json();
-        });
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     async createSession(
@@ -65,6 +54,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         query?: string,
         limit?: number,
         offset?: number,
+        signal?: AbortSignal,
     ): Promise<AcademicSessionDTO[]> {
         const url = new URL(this.baseURL + "/list");
 
@@ -80,7 +70,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
             url.searchParams.append("offset", offset.toString());
         }
 
-        return this.get(url).then((res) => res.json());
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     async updateSession(
