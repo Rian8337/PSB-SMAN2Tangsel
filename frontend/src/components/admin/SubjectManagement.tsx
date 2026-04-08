@@ -274,6 +274,7 @@ export function SubjectManagement() {
                 <Text fontSize="sm" color="gray.500">
                     {t("pagination.info", { page: page.toString() })}
                 </Text>
+
                 <HStack gap={2}>
                     <Button
                         size="sm"
@@ -285,6 +286,7 @@ export function SubjectManagement() {
                     >
                         {t("pagination.previous")}
                     </Button>
+
                     <Button
                         size="sm"
                         variant="outline"
