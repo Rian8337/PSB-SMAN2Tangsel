@@ -1,6 +1,7 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
+import { Link } from "@/i18n/navigation";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import {
     Badge,
@@ -17,11 +18,11 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
+import { Check, Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
-import { Check, Plus, Search, Trash2 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
 import { CreateSessionModal } from "./CreateSessionModal";
 
 export function AcademicSessionManagement() {
@@ -32,19 +33,21 @@ export function AcademicSessionManagement() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
+    const [page, setPage] = useState(1);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const limit = 10;
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     const fetchSessions = useCallback(
-        async (query?: string, signal?: AbortSignal) => {
+        async (query?: string, page = 1, signal?: AbortSignal) => {
             setIsLoading(true);
 
             try {
                 const data = await sessionApiClient.listSessions(
                     query,
-                    undefined,
-                    undefined,
+                    limit,
+                    (page - 1) * limit,
                     signal,
                 );
 
@@ -63,14 +66,25 @@ export function AcademicSessionManagement() {
     );
 
     useEffect(() => {
+        // Prevent fetching if user is still actively typing.
+        if (searchQuery !== debouncedSearchQuery) {
+            return;
+        }
+
         const controller = new AbortController();
 
-        void fetchSessions(debouncedSearchQuery, controller.signal);
+        void fetchSessions(debouncedSearchQuery, page, controller.signal);
 
         return () => {
             controller.abort();
         };
-    }, [fetchSessions, debouncedSearchQuery, refreshTrigger]);
+    }, [
+        fetchSessions,
+        searchQuery,
+        debouncedSearchQuery,
+        page,
+        refreshTrigger,
+    ]);
 
     const handleDelete = (session: ValidSession, semester: ValidSemester) => {
         const tOptions = { session, semester: semester.toString() };
@@ -290,6 +304,18 @@ export function AcademicSessionManagement() {
                     </Table.Root>
                 )}
             </Box>
+
+            <Pagination
+                page={page}
+                hasMore={sessions.length >= limit}
+                isLoading={isLoading}
+                onPrevPage={() => {
+                    setPage((p) => p - 1);
+                }}
+                onNextPage={() => {
+                    setPage((p) => p + 1);
+                }}
+            />
 
             <CreateSessionModal
                 isOpen={isCreateModalOpen}
