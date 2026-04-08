@@ -231,7 +231,8 @@
     "accountManagement": "Account Management",
     "dashboard": "Dashboard",
     "mobileTitle": "Admin | PSB SMAN 2 Tangerang Selatan",
-    "academicYear": "Academic Year"
+    "academicYear": "Academic Year",
+    "subjectManagement": "Subject Management"
   },
   "DashboardShell": {
     "mobileTitle": "Dashboard | PSB SMAN 2 Tangerang Selatan",

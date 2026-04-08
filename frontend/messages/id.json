@@ -230,7 +230,8 @@
     "accountManagement": "Manajemen Akun",
     "dashboard": "Dasbor",
     "mobileTitle": "Admin | PSB SMAN 2 Tangerang Selatan",
-    "academicYear": "Tahun Ajaran"
+    "academicYear": "Tahun Ajaran",
+    "subjectManagement": "Mata Pelajaran"
   },
   "DashboardShell": {
     "mobileTitle": "Dasbor | PSB SMAN 2 Tangerang Selatan",

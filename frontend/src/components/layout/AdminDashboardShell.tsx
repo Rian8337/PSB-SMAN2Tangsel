@@ -14,13 +14,16 @@ export function AdminDashboardShell({ children }: PropsWithChildren) {
             label: t("accountManagement"),
             icon: Users,
             href: "/admin/users",
-            exact: false,
         },
         {
             label: t("academicYear"),
             icon: Calendar,
             href: "/admin/academic-year",
-            exact: false,
+        },
+        {
+            label: t("subjectManagement"),
+            icon: Calendar,
+            href: "/admin/subjects",
         },
     ];
 
