@@ -236,7 +236,7 @@ export function SubjectManagement() {
                                                 colorPalette="blue"
                                             >
                                                 <Link
-                                                    href={`/admin/subjects/edit?id=${subject.id.toString()}`}
+                                                    href={`/admin/subjects/edit/${subject.id.toString()}`}
                                                 >
                                                     {t("actions.edit")}
                                                 </Link>
