@@ -255,14 +255,6 @@
     "create": {
       "dialog": {
         "title": "Create New Subject",
-        "code": {
-          "label": "Subject Code",
-          "placeholder": "Enter subject code (e.g., MAT101)"
-        },
-        "name": {
-          "label": "Subject Name",
-          "placeholder": "Enter subject name (e.g., Mathematics)"
-        },
         "cancelButton": "Cancel",
         "submitButton": "Create Subject"
       },
@@ -271,6 +263,16 @@
         "successMessage": "Subject \"{name}\" has been successfully created.",
         "errorTitle": "Failed to Create Subject",
         "errorMessage": "An error occurred while creating the subject. Please try again."
+      }
+    },
+    "fields": {
+      "code": {
+        "label": "Subject Code",
+        "placeholder": "Enter subject code (e.g., MAT101)"
+      },
+      "name": {
+        "label": "Subject Name",
+        "placeholder": "Enter subject name (e.g., Mathematics)"
       }
     },
     "title": "Subject Management",

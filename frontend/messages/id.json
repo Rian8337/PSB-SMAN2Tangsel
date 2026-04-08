@@ -254,14 +254,6 @@
     "create": {
       "dialog": {
         "title": "Daftar Mata Pelajaran Baru",
-        "code": {
-          "label": "Kode Mata Pelajaran",
-          "placeholder": "Masukkan kode mata pelajaran (misal: MAT101)"
-        },
-        "name": {
-          "label": "Nama Mata Pelajaran",
-          "placeholder": "Masukkan nama mata pelajaran"
-        },
         "cancelButton": "Batal",
         "submitButton": "Buat Mata Pelajaran"
       },
@@ -270,6 +262,16 @@
         "successMessage": "Mata pelajaran \"{name}\" telah berhasil dibuat.",
         "errorTitle": "Gagal Membuat Mata Pelajaran",
         "errorMessage": "Terjadi kesalahan saat membuat mata pelajaran. Silakan coba lagi."
+      }
+    },
+    "fields": {
+      "code": {
+        "label": "Kode Mata Pelajaran",
+        "placeholder": "Masukkan kode mata pelajaran (misal: MAT101)"
+      },
+      "name": {
+        "label": "Nama Mata Pelajaran",
+        "placeholder": "Masukkan nama mata pelajaran"
       }
     },
     "title": "Manajemen Mata Pelajaran",

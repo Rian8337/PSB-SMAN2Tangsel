@@ -98,25 +98,25 @@ export function CreateSubjectModal({
             submitLabel={t("create.dialog.submitButton")}
             cancelLabel={t("create.dialog.cancelButton")}
         >
-            <FormField label={t("create.dialog.code.label")}>
+            <FormField label={t("fields.code.label")}>
                 <Input
                     name="code"
                     value={code}
                     onChange={(e) => {
                         setCode(e.target.value.toUpperCase());
                     }}
-                    placeholder={t("create.dialog.code.placeholder")}
+                    placeholder={t("fields.code.placeholder")}
                 />
             </FormField>
 
-            <FormField label={t("create.dialog.name.label")}>
+            <FormField label={t("fields.name.label")}>
                 <Input
                     name="name"
                     value={name}
                     onChange={(e) => {
                         setName(e.target.value);
                     }}
-                    placeholder={t("create.dialog.name.placeholder")}
+                    placeholder={t("fields.name.placeholder")}
                 />
             </FormField>
         </FormDialog>
