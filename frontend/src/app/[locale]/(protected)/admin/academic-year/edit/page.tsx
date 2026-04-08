@@ -56,10 +56,9 @@ export default async function EditAcademicYearPage({
 
     const sessionApiClient = await getServerSessionApiClient();
 
-    const academicSession = await sessionApiClient.getSession(
-        parsedSession.data,
-        parsedSemester.data,
-    );
+    const academicSession = await sessionApiClient
+        .getSession(parsedSession.data, parsedSemester.data)
+        .catch(() => null);
 
     if (!academicSession) {
         notFound();
