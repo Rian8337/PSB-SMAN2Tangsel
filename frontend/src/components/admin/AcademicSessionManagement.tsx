@@ -36,11 +36,17 @@ export function AcademicSessionManagement() {
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     const fetchSessions = useCallback(
-        async (query?: string) => {
+        async (query?: string, signal?: AbortSignal) => {
             setIsLoading(true);
 
             try {
-                const data = await sessionApiClient.listSessions(query);
+                const data = await sessionApiClient.listSessions(
+                    query,
+                    undefined,
+                    undefined,
+                    signal,
+                );
+
                 setSessions(data);
             } catch {
                 toaster.create({
@@ -56,7 +62,13 @@ export function AcademicSessionManagement() {
     );
 
     useEffect(() => {
-        void fetchSessions(debouncedSearchQuery);
+        const controller = new AbortController();
+
+        void fetchSessions(debouncedSearchQuery, controller.signal);
+
+        return () => {
+            controller.abort();
+        };
     }, [fetchSessions, debouncedSearchQuery]);
 
     const handleDelete = (session: ValidSession, semester: ValidSemester) => {

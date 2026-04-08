@@ -36,11 +36,17 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     const fetchUsers = useCallback(
-        async (query?: string) => {
+        async (query?: string, signal?: AbortSignal) => {
             setIsLoading(true);
 
             try {
-                const data = await userApiClient.listUsers(query);
+                const data = await userApiClient.listUsers(
+                    query,
+                    undefined,
+                    undefined,
+                    signal,
+                );
+
                 setUsers(data);
             } catch {
                 toaster.create({
@@ -56,7 +62,13 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     );
 
     useEffect(() => {
-        void fetchUsers(debouncedSearchQuery);
+        const controller = new AbortController();
+
+        void fetchUsers(debouncedSearchQuery, controller.signal);
+
+        return () => {
+            controller.abort();
+        };
     }, [fetchUsers, debouncedSearchQuery]);
 
     const handleDelete = (userId: number, userName: string) => {
