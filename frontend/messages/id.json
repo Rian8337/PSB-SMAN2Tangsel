@@ -272,6 +272,37 @@
         "errorMessage": "Terjadi kesalahan saat membuat mata pelajaran. Silakan coba lagi."
       },
       "invalidCode": "Kode hanya boleh berisi huruf kapital, angka, dan strip."
+    },
+    "title": "Manajemen Mata Pelajaran",
+    "searchPlaceholder": "Cari mata pelajaran berdasarkan kode atau nama...",
+    "addButton": "Tambah Mata Pelajaran",
+    "columns": {
+      "code": "Kode",
+      "name": "Nama",
+      "active": "Aktif",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "edit": "Edit"
+    },
+    "delete": {
+      "confirmation": "Apakah Anda yakin ingin menghapus mata pelajaran \"{code}\"? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Mata Pelajaran Berhasil Dihapus",
+        "successMessage": "Mata pelajaran \"{code}\" telah berhasil dihapus.",
+        "errorTitle": "Gagal Menghapus Mata Pelajaran",
+        "errorMessage": "Terjadi kesalahan saat menghapus mata pelajaran. Silakan coba lagi."
+      }
+    },
+    "emptyState": "Tidak ada mata pelajaran yang ditemukan.",
+    "pagination": {
+      "previous": "Sebelumnya",
+      "next": "Berikutnya",
+      "info": "Halaman {page}"
+    },
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Mata Pelajaran",
+      "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran. Silakan coba lagi."
     }
   },
   "NotificationBell": {

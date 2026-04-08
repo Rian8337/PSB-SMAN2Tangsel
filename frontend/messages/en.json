@@ -273,6 +273,37 @@
         "errorMessage": "An error occurred while creating the subject. Please try again."
       },
       "invalidCode": "Invalid subject code. Must only contain uppercase letters, numbers, and hyphens."
+    },
+    "title": "Subject Management",
+    "searchPlaceholder": "Search subjects by code or name...",
+    "addButton": "Add Subject",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "active": "Active",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit"
+    },
+    "delete": {
+      "confirmation": "Are you sure you want to delete the subject \"{code}\"? This action cannot be undone.",
+      "toast": {
+        "successTitle": "Subject Successfully Deleted",
+        "successMessage": "Subject \"{code}\" has been successfully deleted.",
+        "errorTitle": "Failed to Delete Subject",
+        "errorMessage": "An error occurred while deleting the subject. Please try again."
+      }
+    },
+    "emptyState": "No subjects found.",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "info": "Page {page}"
+    },
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Subjects",
+      "errorMessage": "An error occurred while fetching subjects. Please try again."
     }
   },
   "NotificationBell": {
