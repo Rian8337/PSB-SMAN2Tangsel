@@ -265,6 +265,16 @@
         "errorMessage": "An error occurred while creating the subject. Please try again."
       }
     },
+    "edit": {
+      "title": "Edit Subject",
+      "toast": {
+        "successTitle": "Subject Updated",
+        "successMessage": "Subject \"{name}\" has been successfully updated.",
+        "errorTitle": "Failed to Update Subject",
+        "errorMessage": "An error occurred while updating the subject. Please try again."
+      },
+      "submitButton": "Save Changes"
+    },
     "fields": {
       "code": {
         "label": "Subject Code",
@@ -273,6 +283,9 @@
       "name": {
         "label": "Subject Name",
         "placeholder": "Enter subject name (e.g., Mathematics)"
+      },
+      "active": {
+        "label": "Active"
       }
     },
     "title": "Subject Management",

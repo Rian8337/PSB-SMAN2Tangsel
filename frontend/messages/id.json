@@ -264,6 +264,16 @@
         "errorMessage": "Terjadi kesalahan saat membuat mata pelajaran. Silakan coba lagi."
       }
     },
+    "edit": {
+      "title": "Edit Mata Pelajaran",
+      "toast": {
+        "successTitle": "Mata Pelajaran Berhasil Diperbarui",
+        "successMessage": "Mata pelajaran \"{name}\" telah berhasil diperbarui.",
+        "errorTitle": "Gagal Memperbarui Mata Pelajaran",
+        "errorMessage": "Terjadi kesalahan saat memperbarui mata pelajaran. Silakan coba lagi."
+      },
+      "submitButton": "Simpan Perubahan"
+    },
     "fields": {
       "code": {
         "label": "Kode Mata Pelajaran",
@@ -272,6 +282,9 @@
       "name": {
         "label": "Nama Mata Pelajaran",
         "placeholder": "Masukkan nama mata pelajaran"
+      },
+      "active": {
+        "label": "Aktifkan Mata Pelajaran Ini"
       }
     },
     "title": "Manajemen Mata Pelajaran",
