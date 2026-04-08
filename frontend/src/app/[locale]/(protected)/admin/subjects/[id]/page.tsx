@@ -5,11 +5,11 @@ import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string }>;
-}) {
+interface EditSubjectPageProps {
+    params: Promise<{ locale: string; id: string }>;
+}
+
+export async function generateMetadata({ params }: EditSubjectPageProps) {
     const { locale } = await params;
     const t = await getTranslations({
         locale: hasLocale(routing.locales, locale)
@@ -22,18 +22,16 @@ export async function generateMetadata({
 }
 
 export default async function EditSubjectPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ id?: string }>;
-}) {
-    const { id: idParam } = await searchParams;
-    const id = parseInt(idParam ?? "", 10);
-    const subjectApiClient = await getServerSubjectApiClient();
+    params,
+}: EditSubjectPageProps) {
+    const { id: idParam } = await params;
+    const id = parseInt(idParam, 10);
 
     if (Number.isNaN(id)) {
         notFound();
     }
 
+    const subjectApiClient = await getServerSubjectApiClient();
     const subject = await subjectApiClient.getSubject(id).catch(() => null);
 
     if (!subject) {
