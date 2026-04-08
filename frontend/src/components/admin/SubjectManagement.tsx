@@ -270,7 +270,6 @@ export function SubjectManagement() {
                 )}
             </Box>
 
-            {/* Pagination Controls */}
             <Flex justify="space-between" align="center" mt={4}>
                 <Text fontSize="sm" color="gray.500">
                     {t("pagination.info", { page: page.toString() })}
