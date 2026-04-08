@@ -160,7 +160,7 @@ export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
                                         >
                                             {editMode ? (
                                                 <Link
-                                                    href={`/admin/schedules/edit/${cls.id.toString()}`}
+                                                    href={`/admin/schedules/${cls.id.toString()}`}
                                                     style={{
                                                         display: "flex",
                                                         width: "100%",
