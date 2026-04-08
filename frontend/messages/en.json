@@ -251,6 +251,30 @@
     "saturday": "Saturday",
     "sunday": "Sunday"
   },
+  "SubjectManagement": {
+    "create": {
+      "dialog": {
+        "title": "Create New Subject",
+        "code": {
+          "label": "Subject Code",
+          "placeholder": "Enter subject code (e.g., MAT101)"
+        },
+        "name": {
+          "label": "Subject Name",
+          "placeholder": "Enter subject name (e.g., Mathematics)"
+        },
+        "cancelButton": "Cancel",
+        "submitButton": "Create Subject"
+      },
+      "toast": {
+        "successTitle": "Subject Created",
+        "successMessage": "Subject \"{name}\" has been successfully created.",
+        "errorTitle": "Failed to Create Subject",
+        "errorMessage": "An error occurred while creating the subject. Please try again."
+      },
+      "invalidCode": "Invalid subject code. Must only contain uppercase letters, numbers, and hyphens."
+    }
+  },
   "NotificationBell": {
     "noNotifications": "No notifications at the moment.",
     "title": "Notifications"

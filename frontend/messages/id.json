@@ -250,6 +250,30 @@
     "saturday": "Sabtu",
     "sunday": "Minggu"
   },
+  "SubjectManagement": {
+    "create": {
+      "dialog": {
+        "title": "Daftar Mata Pelajaran Baru",
+        "code": {
+          "label": "Kode Mata Pelajaran",
+          "placeholder": "Masukkan kode mata pelajaran (misal: MAT101)"
+        },
+        "name": {
+          "label": "Nama Mata Pelajaran",
+          "placeholder": "Masukkan nama mata pelajaran"
+        },
+        "cancelButton": "Batal",
+        "submitButton": "Buat Mata Pelajaran"
+      },
+      "toast": {
+        "successTitle": "Mata Pelajaran Berhasil Dibuat",
+        "successMessage": "Mata pelajaran \"{name}\" telah berhasil dibuat.",
+        "errorTitle": "Gagal Membuat Mata Pelajaran",
+        "errorMessage": "Terjadi kesalahan saat membuat mata pelajaran. Silakan coba lagi."
+      },
+      "invalidCode": "Kode hanya boleh berisi huruf kapital, angka, dan strip."
+    }
+  },
   "NotificationBell": {
     "noNotifications": "Tidak ada notifikasi saat ini.",
     "title": "Notifikasi"
