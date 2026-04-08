@@ -32,6 +32,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -69,7 +70,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
         return () => {
             controller.abort();
         };
-    }, [fetchUsers, debouncedSearchQuery]);
+    }, [fetchUsers, debouncedSearchQuery, refreshTrigger]);
 
     const handleDelete = (userId: number, userName: string) => {
         if (!confirm(t("deleteUser.confirmation", { name: userName }))) {
@@ -87,7 +88,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     type: "success",
                 });
 
-                void fetchUsers(searchQuery);
+                setRefreshTrigger((prev) => prev + 1);
             })
             .catch(() => {
                 toaster.create({
@@ -297,7 +298,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
-                    void fetchUsers(searchQuery);
+                    setRefreshTrigger((prev) => prev + 1);
                 }}
             />
         </Box>

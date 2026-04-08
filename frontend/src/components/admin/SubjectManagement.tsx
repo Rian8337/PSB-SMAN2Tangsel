@@ -31,6 +31,7 @@ export function SubjectManagement() {
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [page, setPage] = useState(1);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const limit = 10;
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -78,7 +79,13 @@ export function SubjectManagement() {
         return () => {
             controller.abort();
         };
-    }, [fetchSubjects, searchQuery, debouncedSearchQuery, page]);
+    }, [
+        fetchSubjects,
+        searchQuery,
+        debouncedSearchQuery,
+        page,
+        refreshTrigger,
+    ]);
 
     const handleDelete = (id: number, code: string) => {
         if (!confirm(t("delete.confirmation", { code }))) {
@@ -94,7 +101,7 @@ export function SubjectManagement() {
                     type: "success",
                 });
 
-                void fetchSubjects(debouncedSearchQuery, page);
+                setRefreshTrigger((prev) => prev + 1);
             })
             .catch(() => {
                 toaster.create({
@@ -306,7 +313,7 @@ export function SubjectManagement() {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
-                    void fetchSubjects(debouncedSearchQuery, page);
+                    setRefreshTrigger((prev) => prev + 1);
                 }}
             />
         </Box>

@@ -32,6 +32,7 @@ export function AcademicSessionManagement() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -69,7 +70,7 @@ export function AcademicSessionManagement() {
         return () => {
             controller.abort();
         };
-    }, [fetchSessions, debouncedSearchQuery]);
+    }, [fetchSessions, debouncedSearchQuery, refreshTrigger]);
 
     const handleDelete = (session: ValidSession, semester: ValidSemester) => {
         const tOptions = { session, semester: semester.toString() };
@@ -87,7 +88,7 @@ export function AcademicSessionManagement() {
                     type: "success",
                 });
 
-                void fetchSessions(debouncedSearchQuery);
+                setRefreshTrigger((prev) => prev + 1);
             })
             .catch(() => {
                 toaster.create({
@@ -296,7 +297,7 @@ export function AcademicSessionManagement() {
                     setisCreateModalOpen(false);
                 }}
                 onSuccess={() => {
-                    void fetchSessions(debouncedSearchQuery);
+                    setRefreshTrigger((prev) => prev + 1);
                 }}
             />
         </Box>
