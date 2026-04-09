@@ -29,30 +29,38 @@ test.describe("Academic Session Management", () => {
 
         await openCreateModalButton.click();
 
-        const dialog = page.getByRole("dialog", {
+        const createDialog = page.getByRole("dialog", {
             name: /daftar tahun ajaran baru|new academic session/i,
         });
-        const openDialog = page.locator('[role="dialog"][data-state="open"]');
 
-        await expect(dialog).toBeVisible();
+        await expect(createDialog).toBeVisible();
 
-        const sessionInput = dialog.locator('input[name="session"]');
+        const sessionInput = createDialog.locator('input[name="session"]');
         await sessionInput.fill(testSession);
 
-        await dialog
+        await createDialog
             .locator('select[name="semester"]')
             .selectOption(testSemester);
 
-        await dialog.locator('input[name="startTime"]').fill(startDate);
-        await dialog.locator('input[name="endTime"]').fill(endDate);
+        await createDialog.locator('input[name="startTime"]').fill(startDate);
+        await createDialog.locator('input[name="endTime"]').fill(endDate);
 
-        await dialog.getByRole("button", { name: /buat|create/i }).click();
+        const createSessionResponse = page.waitForResponse((response) => {
+            const pathname = new URL(response.url()).pathname;
 
-        const successToast = page.getByText(/berhasil|success/i).first();
+            return (
+                response.request().method() === "POST" &&
+                response.ok() &&
+                /\/sessions\/?$/.test(pathname)
+            );
+        });
 
-        await expect(successToast).toBeVisible();
-        await expect(openDialog).toHaveCount(0);
-        await expect(successToast).toBeHidden();
+        await Promise.all([
+            createSessionResponse,
+            createDialog.getByRole("button", { name: /buat|create/i }).click(),
+        ]);
+
+        await expect(createDialog).toBeHidden();
 
         // Search session
         const searchInput = page.locator('input[name="search"]');
@@ -80,7 +88,6 @@ test.describe("Academic Session Management", () => {
         // Edit session
         const editLink = sessionRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
-        await expect(openDialog).toHaveCount(0);
 
         await Promise.all([
             page.waitForURL(

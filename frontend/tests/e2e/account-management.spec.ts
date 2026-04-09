@@ -34,8 +34,6 @@ test.describe("Account Management", () => {
             name: /daftar pengguna baru|register user/i,
         });
 
-        const openDialog = page.locator('[role="dialog"][data-state="open"]');
-
         await expect(async () => {
             await openCreateUserDialogButton.click();
             await expect(dialog).toBeVisible();
@@ -51,15 +49,28 @@ test.describe("Account Management", () => {
         await roleSelect.selectOption(UserRole.student.toString());
         await passwordInput.fill(registeredUser.password);
 
-        await dialog.getByRole("button", { name: /buat|create/i }).click();
+        const createUserResponse = page.waitForResponse((response) => {
+            const pathname = new URL(response.url()).pathname;
+
+            return (
+                response.request().method() === "POST" &&
+                response.ok() &&
+                /\/users\/create\/?$/.test(pathname)
+            );
+        });
+
+        await Promise.all([
+            createUserResponse,
+            dialog.getByRole("button", { name: /buat|create/i }).click(),
+        ]);
 
         const successToast = page.getByText(/berhasil|success/i).first();
 
         await expect(successToast).toBeVisible();
-        await expect(openDialog).toHaveCount(0);
 
         // Wait for the toast to hide.
         await expect(successToast).toBeHidden();
+        await expect(dialog).toBeHidden();
 
         // Search user
         const searchInput = page.locator('input[name="search"]');
@@ -90,6 +101,7 @@ test.describe("Account Management", () => {
         // Edit user
         const editLink = userRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
+
         await Promise.all([
             page.waitForURL(/\/admin\/users\/\d+/),
             editLink.click(),

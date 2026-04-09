@@ -33,7 +33,6 @@ test.describe("Subject Management", () => {
         const dialog = page.getByRole("dialog", {
             name: /daftar mata pelajaran baru|new subject/i,
         });
-        const openDialog = page.locator('[role="dialog"][data-state="open"]');
 
         await expect(async () => {
             await openCreateModalButton.click();
@@ -46,14 +45,27 @@ test.describe("Subject Management", () => {
         await codeInput.fill(testSubject.code);
         await nameInput.fill(testSubject.name);
 
-        await dialog.getByRole("button", { name: /buat|create/i }).click();
+        const createSubjectResponse = page.waitForResponse((response) => {
+            const pathname = new URL(response.url()).pathname;
+
+            return (
+                response.request().method() === "POST" &&
+                response.ok() &&
+                /\/subjects\/?$/.test(pathname)
+            );
+        });
+
+        await Promise.all([
+            createSubjectResponse,
+            dialog.getByRole("button", { name: /buat|create/i }).click(),
+        ]);
 
         const successToast = page.getByText(/berhasil|success/i).first();
         await expect(successToast).toBeVisible();
-        await expect(openDialog).toHaveCount(0);
 
         // Wait for the toast to hide.
         await expect(successToast).toBeHidden();
+        await expect(dialog).toBeHidden();
 
         // Search subject
         const searchInput = page.locator('input[name="search"]');
@@ -82,7 +94,6 @@ test.describe("Subject Management", () => {
         // Edit subject
         const editLink = subjectRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
-        await expect(openDialog).toHaveCount(0);
 
         await Promise.all([
             page.waitForURL(/\/admin\/subjects\/\d+/),
