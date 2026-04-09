@@ -124,6 +124,7 @@ test.describe("Account Management", () => {
 
         await expect(deleteToast).toBeVisible();
         await expect(updatedRow).toBeHidden();
+        await expect(deleteToast).toBeHidden();
 
         // Search is still applied, so no users should be found
         await expect(page.locator("table")).toContainText(

@@ -107,7 +107,8 @@ test.describe("Academic Session Management", () => {
 
         await deleteButton.click();
 
-        const deleteToast = page.getByText(/berhasil|success/i).first();
+        const deleteToast = page.getByText(/berhasil|success/i).last();
+
         await expect(deleteToast).toBeVisible();
         await expect(updatedRow).toBeHidden();
         await expect(deleteToast).toBeHidden();

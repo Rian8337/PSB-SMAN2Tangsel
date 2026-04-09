@@ -119,8 +119,10 @@ test.describe("Subject Management", () => {
         await deleteButton.click();
 
         const deleteToast = page.getByText(/berhasil|success/i).last();
+
         await expect(deleteToast).toBeVisible();
         await expect(updatedRow).toBeHidden();
+        await expect(deleteToast).toBeHidden();
 
         // Search is still applied, so no subjects should be found
         await expect(page.locator("table")).toContainText(/tidak ada|empty/i);
