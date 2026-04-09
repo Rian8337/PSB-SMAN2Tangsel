@@ -41,7 +41,14 @@ export const mockAdministratorRepository: Mocked<IAdministratorRepository> = {
  * Mock implementation of {@link IClassRepository}.
  */
 export const mockClassRepository: Mocked<IClassRepository> = {
+    getById: vi.fn(),
     getEnrolledStudentIds: vi.fn(),
+    list: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    hasSubjects: vi.fn(),
+    hasStudents: vi.fn(),
+    delete: vi.fn(),
 };
 
 /**
