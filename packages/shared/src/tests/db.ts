@@ -7,8 +7,17 @@ import { sql } from "drizzle-orm";
 
 type Insert<T extends AnyMySqlTable> = T["$inferInsert"];
 
-// Hash for password123, 12 rounds
-const testPasswordHash =
+/**
+ * The plaintext password used for all seeded users in the database.
+ */
+export const testPassword = "password123";
+
+/**
+ * The bcrypt hash of the password "password123" with 12 salt rounds.
+ *
+ * This is used for seeding test users in the database.
+ */
+export const testPasswordHash =
     "$2a$12$qwDcGIMf0xiOI5W5JhxM3eVWi5YnuCr9vsmq4S0quIbroKo12npZ2";
 
 /**

@@ -1,9 +1,8 @@
-import { seededPrimaryData } from "@psb/shared/tests";
+import { seededPrimaryData, testPassword } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
 import TestAgent from "supertest/lib/agent";
 
 const loginEndpoint = "/auth/login";
-const testPassword = "password123";
 
 /**
  * Logins a test agent as a student.
@@ -56,6 +55,32 @@ async function loginUser(agent: TestAgent, role: UserRole) {
     if (res.status !== 200) {
         throw new Error(
             `Login failed for user with role ${role.toString()} with status ${res.status.toString()}`,
+        );
+    }
+
+    return res;
+}
+
+/**
+ * Logins a test agent using explicit credentials. This can be used to log in as temporary test users.
+ *
+ * @param agent The test agent to login.
+ * @param identifier The user's identifier.
+ * @param password The raw password. Defaults to {@link testPassword}.
+ */
+export async function loginWithCredentials(
+    agent: TestAgent,
+    identifier: string,
+    password = testPassword,
+) {
+    const res = await agent.post(loginEndpoint).send({
+        id: identifier,
+        password: password,
+    });
+
+    if (res.status !== 200) {
+        throw new Error(
+            `Login failed for user ${identifier} with status ${res.status.toString()}`,
         );
     }
 
