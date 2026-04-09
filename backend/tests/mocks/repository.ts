@@ -57,6 +57,7 @@ export const mockClassRepository: Mocked<IClassRepository> = {
 export const mockNotificationRepository: Mocked<INotificationRepository> = {
     create: vi.fn(),
     createBulk: vi.fn(),
+    findById: vi.fn(),
     findByUserId: vi.fn(),
     getUnreadCount: vi.fn(),
     updateReadStatus: vi.fn(),

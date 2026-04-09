@@ -1,5 +1,6 @@
 import { NotificationService } from "@/services";
-import { NotificationDTO } from "@psb/shared/types";
+import { ForbiddenError, NotFoundError } from "@/types";
+import { Notification } from "@psb/shared/types";
 import { mockClassRepository, mockNotificationRepository } from "@test/mocks";
 
 describe("NotificationService (unit)", () => {
@@ -8,8 +9,18 @@ describe("NotificationService (unit)", () => {
         mockNotificationRepository,
     );
 
+    const notification: Notification = {
+        createdAt: new Date(),
+        id: 1,
+        message: "Test Message",
+        read: false,
+        title: "Test Title",
+        url: null,
+        userId: 1,
+    };
+
     describe("getUserNotifications", () => {
-        const notifications: NotificationDTO[] = [];
+        const notifications: Notification[] = [];
 
         beforeEach(() => {
             mockNotificationRepository.findByUserId.mockResolvedValue(
@@ -24,7 +35,7 @@ describe("NotificationService (unit)", () => {
                 mockNotificationRepository.findByUserId,
             ).toHaveBeenCalledWith(1, undefined, undefined);
 
-            expect(result).toBe(notifications);
+            expect(result).toEqual([]);
         });
 
         it("should delegate to NotificationRepository.findByUserId with specified parameters", async () => {
@@ -34,7 +45,7 @@ describe("NotificationService (unit)", () => {
                 mockNotificationRepository.findByUserId,
             ).toHaveBeenCalledWith(1, 5, 10);
 
-            expect(result).toBe(notifications);
+            expect(result).toEqual([]);
         });
     });
 
@@ -54,12 +65,37 @@ describe("NotificationService (unit)", () => {
     });
 
     describe("updateReadStatus", () => {
-        it("should delegate to NotificationRepository.updateReadStatus", async () => {
-            await service.updateReadStatus(100, 1, true);
+        it("should update read status successfully", async () => {
+            mockNotificationRepository.findById.mockResolvedValue(notification);
+
+            await service.updateReadStatus(1, 1, true);
 
             expect(
                 mockNotificationRepository.updateReadStatus,
-            ).toHaveBeenCalledWith(100, 1, true);
+            ).toHaveBeenCalledWith(1, true);
+        });
+
+        it("should throw if the notification does not exist", async () => {
+            mockNotificationRepository.findById.mockResolvedValue(null);
+
+            await expect(
+                service.updateReadStatus(999, 1, true),
+            ).rejects.toThrow(
+                new NotFoundError("notificationService.notificationNotFound"),
+            );
+        });
+
+        it("should throw if the notification belongs to another user", async () => {
+            mockNotificationRepository.findById.mockResolvedValue({
+                ...notification,
+                userId: 2,
+            });
+
+            await expect(service.updateReadStatus(1, 1, true)).rejects.toThrow(
+                new ForbiddenError(
+                    "notificationService.unauthorizedReadStatusUpdate",
+                ),
+            );
         });
     });
 
