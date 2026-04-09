@@ -52,7 +52,11 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                 );
 
                 setUsers(data);
-            } catch {
+            } catch (e) {
+                if (e instanceof Error && e.name === "AbortError") {
+                    return;
+                }
+
                 toaster.create({
                     title: t("fetchUserToast.errorTitle"),
                     description: t("fetchUserToast.errorMessage"),

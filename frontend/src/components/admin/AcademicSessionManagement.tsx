@@ -52,7 +52,11 @@ export function AcademicSessionManagement() {
                 );
 
                 setSessions(data);
-            } catch {
+            } catch (e) {
+                if (e instanceof Error && e.name === "AbortError") {
+                    return;
+                }
+
                 toaster.create({
                     title: t("fetchToast.errorTitle"),
                     description: t("fetchToast.errorMessage"),
