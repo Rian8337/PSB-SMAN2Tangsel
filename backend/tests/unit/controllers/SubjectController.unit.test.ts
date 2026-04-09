@@ -1,4 +1,5 @@
 import { SubjectController } from "@/controllers";
+import { MessageKey } from "@/i18n";
 import { Subject } from "@psb/shared/types";
 import {
     createMockRequestFactory,
@@ -93,6 +94,38 @@ describe("SubjectController (unit)", () => {
 
             expect(res.json).toHaveBeenCalledWith([mockSubject]);
         });
+
+        it.each<[string, MessageKey]>([
+            ["abc", "controller.invalidLimitFormat"],
+            ["0", "controller.invalidLimitRange"],
+            ["-5", "controller.invalidLimitRange"],
+            ["51", "controller.invalidLimitRange"],
+        ])(
+            "should return 400 for invalid limit: %s",
+            async (limit, errorKey) => {
+                req.query.limit = limit;
+
+                await controller.listSubjects(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(res.json).toHaveBeenCalledWith({ error: errorKey });
+            },
+        );
+
+        it.each<[string, MessageKey]>([
+            ["abc", "controller.invalidOffsetFormat"],
+            ["-1", "controller.invalidOffsetRange"],
+        ])(
+            "should return 400 for invalid offset: %s",
+            async (offset, errorKey) => {
+                req.query.offset = offset;
+
+                await controller.listSubjects(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(res.json).toHaveBeenCalledWith({ error: errorKey });
+            },
+        );
     });
 
     describe("createSubject", () => {
@@ -162,6 +195,22 @@ describe("SubjectController (unit)", () => {
 
             expect(res.sendStatus).toHaveBeenCalledWith(200);
         });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])("should return 400 for invalid subject ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.updateSubject(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(mockSubjectService.updateSubject).not.toHaveBeenCalled();
+        });
     });
 
     describe("deleteSubject", () => {
@@ -183,6 +232,22 @@ describe("SubjectController (unit)", () => {
 
             expect(mockSubjectService.deleteSubject).toHaveBeenCalledWith(1);
             expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])("should return 400 for invalid subject ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.deleteSubject(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(mockSubjectService.deleteSubject).not.toHaveBeenCalled();
         });
     });
 });
