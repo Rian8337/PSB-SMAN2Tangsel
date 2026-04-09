@@ -1,3 +1,4 @@
+export * from "./classes";
 export * from "./sessions";
-export * from "./users";
 export * from "./subjects";
+export * from "./users";
