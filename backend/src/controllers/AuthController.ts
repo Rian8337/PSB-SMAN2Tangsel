@@ -43,6 +43,9 @@ export class AuthController extends BaseController {
 
                 return (
                     configService.getEnvironmentVariable(
+                        EnvironmentVariableKey.nodeEnv,
+                    ) !== "production" ||
+                    configService.getEnvironmentVariable(
                         EnvironmentVariableKey.isE2ETest,
                     ) === "true"
                 );
