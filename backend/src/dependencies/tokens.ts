@@ -12,6 +12,7 @@ import {
 } from "@/repositories";
 import {
     IAuthService,
+    IClassService,
     IConfigService,
     INotificationService,
     IScheduleService,
@@ -111,6 +112,11 @@ export const dependencyTokens = {
      * Injection token for an {@link IAuthService}.
      */
     authService: Symbol.for("authService") as InjectionToken<IAuthService>,
+
+    /**
+     * Injection token for an {@link IClassService}.
+     */
+    classService: Symbol.for("classService") as InjectionToken<IClassService>,
 
     /**
      * Injection token for an {@link IConfigService}.

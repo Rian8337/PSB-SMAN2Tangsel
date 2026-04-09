@@ -24,6 +24,15 @@ interface Localization {
         readonly invalidOffsetRange: string;
     };
 
+    readonly classController: {
+        readonly invalidId: string;
+    };
+
+    readonly classService: {
+        readonly classNotFound: string;
+        readonly classInUse: string;
+    };
+
     readonly notificationController: {
         readonly invalidNotificationIdFormat: string;
         readonly invalidReadStatusFormat: string;
@@ -98,6 +107,14 @@ export const messages = {
             invalidOffsetRange:
                 "Parameter offset harus berada dalam rentang yang valid.",
         },
+        classController: {
+            invalidId: "Parameter id harus berupa bilangan bulat positif.",
+        },
+        classService: {
+            classNotFound: "Kelas tidak ditemukan.",
+            classInUse:
+                "Kelas yang memiliki mata pelajaran atau siswa tidak dapat dihapus.",
+        },
         notificationController: {
             invalidNotificationIdFormat:
                 "Parameter notificationId harus berupa bilangan bulat positif.",
@@ -166,6 +183,14 @@ export const messages = {
                 "Parameter offset must be a non-negative integer.",
             invalidOffsetRange:
                 "Parameter offset must be within a valid range.",
+        },
+        classController: {
+            invalidId: "Parameter id must be a positive integer.",
+        },
+        classService: {
+            classNotFound: "Class not found.",
+            classInUse:
+                "Classes with associated subjects or students cannot be deleted.",
         },
         notificationController: {
             invalidNotificationIdFormat:
