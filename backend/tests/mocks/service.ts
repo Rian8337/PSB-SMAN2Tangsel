@@ -1,5 +1,6 @@
 import {
     IAuthService,
+    IClassService,
     IConfigService,
     INotificationService,
     IScheduleService,
@@ -19,6 +20,17 @@ export const mockAuthService: Mocked<IAuthService> = {
     verifySession: vi.fn(),
     encryptSession: vi.fn(),
     decryptSession: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassService}.
+ */
+export const mockClassService: Mocked<IClassService> = {
+    getClassById: vi.fn(),
+    listClasses: vi.fn(),
+    createClass: vi.fn(),
+    updateClass: vi.fn(),
+    deleteClass: vi.fn(),
 };
 
 /**
