@@ -30,7 +30,10 @@ test.describe("Subject Management", () => {
             name: /tambah|add/i,
         });
 
-        const dialog = page.locator('[role="dialog"][data-state="open"]');
+        const dialog = page.getByRole("dialog", {
+            name: /daftar mata pelajaran baru|new subject/i,
+        });
+        const openDialog = page.locator('[role="dialog"][data-state="open"]');
 
         await expect(async () => {
             await openCreateModalButton.click();
@@ -40,17 +43,14 @@ test.describe("Subject Management", () => {
         const codeInput = dialog.locator('input[name="code"]');
         const nameInput = dialog.locator('input[name="name"]');
 
-        await codeInput.click();
-        await codeInput.pressSequentially(testSubject.code);
-
-        await nameInput.click();
-        await nameInput.pressSequentially(testSubject.name);
+        await codeInput.fill(testSubject.code);
+        await nameInput.fill(testSubject.name);
 
         await dialog.getByRole("button", { name: /buat|create/i }).click();
 
         const successToast = page.getByText(/berhasil|success/i).first();
         await expect(successToast).toBeVisible();
-        await expect(dialog).toBeHidden();
+        await expect(openDialog).toHaveCount(0);
 
         // Wait for the toast to hide.
         await expect(successToast).toBeHidden();
@@ -58,8 +58,19 @@ test.describe("Subject Management", () => {
         // Search subject
         const searchInput = page.locator('input[name="search"]');
 
-        await searchInput.click();
-        await searchInput.pressSequentially(testSubject.code, { delay: 50 });
+        const searchSubjectsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/subjects/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(testSubject.code);
+        await searchSubjectsResponse;
 
         const subjectRow = page.getByRole("row", {
             name: new RegExp(testSubject.code, "i"),
@@ -69,17 +80,20 @@ test.describe("Subject Management", () => {
         await expect(subjectRow).toContainText(testSubject.name);
 
         // Edit subject
-        await subjectRow.getByRole("link", { name: /edit/i }).click();
-        await expect(page).toHaveURL(/\/admin\/subjects\/\d+/);
+        const editLink = subjectRow.getByRole("link", { name: /edit/i });
+        await expect(editLink).toBeVisible();
+        await expect(openDialog).toHaveCount(0);
+
+        await Promise.all([
+            page.waitForURL(/\/admin\/subjects\/\d+/),
+            editLink.click(),
+        ]);
 
         const editNameInput = page.locator('input[name="name"]');
         await expect(editNameInput).toBeVisible();
 
         const updatedName = `${testSubject.name} Updated`;
-
-        await editNameInput.clear();
-        await editNameInput.click();
-        await editNameInput.pressSequentially(updatedName);
+        await editNameInput.fill(updatedName);
 
         const activeSwitch = page.getByRole("checkbox");
         await activeSwitch.click({ force: true });
@@ -96,9 +110,21 @@ test.describe("Subject Management", () => {
         await expect(updateToast).toBeHidden();
 
         // Delete subject
-        await searchInput.clear();
-        await searchInput.click();
-        await searchInput.pressSequentially(updatedName, { delay: 50 });
+        const searchUpdatedSubjectsResponse = page.waitForResponse(
+            (response) => {
+                const url = response.url();
+
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    url.includes("/subjects/list") &&
+                    url.includes("query=")
+                );
+            },
+        );
+
+        await searchInput.fill(updatedName);
+        await searchUpdatedSubjectsResponse;
 
         const updatedRow = page.getByRole("row", {
             name: new RegExp(testSubject.code, "i"),

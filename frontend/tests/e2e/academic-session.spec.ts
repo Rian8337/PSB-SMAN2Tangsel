@@ -29,12 +29,15 @@ test.describe("Academic Session Management", () => {
 
         await openCreateModalButton.click();
 
-        const dialog = page.locator('[role="dialog"][data-state="open"]');
+        const dialog = page.getByRole("dialog", {
+            name: /daftar tahun ajaran baru|new academic session/i,
+        });
+        const openDialog = page.locator('[role="dialog"][data-state="open"]');
+
         await expect(dialog).toBeVisible();
 
         const sessionInput = dialog.locator('input[name="session"]');
-        await sessionInput.clear();
-        await sessionInput.pressSequentially(testSession);
+        await sessionInput.fill(testSession);
 
         await dialog
             .locator('select[name="semester"]')
@@ -48,14 +51,25 @@ test.describe("Academic Session Management", () => {
         const successToast = page.getByText(/berhasil|success/i).first();
 
         await expect(successToast).toBeVisible();
-        await expect(dialog).not.toBeAttached();
+        await expect(openDialog).toHaveCount(0);
         await expect(successToast).toBeHidden();
 
         // Search session
         const searchInput = page.locator('input[name="search"]');
 
-        await searchInput.click();
-        await searchInput.pressSequentially(testSession, { delay: 50 });
+        const searchSessionsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/sessions/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(testSession);
+        await searchSessionsResponse;
 
         const sessionRow = page.getByRole("row", {
             name: new RegExp(testSession),
@@ -64,11 +78,16 @@ test.describe("Academic Session Management", () => {
         await expect(sessionRow).toBeVisible();
 
         // Edit session
-        await sessionRow.getByRole("link", { name: /edit/i }).click();
+        const editLink = sessionRow.getByRole("link", { name: /edit/i });
+        await expect(editLink).toBeVisible();
+        await expect(openDialog).toHaveCount(0);
 
-        await expect(page).toHaveURL(
-            /\/admin\/academic-year\/edit\?session=2035%2F2036&semester=1/,
-        );
+        await Promise.all([
+            page.waitForURL(
+                /\/admin\/academic-year\/edit\?session=2035%2F2036&semester=1/,
+            ),
+            editLink.click(),
+        ]);
 
         const editStartInput = page.locator('input[name="startTime"]');
         await expect(editStartInput).toBeVisible();
@@ -87,9 +106,21 @@ test.describe("Academic Session Management", () => {
         await expect(updateToast).toBeHidden();
 
         // Delete session
-        await searchInput.clear();
-        await searchInput.click();
-        await searchInput.pressSequentially(testSession, { delay: 50 });
+        const searchUpdatedSessionsResponse = page.waitForResponse(
+            (response) => {
+                const url = response.url();
+
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    url.includes("/sessions/list") &&
+                    url.includes("query=")
+                );
+            },
+        );
+
+        await searchInput.fill(testSession);
+        await searchUpdatedSessionsResponse;
 
         const updatedRow = page.getByRole("row", {
             name: new RegExp(testSession),
@@ -113,8 +144,18 @@ test.describe("Academic Session Management", () => {
         await expect(updatedRow).toBeHidden();
         await expect(deleteToast).toBeHidden();
 
+        const clearSearchResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/sessions/list")
+            );
+        });
+
         await searchInput.clear();
-        await page.waitForTimeout(500);
+        await clearSearchResponse;
 
         await expect(
             page.getByRole("row", { name: new RegExp(testSession) }),

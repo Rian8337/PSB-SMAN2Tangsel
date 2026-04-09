@@ -30,7 +30,11 @@ test.describe("Account Management", () => {
             name: /daftar|register/i,
         });
 
-        const dialog = page.locator('[role="dialog"][data-state="open"]');
+        const dialog = page.getByRole("dialog", {
+            name: /daftar pengguna baru|register user/i,
+        });
+
+        const openDialog = page.locator('[role="dialog"][data-state="open"]');
 
         await expect(async () => {
             await openCreateUserDialogButton.click();
@@ -42,23 +46,17 @@ test.describe("Account Management", () => {
         const roleSelect = dialog.locator('select[name="role"]');
         const passwordInput = dialog.locator('input[name="password"]');
 
-        await nameInput.click();
-        await nameInput.pressSequentially(registeredUser.name);
-
-        await identifierInput.click();
-        await identifierInput.pressSequentially(registeredUser.identifier);
-
+        await nameInput.fill(registeredUser.name);
+        await identifierInput.fill(registeredUser.identifier);
         await roleSelect.selectOption(UserRole.student.toString());
-
-        await passwordInput.click();
-        await passwordInput.pressSequentially(registeredUser.password);
+        await passwordInput.fill(registeredUser.password);
 
         await dialog.getByRole("button", { name: /buat|create/i }).click();
 
         const successToast = page.getByText(/berhasil|success/i).first();
 
         await expect(successToast).toBeVisible();
-        await expect(dialog).toBeHidden();
+        await expect(openDialog).toHaveCount(0);
 
         // Wait for the toast to hide.
         await expect(successToast).toBeHidden();
@@ -66,26 +64,42 @@ test.describe("Account Management", () => {
         // Search user
         const searchInput = page.locator('input[name="search"]');
 
-        await searchInput.click();
-        await searchInput.pressSequentially(registeredUser.name, { delay: 50 });
+        const searchUsersResponse = page.waitForResponse((response) => {
+            const url = response.url();
 
-        const userRow = page.getByRole("row", { name: registeredUser.name });
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/users/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(registeredUser.name);
+        await searchUsersResponse;
+
+        const userRow = page.getByRole("row", {
+            name: new RegExp(
+                `${registeredUser.name}.*${registeredUser.identifier}`,
+            ),
+        });
 
         await expect(userRow).toBeVisible();
         await expect(userRow).toContainText(registeredUser.identifier);
 
         // Edit user
-        await userRow.getByRole("link", { name: /edit/i }).click();
-        await expect(page).toHaveURL(/\/admin\/users\/\d+/);
+        const editLink = userRow.getByRole("link", { name: /edit/i });
+        await expect(editLink).toBeVisible();
+        await Promise.all([
+            page.waitForURL(/\/admin\/users\/\d+/),
+            editLink.click(),
+        ]);
 
         const editNameInput = page.locator('input[name="name"]');
         await expect(editNameInput).toBeVisible();
 
         const updatedName = `${registeredUser.name} Updated`;
-
-        await editNameInput.clear();
-        await editNameInput.click();
-        await editNameInput.pressSequentially(updatedName);
+        await editNameInput.fill(updatedName);
 
         const activeSwitch = page.getByRole("checkbox");
         await activeSwitch.click({ force: true });
@@ -102,9 +116,19 @@ test.describe("Account Management", () => {
         await expect(updateToast).toBeHidden();
 
         // Delete user
-        await searchInput.clear();
-        await searchInput.click();
-        await searchInput.pressSequentially(updatedName, { delay: 50 });
+        const searchUpdatedUsersResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/users/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(updatedName);
+        await searchUpdatedUsersResponse;
 
         const updatedRow = page.getByRole("row", { name: updatedName });
         await expect(updatedRow).toBeVisible();
