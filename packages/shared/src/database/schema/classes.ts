@@ -10,6 +10,7 @@ import { ValidSemester } from "../../types";
 import { sessions } from "./sessions";
 import { classSubjects } from "./classSubjects";
 import { studentClasses } from "./studentClasses";
+import { index } from "drizzle-orm/mysql-core";
 
 /**
  * The class table.
@@ -42,6 +43,11 @@ export const classes = mysqlTable(
             columns: [table.session, table.semester],
             foreignColumns: [sessions.session, sessions.semester],
         }).onDelete("cascade"),
+        index("session_semester_name_idx").on(
+            table.session,
+            table.semester,
+            table.name,
+        ),
     ],
 );
 
