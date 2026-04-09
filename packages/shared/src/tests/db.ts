@@ -153,13 +153,26 @@ export function createDatabaseManager(db: DrizzleDb) {
     function createSeeder<T extends AnyMySqlTable>(table: T): TableSeeder<T> {
         return {
             seedOne: async (value) => {
-                await db.insert(table).values(value);
+                const [result] = await db.insert(table).values(value);
+
+                if (result.insertId) {
+                    return { ...value, id: result.insertId };
+                }
 
                 return value;
             },
 
             seedMany: async (...values) => {
-                await db.insert(table).values(values);
+                const [result] = await db.insert(table).values(values);
+
+                // When inserting multiple rows, insertId represents the ID of the first row inserted.
+                // Assuming sequential auto-incrementing, we can accurately map the IDs to the rest of the array.
+                if (result.insertId) {
+                    return values.map((val, index) => ({
+                        ...val,
+                        id: result.insertId + index,
+                    }));
+                }
 
                 return values;
             },
