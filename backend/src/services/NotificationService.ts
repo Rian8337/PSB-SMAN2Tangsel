@@ -4,6 +4,7 @@ import { IClassRepository, INotificationRepository } from "@/repositories";
 import { inject } from "tsyringe";
 import { INotificationService } from "./INotificationService";
 import { NotificationDTO } from "@psb/shared/types";
+import { ForbiddenError, NotFoundError } from "@/types";
 
 /**
  * A service that is responsible for notification-related operations.
@@ -22,21 +23,41 @@ export class NotificationService implements INotificationService {
         limit?: number,
         offset?: number,
     ): Promise<NotificationDTO[]> {
-        return this.notificationRepository.findByUserId(userId, limit, offset);
+        return this.notificationRepository
+            .findByUserId(userId, limit, offset)
+            .then((notifications) =>
+                notifications.map((n) => ({
+                    ...n,
+                    createdAt: n.createdAt.getTime(),
+                })),
+            );
     }
 
     getUnreadCount(userId: number): Promise<number> {
         return this.notificationRepository.getUnreadCount(userId);
     }
 
-    updateReadStatus(
+    async updateReadStatus(
         notificationId: number,
         userId: number,
         read: boolean,
     ): Promise<void> {
-        return this.notificationRepository.updateReadStatus(
+        // Ensure that the notification belongs to the user before updating.
+        const notification =
+            await this.notificationRepository.findById(notificationId);
+
+        if (!notification) {
+            throw new NotFoundError("notificationService.notificationNotFound");
+        }
+
+        if (notification.userId !== userId) {
+            throw new ForbiddenError(
+                "notificationService.unauthorizedReadStatusUpdate",
+            );
+        }
+
+        await this.notificationRepository.updateReadStatus(
             notificationId,
-            userId,
             read,
         );
     }

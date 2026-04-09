@@ -38,6 +38,11 @@ interface Localization {
         readonly invalidReadStatusFormat: string;
     };
 
+    readonly notificationService: {
+        readonly notificationNotFound: string;
+        readonly unauthorizedReadStatusUpdate: string;
+    };
+
     readonly scheduleController: {
         readonly baseIcsFilename: string;
     };
@@ -121,6 +126,12 @@ export const messages = {
             invalidReadStatusFormat:
                 "Parameter read harus berupa boolean (true atau false).",
         },
+        notificationService: {
+            notificationNotFound: "Notifikasi tidak ditemukan.",
+            unauthorizedReadStatusUpdate:
+                "Anda tidak diizinkan untuk memperbarui status baca notifikasi ini.",
+        },
+
         scheduleController: {
             baseIcsFilename: "jadwal_pelajaran",
         },
@@ -197,6 +208,11 @@ export const messages = {
                 "Parameter notificationId must be a positive integer.",
             invalidReadStatusFormat:
                 "Parameter read must be a boolean (true or false).",
+        },
+        notificationService: {
+            notificationNotFound: "Notification not found.",
+            unauthorizedReadStatusUpdate:
+                "You are not authorized to update the read status of this notification.",
         },
         scheduleController: {
             baseIcsFilename: "class_schedule",

@@ -1,3 +1,10 @@
+import { notifications } from "../database/schema";
+
+/**
+ * The type of a notification as stored in the database.
+ */
+export type Notification = typeof notifications.$inferSelect;
+
 /**
  * Notification data transferred between frontend and backend.
  */

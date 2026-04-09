@@ -1,7 +1,7 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { notifications } from "@psb/shared/schema";
-import { DrizzleDb, NotificationDTO } from "@psb/shared/types";
+import { DrizzleDb, Notification } from "@psb/shared/types";
 import { and, count, desc, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
@@ -48,40 +48,36 @@ export class NotificationRepository
             .values(userIds.map((userId) => ({ userId, title, message, url })));
     }
 
+    findById(id: number): Promise<Notification | null> {
+        return this.db
+            .select()
+            .from(notifications)
+            .where(eq(notifications.id, id))
+            .then((res) => res.at(0) ?? null);
+    }
+
     findByUserId(
         userId: number,
         limit = 5,
         offset = 0,
-    ): Promise<NotificationDTO[]> {
+    ): Promise<Notification[]> {
         return this.db
             .select()
             .from(notifications)
             .where(eq(notifications.userId, userId))
             .orderBy(desc(notifications.createdAt))
             .limit(limit)
-            .offset(offset)
-            .then((res) =>
-                res.map((r) => ({
-                    ...r,
-                    createdAt: r.createdAt.getTime(),
-                })),
-            );
+            .offset(offset);
     }
 
     async updateReadStatus(
         notificationId: number,
-        userId: number,
         read: boolean,
     ): Promise<void> {
         await this.db
             .update(notifications)
             .set({ read })
-            .where(
-                and(
-                    eq(notifications.id, notificationId),
-                    eq(notifications.userId, userId),
-                ),
-            );
+            .where(eq(notifications.id, notificationId));
     }
 
     getUnreadCount(userId: number): Promise<number> {

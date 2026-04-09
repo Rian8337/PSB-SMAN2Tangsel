@@ -1,4 +1,4 @@
-import { NotificationDTO } from "@psb/shared/types";
+import { Notification } from "@psb/shared/types";
 
 /**
  * Defines operations for accessing and managing notifications data in the database.
@@ -35,6 +35,14 @@ export interface INotificationRepository {
     ): Promise<void>;
 
     /**
+     * Obtains a notification by its ID.
+     *
+     * @param id The ID of the notification.
+     * @returns The notification with the specified ID, or `null` if not found.
+     */
+    findById(id: number): Promise<Notification | null>;
+
+    /**
      * Fetches the notifications of a user, ordered by creation time in descending order (most recent first).
      *
      * @param userId The ID of the user.
@@ -46,21 +54,15 @@ export interface INotificationRepository {
         userId: number,
         limit?: number,
         offset?: number,
-    ): Promise<NotificationDTO[]>;
+    ): Promise<Notification[]>;
 
     /**
      * Updates the read status of a notification.
      *
      * @param notificationId The ID of the notification to update.
-     * @param userId The ID of the user who owns the notification. This ensures that only the user who
-     * owns the notification can update its read status.
      * @param read The new read status of the notification.
      */
-    updateReadStatus(
-        notificationId: number,
-        userId: number,
-        read: boolean,
-    ): Promise<void>;
+    updateReadStatus(notificationId: number, read: boolean): Promise<void>;
 
     /**
      * Obtains the count of unread notifications of a user.
