@@ -41,15 +41,23 @@ export function loginAdministrator(agent: TestAgent) {
     return loginUser(agent, UserRole.administrator);
 }
 
-function loginUser(agent: TestAgent, role: UserRole) {
+async function loginUser(agent: TestAgent, role: UserRole) {
     const user = seededPrimaryData.users.find((u) => u.role === role);
 
     if (!user) {
         throw new Error(`No user found with role ${role.toString()}`);
     }
 
-    return agent.post(loginEndpoint).send({
+    const res = await agent.post(loginEndpoint).send({
         id: user.identifier,
         password: testPassword,
     });
+
+    if (res.status !== 200) {
+        throw new Error(
+            `Login failed for user with role ${role.toString()} with status ${res.status.toString()}`,
+        );
+    }
+
+    return res;
 }

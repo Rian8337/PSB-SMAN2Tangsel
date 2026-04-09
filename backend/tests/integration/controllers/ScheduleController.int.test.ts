@@ -62,13 +62,7 @@ describe("ScheduleController (integration)", () => {
             const agent = request.agent(app);
 
             beforeAll(async () => {
-                const loginRes = await loginStudent(agent);
-
-                if (loginRes.status !== 200) {
-                    throw new Error(
-                        `Student login returned status ${loginRes.status.toString()}`,
-                    );
-                }
+                await loginStudent(agent);
             });
 
             it("should return the student's schedule", async () => {
@@ -87,13 +81,7 @@ describe("ScheduleController (integration)", () => {
             const agent = request.agent(app);
 
             beforeAll(async () => {
-                const loginRes = await loginTeacher(agent);
-
-                if (loginRes.status !== 200) {
-                    throw new Error(
-                        `Teacher login returned status ${loginRes.status.toString()}`,
-                    );
-                }
+                await loginTeacher(agent);
             });
 
             it("should return the teacher's schedule", async () => {
@@ -112,13 +100,7 @@ describe("ScheduleController (integration)", () => {
             const agent = request.agent(app);
 
             beforeAll(async () => {
-                const loginRes = await loginAdministrator(agent);
-
-                if (loginRes.status !== 200) {
-                    throw new Error(
-                        `Administrator login returned status ${loginRes.status.toString()}`,
-                    );
-                }
+                await loginAdministrator(agent);
             });
 
             it("should restrict access", async () => {
