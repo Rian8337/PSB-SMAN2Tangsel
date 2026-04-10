@@ -25,7 +25,7 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         const url = new URL(this.baseURL + "/list");
 
         if (typeof query === "string" && query.trim().length > 0) {
-            url.searchParams.append("query", encodeURIComponent(query.trim()));
+            url.searchParams.append("query", query.trim());
         }
 
         if (limit !== undefined) {
