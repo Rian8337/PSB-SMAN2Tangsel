@@ -7,24 +7,24 @@ import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-function render(subject: Subject) {
+const mockSubject: Subject = {
+    id: 42,
+    code: "FIS-XI",
+    name: "Fisika Dasar",
+    active: true,
+};
+
+function render() {
     return renderWithChakraProvider(
         <SubjectApiProvider client={mockSubjectApiClient}>
-            <EditSubjectForm subject={subject} />
+            <EditSubjectForm subject={mockSubject} />
         </SubjectApiProvider>,
     );
 }
 
 describe("EditSubjectForm", () => {
-    const mockSubject: Subject = {
-        id: 42,
-        code: "FIS-XI",
-        name: "Fisika Dasar",
-        active: true,
-    };
-
     it("should initialize with the subject data", () => {
-        render(mockSubject);
+        render();
 
         const codeInput = screen.getByRole("textbox", {
             name: "fields.code.label",
@@ -46,7 +46,7 @@ describe("EditSubjectForm", () => {
     it("should validate the subject code format", async () => {
         const user = userEvent.setup();
 
-        render(mockSubject);
+        render();
 
         const codeInput = screen.getByRole("textbox", {
             name: "fields.code.label",
@@ -68,7 +68,7 @@ describe("EditSubjectForm", () => {
 
         mockSubjectApiClient.updateSubject.mockResolvedValue();
 
-        render(mockSubject);
+        render();
 
         const nameInput = screen.getByRole("textbox", {
             name: "fields.name.label",
@@ -109,7 +109,7 @@ describe("EditSubjectForm", () => {
             new APIError(400, errorMessage),
         );
 
-        render(mockSubject);
+        render();
 
         const submitButton = screen.getByRole("button", {
             name: "edit.submitButton",

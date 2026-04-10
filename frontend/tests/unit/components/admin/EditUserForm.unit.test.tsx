@@ -7,25 +7,25 @@ import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-function renderForm(user: UserListItem) {
+const mockUser: UserListItem = {
+    id: 1,
+    active: true,
+    identifier: "1234567890",
+    name: "John Doe",
+    role: UserRole.student,
+};
+
+function render() {
     return renderWithChakraProvider(
         <UserApiProvider client={mockUserApiClient}>
-            <EditUserForm user={user} />
+            <EditUserForm user={mockUser} />
         </UserApiProvider>,
     );
 }
 
 describe("EditUserForm (unit)", () => {
-    const mockUser: UserListItem = {
-        id: 1,
-        active: true,
-        identifier: "1234567890",
-        name: "John Doe",
-        role: UserRole.student,
-    };
-
     it("renders the form with initial user data", () => {
-        renderForm(mockUser);
+        render();
 
         expect(
             screen.getByRole("heading", { name: "title" }),
@@ -56,7 +56,8 @@ describe("EditUserForm (unit)", () => {
 
     it("shows a validation error if name is empty", async () => {
         const user = userEvent.setup();
-        renderForm(mockUser);
+
+        render();
 
         const nameInput = screen.getByDisplayValue(mockUser.name);
 
@@ -76,7 +77,7 @@ describe("EditUserForm (unit)", () => {
         const user = userEvent.setup();
         mockUserApiClient.updateUser.mockResolvedValueOnce(undefined);
 
-        renderForm(mockUser);
+        render();
 
         const nameInput = screen.getByDisplayValue(mockUser.name);
         const activeSwitch = screen.getByRole("checkbox");
@@ -117,7 +118,7 @@ describe("EditUserForm (unit)", () => {
             new APIError(400, errorMessage),
         );
 
-        renderForm(mockUser);
+        render();
 
         const submitButton = screen.getByRole("button", {
             name: "updateButton",

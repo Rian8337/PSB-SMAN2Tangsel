@@ -7,28 +7,28 @@ import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-function renderForm(session: AcademicSessionDTO) {
+const initialStartDate = new Date("2024-08-01T12:00:00");
+const initialEndDate = new Date("2024-12-15T12:00:00");
+
+const mockSession: AcademicSessionDTO = {
+    session: "2024/2025",
+    semester: 1,
+    startTime: initialStartDate.getTime(),
+    endTime: initialEndDate.getTime(),
+    active: false,
+};
+
+function render() {
     return renderWithChakraProvider(
         <SessionApiProvider client={mockSessionApiClient}>
-            <EditAcademicSessionForm session={session} />,
+            <EditAcademicSessionForm session={mockSession} />,
         </SessionApiProvider>,
     );
 }
 
 describe("EditAcademicSessionForm (unit)", () => {
-    const initialStartDate = new Date("2024-08-01T12:00:00");
-    const initialEndDate = new Date("2024-12-15T12:00:00");
-
-    const mockSession: AcademicSessionDTO = {
-        session: "2024/2025",
-        semester: 1,
-        startTime: initialStartDate.getTime(),
-        endTime: initialEndDate.getTime(),
-        active: false,
-    };
-
     it("renders the form with initial session data", () => {
-        renderForm(mockSession);
+        render();
 
         expect(
             screen.getByRole("heading", { name: "title" }),
@@ -55,7 +55,7 @@ describe("EditAcademicSessionForm (unit)", () => {
 
     it("shows a validation error if required fields are missing", async () => {
         const user = userEvent.setup();
-        const { container } = renderForm(mockSession);
+        const { container } = render();
 
         const startInput = container.querySelector<HTMLInputElement>(
             'input[name="startTime"]',
@@ -74,7 +74,7 @@ describe("EditAcademicSessionForm (unit)", () => {
 
     it("shows a validation error if end date is before start date", async () => {
         const user = userEvent.setup();
-        const { container } = renderForm(mockSession);
+        const { container } = render();
 
         const endInput = container.querySelector<HTMLInputElement>(
             'input[name="endTime"]',
@@ -96,7 +96,7 @@ describe("EditAcademicSessionForm (unit)", () => {
         const user = userEvent.setup();
         mockSessionApiClient.updateSession.mockResolvedValueOnce(undefined);
 
-        const { container } = renderForm(mockSession);
+        const { container } = render();
 
         const startInput = container.querySelector<HTMLInputElement>(
             'input[name="startTime"]',
@@ -142,7 +142,7 @@ describe("EditAcademicSessionForm (unit)", () => {
             new APIError(400, errorMessage),
         );
 
-        renderForm(mockSession);
+        render();
 
         const submitButton = screen.getByRole("button", {
             name: "updateButton",
