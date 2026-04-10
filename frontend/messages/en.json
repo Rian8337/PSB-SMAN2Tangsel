@@ -249,6 +249,9 @@
     "columns": {
       "name": "Name",
       "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit"
     }
   },
   "Form": {
