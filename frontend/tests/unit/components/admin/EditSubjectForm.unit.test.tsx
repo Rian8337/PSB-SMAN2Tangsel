@@ -22,7 +22,7 @@ function render() {
     );
 }
 
-describe("EditSubjectForm", () => {
+describe("EditSubjectForm (unit)", () => {
     it("should initialize with the subject data", () => {
         render();
 

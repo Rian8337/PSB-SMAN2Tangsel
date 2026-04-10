@@ -22,7 +22,7 @@ function render() {
     );
 }
 
-describe("EditClassForm", () => {
+describe("EditClassForm (unit)", () => {
     it("should initialize with the class data", () => {
         render();
 
