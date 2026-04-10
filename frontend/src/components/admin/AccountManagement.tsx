@@ -70,6 +70,10 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     );
 
     useEffect(() => {
+        setPage(1);
+    }, [debouncedSearchQuery]);
+
+    useEffect(() => {
         // Prevent fetching if user is still actively typing.
         if (searchQuery !== debouncedSearchQuery) {
             return;
