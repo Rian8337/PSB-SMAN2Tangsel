@@ -181,6 +181,75 @@
       }
     }
   },
+  "ClassManagement": {
+    "title": "Manajemen Kelas",
+    "delete": {
+      "confirmation": "Apakah Anda yakin ingin menghapus kelas \"{name}\"? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Kelas Berhasil Dihapus",
+        "successMessage": "Kelas \"{name}\" telah berhasil dihapus.",
+        "errorTitle": "Gagal Menghapus Kelas",
+        "errorMessage": "Terjadi kesalahan saat menghapus kelas. Silakan coba lagi."
+      }
+    },
+    "fetchSessionToast": {
+      "errorTitle": "Gagal Mengambil Tahun Ajaran",
+      "errorMessage": "Terjadi kesalahan saat mengambil tahun ajaran. Silakan coba lagi."
+    },
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Kelas",
+      "errorMessage": "Terjadi kesalahan saat mengambil kelas. Silakan coba lagi."
+    },
+    "create": {
+      "dialog": {
+        "title": "Daftar Kelas Baru",
+        "nameLabel": "Nama Kelas",
+        "namePlaceholder": "Masukkan nama kelas (misal: X IPA 1)",
+        "cancelButton": "Batal",
+        "submitButton": "Buat Kelas",
+        "sessionContext": "Tahun Akademik {session} {semester}"
+      },
+      "toast": {
+        "successTitle": "Kelas Berhasil Dibuat",
+        "successMessage": "Kelas \"{name}\" telah berhasil dibuat.",
+        "errorTitle": "Gagal Membuat Kelas",
+        "errorMessage": "Terjadi kesalahan saat membuat kelas. Silakan coba lagi."
+      }
+    },
+    "edit": {
+      "title": "Edit Kelas",
+      "toast": {
+        "successTitle": "Kelas Berhasil Diperbarui",
+        "successMessage": "Kelas \"{name}\" telah berhasil diperbarui.",
+        "errorTitle": "Gagal Memperbarui Kelas",
+        "errorMessage": "Terjadi kesalahan saat memperbarui kelas. Silakan coba lagi."
+      },
+      "sessionContext": "Tahun Akademik {session} {semester}",
+      "submitButton": "Simpan Perubahan"
+    },
+    "validation": {
+      "maxLength": "Nama kelas tidak boleh lebih dari {max} karakter.",
+      "invalidName": "Nama kelas tidak valid. Harus berupa kombinasi angka dan huruf (misal: X IPA 1)."
+    },
+    "fields": {
+      "name": {
+        "label": "Nama Kelas",
+        "placeholder": "Masukkan nama kelas (misal: X IPA 1)"
+      }
+    },
+    "noActiveSession": "Tidak ada tahun ajaran aktif. Harap buat tahun ajaran terlebih dahulu.",
+    "activeSessionLabel": "Tahun Ajaran Aktif: {session} {semester}",
+    "searchPlaceholder": "Cari kelas berdasarkan nama...",
+    "addButton": "Tambah Kelas",
+    "emptyState": "Tidak ada kelas yang ditemukan.",
+    "columns": {
+      "name": "Nama",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "edit": "Edit"
+    }
+  },
   "Form": {
     "invalidDateRange": "Tanggal mulai harus sebelum tanggal selesai.",
     "invalidDate": "Tanggal yang dimasukkan tidak valid.",

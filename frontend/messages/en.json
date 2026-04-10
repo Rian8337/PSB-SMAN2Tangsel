@@ -182,6 +182,75 @@
       }
     }
   },
+  "ClassManagement": {
+    "title": "Class Management",
+    "delete": {
+      "confirmation": "Are you sure you want to delete class \"{name}\"? This action cannot be undone.",
+      "toast": {
+        "successTitle": "Class Deleted",
+        "successMessage": "Class \"{name}\" has been successfully deleted.",
+        "errorTitle": "Failed to Delete Class",
+        "errorMessage": "An error occurred while deleting the class. Please try again."
+      }
+    },
+    "fetchSessionToast": {
+      "errorTitle": "Failed to Fetch Academic Year",
+      "errorMessage": "An error occurred while fetching the academic year. Please try again."
+    },
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Classes",
+      "errorMessage": "An error occurred while fetching classes. Please try again."
+    },
+    "create": {
+      "dialog": {
+        "title": "Create New Class",
+        "nameLabel": "Class Name",
+        "namePlaceholder": "Enter class name (e.g., X Science 1)",
+        "cancelButton": "Cancel",
+        "submitButton": "Create Class",
+        "sessionContext": "Academic Year {session} {semester}"
+      },
+      "validation": {
+        "invalidName": "Invalid class name. Must be a combination of numbers and letters (e.g., X Science 1)."
+      },
+      "toast": {
+        "successTitle": "Class Created",
+        "successMessage": "Class \"{name}\" has been successfully created.",
+        "errorTitle": "Failed to Create Class",
+        "errorMessage": "An error occurred while creating the class. Please try again."
+      }
+    },
+    "edit": {
+      "title": "Edit Class",
+      "toast": {
+        "successTitle": "Class Updated",
+        "successMessage": "Class \"{name}\" has been successfully updated.",
+        "errorTitle": "Failed to Update Class",
+        "errorMessage": "An error occurred while updating the class. Please try again."
+      },
+      "sessionContext": "Academic Year {session} {semester}",
+      "submitButton": "Save Changes"
+    },
+    "validation": {
+      "maxLength": "Class name is too long. Maximum length is {max} characters.",
+      "invalidName": "Invalid class name. Must be a combination of numbers and letters (e.g., X Science 1)."
+    },
+    "fields": {
+      "name": {
+        "label": "Class Name",
+        "placeholder": "Enter class name (e.g., X Science 1)"
+      }
+    },
+    "noActiveSession": "There is no active academic year. Please create an academic year first.",
+    "activeSessionLabel": "Active Academic Year: {session} {semester}",
+    "searchPlaceholder": "Search classes by name...",
+    "addButton": "Add Class",
+    "emptyState": "No classes found.",
+    "columns": {
+      "name": "Name",
+      "actions": "Actions"
+    }
+  },
   "Form": {
     "invalidDate": "The entered date is invalid.",
     "invalidDateRange": "Start date must be before end date.",
