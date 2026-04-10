@@ -45,7 +45,7 @@ export interface IClassAPIClient {
      * @param id The unique identifier of the class to obtain.
      * @returns The class with the specified unique identifier.
      */
-    getClassById(id: number, signal?: AbortSignal): Promise<Class>;
+    getClass(id: number, signal?: AbortSignal): Promise<Class>;
 
     /**
      * Obtains a list of classes in a specific academic session for display in the UI.

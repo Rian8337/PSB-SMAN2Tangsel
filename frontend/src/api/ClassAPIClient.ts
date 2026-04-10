@@ -10,7 +10,7 @@ export class ClassAPIClient extends APIClient implements IClassAPIClient {
         return super.baseURL + "/classes";
     }
 
-    getClassById(id: number, signal?: AbortSignal): Promise<Class> {
+    getClass(id: number, signal?: AbortSignal): Promise<Class> {
         return this.get(`/${id.toString()}`, { signal }).then((res) =>
             res.json(),
         );
