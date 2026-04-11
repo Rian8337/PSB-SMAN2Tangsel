@@ -14,5 +14,5 @@ export type ClassSubject = typeof classSubjects.$inferSelect;
 export interface ClassSubjectAssignment {
     readonly id: number;
     readonly subject: Pick<Subject, "id" | "code" | "name">;
-    readonly teacher: Pick<Teacher, "userId" | "name"> | null;
+    readonly teacher: Pick<Teacher, "id" | "name"> | null;
 }

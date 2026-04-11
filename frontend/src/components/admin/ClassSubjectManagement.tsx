@@ -106,7 +106,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
         try {
             await classSubjectApiClient.updateAssignedSubject(
                 assignmentId,
-                teacher?.userId ?? null,
+                teacher?.id ?? null,
             );
 
             toaster.create({
@@ -296,7 +296,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                                                             ? {
                                                                   value: assignment
                                                                       .teacher
-                                                                      .userId,
+                                                                      .id,
                                                                   label: assignment
                                                                       .teacher
                                                                       .name,
@@ -310,7 +310,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                                                             assignment.id,
                                                             selectedOption
                                                                 ? {
-                                                                      userId: selectedOption.value,
+                                                                      id: selectedOption.value,
                                                                       name: selectedOption.label,
                                                                   }
                                                                 : null,
