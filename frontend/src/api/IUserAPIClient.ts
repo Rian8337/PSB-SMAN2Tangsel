@@ -30,6 +30,22 @@ export interface IUserAPIClient {
     ): Promise<UserListItem[]>;
 
     /**
+     * Lists teachers for display in the teacher selection dropdown when assigning a teacher to a class subject.
+     *
+     * @param query The search query to filter teachers by name or identifier.
+     * @param limit The maximum number of teachers to return. Defaults to 5.
+     * @param offset The number of teachers to skip before starting to collect the result set. Defaults to 0.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list teachers.
+     * @returns A list of user items containing basic information about each teacher.
+     */
+    listTeachers(
+        query?: string,
+        limit?: number,
+        offset?: number,
+        signal?: AbortSignal,
+    ): Promise<UserListItem[]>;
+
+    /**
      * Registers a new user.
      *
      * @param name The name of the user.

@@ -24,9 +24,13 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
 export const mockClassApiClient: Mocked<IClassAPIClient> = {
     getClass: vi.fn(),
     listClasses: vi.fn(),
+    listAssignedSubjects: vi.fn(),
     createClass: vi.fn(),
     updateClass: vi.fn(),
     deleteClass: vi.fn(),
+    assignSubject: vi.fn(),
+    updateAssignedSubject: vi.fn(),
+    unassignSubject: vi.fn(),
 };
 
 /**
@@ -64,6 +68,7 @@ export const mockSessionApiClient: Mocked<ISessionAPIClient> = {
 export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
     getSubject: vi.fn(),
     listSubjects: vi.fn(),
+    listUnassignedSubjects: vi.fn(),
     createSubject: vi.fn(),
     updateSubject: vi.fn(),
     deleteSubject: vi.fn(),
@@ -75,6 +80,7 @@ export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
 export const mockUserApiClient: Mocked<IUserAPIClient> = {
     getUser: vi.fn(),
     listUsers: vi.fn(),
+    listTeachers: vi.fn(),
     createUser: vi.fn(),
     updateUser: vi.fn(),
     updatePassword: vi.fn(),
