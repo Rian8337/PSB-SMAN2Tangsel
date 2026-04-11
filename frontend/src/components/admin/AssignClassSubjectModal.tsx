@@ -106,7 +106,7 @@ export function AssignClassSubjectModal({
             .assignSubject(
                 clazz.id,
                 selectedSubject.value,
-                selectedTeacher?.value,
+                selectedTeacher?.value ?? null,
             )
             .then(() => {
                 toaster.create({

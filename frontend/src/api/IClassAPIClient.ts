@@ -112,13 +112,13 @@ export interface IClassAPIClient {
      *
      * @param classId The unique identifier of the class to assign the subject to.
      * @param subjectId The unique identifier of the subject to assign to the class.
-     * @param teacherId The unique identifier of the teacher to assign to the class subject. If not provided, the subject will be
+     * @param teacherId The unique identifier of the teacher to assign to the class subject. If `null`, the subject will be
      * assigned to the class without a teacher.
      */
     assignSubject(
         classId: number,
         subjectId: number,
-        teacherId?: number,
+        teacherId: number | null,
     ): Promise<void>;
 
     /**
