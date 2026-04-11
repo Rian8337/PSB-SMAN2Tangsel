@@ -63,7 +63,9 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     type: "error",
                 });
             } finally {
-                setIsLoading(false);
+                if (!signal?.aborted) {
+                    setIsLoading(false);
+                }
             }
         },
         [userApiClient, t],

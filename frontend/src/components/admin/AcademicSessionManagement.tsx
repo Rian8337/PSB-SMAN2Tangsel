@@ -63,7 +63,9 @@ export function AcademicSessionManagement() {
                     type: "error",
                 });
             } finally {
-                setIsLoading(false);
+                if (!signal?.aborted) {
+                    setIsLoading(false);
+                }
             }
         },
         [sessionApiClient, t],

@@ -15,7 +15,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { AcademicSessionDTO, Class } from "@psb/shared/types";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { BookOpen, Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { Pagination } from "../ui/Pagination";
@@ -98,7 +98,9 @@ export function ClassManagement() {
                     type: "error",
                 });
             } finally {
-                setIsLoadingClasses(false);
+                if (!signal?.aborted) {
+                    setIsLoadingClasses(false);
+                }
             }
         },
         [classApiClient, activeSession, t],
@@ -290,6 +292,19 @@ export function ClassManagement() {
                                                     href={`/admin/classes/${c.id.toString()}`}
                                                 >
                                                     {t("actions.edit")}
+                                                </Link>
+                                            </Button>
+
+                                            <Button
+                                                asChild
+                                                variant="ghost"
+                                                colorPalette="green"
+                                            >
+                                                <Link
+                                                    href={`/admin/classes/${c.id.toString()}/subjects`}
+                                                    aria-label={`manage-subjects-${c.name}`}
+                                                >
+                                                    <BookOpen size={16} />
                                                 </Link>
                                             </Button>
 

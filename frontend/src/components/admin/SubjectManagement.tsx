@@ -63,7 +63,9 @@ export function SubjectManagement() {
                     type: "error",
                 });
             } finally {
-                setIsLoading(false);
+                if (!signal?.aborted) {
+                    setIsLoading(false);
+                }
             }
         },
         [subjectApiClient, t],
