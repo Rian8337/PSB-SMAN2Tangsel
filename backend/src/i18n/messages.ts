@@ -33,6 +33,10 @@ interface Localization {
         readonly classInUse: string;
     };
 
+    readonly classSubjectController: {
+        readonly invalidAssignmentId: string;
+    };
+
     readonly classSubjectService: {
         readonly classHasContent: string;
     };
@@ -124,6 +128,10 @@ export const messages = {
             classInUse:
                 "Kelas yang memiliki mata pelajaran atau siswa tidak dapat dihapus.",
         },
+        classSubjectController: {
+            invalidAssignmentId:
+                "Parameter assignmentId harus berupa bilangan bulat positif.",
+        },
         classSubjectService: {
             classHasContent:
                 "Tidak dapat menghapus mata pelajaran ini karena sudah memiliki materi ajar atau tugas siswa.",
@@ -139,7 +147,6 @@ export const messages = {
             unauthorizedReadStatusUpdate:
                 "Anda tidak diizinkan untuk memperbarui status baca notifikasi ini.",
         },
-
         scheduleController: {
             baseIcsFilename: "jadwal_pelajaran",
         },
@@ -210,6 +217,10 @@ export const messages = {
             classNotFound: "Class not found.",
             classInUse:
                 "Classes with associated subjects or students cannot be deleted.",
+        },
+        classSubjectController: {
+            invalidAssignmentId:
+                "Parameter assignmentId must be a positive integer.",
         },
         classSubjectService: {
             classHasContent:
