@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IClassRepository,
+    IClassSubjectRepository,
     INotificationRepository,
     IScheduleRepository,
     ISessionRepository,
@@ -54,6 +55,13 @@ export const dependencyTokens = {
     classRepository: Symbol.for(
         "classRepository",
     ) as InjectionToken<IClassRepository>,
+
+    /**
+     * Injection token for an {@link IClassSubjectRepository}.
+     */
+    classSubjectRepository: Symbol.for(
+        "classSubjectRepository",
+    ) as InjectionToken<IClassSubjectRepository>,
 
     /**
      * Injection token for an {@link INotificationRepository}.
