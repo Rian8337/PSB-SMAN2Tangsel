@@ -1,10 +1,13 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { IClassRepository, ISubjectRepository } from "@/repositories";
+import {
+    IClassRepository,
+    IClassSubjectRepository,
+    ISubjectRepository,
+} from "@/repositories";
 import { ConflictError, NotFoundError } from "@/types";
 import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
 import { inject } from "tsyringe";
-import { IClassSubjectRepository } from "../repositories/IClassSubjectRepository";
 import { IClassSubjectService } from "./IClassSubjectService";
 
 /**
