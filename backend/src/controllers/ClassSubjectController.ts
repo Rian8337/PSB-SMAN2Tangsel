@@ -174,7 +174,7 @@ export class ClassSubjectController extends BaseController {
             const { subjectId, teacherId } = req.body;
 
             if (
-                subjectId === undefined ||
+                typeof subjectId !== "number" ||
                 Number.isNaN(subjectId) ||
                 subjectId <= 0
             ) {
@@ -183,7 +183,7 @@ export class ClassSubjectController extends BaseController {
 
             if (
                 teacherId !== null &&
-                (teacherId === undefined ||
+                (typeof teacherId !== "number" ||
                     Number.isNaN(teacherId) ||
                     teacherId <= 0)
             ) {
@@ -228,7 +228,7 @@ export class ClassSubjectController extends BaseController {
 
             if (
                 teacherId !== null &&
-                (teacherId === undefined ||
+                (typeof teacherId !== "number" ||
                     Number.isNaN(teacherId) ||
                     teacherId <= 0)
             ) {
