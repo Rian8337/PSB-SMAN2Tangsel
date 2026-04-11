@@ -250,6 +250,72 @@
       "edit": "Edit"
     }
   },
+  "ClassSubjectManagement": {
+    "metaTitle": "Mata Pelajaran Kelas",
+    "title": "Mata Pelajaran Kelas {class}",
+    "searchPlaceholder": "Cari mata pelajaran berdasarkan nama atau kode...",
+    "emptyState": "Tidak ada mata pelajaran yang ditemukan untuk kelas ini.",
+    "unassignedTeacherPlaceholder": "Belum ada guru pengampu",
+    "assignNewSubject": "Tambah Mata Pelajaran",
+    "assign": {
+      "title": "Tambah Mata Pelajaran ke Kelas",
+      "assignButton": "Tambah Mata Pelajaran",
+      "cancelButton": "Batal",
+      "dialog": {
+        "context": "Tambah mata pelajaran ke {class}",
+        "subjectLabel": "Pilih Mata Pelajaran",
+        "subjectPlaceholder": "Cari dan pilih mata pelajaran...",
+        "teacherLabel": "Pilih Guru Pengampu",
+        "teacherPlaceholder": "Cari dan pilih guru...",
+        "cancelButton": "Batal",
+        "submitButton": "Tambah Mata Pelajaran"
+      },
+      "toast": {
+        "successTitle": "Mata Pelajaran Berhasil Ditambahkan",
+        "successMessage": "Mata pelajaran {subject} telah berhasil ditambahkan ke kelas {class}.",
+        "errorTitle": "Gagal Menambahkan Mata Pelajaran",
+        "errorMessage": "Terjadi kesalahan saat menambahkan mata pelajaran. Silakan coba lagi."
+      },
+      "validation": {
+        "selectSubject": "Harap pilih mata pelajaran."
+      },
+      "fields": {
+        "subject": {
+          "label": "Mata Pelajaran",
+          "placeholder": "Cari dan pilih mata pelajaran..."
+        },
+        "teacher": {
+          "label": "Guru Pengampu (opsional)",
+          "placeholder": "Cari dan pilih guru..."
+        }
+      }
+    },
+    "columns": {
+      "subjectCode": "Kode Mata Pelajaran",
+      "subjectName": "Nama Mata Pelajaran",
+      "teacher": "Guru Pengampu",
+      "actions": "Aksi"
+    },
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Mata Pelajaran Kelas",
+      "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran kelas. Silakan coba lagi."
+    },
+    "updateToast": {
+      "successTitle": "Pengampu Berhasil Diperbarui",
+      "successMessage": "Guru pengampu untuk mata pelajaran telah berhasil diperbarui.",
+      "errorTitle": "Gagal Memperbarui Pengampu",
+      "errorMessage": "Terjadi kesalahan saat memperbarui guru pengampu. Silakan coba lagi."
+    },
+    "remove": {
+      "confirmation": "Apakah Anda yakin ingin menghapus mata pelajaran {subject} dari kelas {class}? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Mata Pelajaran Dihapus",
+        "successMessage": "Mata pelajaran {subject} telah berhasil dihapus dari kelas {class}.",
+        "errorTitle": "Gagal Menghapus Mata Pelajaran",
+        "errorMessage": "Terjadi kesalahan saat menghapus mata pelajaran. Silakan coba lagi."
+      }
+    }
+  },
   "Form": {
     "invalidDateRange": "Tanggal mulai harus sebelum tanggal selesai.",
     "invalidDate": "Tanggal yang dimasukkan tidak valid.",
@@ -386,6 +452,9 @@
       "errorTitle": "Gagal Mengambil Mata Pelajaran",
       "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran. Silakan coba lagi."
     }
+  },
+  "AsyncSelect": {
+    "noResults": "Tidak ada hasil yang ditemukan."
   },
   "Pagination": {
     "previous": "Sebelumnya",

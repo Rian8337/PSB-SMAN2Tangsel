@@ -254,6 +254,72 @@
       "edit": "Edit"
     }
   },
+  "ClassSubjectManagement": {
+    "metaTitle": "Class Subject Management",
+    "title": "Class Subject Management for {class}",
+    "searchPlaceholder": "Search subjects by name or code...",
+    "emptyState": "No subjects found for this class.",
+    "assignNewSubject": "Assign New Subject",
+    "unassignedTeacherPlaceholder": "Unassigned",
+    "assign": {
+      "title": "Add Subject to Class",
+      "assignButton": "Assign Subject",
+      "cancelButton": "Cancel",
+      "dialog": {
+        "context": "Add subject to {class}",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Search and select a subject...",
+        "teacherLabel": "Teacher",
+        "teacherPlaceholder": "Search and select a teacher...",
+        "cancelButton": "Cancel",
+        "submitButton": "Add Subject"
+      },
+      "toast": {
+        "successTitle": "Subject Added",
+        "successMessage": "{subject} has been successfully added to {class}.",
+        "errorTitle": "Failed to Add Subject",
+        "errorMessage": "An error occurred while adding the subject. Please try again."
+      },
+      "validation": {
+        "subjectRequired": "Please select a subject."
+      },
+      "fields": {
+        "subject": {
+          "label": "Subject",
+          "placeholder": "Search and select a subject..."
+        },
+        "teacher": {
+          "label": "Teacher (optional)",
+          "placeholder": "Search and select a teacher..."
+        }
+      }
+    },
+    "columns": {
+      "subjectCode": "Subject Code",
+      "subjectName": "Subject Name",
+      "teacher": "Teacher",
+      "actions": "Actions"
+    },
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Class Subjects",
+      "errorMessage": "An error occurred while fetching class subjects. Please try again."
+    },
+    "updateToast": {
+      "successTitle": "Teacher Updated",
+      "successMessage": "The teacher for the subject has been successfully updated.",
+      "errorTitle": "Failed to Update Teacher",
+      "errorMessage": "An error occurred while updating the teacher. Please try again."
+    },
+    "remove": {
+      "confirmation": "Are you sure you want to remove {subject} from {class}? This action cannot be undone.",
+      "toast": {
+        "successTitle": "Subject Removed",
+        "successMessage": "{subject} has been successfully removed from {class}.",
+        "errorTitle": "Failed to Remove Subject",
+        "errorMessage": "An error occurred while removing the subject. Please try again."
+      }
+    }
+  },
   "Form": {
     "invalidDate": "The entered date is invalid.",
     "invalidDateRange": "Start date must be before end date.",
@@ -390,6 +456,9 @@
       "errorTitle": "Failed to Fetch Subjects",
       "errorMessage": "An error occurred while fetching subjects. Please try again."
     }
+  },
+  "AsyncSelect": {
+    "noResults": "No results found."
   },
   "Pagination": {
     "previous": "Previous",
