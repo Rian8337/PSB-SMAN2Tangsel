@@ -33,6 +33,10 @@ interface Localization {
         readonly classInUse: string;
     };
 
+    readonly classSubjectService: {
+        readonly classHasContent: string;
+    };
+
     readonly notificationController: {
         readonly invalidNotificationIdFormat: string;
         readonly invalidReadStatusFormat: string;
@@ -120,6 +124,10 @@ export const messages = {
             classInUse:
                 "Kelas yang memiliki mata pelajaran atau siswa tidak dapat dihapus.",
         },
+        classSubjectService: {
+            classHasContent:
+                "Tidak dapat menghapus mata pelajaran ini karena sudah memiliki materi ajar atau tugas siswa.",
+        },
         notificationController: {
             invalidNotificationIdFormat:
                 "Parameter notificationId harus berupa bilangan bulat positif.",
@@ -202,6 +210,10 @@ export const messages = {
             classNotFound: "Class not found.",
             classInUse:
                 "Classes with associated subjects or students cannot be deleted.",
+        },
+        classSubjectService: {
+            classHasContent:
+                "Cannot unassign this subject. It already has teaching materials or student assignments associated with it.",
         },
         notificationController: {
             invalidNotificationIdFormat:
