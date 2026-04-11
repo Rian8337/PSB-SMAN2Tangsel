@@ -3,15 +3,10 @@ import {
     AssignClassSubjectModal,
     AssignClassSubjectModalProps,
 } from "@/components/admin/AssignClassSubjectModal";
-import { ClassApiProvider } from "@/providers/api/class-api-provider";
-import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
+import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
 import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { Class, Subject, UserListItem, UserRole } from "@psb/shared/types";
-import {
-    mockClassApiClient,
-    mockSubjectApiClient,
-    mockUserApiClient,
-} from "@test/mocks";
+import { mockClassSubjectApiClient, mockUserApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -42,19 +37,17 @@ const mockTeacher: UserListItem = {
 
 function render(props: Partial<AssignClassSubjectModalProps> = {}) {
     return renderWithChakraProvider(
-        <ClassApiProvider client={mockClassApiClient}>
-            <SubjectApiProvider client={mockSubjectApiClient}>
-                <UserApiProvider client={mockUserApiClient}>
-                    <AssignClassSubjectModal
-                        isOpen={props.isOpen ?? true}
-                        clazz={props.clazz ?? mockClass}
-                        onClose={onClose}
-                        onSuccess={onSuccess}
-                        {...props}
-                    />
-                </UserApiProvider>
-            </SubjectApiProvider>
-        </ClassApiProvider>,
+        <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
+            <UserApiProvider client={mockUserApiClient}>
+                <AssignClassSubjectModal
+                    isOpen={props.isOpen ?? true}
+                    clazz={props.clazz ?? mockClass}
+                    onClose={onClose}
+                    onSuccess={onSuccess}
+                    {...props}
+                />
+            </UserApiProvider>
+        </ClassSubjectApiProvider>,
     );
 }
 
@@ -74,18 +67,18 @@ describe("AssignClassSubjectModal (unit)", () => {
             screen.getByText("validation.selectSubject"),
         ).toBeInTheDocument();
 
-        expect(mockClassApiClient.assignSubject).not.toHaveBeenCalled();
+        expect(mockClassSubjectApiClient.assignSubject).not.toHaveBeenCalled();
     });
 
     it("should fetch and allow selecting a subject and teacher, then submit successfully", async () => {
         const user = userEvent.setup();
 
-        mockSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
+        mockClassSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
             mockSubjects,
         );
 
         mockUserApiClient.listTeachers.mockResolvedValue([mockTeacher]);
-        mockClassApiClient.assignSubject.mockResolvedValue(undefined);
+        mockClassSubjectApiClient.assignSubject.mockResolvedValue(undefined);
 
         render();
 
@@ -117,7 +110,9 @@ describe("AssignClassSubjectModal (unit)", () => {
         await user.click(submitButton);
 
         await waitFor(() => {
-            expect(mockClassApiClient.assignSubject).toHaveBeenCalledWith(
+            expect(
+                mockClassSubjectApiClient.assignSubject,
+            ).toHaveBeenCalledWith(
                 mockClass.id,
                 mockSubjects[0].id,
                 mockTeacher.id,
@@ -131,11 +126,11 @@ describe("AssignClassSubjectModal (unit)", () => {
     it("should allow submitting without a teacher (null teacherId)", async () => {
         const user = userEvent.setup();
 
-        mockSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
+        mockClassSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
             mockSubjects,
         );
 
-        mockClassApiClient.assignSubject.mockResolvedValue(undefined);
+        mockClassSubjectApiClient.assignSubject.mockResolvedValue(undefined);
 
         render();
 
@@ -158,11 +153,9 @@ describe("AssignClassSubjectModal (unit)", () => {
         await user.click(submitButton);
 
         await waitFor(() => {
-            expect(mockClassApiClient.assignSubject).toHaveBeenCalledWith(
-                mockClass.id,
-                mockSubjects[0].id,
-                null,
-            );
+            expect(
+                mockClassSubjectApiClient.assignSubject,
+            ).toHaveBeenCalledWith(mockClass.id, mockSubjects[0].id, null);
         });
 
         expect(onSuccess).toHaveBeenCalledOnce();
@@ -172,11 +165,11 @@ describe("AssignClassSubjectModal (unit)", () => {
         const user = userEvent.setup();
         const errorMessage = "Subject already assigned";
 
-        mockSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
+        mockClassSubjectApiClient.listUnassignedSubjects.mockResolvedValue(
             mockSubjects,
         );
 
-        mockClassApiClient.assignSubject.mockRejectedValue(
+        mockClassSubjectApiClient.assignSubject.mockRejectedValue(
             new APIError(409, errorMessage),
         );
 

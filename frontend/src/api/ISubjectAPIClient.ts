@@ -30,24 +30,6 @@ export interface ISubjectAPIClient {
     ): Promise<Subject[]>;
 
     /**
-     * Lists subjects that are not yet assigned to a specific class for display in the subject selection dropdown when assigning subjects to a class.
-     *
-     * @param classId The unique identifier of the class to list unassigned subjects for.
-     * @param query The search query to filter unassigned subjects by name or code.
-     * @param limit The maximum number of unassigned subjects to return. Defaults to 5.
-     * @param offset The number of unassigned subjects to skip before starting to collect the result set. Defaults to 0.
-     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list unassigned subjects.
-     * @returns A list of subjects that are not yet assigned to the specified class, matching the search query.
-     */
-    listUnassignedSubjects(
-        classId: number,
-        query?: string,
-        limit?: number,
-        offset?: number,
-        signal?: AbortSignal,
-    ): Promise<Subject[]>;
-
-    /**
      * Creates a new subject with the specified details.
      *
      * @param code The unique code of the subject to create.

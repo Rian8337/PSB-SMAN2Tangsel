@@ -15,6 +15,8 @@ import { ISubjectAPIClient } from "./ISubjectAPIClient";
 import { APIClient } from "./APIClient";
 import { ClassAPIClient } from "./ClassAPIClient";
 import { IClassAPIClient } from "./IClassAPIClient";
+import { IClassSubjectAPIClient } from "./IClassSubjectAPIClient";
+import { ClassSubjectAPIClient } from "./ClassSubjectAPIClient";
 
 /**
  * Server-side factory to retrieve an {@link IAuthAPIClient}.
@@ -40,6 +42,19 @@ export async function getServerClassApiClient(
     locale?: Locale,
 ): Promise<IClassAPIClient> {
     return initializeClient(ClassAPIClient, locale);
+}
+
+/**
+ * Server-side factory to retrieve an {@link IClassSubjectAPIClient}.
+ *
+ * @param locale Optional locale to initialize the {@link IClassSubjectAPIClient} with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link IClassSubjectAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerClassSubjectApiClient(
+    locale?: Locale,
+): Promise<IClassSubjectAPIClient> {
+    return initializeClient(ClassSubjectAPIClient, locale);
 }
 
 /**

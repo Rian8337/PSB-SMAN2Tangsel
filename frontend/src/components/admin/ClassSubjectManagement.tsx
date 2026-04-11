@@ -2,7 +2,7 @@
 
 import { APIError } from "@/api";
 import { useDebounce } from "@/hooks";
-import { useClassApiClient } from "@/providers/api/class-api-provider";
+import { useClassSubjectApiClient } from "@/providers/api/class-subject-api-provider";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
 import {
     Box,
@@ -28,8 +28,8 @@ export interface ClassSubjectManagementProps {
 
 export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
     const t = useTranslations("ClassSubjectManagement");
+    const classSubjectApiClient = useClassSubjectApiClient();
     const userApiClient = useUserApiClient();
-    const classApiClient = useClassApiClient();
 
     const [isLoading, setIsLoading] = useState(true);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -53,7 +53,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
             setIsLoading(true);
             try {
                 const paginatedAssignments =
-                    await classApiClient.listAssignedSubjects(
+                    await classSubjectApiClient.listAssignedSubjects(
                         clazz.id,
                         query,
                         limit,
@@ -76,7 +76,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                 setIsLoading(false);
             }
         },
-        [clazz.id, classApiClient, limit, t],
+        [clazz.id, classSubjectApiClient, limit, t],
     );
 
     useEffect(() => {
@@ -104,7 +104,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
         teacher: ClassSubjectAssignment["teacher"] | null,
     ) => {
         try {
-            await classApiClient.updateAssignedSubject(
+            await classSubjectApiClient.updateAssignedSubject(
                 assignmentId,
                 teacher?.userId ?? null,
             );
@@ -151,7 +151,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
         }
 
         try {
-            await classApiClient.unassignSubject(assignmentId);
+            await classSubjectApiClient.unassignSubject(assignmentId);
 
             toaster.create({
                 title: t("remove.toast.successTitle"),

@@ -39,6 +39,29 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         return this.get(url, { signal }).then((res) => res.json());
     }
 
+    listTeachers(
+        query?: string,
+        limit?: number,
+        offset?: number,
+        signal?: AbortSignal,
+    ): Promise<UserListItem[]> {
+        const url = new URL(this.baseURL + "/teachers");
+
+        if (typeof query === "string" && query.trim().length > 0) {
+            url.searchParams.append("query", query.trim());
+        }
+
+        if (limit !== undefined) {
+            url.searchParams.append("limit", limit.toString());
+        }
+
+        if (offset !== undefined) {
+            url.searchParams.append("offset", offset.toString());
+        }
+
+        return this.get(url, { signal }).then((res) => res.json());
+    }
+
     async createUser(
         name: string,
         password: string,

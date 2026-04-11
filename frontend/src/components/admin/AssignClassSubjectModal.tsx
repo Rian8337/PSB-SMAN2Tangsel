@@ -1,8 +1,7 @@
 "use client";
 
 import { APIError } from "@/api";
-import { useClassApiClient } from "@/providers/api/class-api-provider";
-import { useSubjectApiClient } from "@/providers/api/subject-api-provider";
+import { useClassSubjectApiClient } from "@/providers/api/class-subject-api-provider";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
 import { Text } from "@chakra-ui/react";
 import { Class } from "@psb/shared/types";
@@ -27,8 +26,7 @@ export function AssignClassSubjectModal({
     onSuccess,
 }: AssignClassSubjectModalProps) {
     const t = useTranslations("ClassSubjectManagement.assign");
-    const classApiClient = useClassApiClient();
-    const subjectApiClient = useSubjectApiClient();
+    const classSubjectApiClient = useClassSubjectApiClient();
     const userApiClient = useUserApiClient();
 
     const [selectedSubject, setSelectedSubject] =
@@ -52,7 +50,7 @@ export function AssignClassSubjectModal({
 
     const fetchUnassignedSubjects = useCallback(
         async (query: string, signal?: AbortSignal) => {
-            const subjects = await subjectApiClient.listUnassignedSubjects(
+            const subjects = await classSubjectApiClient.listUnassignedSubjects(
                 clazz.id,
                 query,
                 10,
@@ -68,7 +66,7 @@ export function AssignClassSubjectModal({
                     }) satisfies AsyncSelectOption,
             );
         },
-        [subjectApiClient, clazz.id],
+        [classSubjectApiClient, clazz.id],
     );
 
     const fetchTeachers = useCallback(
@@ -102,7 +100,7 @@ export function AssignClassSubjectModal({
 
         setIsLoading(true);
 
-        classApiClient
+        classSubjectApiClient
             .assignSubject(
                 clazz.id,
                 selectedSubject.value,

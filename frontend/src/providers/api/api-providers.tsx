@@ -1,6 +1,7 @@
 import { composeProviders } from "../composer";
 import { AuthApiProvider } from "./auth-api-provider";
 import { ClassApiProvider } from "./class-api-provider";
+import { ClassSubjectApiProvider } from "./class-subject-api-provider";
 import { NotificationApiProvider } from "./notification-api-provider";
 import { ScheduleApiProvider } from "./schedule-api-provider";
 import { SessionApiProvider } from "./session-api-provider";
@@ -13,6 +14,7 @@ import { UserApiProvider } from "./user-api-provider";
 export const ApiProviders = composeProviders(
     AuthApiProvider,
     ClassApiProvider,
+    ClassSubjectApiProvider,
     NotificationApiProvider,
     ScheduleApiProvider,
     SessionApiProvider,

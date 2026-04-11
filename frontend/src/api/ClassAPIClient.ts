@@ -1,4 +1,4 @@
-import { Class, ValidSession, ValidSemester } from "@psb/shared/types";
+import { Class, ValidSemester, ValidSession } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { IClassAPIClient, ListClassOptions } from "./IClassAPIClient";
 

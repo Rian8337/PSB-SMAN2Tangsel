@@ -1,6 +1,7 @@
 import {
     IAuthAPIClient,
     IClassAPIClient,
+    IClassSubjectAPIClient,
     INotificationAPIClient,
     IScheduleAPIClient,
     ISessionAPIClient,
@@ -24,10 +25,17 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
 export const mockClassApiClient: Mocked<IClassAPIClient> = {
     getClass: vi.fn(),
     listClasses: vi.fn(),
-    listAssignedSubjects: vi.fn(),
     createClass: vi.fn(),
     updateClass: vi.fn(),
     deleteClass: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassSubjectAPIClient}.
+ */
+export const mockClassSubjectApiClient: Mocked<IClassSubjectAPIClient> = {
+    listAssignedSubjects: vi.fn(),
+    listUnassignedSubjects: vi.fn(),
     assignSubject: vi.fn(),
     updateAssignedSubject: vi.fn(),
     unassignSubject: vi.fn(),
@@ -68,7 +76,6 @@ export const mockSessionApiClient: Mocked<ISessionAPIClient> = {
 export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
     getSubject: vi.fn(),
     listSubjects: vi.fn(),
-    listUnassignedSubjects: vi.fn(),
     createSubject: vi.fn(),
     updateSubject: vi.fn(),
     deleteSubject: vi.fn(),
