@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IClassRepository,
+    IClassSubjectRepository,
     INotificationRepository,
     IScheduleRepository,
     ISessionRepository,
@@ -49,6 +50,18 @@ export const mockClassRepository: Mocked<IClassRepository> = {
     hasSubjects: vi.fn(),
     hasStudents: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassSubjectRepository}.
+ */
+export const mockClassSubjectRepository: Mocked<IClassSubjectRepository> = {
+    listAssignedSubjects: vi.fn(),
+    listUnassignedSubjects: vi.fn(),
+    assignSubject: vi.fn(),
+    updateAssignedSubject: vi.fn(),
+    hasAssociatedContent: vi.fn(),
+    unassignSubject: vi.fn(),
 };
 
 /**
