@@ -1,6 +1,12 @@
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "../database/schema";
+import { UserRole } from "../types";
+
+/**
+ * The Zod schema for validating user roles.
+ */
+export const validRoleSchema = z.enum(UserRole);
 
 /**
  * The Zod schema for validating user insertion data.
@@ -16,6 +22,7 @@ export const insertUserSchema = createInsertSchema(users, {
             .string()
             .min(1, "Password is required")
             .max(72, "Password must be at most 72 characters long"),
+    role: validRoleSchema,
 });
 
 /**
