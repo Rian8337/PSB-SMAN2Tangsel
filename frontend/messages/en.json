@@ -281,7 +281,7 @@
         "errorMessage": "An error occurred while adding the subject. Please try again."
       },
       "validation": {
-        "subjectRequired": "Please select a subject."
+        "selectSubject": "Please select a subject."
       },
       "fields": {
         "subject": {
