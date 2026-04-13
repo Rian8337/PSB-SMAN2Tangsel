@@ -82,7 +82,12 @@ describe("UserController (unit)", () => {
             unknown,
             UserListItem[] | { error: string },
             unknown,
-            Partial<{ query?: string; limit?: string; offset?: string }>
+            Partial<{
+                query?: string;
+                limit?: string;
+                offset?: string;
+                role: string;
+            }>
         >();
 
         const mockUsers: UserListItem[] = [];
@@ -110,12 +115,14 @@ describe("UserController (unit)", () => {
                 undefined,
                 undefined,
                 undefined,
+                undefined,
             );
 
             expect(res.json).toHaveBeenCalledWith(mockUsers);
         });
 
-        it("should parse and pass valid query, limit, and offset queries to service", async () => {
+        it("should parse and pass valid role, query, limit, and offset queries to service", async () => {
+            req.query.role = UserRole.student.toString();
             req.query.query = "test";
             req.query.limit = "10";
             req.query.offset = "20";
@@ -123,6 +130,7 @@ describe("UserController (unit)", () => {
             await controller.listUsers(req, res);
 
             expect(mockUserService.listUsers).toHaveBeenCalledWith(
+                UserRole.student,
                 "test",
                 10,
                 20,

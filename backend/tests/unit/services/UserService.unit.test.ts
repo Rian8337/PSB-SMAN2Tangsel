@@ -48,9 +48,10 @@ describe("UserService (unit)", () => {
         it("should delegate to UserRepository.listUsers with correct parameters", async () => {
             mockUserRepository.listUsers.mockResolvedValue([]);
 
-            await service.listUsers("Test", 10, 20);
+            await service.listUsers(undefined, "Test", 10, 20);
 
             expect(mockUserRepository.listUsers).toHaveBeenCalledWith(
+                undefined,
                 "Test",
                 10,
                 20,
