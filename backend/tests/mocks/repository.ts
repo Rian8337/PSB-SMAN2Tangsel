@@ -80,8 +80,13 @@ export const mockNotificationRepository: Mocked<INotificationRepository> = {
  * Mock implementation of {@link IScheduleRepository}.
  */
 export const mockScheduleRepository: Mocked<IScheduleRepository> = {
+    findById: vi.fn(),
     findByClassId: vi.fn(),
     findByTeacherId: vi.fn(() => Promise.resolve([])),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    hasConflict: vi.fn(),
 };
 
 /**
