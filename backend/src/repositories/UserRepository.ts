@@ -1,7 +1,6 @@
 import { Injectable } from "@/decorators/injectable";
-import { DatabaseRepository } from "./DatabaseRepository";
-import { IUserRepository } from "./IUserRepository";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { administrators, students, teachers, users } from "@psb/shared/schema";
 import {
     DrizzleDb,
     Transaction,
@@ -9,9 +8,10 @@ import {
     UserListItem,
     UserRole,
 } from "@psb/shared/types";
-import { administrators, students, teachers, users } from "@psb/shared/schema";
-import { eq, like, or } from "drizzle-orm";
+import { and, eq, like, or, SQL } from "drizzle-orm";
 import { inject } from "tsyringe";
+import { DatabaseRepository } from "./DatabaseRepository";
+import { IUserRepository } from "./IUserRepository";
 
 /**
  * Defines operations for accessing and managing user data in the database.
@@ -44,8 +44,30 @@ export class UserRepository
             .then((res) => res.at(0) ?? null);
     }
 
-    listUsers(query?: string, limit = 5, offset = 0): Promise<UserListItem[]> {
-        let builder = this.db
+    listUsers(
+        role?: UserRole,
+        query?: string,
+        limit = 5,
+        offset = 0,
+    ): Promise<UserListItem[]> {
+        const whereConditions: (SQL | undefined)[] = [];
+
+        if (role !== undefined) {
+            whereConditions.push(eq(users.role, role));
+        }
+
+        if (query) {
+            const searchParam = `%${query.trim()}%`;
+
+            whereConditions.push(
+                or(
+                    like(users.name, searchParam),
+                    like(users.identifier, searchParam),
+                ),
+            );
+        }
+
+        return this.db
             .select({
                 id: users.id,
                 name: users.name,
@@ -53,20 +75,10 @@ export class UserRepository
                 active: users.active,
                 identifier: users.identifier,
             })
-            .from(users);
-
-        if (query) {
-            const searchParam = `%${query.trim()}%`;
-
-            builder = builder.where(
-                or(
-                    like(users.name, searchParam),
-                    like(users.identifier, searchParam),
-                ),
-            ) as typeof builder;
-        }
-
-        return builder.limit(limit).offset(offset);
+            .from(users)
+            .where(and(...whereConditions))
+            .limit(limit)
+            .offset(offset);
     }
 
     async create(

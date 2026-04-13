@@ -8,6 +8,13 @@ import { Roles } from "@/decorators/roles";
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { BadRequestError } from "@/types";
+import { listQuerySchema } from "@/validators";
+import { validRoleSchema } from "@psb/shared/validator";
+import { MessageKey } from "@/i18n";
+
+const listUsersValidationSchema = listQuerySchema.extend({
+    role: validRoleSchema.optional(),
+});
 
 /**
  * Controller that handles user-related endpoints.
@@ -31,7 +38,12 @@ export class UserController extends BaseController {
             unknown,
             UserListItem[] | { error: string },
             unknown,
-            Partial<{ query?: string; limit?: string; offset?: string }>
+            Partial<{
+                query?: string;
+                limit?: string;
+                offset?: string;
+                role?: string;
+            }>
         >,
         res: Response<UserListItem[] | { error: string }>,
     ) {
@@ -40,43 +52,18 @@ export class UserController extends BaseController {
         }
 
         try {
-            const query = req.query.query
-                ? decodeURIComponent(req.query.query)
-                : undefined;
+            const parsed = listUsersValidationSchema.safeParse(req.query);
 
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (query !== undefined && typeof query !== "string") {
-                throw new BadRequestError("controller.invalidQueryFormat");
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
-            }
+            const { role, query, limit, offset } = parsed.data;
 
             const users = await this.userService.listUsers(
+                role,
                 query,
                 limit,
                 offset,

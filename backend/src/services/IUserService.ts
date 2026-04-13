@@ -15,12 +15,14 @@ export interface IUserService {
     /**
      * Fetches a list of users for display in the UI.
      *
+     * @param role An optional {@link UserRole} to filter the users by their role.
      * @param query An optional search query to filter users by name or identifier.
      * @param limit The maximum number of users to return. Defaults to 5.
      * @param offset The number of users to skip before starting to collect the result set. Defaults to 0.
      * @returns A list of user items containing basic information about each user.
      */
     listUsers(
+        role?: UserRole,
         query?: string,
         limit?: number,
         offset?: number,

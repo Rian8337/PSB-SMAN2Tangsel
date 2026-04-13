@@ -31,11 +31,12 @@ export class UserService implements IUserService {
     }
 
     listUsers(
+        role?: UserRole,
         query?: string,
         limit?: number,
         offset?: number,
     ): Promise<UserListItem[]> {
-        return this.userRepository.listUsers(query, limit, offset);
+        return this.userRepository.listUsers(role, query, limit, offset);
     }
 
     async create(
