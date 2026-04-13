@@ -3,10 +3,10 @@ import { Roles } from "@/decorators/roles";
 import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IClassService } from "@/services";
+import { IClassService, IScheduleService } from "@/services";
 import { BadRequestError } from "@/types";
 import { coercedClassIdSchema, listQuerySchema } from "@/validators";
-import { Class, UserRole } from "@psb/shared/types";
+import { Class, ScheduleDTO, UserRole } from "@psb/shared/types";
 import {
     insertClassSchema,
     validClassNameSchema,
@@ -31,6 +31,8 @@ export class ClassController extends BaseController {
     constructor(
         @inject(dependencyTokens.classService)
         private readonly classService: IClassService,
+        @inject(dependencyTokens.scheduleService)
+        private readonly scheduleService: IScheduleService,
     ) {
         super();
     }
@@ -73,6 +75,34 @@ export class ClassController extends BaseController {
             });
 
             res.json(classes);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Obtains the schedule for a specific class.
+     */
+    @Get("/:id/schedules")
+    @Roles(UserRole.administrator)
+    async getClassSchedule(
+        req: Request<{ id: string }, ScheduleDTO[] | { error: string }>,
+        res: Response<ScheduleDTO[] | { error: string }>,
+    ) {
+        try {
+            const parsed = coercedClassIdSchema.safeParse(req.params);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const schedule = await this.scheduleService.getClassSchedule(
+                parsed.data,
+            );
+
+            res.json(schedule);
         } catch (e) {
             this.handleError(req, res, e);
         }
