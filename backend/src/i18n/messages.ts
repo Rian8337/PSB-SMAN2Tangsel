@@ -34,6 +34,10 @@ interface Localization {
         readonly classInUse: string;
     };
 
+    readonly classSubject: {
+        readonly invalidClassSubjectId: string;
+    };
+
     readonly classSubjectController: {
         readonly invalidAssignmentId: string;
     };
@@ -54,6 +58,10 @@ interface Localization {
 
     readonly scheduleController: {
         readonly baseIcsFilename: string;
+        readonly invalidDay: string;
+        readonly invalidStartTime: string;
+        readonly invalidEndTime: string;
+        readonly invalidScheduleId: string;
     };
 
     readonly scheduleService: {
@@ -137,6 +145,10 @@ export const messages = {
             classInUse:
                 "Kelas yang memiliki mata pelajaran atau siswa tidak dapat dihapus.",
         },
+        classSubject: {
+            invalidClassSubjectId:
+                "classSubjectId harus berupa bilangan bulat positif.",
+        },
         classSubjectController: {
             invalidAssignmentId:
                 "Parameter assignmentId harus berupa bilangan bulat positif.",
@@ -158,6 +170,13 @@ export const messages = {
         },
         scheduleController: {
             baseIcsFilename: "jadwal_pelajaran",
+            invalidDay: "Parameter day harus berupa hari yang valid.",
+            invalidStartTime:
+                "Parameter startTime harus berupa tanggal yang valid.",
+            invalidEndTime:
+                "Parameter endTime harus berupa tanggal yang valid.",
+            invalidScheduleId:
+                "Parameter id harus berupa bilangan bulat positif.",
         },
         scheduleService: {
             scheduleNotFound: "Jadwal tidak ditemukan.",
@@ -235,6 +254,9 @@ export const messages = {
             classInUse:
                 "Classes with associated subjects or students cannot be deleted.",
         },
+        classSubject: {
+            invalidClassSubjectId: "classSubjectId must be a positive integer.",
+        },
         classSubjectController: {
             invalidAssignmentId:
                 "Parameter assignmentId must be a positive integer.",
@@ -256,6 +278,10 @@ export const messages = {
         },
         scheduleController: {
             baseIcsFilename: "class_schedule",
+            invalidDay: "Parameter day must be a valid day.",
+            invalidStartTime: "Parameter startTime must be a valid date.",
+            invalidEndTime: "Parameter endTime must be a valid date.",
+            invalidScheduleId: "Parameter id must be a positive integer.",
         },
         scheduleService: {
             scheduleNotFound: "Schedule not found.",
