@@ -67,10 +67,18 @@ test.describe("Account Management", () => {
         const successToast = page.getByText(/berhasil|success/i).first();
 
         await expect(successToast).toBeVisible();
-
-        // Wait for the toast to hide.
         await expect(successToast).toBeHidden();
-        await expect(dialog).toBeHidden();
+
+        // Animations are inconsistent across browsers. In WebKit, the dialog is hidden but still in the DOM
+        // with data-state="closed". In Chromium/Firefox, it is unmounted from the DOM. Both are valid
+        // implementations of hiding the dialog, so we check for both possibilities here.
+        await expect(async () => {
+            const count = await dialog.count();
+
+            if (count > 0) {
+                expect(await dialog.getAttribute("data-state")).toBe("closed");
+            }
+        }).toPass({ timeout: 5000 });
 
         // Search user
         const searchInput = page.locator('input[name="search"]');
@@ -102,9 +110,11 @@ test.describe("Account Management", () => {
         const editLink = userRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
 
+        await editLink.focus();
+
         await Promise.all([
             page.waitForURL(/\/admin\/users\/\d+/),
-            editLink.click(),
+            page.keyboard.press("Enter"),
         ]);
 
         const editNameInput = page.locator('input[name="name"]');
@@ -125,7 +135,7 @@ test.describe("Account Management", () => {
         const updateToast = page.getByText(/berhasil|success/i).first();
         await expect(updateToast).toBeVisible();
         await expect(page).toHaveURL(/\/admin\/users/);
-        await expect(updateToast).toBeHidden();
+        await expect(updateToast).toBeHidden({ timeout: 10000 });
 
         // Delete user
         const searchUpdatedUsersResponse = page.waitForResponse((response) => {

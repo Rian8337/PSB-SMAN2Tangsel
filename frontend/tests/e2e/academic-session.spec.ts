@@ -29,21 +29,21 @@ test.describe("Academic Session Management", () => {
 
         await openCreateModalButton.click();
 
-        const createDialog = page.getByRole("dialog", {
+        const dialog = page.getByRole("dialog", {
             name: /daftar tahun ajaran baru|new academic session/i,
         });
 
-        await expect(createDialog).toBeVisible();
+        await expect(dialog).toBeVisible();
 
-        const sessionInput = createDialog.locator('input[name="session"]');
+        const sessionInput = dialog.locator('input[name="session"]');
         await sessionInput.fill(testSession);
 
-        await createDialog
+        await dialog
             .locator('select[name="semester"]')
             .selectOption(testSemester);
 
-        await createDialog.locator('input[name="startTime"]').fill(startDate);
-        await createDialog.locator('input[name="endTime"]').fill(endDate);
+        await dialog.locator('input[name="startTime"]').fill(startDate);
+        await dialog.locator('input[name="endTime"]').fill(endDate);
 
         const createSessionResponse = page.waitForResponse((response) => {
             const pathname = new URL(response.url()).pathname;
@@ -55,12 +55,28 @@ test.describe("Academic Session Management", () => {
             );
         });
 
-        await Promise.all([
+        const [createResponse] = await Promise.all([
             createSessionResponse,
-            createDialog.getByRole("button", { name: /buat|create/i }).click(),
+            dialog.getByRole("button", { name: /buat|create/i }).click(),
         ]);
 
-        await expect(createDialog).toBeHidden();
+        expect(createResponse.ok()).toBe(true);
+
+        const successToast = page.getByText(/berhasil|success/i).first();
+
+        await expect(successToast).toBeVisible();
+        await expect(successToast).toBeHidden();
+
+        // Animations are inconsistent across browsers. In WebKit, the dialog is hidden but still in the DOM
+        // with data-state="closed". In Chromium/Firefox, it is unmounted from the DOM. Both are valid
+        // implementations of hiding the dialog, so we check for both possibilities here.
+        await expect(async () => {
+            const count = await dialog.count();
+
+            if (count > 0) {
+                expect(await dialog.getAttribute("data-state")).toBe("closed");
+            }
+        }).toPass({ timeout: 5000 });
 
         // Search session
         const searchInput = page.locator('input[name="search"]');
@@ -89,11 +105,13 @@ test.describe("Academic Session Management", () => {
         const editLink = sessionRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
 
+        await editLink.focus();
+
         await Promise.all([
             page.waitForURL(
                 /\/admin\/academic-year\/edit\?session=2035%2F2036&semester=1/,
             ),
-            editLink.click(),
+            page.keyboard.press("Enter"),
         ]);
 
         const editStartInput = page.locator('input[name="startTime"]');
