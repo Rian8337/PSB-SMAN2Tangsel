@@ -1,4 +1,18 @@
-import { ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
+
+export interface CreateScheduleOptions {
+    readonly classSubjectId: number;
+    readonly day: ScheduleDay;
+    readonly startTime: Date;
+    readonly endTime: Date;
+}
+
+export interface UpdateScheduleOptions {
+    readonly id: number;
+    readonly day: ScheduleDay;
+    readonly startTime: Date;
+    readonly endTime: Date;
+}
 
 /**
  * A service that is responsible for schedule-related operations.
@@ -33,4 +47,25 @@ export interface IScheduleService {
         sessionStart: Date,
         sessionEnd: Date,
     ): Buffer;
+
+    /**
+     * Creates a new schedule for a class subject.
+     *
+     * @param options Options for creating the schedule.
+     */
+    create(options: CreateScheduleOptions): Promise<void>;
+
+    /**
+     * Updates an existing schedule.
+     *
+     * @param options Options for updating the schedule.
+     */
+    update(options: UpdateScheduleOptions): Promise<void>;
+
+    /**
+     * Deletes a schedule.
+     *
+     * @param id The ID of the schedule to delete.
+     */
+    delete(id: number): Promise<void>;
 }

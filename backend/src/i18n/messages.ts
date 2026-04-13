@@ -56,6 +56,12 @@ interface Localization {
         readonly baseIcsFilename: string;
     };
 
+    readonly scheduleService: {
+        readonly scheduleNotFound: string;
+        readonly invalidTimeOrder: string;
+        readonly scheduleConflict: string;
+    };
+
     readonly sessionService: {
         readonly duplicateSession: string;
         readonly noActiveSession: string;
@@ -153,6 +159,13 @@ export const messages = {
         scheduleController: {
             baseIcsFilename: "jadwal_pelajaran",
         },
+        scheduleService: {
+            scheduleNotFound: "Jadwal tidak ditemukan.",
+            invalidTimeOrder:
+                "Waktu mulai harus lebih awal daripada waktu selesai.",
+            scheduleConflict:
+                "Jadwal yang diusulkan bertabrakan dengan jadwal yang sudah ada untuk kelas atau guru yang bersangkutan.",
+        },
         sessionService: {
             duplicateSession:
                 "Tahun pelajaran dengan sesi dan semester yang sama sudah ada.",
@@ -243,6 +256,12 @@ export const messages = {
         },
         scheduleController: {
             baseIcsFilename: "class_schedule",
+        },
+        scheduleService: {
+            scheduleNotFound: "Schedule not found.",
+            invalidTimeOrder: "Start time must be before end time.",
+            scheduleConflict:
+                "The proposed schedule conflicts with an existing schedule for the associated class or teacher.",
         },
         sessionService: {
             duplicateSession:

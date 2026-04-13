@@ -1,10 +1,15 @@
 import { ScheduleDTO } from "@psb/shared/types";
-import { IScheduleService } from "./IScheduleService";
+import {
+    CreateScheduleOptions,
+    IScheduleService,
+    UpdateScheduleOptions,
+} from "./IScheduleService";
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { inject } from "tsyringe";
 import { IScheduleRepository } from "@/repositories";
 import { createEvents, EventAttributes } from "ics";
+import { BadRequestError, ConflictError, NotFoundError } from "@/types";
 
 /**
  * A service that is responsible for schedule-related operations.
@@ -80,6 +85,63 @@ export class ScheduleService implements IScheduleService {
         return Buffer.from(value);
     }
 
+    async create(options: CreateScheduleOptions): Promise<void> {
+        this.validateTimeOrder(options.startTime, options.endTime);
+
+        const hasConflict = await this.scheduleRepository.hasConflict(
+            options.classSubjectId,
+            options.day,
+            options.startTime,
+            options.endTime,
+        );
+
+        if (hasConflict) {
+            throw new ConflictError("scheduleService.scheduleConflict");
+        }
+
+        await this.scheduleRepository.create(
+            options.classSubjectId,
+            options.day,
+            options.startTime,
+            options.endTime,
+        );
+    }
+
+    async update(options: UpdateScheduleOptions): Promise<void> {
+        this.validateTimeOrder(options.startTime, options.endTime);
+
+        const existingSchedule = await this.scheduleRepository.findById(
+            options.id,
+        );
+
+        if (!existingSchedule) {
+            throw new NotFoundError("scheduleService.scheduleNotFound");
+        }
+
+        const hasConflict = await this.scheduleRepository.hasConflict(
+            existingSchedule.classSubjectId,
+            options.day,
+            options.startTime,
+            options.endTime,
+            options.id,
+        );
+
+        if (hasConflict) {
+            throw new ConflictError("scheduleService.scheduleConflict");
+        }
+
+        await this.scheduleRepository.update(
+            options.id,
+            options.day,
+            options.startTime,
+            options.endTime,
+        );
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.scheduleRepository.delete(id);
+    }
+
     private getFirstDateOfDay(
         sessionStartDate: Date,
         targetDayOfWeek: number,
@@ -93,5 +155,11 @@ export class ScheduleService implements IScheduleService {
         firstDate.setDate(firstDate.getDate() + daysToWait);
 
         return firstDate;
+    }
+
+    private validateTimeOrder(startTime: Date, endTime: Date) {
+        if (startTime >= endTime) {
+            throw new BadRequestError("scheduleService.invalidTimeOrder");
+        }
     }
 }
