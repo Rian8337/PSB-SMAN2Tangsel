@@ -1,13 +1,24 @@
 import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
-import { Get } from "@/decorators/routes";
+import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IScheduleService, ISessionService } from "@/services";
-import { ScheduleDTO, UserRole } from "@psb/shared/types";
+import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
-import { ForbiddenError, SessionData } from "@/types";
+import {
+    BadRequestError,
+    ForbiddenError,
+    SessionData,
+    UnauthorizedError,
+} from "@/types";
+import {
+    createScheduleSchema,
+    scheduleIdSchema,
+    updateScheduleSchema,
+} from "@/validators";
+import { MessageKey } from "@/i18n";
 
 /**
  * Controller that handles schedule endpoints.
@@ -32,10 +43,6 @@ export class ScheduleController extends BaseController {
         req: Request<unknown, { error: string } | ScheduleDTO[]>,
         res: Response<{ error: string } | ScheduleDTO[]>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
             const schedule = await this.getSchedule(req.sessionData);
 
@@ -55,10 +62,6 @@ export class ScheduleController extends BaseController {
         req: Request<unknown, Buffer | { error: string }>,
         res: Response<Buffer | { error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
             const activeSession = await this.sessionService.getActive();
             const schedule = await this.getSchedule(req.sessionData);
@@ -84,6 +87,112 @@ export class ScheduleController extends BaseController {
         }
     }
 
+    /**
+     * Creates a new schedule for a class subject.
+     */
+    @Post("/")
+    @Roles(UserRole.administrator)
+    async create(
+        req: Request<
+            unknown,
+            { error: string },
+            Partial<{
+                classSubjectId: number;
+                day: ScheduleDay;
+                startTime: number;
+                endTime: number;
+            }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        try {
+            const parsed = createScheduleSchema.safeParse(req.body);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.scheduleService.create(parsed.data);
+
+            res.sendStatus(201);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Updates an existing schedule by its ID.
+     */
+    @Put("/:id")
+    @Roles(UserRole.administrator)
+    async update(
+        req: Request<
+            { id: string },
+            { error: string },
+            Partial<{
+                day: ScheduleDay;
+                startTime: number;
+                endTime: number;
+            }>
+        >,
+        res: Response<{ error: string }>,
+    ) {
+        try {
+            const paramsParsed = scheduleIdSchema.safeParse(req.params);
+
+            if (!paramsParsed.success) {
+                throw new BadRequestError(
+                    paramsParsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const bodyParsed = updateScheduleSchema.safeParse(req.body);
+
+            if (!bodyParsed.success) {
+                throw new BadRequestError(
+                    bodyParsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.scheduleService.update({
+                id: paramsParsed.data.id,
+                ...bodyParsed.data,
+            });
+
+            res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Deletes a schedule by its ID.
+     */
+    @Delete("/:id")
+    @Roles(UserRole.administrator)
+    async delete(
+        req: Request<{ id: string }, { error: string }>,
+        res: Response<{ error: string }>,
+    ) {
+        try {
+            const parsed = scheduleIdSchema.safeParse(req.params);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.scheduleService.delete(parsed.data.id);
+
+            res.sendStatus(204);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
     private getSchedule(sessionData?: SessionData) {
         switch (sessionData?.role) {
             case UserRole.student:
@@ -97,7 +206,11 @@ export class ScheduleController extends BaseController {
                 );
 
             default:
-                throw new ForbiddenError();
+                if (sessionData) {
+                    throw new ForbiddenError();
+                } else {
+                    throw new UnauthorizedError();
+                }
         }
     }
 }
