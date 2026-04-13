@@ -60,6 +60,7 @@ export const users = mysqlTable(
     },
     (table) => [
         index("name_idx").on(table.name),
+        index("role_idx").on(table.role),
         index("identifier_idx").on(table.identifier),
     ],
 );
