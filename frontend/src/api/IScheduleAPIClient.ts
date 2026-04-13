@@ -1,5 +1,19 @@
 import { ScheduleDTO } from "@psb/shared/types";
 
+export interface CreateScheduleOptions {
+    readonly classSubjectId: number;
+    readonly day: number;
+    readonly startTime: Date;
+    readonly endTime: Date;
+}
+
+export interface UpdateScheduleOptions {
+    readonly id: number;
+    readonly day: number;
+    readonly startTime: Date;
+    readonly endTime: Date;
+}
+
 /**
  * Provides operations for schedule-related API calls.
  */
@@ -21,4 +35,26 @@ export interface IScheduleAPIClient {
     download(
         signal?: AbortSignal,
     ): Promise<Readonly<{ blob: Blob; filename?: string }>>;
+
+    /**
+     * Creates a new schedule for a class subject.
+     *
+     * @param options Options for creating the schedule.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to create the schedule.
+     */
+    createSchedule(options: CreateScheduleOptions): Promise<void>;
+
+    /**
+     * Updates an existing schedule.
+     *
+     * @param options Options for updating the schedule.
+     */
+    updateSchedule(options: UpdateScheduleOptions): Promise<void>;
+
+    /**
+     * Deletes a schedule.
+     *
+     * @param id The ID of the schedule to delete.
+     */
+    deleteSchedule(id: number): Promise<void>;
 }

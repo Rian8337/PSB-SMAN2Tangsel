@@ -54,8 +54,11 @@ export const mockNotificationApiClient: Mocked<INotificationAPIClient> = {
  * Mock implementation of {@link IScheduleAPIClient}.
  */
 export const mockScheduleApiClient: Mocked<IScheduleAPIClient> = {
-    download: vi.fn(),
     getSchedule: vi.fn(),
+    download: vi.fn(),
+    createSchedule: vi.fn(),
+    updateSchedule: vi.fn(),
+    deleteSchedule: vi.fn(),
 };
 
 /**

@@ -1,6 +1,10 @@
 import { ScheduleDTO } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
-import { IScheduleAPIClient } from "./IScheduleAPIClient";
+import {
+    CreateScheduleOptions,
+    IScheduleAPIClient,
+    UpdateScheduleOptions,
+} from "./IScheduleAPIClient";
 
 /**
  * Provides operations for schedule-related API calls.
@@ -32,5 +36,25 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         }
 
         return { blob, filename };
+    }
+
+    async createSchedule(options: CreateScheduleOptions): Promise<void> {
+        await this.post("/", {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(options),
+        });
+    }
+
+    async updateSchedule(options: UpdateScheduleOptions): Promise<void> {
+        const { id, ...data } = options;
+
+        await this.put(`/${id.toString()}`, {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+    }
+
+    async deleteSchedule(id: number): Promise<void> {
+        await this.delete(`/${id.toString()}`);
     }
 }
