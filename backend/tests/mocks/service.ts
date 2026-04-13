@@ -79,6 +79,9 @@ export const mockScheduleService: Mocked<IScheduleService> = {
     getClassSchedule: vi.fn(),
     getTeacherSchedule: vi.fn(),
     generateIcsFile: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
 };
 
 /**
