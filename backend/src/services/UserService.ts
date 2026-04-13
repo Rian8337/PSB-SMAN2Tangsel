@@ -51,28 +51,28 @@ export class UserService implements IUserService {
         this.verifyName(name);
 
         if (password.trim().length === 0 || !passwordRegex.test(password)) {
-            throw new BadRequestError("userService.invalidPassword");
+            throw new BadRequestError("user.invalidPassword");
         }
 
         if (identifier.length === 0) {
-            throw new BadRequestError("userService.invalidIdentifier");
+            throw new BadRequestError("user.invalidIdentifier");
         }
 
         switch (role) {
             case UserRole.student:
                 if (!/^\d{10}$/.test(identifier)) {
-                    throw new BadRequestError("userService.invalidIdentifier");
+                    throw new BadRequestError("user.invalidIdentifier");
                 }
                 break;
 
             case UserRole.teacher:
                 if (!/^[1-9]\d*$/.test(identifier)) {
-                    throw new BadRequestError("userService.invalidIdentifier");
+                    throw new BadRequestError("user.invalidIdentifier");
                 }
                 break;
 
             default:
-                throw new BadRequestError("userService.invalidRole");
+                throw new BadRequestError("user.invalidRole");
         }
 
         return this.userRepository.create(
@@ -111,14 +111,14 @@ export class UserService implements IUserService {
         const passwordMatch = await compare(currentPassword, user.password);
 
         if (!passwordMatch) {
-            throw new BadRequestError("userService.invalidPassword");
+            throw new BadRequestError("user.invalidPassword");
         }
 
         if (
             newPassword.trim().length === 0 ||
             !passwordRegex.test(newPassword)
         ) {
-            throw new BadRequestError("userService.invalidPassword");
+            throw new BadRequestError("user.invalidPassword");
         }
 
         const samePassword = await compare(newPassword, user.password);
@@ -154,7 +154,7 @@ export class UserService implements IUserService {
             name.length > 100 ||
             !/^[a-zA-Z\s]+$/.test(name)
         ) {
-            throw new BadRequestError("userService.invalidUsername");
+            throw new BadRequestError("user.invalidName");
         }
     }
 }

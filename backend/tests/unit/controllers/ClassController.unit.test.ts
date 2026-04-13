@@ -39,6 +39,21 @@ describe("ClassController (unit)", () => {
             expect(mockClassService.getClassById).toHaveBeenCalledWith(1);
             expect(res.json).toHaveBeenCalledWith(mockClass);
         });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])("should return 400 for invalid class ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.getById(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
     });
 
     describe("list", () => {

@@ -8,6 +8,13 @@ import { NotificationDTO } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import { limitSchema, notificationIdSchema, offsetSchema } from "@/validators";
+import { MessageKey } from "@/i18n/messages";
+import z from "zod";
+
+const coercedNotificationIdSchema = z.coerce
+    .number({ error: "notification.invalidId" satisfies MessageKey })
+    .pipe(notificationIdSchema);
 
 /**
  * Controller that handles notification endpoints.
@@ -40,39 +47,27 @@ export class NotificationController extends BaseController {
         }
 
         try {
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
+            const parsedLimit = limitSchema.safeParse(req.query.limit);
 
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
+            if (!parsedLimit.success) {
+                throw new BadRequestError(
+                    parsedLimit.error.issues[0].message as MessageKey,
+                );
             }
 
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
+            const parsedOffset = offsetSchema.safeParse(req.query.offset);
 
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
+            if (!parsedOffset.success) {
+                throw new BadRequestError(
+                    parsedOffset.error.issues[0].message as MessageKey,
+                );
             }
 
             const notifications =
                 await this.notificationService.getUserNotifications(
                     req.sessionData.userId,
-                    limit,
-                    offset,
+                    parsedLimit.data,
+                    parsedOffset.data,
                 );
 
             res.json(notifications);
@@ -119,11 +114,13 @@ export class NotificationController extends BaseController {
         }
 
         try {
-            const notificationId = parseInt(req.params.id, 10);
+            const parsedId = coercedNotificationIdSchema.safeParse(
+                req.params.id,
+            );
 
-            if (Number.isNaN(notificationId) || notificationId <= 0) {
+            if (!parsedId.success) {
                 throw new BadRequestError(
-                    "notificationController.invalidNotificationIdFormat",
+                    parsedId.error.issues[0].message as MessageKey,
                 );
             }
 
@@ -134,7 +131,7 @@ export class NotificationController extends BaseController {
             }
 
             await this.notificationService.updateReadStatus(
-                notificationId,
+                parsedId.data,
                 req.sessionData.userId,
                 req.body.read,
             );

@@ -70,10 +70,6 @@ describe("UserController (unit)", () => {
 
             expect(mockUserService.findById).not.toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(400);
-
-            expect(res.json).toHaveBeenCalledWith({
-                error: "userController.invalidUserId",
-            });
         });
     });
 

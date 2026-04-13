@@ -8,6 +8,19 @@ import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import {
+    classIdSchema,
+    coercedClassIdSchema,
+    coercedClassSubjectIdSchema,
+    listQuerySchema,
+    subjectIdSchema,
+    userIdSchema,
+} from "@/validators";
+import { MessageKey } from "@/i18n";
+
+const assignedSubjectsQuerySchema = listQuerySchema.extend({
+    classId: classIdSchema,
+});
 
 /**
  * Controller that handles endpoints related to subject management of classes.
@@ -36,41 +49,20 @@ export class ClassSubjectController extends BaseController {
         res: Response<ClassSubjectAssignment[] | { error: string }>,
     ) {
         try {
-            const classId = parseInt(req.params.id, 10);
+            const parsed = assignedSubjectsQuerySchema.safeParse({
+                classId: parseInt(req.params.id, 10),
+                query: req.query.query,
+                limit: req.query.limit,
+                offset: req.query.offset,
+            });
 
-            if (Number.isNaN(classId) || classId <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
-            const query = req.query.query
-                ? decodeURIComponent(req.query.query)
-                : undefined;
-
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
-            }
+            const { classId, query, limit, offset } = parsed.data;
 
             const subjects =
                 await this.classSubjectService.listAssignedSubjects(
@@ -101,48 +93,28 @@ export class ClassSubjectController extends BaseController {
         res: Response<Subject[] | { error: string }>,
     ) {
         try {
-            const classId = parseInt(req.params.id, 10);
+            const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(classId) || classId <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsedClassId.success) {
+                throw new BadRequestError(
+                    parsedClassId.error.issues[0].message as MessageKey,
+                );
             }
 
-            const query = req.query.query
-                ? decodeURIComponent(req.query.query)
-                : undefined;
+            const parsedQuery = listQuerySchema.safeParse(req.query);
 
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
+                );
             }
 
             const subjects =
                 await this.classSubjectService.listUnassignedSubjects(
-                    classId,
-                    query,
-                    limit,
-                    offset,
+                    parsedClassId.data,
+                    parsedQuery.data.query,
+                    parsedQuery.data.limit,
+                    parsedQuery.data.offset,
                 );
 
             res.json(subjects);
@@ -165,35 +137,38 @@ export class ClassSubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const classId = parseInt(req.params.id, 10);
+            const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(classId) || classId <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsedClassId.success) {
+                throw new BadRequestError(
+                    parsedClassId.error.issues[0].message as MessageKey,
+                );
             }
 
-            const { subjectId, teacherId } = req.body;
+            const parsedSubjectId = subjectIdSchema.safeParse(
+                req.body.subjectId,
+            );
 
-            if (
-                typeof subjectId !== "number" ||
-                Number.isNaN(subjectId) ||
-                subjectId <= 0
-            ) {
-                throw new BadRequestError("subjectController.invalidSubjectId");
+            if (!parsedSubjectId.success) {
+                throw new BadRequestError(
+                    parsedSubjectId.error.issues[0].message as MessageKey,
+                );
             }
 
-            if (
-                teacherId !== null &&
-                (typeof teacherId !== "number" ||
-                    Number.isNaN(teacherId) ||
-                    teacherId <= 0)
-            ) {
-                throw new BadRequestError("userController.invalidUserId");
+            const parsedTeacherId = userIdSchema
+                .nullable()
+                .safeParse(req.body.teacherId);
+
+            if (!parsedTeacherId.success) {
+                throw new BadRequestError(
+                    parsedTeacherId.error.issues[0].message as MessageKey,
+                );
             }
 
             await this.classSubjectService.assignSubject(
-                classId,
-                subjectId,
-                teacherId,
+                parsedClassId.data,
+                parsedSubjectId.data,
+                parsedTeacherId.data,
             );
 
             res.sendStatus(201);
@@ -216,28 +191,29 @@ export class ClassSubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const assignmentId = parseInt(req.params.id, 10);
+            const parsedId = coercedClassSubjectIdSchema.safeParse(
+                req.params.id,
+            );
 
-            if (Number.isNaN(assignmentId) || assignmentId <= 0) {
+            if (!parsedId.success) {
                 throw new BadRequestError(
-                    "classSubjectController.invalidAssignmentId",
+                    parsedId.error.issues[0].message as MessageKey,
                 );
             }
 
-            const { teacherId } = req.body;
+            const parsedTeacherId = userIdSchema
+                .nullable()
+                .safeParse(req.body.teacherId);
 
-            if (
-                teacherId !== null &&
-                (typeof teacherId !== "number" ||
-                    Number.isNaN(teacherId) ||
-                    teacherId <= 0)
-            ) {
-                throw new BadRequestError("userController.invalidUserId");
+            if (!parsedTeacherId.success) {
+                throw new BadRequestError(
+                    parsedTeacherId.error.issues[0].message as MessageKey,
+                );
             }
 
             await this.classSubjectService.updateAssignedSubject(
-                assignmentId,
-                teacherId,
+                parsedId.data,
+                parsedTeacherId.data,
             );
 
             res.sendStatus(204);
@@ -257,15 +233,17 @@ export class ClassSubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const assignmentId = parseInt(req.params.id, 10);
+            const parsedId = coercedClassSubjectIdSchema.safeParse(
+                req.params.id,
+            );
 
-            if (Number.isNaN(assignmentId) || assignmentId <= 0) {
+            if (!parsedId.success) {
                 throw new BadRequestError(
-                    "classSubjectController.invalidAssignmentId",
+                    parsedId.error.issues[0].message as MessageKey,
                 );
             }
 
-            await this.classSubjectService.unassignSubject(assignmentId);
+            await this.classSubjectService.unassignSubject(parsedId.data);
 
             res.sendStatus(204);
         } catch (e) {

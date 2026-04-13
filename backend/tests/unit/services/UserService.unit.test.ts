@@ -118,9 +118,7 @@ describe("UserService (unit)", () => {
                     UserRole.student,
                     "1234567890",
                 ),
-            ).rejects.toThrow(
-                new BadRequestError("userService.invalidUsername"),
-            );
+            ).rejects.toThrow(new BadRequestError("user.invalidName"));
         });
 
         it.each([
@@ -140,9 +138,7 @@ describe("UserService (unit)", () => {
                     UserRole.student,
                     "1234567890",
                 ),
-            ).rejects.toThrow(
-                new BadRequestError("userService.invalidPassword"),
-            );
+            ).rejects.toThrow(new BadRequestError("user.invalidPassword"));
         });
 
         it.each([
@@ -163,7 +159,7 @@ describe("UserService (unit)", () => {
                         invalidIdentifier,
                     ),
                 ).rejects.toThrow(
-                    new BadRequestError("userService.invalidIdentifier"),
+                    new BadRequestError("user.invalidIdentifier"),
                 );
             },
         );
@@ -186,7 +182,7 @@ describe("UserService (unit)", () => {
                         invalidIdentifier,
                     ),
                 ).rejects.toThrow(
-                    new BadRequestError("userService.invalidIdentifier"),
+                    new BadRequestError("user.invalidIdentifier"),
                 );
             },
         );
@@ -199,7 +195,7 @@ describe("UserService (unit)", () => {
                     UserRole.administrator,
                     "12345",
                 ),
-            ).rejects.toThrow(new BadRequestError("userService.invalidRole"));
+            ).rejects.toThrow(new BadRequestError("user.invalidRole"));
         });
     });
 
@@ -232,9 +228,7 @@ describe("UserService (unit)", () => {
         ])("should throw for invalid username: %s", async (invalidUsername) => {
             await expect(
                 service.update(1, invalidUsername, true),
-            ).rejects.toThrow(
-                new BadRequestError("userService.invalidUsername"),
-            );
+            ).rejects.toThrow(new BadRequestError("user.invalidName"));
         });
 
         it("should throw if user is not found", async () => {
@@ -292,9 +286,7 @@ describe("UserService (unit)", () => {
 
             await expect(
                 service.updatePassword(1, "wrongPassword", newPassword),
-            ).rejects.toThrow(
-                new BadRequestError("userService.invalidPassword"),
-            );
+            ).rejects.toThrow(new BadRequestError("user.invalidPassword"));
         });
 
         it("should throw if new password fails validation", async () => {
@@ -302,9 +294,7 @@ describe("UserService (unit)", () => {
 
             await expect(
                 service.updatePassword(1, "oldPassword", "weak"),
-            ).rejects.toThrow(
-                new BadRequestError("userService.invalidPassword"),
-            );
+            ).rejects.toThrow(new BadRequestError("user.invalidPassword"));
         });
 
         it("should throw if new password is the same as current password", async () => {

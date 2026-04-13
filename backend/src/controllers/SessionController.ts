@@ -17,6 +17,8 @@ import {
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import { MessageKey } from "@/i18n";
+import { listQuerySchema } from "@/validators";
 
 /**
  * Controller that handles academic session endpoints.
@@ -63,26 +65,24 @@ export class SessionController extends BaseController {
         res: Response<AcademicSessionDTO | { error: string }>,
     ) {
         try {
-            const { session, semester } = req.query;
-
-            if (typeof session !== "string" || typeof semester !== "string") {
-                throw new BadRequestError();
-            }
-
             const parsedSession = validSessionSchema.safeParse(
-                decodeURIComponent(session),
+                decodeURIComponent(req.query.session ?? ""),
             );
 
             if (!parsedSession.success) {
-                throw new BadRequestError();
+                throw new BadRequestError(
+                    parsedSession.error.issues[0].message as MessageKey,
+                );
             }
 
             const parsedSemester = validSemesterSchema.safeParse(
-                parseInt(semester, 10),
+                parseInt(req.query.semester ?? "", 10),
             );
 
             if (!parsedSemester.success) {
-                throw new BadRequestError();
+                throw new BadRequestError(
+                    parsedSemester.error.issues[0].message as MessageKey,
+                );
             }
 
             const sessionData = await this.sessionService.getSession(
@@ -111,39 +111,15 @@ export class SessionController extends BaseController {
         res: Response<AcademicSessionDTO[] | { error: string }>,
     ) {
         try {
-            const { query } = req.query;
+            const parsedQuery = listQuerySchema.safeParse(req.query);
 
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (query !== undefined && typeof query !== "string") {
-                throw new BadRequestError("controller.invalidQueryFormat");
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
+                );
             }
 
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
-            }
+            const { query, limit, offset } = parsedQuery.data;
 
             const sessions = await this.sessionService.listSessions(
                 query,
@@ -237,21 +213,29 @@ export class SessionController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const { session, semester } = req.body;
-
-            if (typeof session !== "string" || typeof semester !== "number") {
-                throw new BadRequestError();
-            }
-
-            const parsedSession = validSessionSchema.parse(
-                decodeURIComponent(session),
+            const parsedSession = validSessionSchema.safeParse(
+                decodeURIComponent(req.body.session ?? ""),
             );
 
-            const parsedSemester = validSemesterSchema.parse(semester);
+            if (!parsedSession.success) {
+                throw new BadRequestError(
+                    parsedSession.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsedSemester = validSemesterSchema.safeParse(
+                req.body.semester,
+            );
+
+            if (!parsedSemester.success) {
+                throw new BadRequestError(
+                    parsedSemester.error.issues[0].message as MessageKey,
+                );
+            }
 
             await this.sessionService.deleteSession(
-                parsedSession,
-                parsedSemester,
+                parsedSession.data,
+                parsedSemester.data,
             );
 
             res.sendStatus(204);

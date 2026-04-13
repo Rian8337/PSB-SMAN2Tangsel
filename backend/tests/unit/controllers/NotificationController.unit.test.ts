@@ -184,7 +184,7 @@ describe("NotificationController (unit)", () => {
                     expect(res.status).toHaveBeenCalledWith(400);
 
                     expect(res.json).toHaveBeenCalledWith({
-                        error: "notificationController.invalidNotificationIdFormat",
+                        error: "notification.invalidId",
                     });
                 },
             );

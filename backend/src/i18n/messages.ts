@@ -25,7 +25,7 @@ interface Localization {
         readonly invalidOffsetRange: string;
     };
 
-    readonly classController: {
+    readonly class: {
         readonly invalidId: string;
     };
 
@@ -35,19 +35,18 @@ interface Localization {
     };
 
     readonly classSubject: {
-        readonly invalidClassSubjectId: string;
-    };
-
-    readonly classSubjectController: {
-        readonly invalidAssignmentId: string;
+        readonly invalidId: string;
     };
 
     readonly classSubjectService: {
         readonly classHasContent: string;
     };
 
+    readonly notification: {
+        readonly invalidId: string;
+    };
+
     readonly notificationController: {
-        readonly invalidNotificationIdFormat: string;
         readonly invalidReadStatusFormat: string;
     };
 
@@ -77,8 +76,8 @@ interface Localization {
         readonly invalidSessionTime: string;
     };
 
-    readonly subjectController: {
-        readonly invalidSubjectId: string;
+    readonly subject: {
+        readonly invalidId: string;
     };
 
     readonly subjectService: {
@@ -87,17 +86,17 @@ interface Localization {
         readonly subjectNotFound: string;
     };
 
-    readonly userController: {
-        readonly invalidUserId: string;
+    readonly user: {
+        readonly invalidId: string;
+        readonly invalidName: string;
+        readonly invalidPassword: string;
+        readonly invalidRole: string;
+        readonly invalidIdentifier: string;
     };
 
     readonly userService: {
-        readonly invalidUsername: string;
         readonly duplicatePassword: string;
         readonly invalidCurrentPassword: string;
-        readonly invalidPassword: string;
-        readonly invalidIdentifier: string;
-        readonly invalidRole: string;
         readonly userNotFound: string;
     };
 }
@@ -137,8 +136,8 @@ export const messages = {
             invalidOffsetRange:
                 "Parameter offset harus berada dalam rentang yang valid.",
         },
-        classController: {
-            invalidId: "Parameter id harus berupa bilangan bulat positif.",
+        class: {
+            invalidId: "ID kelas harus berupa bilangan bulat positif.",
         },
         classService: {
             classNotFound: "Kelas tidak ditemukan.",
@@ -146,20 +145,17 @@ export const messages = {
                 "Kelas yang memiliki mata pelajaran atau siswa tidak dapat dihapus.",
         },
         classSubject: {
-            invalidClassSubjectId:
-                "classSubjectId harus berupa bilangan bulat positif.",
-        },
-        classSubjectController: {
-            invalidAssignmentId:
-                "Parameter assignmentId harus berupa bilangan bulat positif.",
+            invalidId:
+                "ID mata pelajaran kelas harus berupa bilangan bulat positif.",
         },
         classSubjectService: {
             classHasContent:
                 "Tidak dapat menghapus mata pelajaran ini karena sudah memiliki materi ajar atau tugas siswa.",
         },
+        notification: {
+            invalidId: "ID notifikasi harus berupa bilangan bulat positif.",
+        },
         notificationController: {
-            invalidNotificationIdFormat:
-                "Parameter notificationId harus berupa bilangan bulat positif.",
             invalidReadStatusFormat:
                 "Parameter read harus berupa boolean (true atau false).",
         },
@@ -192,9 +188,8 @@ export const messages = {
             sessionNotFound: "Tahun pelajaran tidak ditemukan.",
             invalidSessionTime: "Waktu tahun pelajaran tidak valid.",
         },
-        subjectController: {
-            invalidSubjectId:
-                "Parameter subjectId harus berupa bilangan bulat positif.",
+        subject: {
+            invalidId: "ID mata pelajaran harus berupa bilangan bulat positif.",
         },
         subjectService: {
             cannotDeleteSubjectWithClasses:
@@ -202,20 +197,19 @@ export const messages = {
             duplicateCode: "Kode mata pelajaran sudah ada.",
             subjectNotFound: "Mata pelajaran tidak ditemukan.",
         },
-        userController: {
-            invalidUserId:
-                "Parameter userId harus berupa bilangan bulat positif.",
+        user: {
+            invalidId: "ID pengguna harus berupa bilangan bulat positif.",
+            invalidName:
+                "Nama pengguna tidak valid. Nama pengguna harus terdiri dari 1-100 karakter.",
+            invalidPassword:
+                "Kata sandi tidak valid. Kata sandi harus terdiri dari minimal 8 karakter, dengan setidaknya 1 huruf kapital, 1 huruf kecil, 1 angka, dan 1 simbol.",
+            invalidRole: "Peran pengguna tidak valid.",
+            invalidIdentifier: "Identifikasi tidak valid.",
         },
         userService: {
-            invalidIdentifier: "Identifikasi tidak valid.",
             duplicatePassword:
                 "Kata sandi baru tidak boleh sama dengan kata sandi lama.",
             invalidCurrentPassword: "Kata sandi saat ini tidak valid.",
-            invalidPassword:
-                "Kata sandi tidak valid. Kata sandi harus terdiri dari minimal 8 karakter, dengan setidaknya 1 huruf kapital, 1 huruf kecil, 1 angka, dan 1 simbol.",
-            invalidUsername:
-                "Nama pengguna tidak valid. Nama pengguna harus terdiri dari 1-100 karakter.",
-            invalidRole: "Peran pengguna tidak valid.",
             userNotFound: "Pengguna tidak ditemukan.",
         },
     },
@@ -246,8 +240,8 @@ export const messages = {
             invalidOffsetRange:
                 "Parameter offset must be within a valid range.",
         },
-        classController: {
-            invalidId: "Parameter id must be a positive integer.",
+        class: {
+            invalidId: "Class ID must be a positive integer.",
         },
         classService: {
             classNotFound: "Class not found.",
@@ -255,19 +249,16 @@ export const messages = {
                 "Classes with associated subjects or students cannot be deleted.",
         },
         classSubject: {
-            invalidClassSubjectId: "classSubjectId must be a positive integer.",
-        },
-        classSubjectController: {
-            invalidAssignmentId:
-                "Parameter assignmentId must be a positive integer.",
+            invalidId: "classSubjectId must be a positive integer.",
         },
         classSubjectService: {
             classHasContent:
                 "Cannot unassign this subject. It already has teaching materials or student assignments associated with it.",
         },
+        notification: {
+            invalidId: "Notification ID must be a positive integer.",
+        },
         notificationController: {
-            invalidNotificationIdFormat:
-                "Parameter notificationId must be a positive integer.",
             invalidReadStatusFormat:
                 "Parameter read must be a boolean (true or false).",
         },
@@ -297,8 +288,8 @@ export const messages = {
             sessionNotFound: "Academic session not found.",
             invalidSessionTime: "Invalid academic session time.",
         },
-        subjectController: {
-            invalidSubjectId: "Parameter subjectId must be a positive integer.",
+        subject: {
+            invalidId: "Subject ID must be a positive integer.",
         },
         subjectService: {
             cannotDeleteSubjectWithClasses:
@@ -306,19 +297,19 @@ export const messages = {
             duplicateCode: "Subject code already exists.",
             subjectNotFound: "Subject not found.",
         },
-        userController: {
-            invalidUserId: "Parameter userId must be a positive integer.",
+        user: {
+            invalidId: "User ID must be a positive integer.",
+            invalidName:
+                "Invalid username. Username must be between 1 and 100 characters long.",
+            invalidPassword:
+                "Invalid password. Password must be at least 8 characters long with at least 1 capital letter, 1 lowercase letter, 1 number, and 1 symbol.",
+            invalidRole: "Invalid user role.",
+            invalidIdentifier: "Invalid identifier.",
         },
         userService: {
-            invalidIdentifier: "Invalid identifier.",
             duplicatePassword:
                 "New password must be different from the old password.",
             invalidCurrentPassword: "Invalid current password.",
-            invalidPassword:
-                "Invalid password. Password must be at least 8 characters long with at least 1 capital letter, 1 lowercase letter, 1 number, and 1 symbol.",
-            invalidUsername:
-                "Invalid username. Username must be between 1 and 100 characters long.",
-            invalidRole: "Invalid user role.",
             userNotFound: "User not found.",
         },
     },

@@ -1,17 +1,23 @@
 import { Controller } from "@/decorators/controller";
-import { BaseController } from "./BaseController";
-import { inject } from "tsyringe";
-import { dependencyTokens } from "@/dependencies/tokens";
-import { IUserService } from "@/services";
-import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { Roles } from "@/decorators/roles";
+import { Delete, Get, Patch, Post } from "@/decorators/routes";
+import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
+import { IUserService } from "@/services";
+import { BadRequestError } from "@/types";
+import {
+    coercedUserIdSchema,
+    createUserSchema,
+    listQuerySchema,
+    validNameSchema,
+    validPasswordSchema,
+    validRoleSchema,
+} from "@/validators";
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { Request, Response } from "express";
-import { BadRequestError } from "@/types";
-import { listQuerySchema } from "@/validators";
-import { validRoleSchema } from "@psb/shared/validator";
-import { MessageKey } from "@/i18n";
+import { inject } from "tsyringe";
 import z from "zod";
+import { BaseController } from "./BaseController";
 
 const listUsersValidationSchema = listQuerySchema.extend({
     role: z.coerce
@@ -51,10 +57,6 @@ export class UserController extends BaseController {
         >,
         res: Response<UserListItem[] | { error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
             const parsed = listUsersValidationSchema.safeParse(req.query);
 
@@ -88,18 +90,16 @@ export class UserController extends BaseController {
         req: Request<{ id: string }, UserListItem | { error: string }>,
         res: Response<UserListItem | { error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
-            const userId = parseInt(req.params.id, 10);
+            const parsedId = coercedUserIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(userId) || userId <= 0) {
-                throw new BadRequestError("userController.invalidUserId");
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
             }
 
-            const user = await this.userService.findById(userId);
+            const user = await this.userService.findById(parsedId.data);
 
             res.json({
                 id: user.id,
@@ -131,21 +131,16 @@ export class UserController extends BaseController {
         >,
         res: Response<{ error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
-            const { name, password, role, identifier } = req.body;
+            const parsedData = createUserSchema.safeParse(req.body);
 
-            if (
-                typeof name !== "string" ||
-                typeof password !== "string" ||
-                typeof role !== "number" ||
-                typeof identifier !== "string"
-            ) {
-                throw new BadRequestError();
+            if (!parsedData.success) {
+                throw new BadRequestError(
+                    parsedData.error.issues[0].message as MessageKey,
+                );
             }
+
+            const { name, password, role, identifier } = parsedData.data;
 
             await this.userService.create(name, password, role, identifier);
 
@@ -173,19 +168,30 @@ export class UserController extends BaseController {
         }
 
         try {
-            const { currentPassword, newPassword } = req.body;
+            const parsedCurrentPassword = validPasswordSchema.safeParse(
+                req.body.currentPassword,
+            );
 
-            if (
-                typeof currentPassword !== "string" ||
-                typeof newPassword !== "string"
-            ) {
-                throw new BadRequestError();
+            if (!parsedCurrentPassword.success) {
+                throw new BadRequestError(
+                    parsedCurrentPassword.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsedNewPassword = validPasswordSchema.safeParse(
+                req.body.newPassword,
+            );
+
+            if (!parsedNewPassword.success) {
+                throw new BadRequestError(
+                    parsedNewPassword.error.issues[0].message as MessageKey,
+                );
             }
 
             await this.userService.updatePassword(
                 req.sessionData.userId,
-                currentPassword,
-                newPassword,
+                parsedCurrentPassword.data,
+                parsedNewPassword.data,
             );
 
             res.sendStatus(200);
@@ -207,24 +213,34 @@ export class UserController extends BaseController {
         >,
         res: Response<{ error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
-            const userId = parseInt(req.params.id, 10);
-            const { name, active } = req.body;
+            const parsedId = coercedUserIdSchema.safeParse(req.params.id);
 
-            if (
-                Number.isNaN(userId) ||
-                userId <= 0 ||
-                typeof name !== "string" ||
-                typeof active !== "boolean"
-            ) {
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsedName = validNameSchema.safeParse(req.body.name);
+
+            if (!parsedName.success) {
+                throw new BadRequestError(
+                    parsedName.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const { active } = req.body;
+
+            if (typeof active !== "boolean") {
                 throw new BadRequestError();
             }
 
-            await this.userService.update(userId, name, active);
+            await this.userService.update(
+                parsedId.data,
+                parsedName.data,
+                active,
+            );
 
             res.sendStatus(200);
         } catch (e) {
@@ -241,18 +257,16 @@ export class UserController extends BaseController {
         req: Request<{ id: string }, { error: string }>,
         res: Response<{ error: string }>,
     ) {
-        if (!this.verifySession(req, res)) {
-            return;
-        }
-
         try {
-            const userId = parseInt(req.params.id, 10);
+            const paramsId = coercedUserIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(userId) || userId <= 0) {
-                throw new BadRequestError();
+            if (!paramsId.success) {
+                throw new BadRequestError(
+                    paramsId.error.issues[0].message as MessageKey,
+                );
             }
 
-            await this.userService.delete(userId);
+            await this.userService.delete(paramsId.data);
 
             res.sendStatus(204);
         } catch (e) {

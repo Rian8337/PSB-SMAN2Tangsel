@@ -2,8 +2,10 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
 import { IClassService } from "@/services";
 import { BadRequestError } from "@/types";
+import { coercedClassIdSchema, listQuerySchema } from "@/validators";
 import { Class, UserRole } from "@psb/shared/types";
 import {
     insertClassSchema,
@@ -14,6 +16,12 @@ import {
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+import z from "zod";
+
+const classListQuerySchema = listQuerySchema.extend({
+    session: validSessionSchema.optional(),
+    semester: z.coerce.number().pipe(validSemesterSchema).optional(),
+});
 
 /**
  * Controller that handles class endpoints.
@@ -48,64 +56,20 @@ export class ClassController extends BaseController {
         res: Response<Class[] | { error: string }>,
     ) {
         try {
-            const session = req.query.session;
+            const parsed = classListQuerySchema.safeParse(req.query);
 
-            const semester = req.query.semester
-                ? parseInt(req.query.semester, 10)
-                : undefined;
-
-            const query = req.query.query
-                ? decodeURIComponent(req.query.query)
-                : undefined;
-
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            const parsedSession = session
-                ? validSessionSchema.safeParse(session)
-                : undefined;
-
-            if (session && !parsedSession?.success) {
-                throw new BadRequestError();
-            }
-
-            const parsedSemester = semester
-                ? validSemesterSchema.safeParse(semester)
-                : undefined;
-
-            if (semester && !parsedSemester?.success) {
-                throw new BadRequestError();
-            }
-
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
             const classes = await this.classService.listClasses({
-                session: parsedSession?.data,
-                semester: parsedSemester?.data,
-                query,
-                limit,
-                offset,
+                session: parsed.data.session,
+                semester: parsed.data.semester,
+                query: parsed.data.query,
+                limit: parsed.data.limit,
+                offset: parsed.data.offset,
             });
 
             res.json(classes);
@@ -124,13 +88,15 @@ export class ClassController extends BaseController {
         res: Response<Class | { error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsed = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
-            const clazz = await this.classService.getClassById(id);
+            const clazz = await this.classService.getClassById(parsed.data);
 
             res.json(clazz);
         } catch (e) {
@@ -151,7 +117,9 @@ export class ClassController extends BaseController {
             const parsedData = insertClassSchema.safeParse(req.body);
 
             if (!parsedData.success) {
-                throw new BadRequestError();
+                throw new BadRequestError(
+                    parsedData.error.issues[0].message as MessageKey,
+                );
             }
 
             await this.classService.createClass(
@@ -176,19 +144,23 @@ export class ClassController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsed = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
             const parsedName = validClassNameSchema.safeParse(req.body.name);
 
             if (!parsedName.success) {
-                throw new BadRequestError();
+                throw new BadRequestError(
+                    parsedName.error.issues[0].message as MessageKey,
+                );
             }
 
-            await this.classService.updateClass(id, parsedName.data);
+            await this.classService.updateClass(parsed.data, parsedName.data);
 
             res.sendStatus(204);
         } catch (e) {
@@ -206,13 +178,15 @@ export class ClassController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsed = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("classController.invalidId");
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
             }
 
-            await this.classService.deleteClass(id);
+            await this.classService.deleteClass(parsed.data);
 
             res.sendStatus(204);
         } catch (e) {

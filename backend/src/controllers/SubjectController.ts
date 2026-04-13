@@ -2,13 +2,15 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
 import { ISubjectService } from "@/services";
 import { BadRequestError } from "@/types";
+import { coercedSubjectIdSchema, listQuerySchema } from "@/validators";
 import { Subject, UserRole } from "@psb/shared/types";
+import { insertSubjectSchema } from "@psb/shared/validator";
 import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
-import { insertSubjectSchema } from "@psb/shared/validator";
 
 /**
  * Controller that handles subject endpoints.
@@ -37,40 +39,18 @@ export class SubjectController extends BaseController {
         res: Response<Subject[] | { error: string }>,
     ) {
         try {
-            const query = req.query.query
-                ? decodeURIComponent(req.query.query)
-                : undefined;
+            const parsedQuery = listQuerySchema.safeParse(req.query);
 
-            const limit = req.query.limit
-                ? parseInt(req.query.limit, 10)
-                : undefined;
-
-            const offset = req.query.offset
-                ? parseInt(req.query.offset, 10)
-                : undefined;
-
-            if (limit !== undefined) {
-                if (Number.isNaN(limit)) {
-                    throw new BadRequestError("controller.invalidLimitFormat");
-                }
-                if (limit <= 0 || limit > 50) {
-                    throw new BadRequestError("controller.invalidLimitRange");
-                }
-            }
-
-            if (offset !== undefined) {
-                if (Number.isNaN(offset)) {
-                    throw new BadRequestError("controller.invalidOffsetFormat");
-                }
-                if (offset < 0) {
-                    throw new BadRequestError("controller.invalidOffsetRange");
-                }
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
+                );
             }
 
             const subjects = await this.subjectService.listSubjects(
-                query,
-                limit,
-                offset,
+                parsedQuery.data.query,
+                parsedQuery.data.limit,
+                parsedQuery.data.offset,
             );
 
             res.json(subjects);
@@ -89,13 +69,15 @@ export class SubjectController extends BaseController {
         res: Response<Subject | { error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("subjectController.invalidSubjectId");
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
             }
 
-            const subject = await this.subjectService.findById(id);
+            const subject = await this.subjectService.findById(parsedId.data);
 
             res.json(subject);
         } catch (e) {
@@ -140,10 +122,12 @@ export class SubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("subjectController.invalidSubjectId");
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
             }
 
             const parsedData = insertSubjectSchema.safeParse(req.body);
@@ -153,7 +137,7 @@ export class SubjectController extends BaseController {
             }
 
             await this.subjectService.updateSubject(
-                id,
+                parsedId.data,
                 parsedData.data.code,
                 parsedData.data.name,
                 parsedData.data.active ?? true,
@@ -175,13 +159,15 @@ export class SubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const id = parseInt(req.params.id, 10);
+            const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);
 
-            if (Number.isNaN(id) || id <= 0) {
-                throw new BadRequestError("subjectController.invalidSubjectId");
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
             }
 
-            await this.subjectService.deleteSubject(id);
+            await this.subjectService.deleteSubject(parsedId.data);
 
             res.sendStatus(204);
         } catch (e) {
