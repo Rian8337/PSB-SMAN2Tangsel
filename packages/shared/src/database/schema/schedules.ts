@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
     foreignKey,
+    index,
     int,
     mysqlTable,
     timestamp,
@@ -55,6 +56,11 @@ export const schedules = mysqlTable(
             foreignColumns: [classSubjects.id],
             name: "fk_schedule_class_subject",
         }).onDelete("cascade"),
+        index("idx_schedule_day_time").on(
+            table.day,
+            table.startTime,
+            table.endTime,
+        ),
     ],
 );
 

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
+import { foreignKey, index, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { classes } from "./classes";
 import { materials } from "./materials";
 import { schedules } from "./schedules";
@@ -51,6 +51,8 @@ export const classSubjects = mysqlTable(
             foreignColumns: [teachers.userId],
             name: "fk_class_subject_teacher",
         }).onDelete("set null"),
+        index("idx_class_subject_class_id").on(table.classId),
+        index("idx_class_subject_teacher_id").on(table.teacherId),
     ],
 );
 
