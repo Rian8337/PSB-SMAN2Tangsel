@@ -1,14 +1,18 @@
 import { ClassController } from "@/controllers";
 import { MessageKey } from "@/i18n";
-import { Class } from "@psb/shared/types";
+import { Class, ScheduleDTO } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
     mockClassService,
+    mockScheduleService,
 } from "@test/mocks";
 
 describe("ClassController (unit)", () => {
-    const controller = new ClassController(mockClassService);
+    const controller = new ClassController(
+        mockClassService,
+        mockScheduleService,
+    );
 
     const mockClass: Class = {
         id: 1,
@@ -17,6 +21,12 @@ describe("ClassController (unit)", () => {
         semester: 1,
     };
 
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        res = createMockResponse();
+    });
+
     describe("getById", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
@@ -24,11 +34,9 @@ describe("ClassController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should return class data when the class exists", async () => {
@@ -56,6 +64,50 @@ describe("ClassController (unit)", () => {
         });
     });
 
+    describe("getClassSchedule", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            ScheduleDTO[] | { error: string }
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+
+        beforeEach(() => {
+            req = createMockRequest({ params: { id: "1" } });
+        });
+
+        it("should return class schedule when the class exists", async () => {
+            const mockSchedule: ScheduleDTO[] = [];
+
+            mockScheduleService.getClassSchedule.mockResolvedValue(
+                mockSchedule,
+            );
+
+            await controller.getClassSchedule(req, res);
+
+            expect(mockScheduleService.getClassSchedule).toHaveBeenCalledWith(
+                1,
+            );
+
+            expect(res.json).toHaveBeenCalledWith(mockSchedule);
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-2" },
+        ])("should return 400 for invalid class ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.getClassSchedule(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
     describe("list", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
@@ -71,7 +123,6 @@ describe("ClassController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -81,8 +132,6 @@ describe("ClassController (unit)", () => {
                     query: "IPA",
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should list classes based on query parameters", async () => {
@@ -142,14 +191,11 @@ describe("ClassController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
                 body: { name: "X IPA 1", session: "2023/2024", semester: 1 },
             });
-
-            res = createMockResponse();
         });
 
         it("should create a new class with valid data", async () => {
@@ -184,15 +230,12 @@ describe("ClassController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
                 params: { id: "1" },
                 body: { name: "X IPA 2" },
             });
-
-            res = createMockResponse();
         });
 
         it("should update class name with valid data", async () => {
@@ -240,11 +283,9 @@ describe("ClassController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should delete class with valid ID", async () => {
