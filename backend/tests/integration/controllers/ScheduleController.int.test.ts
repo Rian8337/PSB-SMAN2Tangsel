@@ -1,4 +1,4 @@
-import { schedules } from "@psb/shared/schema";
+import { classSubjects, schedules } from "@psb/shared/schema";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ScheduleDay } from "@psb/shared/types";
 import { app } from "@test/setup/app";
@@ -14,6 +14,9 @@ import request from "supertest";
 describe("ScheduleController (integration)", () => {
     const student = seededPrimaryData.students[0];
     const teacher = seededPrimaryData.teachers[0];
+
+    let classSubject: typeof classSubjects.$inferInsert;
+    let schedule: typeof schedules.$inferInsert;
 
     beforeAll(async () => {
         const session = seededPrimaryData.sessions[0];
@@ -31,14 +34,14 @@ describe("ScheduleController (integration)", () => {
             studentId: student.userId,
         });
 
-        const classSubject = await seeders.classSubjects.seedOne({
+        classSubject = await seeders.classSubjects.seedOne({
             id: 1,
             classId: clazz.id!,
             subjectId: subject.id,
             teacherId: teacher.userId,
         });
 
-        await seeders.schedules.seedOne({
+        schedule = await seeders.schedules.seedOne({
             id: 1,
             classSubjectId: classSubject.id!,
             day: ScheduleDay.monday,
@@ -58,56 +61,166 @@ describe("ScheduleController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return the student's schedule", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginStudent(agent);
-            });
+            const res = await agent.get(endpoint);
 
-            it("should return the student's schedule", async () => {
-                const res = await agent.get(endpoint);
+            expect(res.status).toBe(200);
+            expect(res.body).toBeInstanceOf(Array);
+            expect(res.body).toHaveLength(1);
 
-                expect(res.status).toBe(200);
-                expect(res.body).toBeInstanceOf(Array);
-                expect(res.body).toHaveLength(1);
-                expect(
-                    (res.body as (typeof schedules.$inferSelect)[])[0].day,
-                ).toBe(ScheduleDay.monday);
-            });
+            expect((res.body as (typeof schedule)[])[0].day).toBe(
+                ScheduleDay.monday,
+            );
         });
 
-        describe("Teacher", () => {
+        it("should return the teacher's schedule", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => {
-                await loginTeacher(agent);
-            });
+            const res = await agent.get(endpoint);
 
-            it("should return the teacher's schedule", async () => {
-                const res = await agent.get(endpoint);
+            expect(res.status).toBe(200);
+            expect(res.body).toBeInstanceOf(Array);
+            expect(res.body).toHaveLength(1);
 
-                expect(res.status).toBe(200);
-                expect(res.body).toBeInstanceOf(Array);
-                expect(res.body).toHaveLength(1);
-                expect(
-                    (res.body as (typeof schedules.$inferSelect)[])[0].day,
-                ).toBe(ScheduleDay.monday);
-            });
+            expect((res.body as (typeof schedule)[])[0].day).toBe(
+                ScheduleDay.monday,
+            );
         });
 
-        describe("Administrator", () => {
+        it("should return 403 if user is an administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+    });
 
-            it("should restrict access", async () => {
-                const res = await agent.get(endpoint);
+    describe("POST /schedule", () => {
+        const endpoint = "/schedule";
+        let payload: object;
 
-                expect(res.status).toBe(403);
-            });
+        beforeAll(() => {
+            payload = {
+                classSubjectId: classSubject.id!,
+                day: ScheduleDay.wednesday,
+                startTime: new Date(2024, 0, 3, 10).getTime(),
+                endTime: new Date(2024, 0, 3, 11).getTime(),
+            };
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).post(endpoint).send(payload);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 if user is a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 201 if user is an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(201);
+        });
+    });
+
+    describe("PUT /schedule/:id", () => {
+        let endpoint: string;
+
+        const payload = {
+            day: ScheduleDay.monday,
+            // Shift schedule by 30 minutes.
+            startTime: new Date(2024, 0, 1, 8, 30).getTime(),
+            endTime: new Date(2024, 0, 1, 9, 30).getTime(),
+        };
+
+        beforeAll(() => {
+            endpoint = `/schedule/${schedule.id!.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).put(endpoint).send(payload);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 if user is a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 200 if user is an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(200);
+        });
+    });
+
+    describe("DELETE /schedule/:id", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/schedule/${schedule.id!.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).delete(endpoint);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 if user is a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 204 if user is an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(204);
         });
     });
 });
