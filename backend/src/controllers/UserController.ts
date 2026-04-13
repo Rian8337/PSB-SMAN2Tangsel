@@ -11,9 +11,13 @@ import { BadRequestError } from "@/types";
 import { listQuerySchema } from "@/validators";
 import { validRoleSchema } from "@psb/shared/validator";
 import { MessageKey } from "@/i18n";
+import z from "zod";
 
 const listUsersValidationSchema = listQuerySchema.extend({
-    role: validRoleSchema.optional(),
+    role: z.coerce
+        .number({ error: "controller.invalidRoleFormat" satisfies MessageKey })
+        .pipe(validRoleSchema)
+        .optional(),
 });
 
 /**

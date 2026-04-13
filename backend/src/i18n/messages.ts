@@ -17,6 +17,7 @@ interface Localization {
     };
 
     readonly controller: {
+        readonly invalidRoleFormat: string;
         readonly invalidQueryFormat: string;
         readonly invalidLimitFormat: string;
         readonly invalidLimitRange: string;
@@ -109,6 +110,8 @@ export const messages = {
                 "Terlalu banyak percobaan masuk. Mohon coba lagi nanti.",
         },
         controller: {
+            invalidRoleFormat:
+                "Parameter role harus berupa peran pengguna yang valid.",
             invalidQueryFormat:
                 "Parameter query harus berupa string jika disertakan.",
             invalidLimitFormat:
@@ -202,6 +205,7 @@ export const messages = {
             tooManyAttempts: "Too many login attempts. Please try again later.",
         },
         controller: {
+            invalidRoleFormat: "Parameter role must be a valid user role.",
             invalidQueryFormat: "Parameter query must be a string if provided.",
             invalidLimitFormat: "Parameter limit must be a positive integer.",
             invalidLimitRange: "Parameter limit must be within a valid range.",
