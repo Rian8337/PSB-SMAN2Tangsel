@@ -16,6 +16,7 @@ export interface IUserAPIClient {
     /**
      * Lists users for display in the UI.
      *
+     * @param role An optional {@link UserRole} to filter the users by their role.
      * @param query The search query to filter users by name or identifier.
      * @param limit The maximum number of users to return. Defaults to 5.
      * @param offset The number of users to skip before starting to collect the result set. Defaults to 0.
@@ -23,22 +24,7 @@ export interface IUserAPIClient {
      * @returns A list of user items containing basic information about each user.
      */
     listUsers(
-        query?: string,
-        limit?: number,
-        offset?: number,
-        signal?: AbortSignal,
-    ): Promise<UserListItem[]>;
-
-    /**
-     * Lists teachers for display in the teacher selection dropdown when assigning a teacher to a class subject.
-     *
-     * @param query The search query to filter teachers by name or identifier.
-     * @param limit The maximum number of teachers to return. Defaults to 5.
-     * @param offset The number of teachers to skip before starting to collect the result set. Defaults to 0.
-     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list teachers.
-     * @returns A list of user items containing basic information about each teacher.
-     */
-    listTeachers(
+        role?: UserRole,
         query?: string,
         limit?: number,
         offset?: number,

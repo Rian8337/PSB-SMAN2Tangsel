@@ -45,6 +45,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
 
             try {
                 const data = await userApiClient.listUsers(
+                    undefined,
                     query,
                     limit,
                     (page - 1) * limit,

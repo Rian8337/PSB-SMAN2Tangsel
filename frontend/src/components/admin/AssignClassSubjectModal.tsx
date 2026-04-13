@@ -4,7 +4,7 @@ import { APIError } from "@/api";
 import { useClassSubjectApiClient } from "@/providers/api/class-subject-api-provider";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
 import { Text } from "@chakra-ui/react";
-import { Class } from "@psb/shared/types";
+import { Class, UserRole } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import { AsyncSelect, AsyncSelectOption } from "../ui/AsyncSelect";
@@ -71,7 +71,8 @@ export function AssignClassSubjectModal({
 
     const fetchTeachers = useCallback(
         async (query: string, signal?: AbortSignal) => {
-            const teachers = await userApiClient.listTeachers(
+            const teachers = await userApiClient.listUsers(
+                UserRole.teacher,
                 query,
                 10,
                 undefined,

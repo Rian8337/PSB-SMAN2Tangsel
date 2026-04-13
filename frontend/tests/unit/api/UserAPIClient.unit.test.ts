@@ -66,7 +66,13 @@ describe("UserAPIClient (unit)", () => {
         it("should append all provided query parameters safely", async () => {
             const controller = new AbortController();
 
-            await client.listUsers("  John  ", 10, 20, controller.signal);
+            await client.listUsers(
+                undefined,
+                "  John  ",
+                10,
+                20,
+                controller.signal,
+            );
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
@@ -80,24 +86,17 @@ describe("UserAPIClient (unit)", () => {
             expect(urlStr).toContain("offset=20");
             expect(options?.signal).toBe(controller.signal);
         });
-    });
 
-    describe("listTeachers", () => {
-        it("should target the teachers endpoint and append query parameters safely", async () => {
-            const controller = new AbortController();
-
-            await client.listTeachers("Budi", 5, 0, controller.signal);
+        it("should append the role parameter when provided", async () => {
+            await client.listUsers(UserRole.student);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
-            const [url, options] = fetchSpy.mock.calls[0];
+            const [url] = fetchSpy.mock.calls[0];
             const urlStr = (url as URL | string).toString();
 
-            expect(urlStr).toContain("/users/teachers");
-            expect(urlStr).toContain("query=Budi");
-            expect(urlStr).toContain("limit=5");
-            expect(urlStr).toContain("offset=0");
-            expect(options?.signal).toBe(controller.signal);
+            expect(urlStr).toContain("/users/list");
+            expect(urlStr).toContain(`role=${UserRole.student.toString()}`);
         });
     });
 

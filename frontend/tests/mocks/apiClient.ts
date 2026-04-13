@@ -87,7 +87,6 @@ export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
 export const mockUserApiClient: Mocked<IUserAPIClient> = {
     getUser: vi.fn(),
     listUsers: vi.fn(),
-    listTeachers: vi.fn(),
     createUser: vi.fn(),
     updateUser: vi.fn(),
     updatePassword: vi.fn(),

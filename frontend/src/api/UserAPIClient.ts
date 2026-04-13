@@ -17,6 +17,7 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
     }
 
     listUsers(
+        role?: UserRole,
         query?: string,
         limit?: number,
         offset?: number,
@@ -24,28 +25,9 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
     ): Promise<UserListItem[]> {
         const url = new URL(this.baseURL + "/list");
 
-        if (typeof query === "string" && query.trim().length > 0) {
-            url.searchParams.append("query", query.trim());
+        if (role !== undefined) {
+            url.searchParams.append("role", role.toString());
         }
-
-        if (limit !== undefined) {
-            url.searchParams.append("limit", limit.toString());
-        }
-
-        if (offset !== undefined) {
-            url.searchParams.append("offset", offset.toString());
-        }
-
-        return this.get(url, { signal }).then((res) => res.json());
-    }
-
-    listTeachers(
-        query?: string,
-        limit?: number,
-        offset?: number,
-        signal?: AbortSignal,
-    ): Promise<UserListItem[]> {
-        const url = new URL(this.baseURL + "/teachers");
 
         if (typeof query === "string" && query.trim().length > 0) {
             url.searchParams.append("query", query.trim());

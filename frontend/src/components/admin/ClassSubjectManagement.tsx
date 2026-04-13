@@ -13,7 +13,7 @@ import {
     Spinner,
     Table,
 } from "@chakra-ui/react";
-import { Class, ClassSubjectAssignment } from "@psb/shared/types";
+import { Class, ClassSubjectAssignment, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
@@ -321,7 +321,8 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                                                         signal,
                                                     ) => {
                                                         const teachers =
-                                                            await userApiClient.listTeachers(
+                                                            await userApiClient.listUsers(
+                                                                UserRole.teacher,
                                                                 query,
                                                                 10,
                                                                 undefined,

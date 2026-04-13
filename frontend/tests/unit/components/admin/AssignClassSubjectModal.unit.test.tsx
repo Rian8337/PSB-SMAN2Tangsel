@@ -77,7 +77,7 @@ describe("AssignClassSubjectModal (unit)", () => {
             mockSubjects,
         );
 
-        mockUserApiClient.listTeachers.mockResolvedValue([mockTeacher]);
+        mockUserApiClient.listUsers.mockResolvedValue([mockTeacher]);
         mockClassSubjectApiClient.assignSubject.mockResolvedValue(undefined);
 
         render();
