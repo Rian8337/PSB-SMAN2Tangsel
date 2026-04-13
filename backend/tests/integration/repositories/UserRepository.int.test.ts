@@ -1,5 +1,6 @@
 import { UserRepository } from "@/repositories";
 import { seededPrimaryData } from "@psb/shared/tests";
+import { UserRole } from "@psb/shared/types";
 import { testDb } from "@test/utils";
 
 describe("UserRepository (integration)", () => {
@@ -39,10 +40,22 @@ describe("UserRepository (integration)", () => {
         });
 
         it("should respect custom limit and offset parameters", async () => {
-            const page1 = await repository.listUsers(undefined, 2, 0);
+            const page1 = await repository.listUsers(
+                undefined,
+                undefined,
+                2,
+                0,
+            );
+
             expect(page1).toHaveLength(2);
 
-            const page2 = await repository.listUsers(undefined, 2, 2);
+            const page2 = await repository.listUsers(
+                undefined,
+                undefined,
+                2,
+                2,
+            );
+
             expect(page2.length).toBeGreaterThanOrEqual(1);
 
             expect(page1[0].id).not.toBe(page2[0].id);
@@ -51,7 +64,7 @@ describe("UserRepository (integration)", () => {
 
         it("should return users matching a partial name search", async () => {
             const partialName = testUser.name.substring(1, 4);
-            const users = await repository.listUsers(partialName);
+            const users = await repository.listUsers(undefined, partialName);
 
             expect(users.length).toBeGreaterThan(0);
             expect(users.some((u) => u.id === testUser.id)).toBe(true);
@@ -59,17 +72,28 @@ describe("UserRepository (integration)", () => {
 
         it("should return users matching a partial identifier search", async () => {
             const partialIdentifier = testUser.identifier.slice(-3);
-            const users = await repository.listUsers(partialIdentifier);
+
+            const users = await repository.listUsers(
+                undefined,
+                partialIdentifier,
+            );
 
             expect(users.length).toBeGreaterThan(0);
             expect(users.some((u) => u.id === testUser.id)).toBe(true);
         });
 
         it("should return an empty array if no users match the search", async () => {
-            const users = await repository.listUsers("nonexistent");
+            const users = await repository.listUsers(undefined, "nonexistent");
 
             expect(users).toHaveLength(0);
             expect(Array.isArray(users)).toBe(true);
+        });
+
+        it("should filter users by role", async () => {
+            const users = await repository.listUsers(UserRole.student);
+
+            expect(users.length).toBeGreaterThan(0);
+            expect(users.every((u) => u.role === UserRole.student)).toBe(true);
         });
     });
 });
