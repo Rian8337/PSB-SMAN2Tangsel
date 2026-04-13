@@ -21,6 +21,7 @@ import { IScheduleRepository } from "./IScheduleRepository";
 
 interface ScheduleQueryResult {
     id: number;
+    classSubjectId: number;
     day: ScheduleDay;
     startTime: Date;
     endTime: Date;
@@ -47,6 +48,7 @@ export class ScheduleRepository
         return this.db
             .select({
                 id: schedules.id,
+                classSubjectId: schedules.classSubjectId,
                 day: schedules.day,
                 startTime: schedules.startTime,
                 endTime: schedules.endTime,
@@ -67,6 +69,7 @@ export class ScheduleRepository
         const records = await this.db
             .select({
                 id: schedules.id,
+                classSubjectId: schedules.classSubjectId,
                 day: schedules.day,
                 startTime: schedules.startTime,
                 endTime: schedules.endTime,
@@ -106,6 +109,7 @@ export class ScheduleRepository
         const records: ScheduleQueryResult[] = await this.db
             .select({
                 id: schedules.id,
+                classSubjectId: schedules.classSubjectId,
                 day: schedules.day,
                 startTime: schedules.startTime,
                 endTime: schedules.endTime,
@@ -214,6 +218,7 @@ export class ScheduleRepository
     private mapToDTO(schedules: ScheduleQueryResult[]): ScheduleDTO[] {
         return schedules.map((s) => ({
             id: s.id,
+            classSubjectId: s.classSubjectId,
             day: s.day,
             startTime: s.startTime.getTime(),
             endTime: s.endTime.getTime(),

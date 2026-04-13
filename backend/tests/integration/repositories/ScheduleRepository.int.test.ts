@@ -44,6 +44,7 @@ describe("ScheduleRepository (integration)", () => {
 
             expect(scheduleDto).toMatchObject({
                 id: schedule.id,
+                classSubjectId: classSubject.id,
                 day: ScheduleDay.monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9).getTime(),

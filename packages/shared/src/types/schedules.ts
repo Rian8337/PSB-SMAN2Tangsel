@@ -14,6 +14,7 @@ export enum ScheduleDay {
  */
 export interface ScheduleDTO {
     readonly id: number;
+    readonly classSubjectId: number;
     readonly day: ScheduleDay;
     readonly startTime: number;
     readonly endTime: number;
