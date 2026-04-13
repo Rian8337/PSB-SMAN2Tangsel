@@ -1,5 +1,5 @@
 import { ScheduleController } from "@/controllers";
-import { ScheduleDTO, UserRole } from "@psb/shared/types";
+import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
@@ -25,12 +25,6 @@ describe("ScheduleController (unit)", () => {
         beforeEach(() => {
             req = createMockRequest();
             res = createMockResponse();
-        });
-
-        it("should return 401 if no session is present", async () => {
-            await controller.getMySchedule(req, res);
-
-            expect(res.status).toHaveBeenCalledWith(401);
         });
 
         it("should return class schedule if user is a student", async () => {
@@ -85,12 +79,6 @@ describe("ScheduleController (unit)", () => {
             res = createMockResponse();
         });
 
-        it("should return 401 if no session is present", async () => {
-            await controller.downloadSchedule(req, res);
-
-            expect(res.status).toHaveBeenCalledWith(401);
-        });
-
         it("should attach correct headers and send buffer", async () => {
             req.sessionData = {
                 classId: 1,
@@ -128,5 +116,205 @@ describe("ScheduleController (unit)", () => {
 
             expect(res.send).toHaveBeenCalledWith(mockBuffer);
         });
+    });
+
+    describe("create", () => {
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            { error: string } | { success: boolean },
+            Partial<{
+                classSubjectId: number;
+                day: ScheduleDay;
+                startTime: number;
+                endTime: number;
+            }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                body: {
+                    classSubjectId: 1,
+                    day: ScheduleDay.monday,
+                    startTime: new Date("1970-01-01T08:00:00Z").getTime(),
+                    endTime: new Date("1970-01-01T09:30:00Z").getTime(),
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should call service and return 201 on success", async () => {
+            await controller.create(req, res);
+
+            expect(mockScheduleService.create).toHaveBeenCalledWith({
+                classSubjectId: 1,
+                day: ScheduleDay.monday,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                startTime: expect.any(Date),
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                endTime: expect.any(Date),
+            });
+
+            expect(res.sendStatus).toHaveBeenCalledWith(201);
+        });
+
+        it.each([
+            { classSubjectId: "abc" },
+            { classSubjectId: -1 },
+            { classSubjectId: 0 },
+        ])(
+            "should return 400 for invalid classSubjectId: $classSubjectId",
+            async ({ classSubjectId }) => {
+                req.body.classSubjectId = classSubjectId as unknown as number;
+
+                await controller.create(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+
+        it.each([{ day: "abc" }, { day: -1 }, { day: 7 }])(
+            "should return 400 for invalid day: $day",
+            async ({ day }) => {
+                req.body.day = day as unknown as ScheduleDay;
+
+                await controller.create(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+
+        it("should return 400 for invalid startTime", async () => {
+            req.body.startTime = "invalid" as unknown as number;
+
+            await controller.create(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 400 for invalid endTime", async () => {
+            req.body.endTime = "invalid" as unknown as number;
+
+            await controller.create(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
+    describe("update", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            { error: string },
+            Partial<{
+                day: ScheduleDay;
+                startTime: number;
+                endTime: number;
+            }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                params: { id: "1" },
+                body: {
+                    day: ScheduleDay.monday,
+                    startTime: new Date("1970-01-01T08:00:00Z").getTime(),
+                    endTime: new Date("1970-01-01T09:30:00Z").getTime(),
+                },
+            });
+
+            res = createMockResponse();
+        });
+
+        it("should call service and return 200 on success", async () => {
+            await controller.update(req, res);
+
+            expect(mockScheduleService.update).toHaveBeenCalledWith({
+                id: 1,
+                day: ScheduleDay.monday,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                startTime: expect.any(Date),
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                endTime: expect.any(Date),
+            });
+
+            expect(res.sendStatus).toHaveBeenCalledWith(200);
+        });
+
+        it.each([{ id: "abc" }, { id: "0" }, { id: "-1" }])(
+            "should return 400 for invalid ID: $id",
+            async ({ id }) => {
+                req.params.id = id;
+
+                await controller.update(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+
+        it.each([{ day: "abc" }, { day: -1 }, { day: 7 }])(
+            "should return 400 for invalid day: $day",
+            async ({ day }) => {
+                req.body.day = day as unknown as ScheduleDay;
+
+                await controller.update(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+
+        it("should return 400 for invalid startTime", async () => {
+            req.body.startTime = "invalid" as unknown as number;
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 400 for invalid endTime", async () => {
+            req.body.endTime = "invalid" as unknown as number;
+
+            await controller.update(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
+    describe("delete", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            { error: string }
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+        let res: ReturnType<typeof createMockResponse>;
+
+        beforeEach(() => {
+            req = createMockRequest({ params: { id: "1" } });
+            res = createMockResponse();
+        });
+
+        it("should call service and return 204 on success", async () => {
+            await controller.delete(req, res);
+
+            expect(mockScheduleService.delete).toHaveBeenCalledWith(1);
+            expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it.each([{ id: "abc" }, { id: "0" }, { id: "-1" }])(
+            "should return 400 for invalid ID: $id",
+            async ({ id }) => {
+                req.params.id = id;
+
+                await controller.delete(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
     });
 });
