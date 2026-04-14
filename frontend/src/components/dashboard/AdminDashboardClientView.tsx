@@ -1,14 +1,7 @@
 "use client";
 
-import {
-    Box,
-    Card,
-    Flex,
-    Heading,
-    Link,
-    SimpleGrid,
-    Text,
-} from "@chakra-ui/react";
+import { Link } from "@/i18n/navigation";
+import { Box, Card, Flex, Heading, SimpleGrid, Text } from "@chakra-ui/react";
 import { BookOpen, Calendar, PersonStanding, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
