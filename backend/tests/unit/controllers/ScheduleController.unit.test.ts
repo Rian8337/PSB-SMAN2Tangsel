@@ -13,6 +13,57 @@ describe("ScheduleController (unit)", () => {
         mockSessionService,
     );
 
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        res = createMockResponse();
+    });
+
+    describe("getById", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            ScheduleDTO | { error: string }
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+
+        beforeEach(() => {
+            req = createMockRequest({ params: { id: "1" } });
+        });
+
+        it("should return schedule data on success", async () => {
+            const schedule: ScheduleDTO = {
+                id: 1,
+                classSubjectId: 1,
+                day: ScheduleDay.monday,
+                startTime: new Date("2024-01-01T08:00:00Z").getTime(),
+                endTime: new Date("2024-01-01T09:30:00Z").getTime(),
+                subject: {
+                    code: "MA1",
+                    name: "Matematika Wajib",
+                },
+            };
+
+            mockScheduleService.getById.mockResolvedValueOnce(schedule);
+
+            await controller.getById(req, res);
+
+            expect(mockScheduleService.getById).toHaveBeenCalledWith(1);
+            expect(res.json).toHaveBeenCalledWith(schedule);
+        });
+
+        it.each([{ id: "abc" }, { id: "0" }, { id: "-2" }])(
+            "should return 400 for invalid ID: $id",
+            async ({ id }) => {
+                req.params.id = id;
+
+                await controller.getById(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
+    });
+
     describe("getMySchedule", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
@@ -20,11 +71,9 @@ describe("ScheduleController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return class schedule if user is a student", async () => {
@@ -72,11 +121,9 @@ describe("ScheduleController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should attach correct headers and send buffer", async () => {
@@ -131,7 +178,6 @@ describe("ScheduleController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -142,8 +188,6 @@ describe("ScheduleController (unit)", () => {
                     endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should call service and return 201 on success", async () => {
