@@ -18,7 +18,7 @@ export function AdminDashboardShell({ children }: PropsWithChildren) {
         {
             label: t("academicYear"),
             icon: Calendar,
-            href: "/admin/academic-year",
+            href: "/admin/academic-years",
         },
         {
             label: t("subjectManagement"),

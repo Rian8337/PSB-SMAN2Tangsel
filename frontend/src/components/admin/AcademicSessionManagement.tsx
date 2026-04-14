@@ -273,7 +273,7 @@ export function AcademicSessionManagement() {
                                                 colorPalette="blue"
                                             >
                                                 <Link
-                                                    href={`/admin/academic-year/edit?session=${encodeURIComponent(session.session)}&semester=${session.semester.toString()}`}
+                                                    href={`/admin/academic-years/edit?session=${encodeURIComponent(session.session)}&semester=${session.semester.toString()}`}
                                                 >
                                                     {t("actions.edit")}
                                                 </Link>

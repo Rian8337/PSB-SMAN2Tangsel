@@ -81,7 +81,7 @@ export function EditAcademicSessionForm({
                     type: "success",
                 });
 
-                router.push("/admin/academic-year");
+                router.push("/admin/academic-years");
                 router.refresh();
             })
             .catch((e: unknown) => {
