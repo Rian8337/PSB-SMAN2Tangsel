@@ -52,6 +52,52 @@ describe("ScheduleController (integration)", () => {
 
     afterAll(testDbManager.cleanupSecondaryTables);
 
+    describe("GET /:id", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/schedule/${schedule.id!.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 if user is a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return the schedule if user is an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.get(endpoint);
+
+            expect(res.status).toBe(200);
+            expect(res.body).toMatchObject({
+                id: schedule.id,
+                classSubjectId: classSubject.id,
+                day: ScheduleDay.monday,
+                startTime: schedule.startTime.getTime(),
+                endTime: schedule.endTime.getTime(),
+            });
+        });
+    });
+
     describe("GET /schedule", () => {
         const endpoint = "/schedule";
 
