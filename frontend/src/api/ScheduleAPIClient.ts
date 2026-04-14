@@ -14,6 +14,12 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         return super.baseURL + "/schedule";
     }
 
+    getById(id: number, signal?: AbortSignal): Promise<ScheduleDTO> {
+        return this.get(`/${id.toString()}`, { signal }).then((res) =>
+            res.json(),
+        );
+    }
+
     getSchedule(signal?: AbortSignal): Promise<ScheduleDTO[]> {
         return this.get("/", { signal }).then((res) => res.json());
     }

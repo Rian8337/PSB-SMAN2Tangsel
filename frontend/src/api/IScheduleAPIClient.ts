@@ -19,6 +19,15 @@ export interface UpdateScheduleOptions {
  */
 export interface IScheduleAPIClient {
     /**
+     * Fetches a schedule by its ID.
+     *
+     * @param id The ID of the schedule to fetch.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to fetch the schedule.
+     * @returns The schedule with the specified ID.
+     */
+    getById(id: number, signal?: AbortSignal): Promise<ScheduleDTO>;
+
+    /**
      * Fetches the weekly schedule of the authenticated user.
      *
      * @param signal An optional {@link AbortSignal} that can be used to cancel the request to fetch the weekly schedule.
