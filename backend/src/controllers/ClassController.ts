@@ -90,7 +90,7 @@ export class ClassController extends BaseController {
         res: Response<ScheduleDTO[] | { error: string }>,
     ) {
         try {
-            const parsed = coercedClassIdSchema.safeParse(req.params);
+            const parsed = coercedClassIdSchema.safeParse(req.params.id);
 
             if (!parsed.success) {
                 throw new BadRequestError(
