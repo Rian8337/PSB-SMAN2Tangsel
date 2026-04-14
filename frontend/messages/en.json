@@ -320,6 +320,62 @@
       }
     }
   },
+  "ClassScheduleManagement": {
+    "metaTitle": "Class Schedule Management",
+    "title": "Class Schedule Management for {class}",
+    "emptyState": "No schedules found for this class.",
+    "addButton": "Add Schedule",
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Class Schedule",
+      "errorMessage": "An error occurred while fetching the class schedule. Please try again."
+    },
+    "validation": {
+      "selectSubject": "Please select a subject.",
+      "invalidTimeRange": "Start time must be before end time."
+    },
+    "fields": {
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Search and select a subject..."
+      },
+      "day": {
+        "label": "Day",
+        "placeholder": "Select day"
+      },
+      "startTime": {
+        "label": "Start Time"
+      },
+      "endTime": {
+        "label": "End Time"
+      }
+    },
+    "create": {
+      "title": "Add Schedule for {class}",
+      "submitButton": "Add Schedule",
+      "cancelButton": "Cancel",
+      "toast": {
+        "successTitle": "Schedule Added Successfully",
+        "successMessage": "The schedule for subject {subject} has been added to class {class}.",
+        "errorTitle": "Failed to Add Schedule",
+        "errorMessage": "An error occurred while adding the schedule. Please try again."
+      }
+    },
+    "edit": {
+      "title": "Edit Schedule",
+      "submitButton": "Save Changes",
+      "cancelButton": "Cancel",
+      "fetchToast": {
+        "errorTitle": "Failed to Fetch Schedule",
+        "errorMessage": "An error occurred while fetching the schedule details. Please try again."
+      },
+      "submitToast": {
+        "successTitle": "Schedule Updated Successfully",
+        "successMessage": "The schedule has been successfully updated.",
+        "errorTitle": "Failed to Update Schedule",
+        "errorMessage": "An error occurred while updating the schedule. Please try again."
+      }
+    }
+  },
   "Form": {
     "invalidDate": "The entered date is invalid.",
     "invalidDateRange": "Start date must be before end date.",
@@ -380,7 +436,7 @@
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
   },
-  "ScheduleGrid": {
+  "Day": {
     "time": "Time",
     "monday": "Monday",
     "tuesday": "Tuesday",

@@ -316,6 +316,62 @@
       }
     }
   },
+  "ClassScheduleManagement": {
+    "metaTitle": "Jadwal Kelas",
+    "title": "Jadwal Kelas {class}",
+    "emptyState": "Tidak ada jadwal yang ditemukan untuk kelas ini.",
+    "addButton": "Tambah Jadwal",
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Jadwal Kelas",
+      "errorMessage": "Terjadi kesalahan saat mengambil jadwal kelas. Silakan coba lagi."
+    },
+    "validation": {
+      "selectSubject": "Harap pilih mata pelajaran.",
+      "invalidTimeRange": "Waktu mulai harus sebelum waktu selesai."
+    },
+    "fields": {
+      "subject": {
+        "label": "Mata Pelajaran",
+        "placeholder": "Cari dan pilih mata pelajaran..."
+      },
+      "day": {
+        "label": "Hari",
+        "placeholder": "Pilih hari"
+      },
+      "startTime": {
+        "label": "Waktu Mulai"
+      },
+      "endTime": {
+        "label": "Waktu Selesai"
+      }
+    },
+    "create": {
+      "title": "Tambah Jadwal untuk {class}",
+      "submitButton": "Tambah Jadwal",
+      "cancelButton": "Batal",
+      "toast": {
+        "successTitle": "Jadwal Berhasil Ditambahkan",
+        "successMessage": "Jadwal untuk mata pelajaran {subject} telah berhasil ditambahkan ke kelas {class}.",
+        "errorTitle": "Gagal Menambahkan Jadwal",
+        "errorMessage": "Terjadi kesalahan saat menambahkan jadwal. Silakan coba lagi."
+      }
+    },
+    "edit": {
+      "title": "Ubah Jadwal",
+      "submitButton": "Simpan Perubahan",
+      "cancelButton": "Batal",
+      "fetchToast": {
+        "errorTitle": "Failed to Fetch Schedule",
+        "errorMessage": "An error occurred while fetching the schedule details. Please try again."
+      },
+      "submitToast": {
+        "successTitle": "Jadwal Berhasil Diperbarui",
+        "successMessage": "Jadwal telah berhasil diperbarui.",
+        "errorTitle": "Gagal Memperbarui Jadwal",
+        "errorMessage": "Terjadi kesalahan saat memperbarui jadwal. Silakan coba lagi."
+      }
+    }
+  },
   "Form": {
     "invalidDateRange": "Tanggal mulai harus sebelum tanggal selesai.",
     "invalidDate": "Tanggal yang dimasukkan tidak valid.",
@@ -376,8 +432,7 @@
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
   },
-  "ScheduleGrid": {
-    "time": "Waktu",
+  "Day": {
     "monday": "Senin",
     "tuesday": "Selasa",
     "wednesday": "Rabu",

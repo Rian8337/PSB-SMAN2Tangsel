@@ -1,12 +1,11 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
 import { parseScheduleData } from "@/utils/schedule";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 
-function getDayLabels(t: ReturnType<typeof useTranslations<"ScheduleGrid">>) {
+function getDayLabels(t: ReturnType<typeof useTranslations<"Day">>) {
     return [
         { label: t("monday"), value: ScheduleDay.monday },
         { label: t("tuesday"), value: ScheduleDay.tuesday },
@@ -16,18 +15,37 @@ function getDayLabels(t: ReturnType<typeof useTranslations<"ScheduleGrid">>) {
     ];
 }
 
-const HOURS = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00"];
+const HOURS = [
+    "06:00",
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+];
 
 const ROW_HEIGHT_REM = 5;
 const START_HOUR = 6;
 
-interface ScheduleGridProps {
-    data: ScheduleDTO[];
-    editMode?: boolean;
+export interface ScheduleGridProps {
+    readonly data: ScheduleDTO[];
+    readonly editMode?: boolean;
+    readonly onScheduleClick?: (scheduleId: number) => void;
 }
 
-export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
-    const t = useTranslations("ScheduleGrid");
+export function ScheduleGrid({
+    data,
+    editMode,
+    onScheduleClick,
+}: ScheduleGridProps) {
+    const t = useTranslations("Day");
     const parsedClasses = parseScheduleData(data);
     const days = getDayLabels(t);
 
@@ -111,29 +129,18 @@ export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
                                     const topOffset =
                                         (cls.startDecimal - START_HOUR) *
                                         ROW_HEIGHT_REM;
-
                                     const height =
                                         (cls.endDecimal - cls.startDecimal) *
                                         ROW_HEIGHT_REM;
 
-                                    const text = (
-                                        <Text
-                                            fontWeight="bold"
-                                            color="#0000FF"
-                                            textDecoration="underline"
-                                            textAlign="center"
-                                            fontSize={{
-                                                base: "sm",
-                                                md: "md",
-                                            }}
-                                        >
-                                            {cls.subject.name}
-                                        </Text>
-                                    );
-
                                     return (
                                         <Box
                                             key={cls.id}
+                                            as={editMode ? "button" : "div"}
+                                            onClick={() =>
+                                                editMode &&
+                                                onScheduleClick?.(cls.id)
+                                            }
                                             position="absolute"
                                             top={`${topOffset.toString()}rem`}
                                             left="0"
@@ -148,6 +155,9 @@ export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
                                             justifyContent="center"
                                             zIndex={2}
                                             overflow="hidden"
+                                            cursor={
+                                                editMode ? "pointer" : "default"
+                                            }
                                             _hover={
                                                 editMode
                                                     ? {
@@ -158,32 +168,22 @@ export function ScheduleGrid({ data, editMode }: ScheduleGridProps) {
                                             }
                                             transition="all 0.2s"
                                         >
-                                            {editMode ? (
-                                                <Link
-                                                    href={`/admin/schedules/${cls.id.toString()}`}
-                                                    style={{
-                                                        display: "flex",
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        alignItems: "center",
-                                                        justifyContent:
-                                                            "center",
-                                                        padding: "0.5rem",
-                                                    }}
-                                                >
-                                                    {text}
-                                                </Link>
-                                            ) : (
-                                                <Flex
-                                                    w="full"
-                                                    h="full"
-                                                    align="center"
-                                                    justify="center"
-                                                    p={2}
-                                                >
-                                                    {text}
-                                                </Flex>
-                                            )}
+                                            <Text
+                                                fontWeight="bold"
+                                                color="#0000FF"
+                                                textDecoration={
+                                                    editMode
+                                                        ? "underline"
+                                                        : "none"
+                                                }
+                                                textAlign="center"
+                                                fontSize={{
+                                                    base: "sm",
+                                                    md: "md",
+                                                }}
+                                            >
+                                                {cls.subject.name}
+                                            </Text>
                                         </Box>
                                     );
                                 })}
