@@ -76,6 +76,7 @@ export const mockNotificationService: Mocked<INotificationService> = {
  * Mock implementation of {@link IScheduleService}.
  */
 export const mockScheduleService: Mocked<IScheduleService> = {
+    getById: vi.fn(),
     getClassSchedule: vi.fn(),
     getTeacherSchedule: vi.fn(),
     generateIcsFile: vi.fn(),
