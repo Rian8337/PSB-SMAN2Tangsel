@@ -2,14 +2,14 @@
 
 import {
     Box,
-    Heading,
-    Text,
-    Flex,
-    SimpleGrid,
     Card,
+    Flex,
+    Heading,
     Link,
+    SimpleGrid,
+    Text,
 } from "@chakra-ui/react";
-import { Users, Calendar, BookOpen, PersonStanding, Clock } from "lucide-react";
+import { BookOpen, Calendar, PersonStanding, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface AdminDashboardClientViewProps {
@@ -49,13 +49,6 @@ export function AdminDashboardClientView({
             color: "green.500",
             title: t("cards.classes.title"),
             description: t("cards.classes.description"),
-        },
-        {
-            href: "/admin/schedules",
-            icon: Clock,
-            color: "orange.500",
-            title: t("cards.schedules.title"),
-            description: t("cards.schedules.description"),
         },
     ];
 
