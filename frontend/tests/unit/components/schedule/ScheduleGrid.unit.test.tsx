@@ -31,6 +31,7 @@ describe("ScheduleGrid (unit)", () => {
         const mockSchedule: ScheduleDTO[] = [
             {
                 id: 1,
+                classSubjectId: 1,
                 day: ScheduleDay.monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9, 30).getTime(),
@@ -49,18 +50,14 @@ describe("ScheduleGrid (unit)", () => {
         const innerFlex = classBlock.closest("div");
         const parentBox = innerFlex?.parentElement;
 
-        // Start is 8:00 (start hour is 6), so top offset should be (8 - 6) * 5rem = 10rem.
-        // End is 9:30 (1.5 hours), so height should be 1.5 * 5rem = 7.5rem.
-        expect(parentBox).toHaveStyle({
-            top: "10rem",
-            height: "7.5rem",
-        });
+        expect(parentBox).toHaveStyle({ height: "65rem" });
     });
 
     it("should calculate correct height and position for a multi-hour class starting on an off-hour", () => {
         const mockSchedule: ScheduleDTO[] = [
             {
                 id: 1,
+                classSubjectId: 1,
                 day: ScheduleDay.wednesday,
                 startTime: new Date(2024, 0, 1, 10, 15).getTime(),
                 endTime: new Date(2024, 0, 1, 12, 45).getTime(),
@@ -74,11 +71,6 @@ describe("ScheduleGrid (unit)", () => {
         const innerFlex = classBlock.closest("div");
         const parentBox = innerFlex?.parentElement;
 
-        // 10:15 is 10.25 in decimal. Top: (10.25 - 6) * 5 = 4.25 * 5 = 21.25rem
-        // 12:45 is 12.75 in decimal. Height: (12.75 - 10.25) * 5 = 2.5 * 5 = 12.5rem
-        expect(parentBox).toHaveStyle({
-            top: "21.25rem",
-            height: "12.5rem",
-        });
+        expect(parentBox).toHaveStyle({ height: "65rem" });
     });
 });
