@@ -14,8 +14,8 @@ import {
     UnauthorizedError,
 } from "@/types";
 import {
+    coercedScheduleIdSchema,
     createScheduleSchema,
-    scheduleIdSchema,
     updateScheduleSchema,
 } from "@/validators";
 import { MessageKey } from "@/i18n";
@@ -88,6 +88,32 @@ export class ScheduleController extends BaseController {
     }
 
     /**
+     * Fetches a schedule by its ID.
+     */
+    @Get("/:id")
+    @Roles(UserRole.administrator)
+    async getById(
+        req: Request<{ id: string }, ScheduleDTO | { error: string }>,
+        res: Response<ScheduleDTO | { error: string }>,
+    ) {
+        try {
+            const parsed = coercedScheduleIdSchema.safeParse(req.params.id);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const schedule = await this.scheduleService.getById(parsed.data);
+
+            res.json(schedule);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
      * Creates a new schedule for a class subject.
      */
     @Post("/")
@@ -140,7 +166,9 @@ export class ScheduleController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const paramsParsed = scheduleIdSchema.safeParse(req.params);
+            const paramsParsed = coercedScheduleIdSchema.safeParse(
+                req.params.id,
+            );
 
             if (!paramsParsed.success) {
                 throw new BadRequestError(
@@ -157,7 +185,7 @@ export class ScheduleController extends BaseController {
             }
 
             await this.scheduleService.update({
-                id: paramsParsed.data.id,
+                id: paramsParsed.data,
                 ...bodyParsed.data,
             });
 
@@ -177,7 +205,7 @@ export class ScheduleController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const parsed = scheduleIdSchema.safeParse(req.params);
+            const parsed = coercedScheduleIdSchema.safeParse(req.params.id);
 
             if (!parsed.success) {
                 throw new BadRequestError(
@@ -185,7 +213,7 @@ export class ScheduleController extends BaseController {
                 );
             }
 
-            await this.scheduleService.delete(parsed.data.id);
+            await this.scheduleService.delete(parsed.data);
 
             res.sendStatus(204);
         } catch (e) {

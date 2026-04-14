@@ -21,6 +21,16 @@ export class ScheduleService implements IScheduleService {
         private readonly scheduleRepository: IScheduleRepository,
     ) {}
 
+    async getById(id: number): Promise<ScheduleDTO> {
+        const schedule = await this.scheduleRepository.findById(id);
+
+        if (!schedule) {
+            throw new NotFoundError("scheduleService.scheduleNotFound");
+        }
+
+        return schedule;
+    }
+
     getClassSchedule(classId: number): Promise<ScheduleDTO[]> {
         return this.scheduleRepository.findByClassId(classId);
     }
@@ -110,13 +120,7 @@ export class ScheduleService implements IScheduleService {
     async update(options: UpdateScheduleOptions): Promise<void> {
         this.validateTimeOrder(options.startTime, options.endTime);
 
-        const existingSchedule = await this.scheduleRepository.findById(
-            options.id,
-        );
-
-        if (!existingSchedule) {
-            throw new NotFoundError("scheduleService.scheduleNotFound");
-        }
+        const existingSchedule = await this.getById(options.id);
 
         const hasConflict = await this.scheduleRepository.hasConflict(
             existingSchedule.classSubjectId,

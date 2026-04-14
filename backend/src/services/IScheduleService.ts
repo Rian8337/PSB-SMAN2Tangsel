@@ -19,6 +19,14 @@ export interface UpdateScheduleOptions {
  */
 export interface IScheduleService {
     /**
+     * Fetches a schedule by its ID.
+     *
+     * @param id The ID of the schedule to fetch.
+     * @returns The schedule with the specified ID.
+     */
+    getById(id: number): Promise<ScheduleDTO>;
+
+    /**
      * Fetches the weekly schedule of a class.
      *
      * @param classId The ID of the class.
