@@ -22,10 +22,12 @@ export const mockNavigation = {
     useRouter: vi.fn(() => mockRouter),
 } satisfies Mocked<Partial<typeof navigation>>;
 
+const identityTranslate = (key: string) => key;
+
 /**
  * Partial mock implementation of `next-intl`.
  */
 export const mockNextIntl = {
     useLocale: vi.fn(() => "id"),
-    useTranslations: vi.fn(() => (key: string) => key),
+    useTranslations: vi.fn(() => identityTranslate),
 } satisfies Mocked<Partial<Record<keyof typeof nextIntl, unknown>>>;
