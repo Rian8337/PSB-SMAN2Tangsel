@@ -4,16 +4,14 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
+const onClose = vi.fn();
+
+const onSubmit = vi.fn<FormDialogProps["onSubmit"]>((e) => {
+    e.preventDefault();
+});
+
 function render(props: Partial<FormDialogProps> = {}) {
-    const onClose = props.onClose ?? vi.fn();
-
-    const onSubmit =
-        props.onSubmit ??
-        vi.fn<FormDialogProps["onSubmit"]>((e) => {
-            e.preventDefault();
-        });
-
-    const result = renderWithChakraProvider(
+    return renderWithChakraProvider(
         <FormDialog
             {...props}
             isOpen={props.isOpen ?? true}
@@ -25,8 +23,6 @@ function render(props: Partial<FormDialogProps> = {}) {
             onSubmit={onSubmit}
         />,
     );
-
-    return { ...result, onClose, onSubmit };
 }
 
 describe("FormDialog (unit)", () => {
@@ -50,7 +46,7 @@ describe("FormDialog (unit)", () => {
     it("should call onClose when the cancel button is clicked", async () => {
         const user = userEvent.setup();
 
-        const { onClose, onSubmit } = render({ children: <div /> });
+        render({ children: <div /> });
 
         const cancelButton = screen.getByRole("button", { name: "Cancel" });
         await user.click(cancelButton);
@@ -62,9 +58,7 @@ describe("FormDialog (unit)", () => {
     it("should call onSubmit when the submit button is clicked", async () => {
         const user = userEvent.setup();
 
-        const { onClose, onSubmit } = render({
-            children: <input name="test" />,
-        });
+        render({ children: <input name="test" /> });
 
         const submitButton = screen.getByRole("button", { name: "Submit" });
         await user.click(submitButton);
@@ -88,6 +82,17 @@ describe("FormDialog (unit)", () => {
 
         expect(submitButton).toBeDisabled();
         expect(cancelButton).toBeDisabled();
+    });
+
+    it("should render the leftAction element if provided", () => {
+        render({
+            leftAction: <button type="button">Delete Item</button>,
+            children: <div />,
+        });
+
+        expect(
+            screen.getByRole("button", { name: "Delete Item" }),
+        ).toBeInTheDocument();
     });
 
     it("should display the error banner if an error is passed", () => {
