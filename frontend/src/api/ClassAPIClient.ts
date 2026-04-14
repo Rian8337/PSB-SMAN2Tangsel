@@ -1,4 +1,9 @@
-import { Class, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    Class,
+    ScheduleDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { IClassAPIClient, ListClassOptions } from "./IClassAPIClient";
 
@@ -12,6 +17,12 @@ export class ClassAPIClient extends APIClient implements IClassAPIClient {
 
     getClass(id: number, signal?: AbortSignal): Promise<Class> {
         return this.get(`/${id.toString()}`, { signal }).then((res) =>
+            res.json(),
+        );
+    }
+
+    getClassSchedule(id: number, signal?: AbortSignal): Promise<ScheduleDTO[]> {
+        return this.get(`/${id.toString()}/schedules`, { signal }).then((res) =>
             res.json(),
         );
     }

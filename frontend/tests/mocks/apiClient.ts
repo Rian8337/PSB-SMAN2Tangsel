@@ -24,6 +24,7 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
  */
 export const mockClassApiClient: Mocked<IClassAPIClient> = {
     getClass: vi.fn(),
+    getClassSchedule: vi.fn(),
     listClasses: vi.fn(),
     createClass: vi.fn(),
     updateClass: vi.fn(),

@@ -1,4 +1,9 @@
-import { Class, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    Class,
+    ScheduleDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 
 /**
  * Options for listing classes.
@@ -46,6 +51,15 @@ export interface IClassAPIClient {
      * @returns The class with the specified unique identifier.
      */
     getClass(id: number, signal?: AbortSignal): Promise<Class>;
+
+    /**
+     * Obtains the weekly schedule of a class by the class's unique identifier.
+     *
+     * @param id The unique identifier of the class whose schedule to obtain.
+     * @param signal Optional {@link AbortSignal} that can be used to cancel the request to obtain the class schedule.
+     * @returns The weekly schedule of the class with the specified unique identifier.
+     */
+    getClassSchedule(id: number, signal?: AbortSignal): Promise<ScheduleDTO[]>;
 
     /**
      * Obtains a list of classes in a specific academic session for display in the UI.
