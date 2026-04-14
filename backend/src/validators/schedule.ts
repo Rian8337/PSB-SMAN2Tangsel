@@ -20,13 +20,19 @@ const idError = {
 };
 
 /**
- * A Zod schema for validating the schedule ID parameter in the request path.
+ * A Zod schema for validating a schedule ID.
  */
-export const scheduleIdSchema = z.object({
-    id: z.coerce
-        .number(idError)
-        .refine((val) => Number.isInteger(val) && val > 0, idError),
-});
+export const scheduleIdSchema = z
+    .number(idError)
+    .int(idError)
+    .positive(idError);
+
+/**
+ * A Zod schema for validating a schedule ID that may be provided as a string and coerced to a number.
+ */
+export const coercedScheduleIdSchema = z.coerce
+    .number(idError)
+    .pipe(scheduleIdSchema);
 
 /**
  * A Zod schema for validating the request body of a create schedule request.
