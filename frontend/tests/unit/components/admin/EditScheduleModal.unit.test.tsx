@@ -216,6 +216,99 @@ describe("EditScheduleModal (unit)", () => {
         );
     });
 
+    it("does not delete the schedule if the user cancels the confirmation", async () => {
+        const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+        const user = userEvent.setup();
+
+        mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
+
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByRole("button", {
+            name: "edit.deleteButton",
+        });
+
+        await user.click(deleteButton);
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(mockScheduleApiClient.deleteSchedule).not.toHaveBeenCalled();
+        expect(onSuccess).not.toHaveBeenCalled();
+        expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("deletes the schedule successfully and triggers callbacks", async () => {
+        const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+        const user = userEvent.setup();
+
+        mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
+        mockScheduleApiClient.deleteSchedule.mockResolvedValue(undefined);
+
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByRole("button", {
+            name: "edit.deleteButton",
+        });
+
+        await user.click(deleteButton);
+
+        expect(confirmSpy).toHaveBeenCalled();
+
+        await waitFor(() => {
+            expect(mockScheduleApiClient.deleteSchedule).toHaveBeenCalledWith(
+                mockSchedule.id,
+            );
+        });
+
+        expect(onSuccess).toHaveBeenCalled();
+        expect(onClose).toHaveBeenCalled();
+        expect(mockToaster.create).toHaveBeenCalledWith(
+            expect.objectContaining({ type: "success" }),
+        );
+    });
+
+    it("handles API errors gracefully during deletion and shows an error toast", async () => {
+        const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+        const user = userEvent.setup();
+
+        mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
+        mockScheduleApiClient.deleteSchedule.mockRejectedValueOnce(
+            new APIError(500, "Failed to delete schedule"),
+        );
+
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByRole("button", {
+            name: "edit.deleteButton",
+        });
+
+        await user.click(deleteButton);
+
+        expect(confirmSpy).toHaveBeenCalled();
+
+        expect(
+            await screen.findByText("Failed to delete schedule"),
+        ).toBeInTheDocument();
+
+        expect(onSuccess).not.toHaveBeenCalled();
+        expect(onClose).not.toHaveBeenCalled();
+
+        expect(mockToaster.create).toHaveBeenCalledWith(
+            expect.objectContaining({ type: "error" }),
+        );
+    });
+
     it("resets the form and closes when the cancel button is clicked", async () => {
         const user = userEvent.setup();
 
