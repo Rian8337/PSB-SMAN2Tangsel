@@ -364,6 +364,8 @@
       "title": "Edit Schedule",
       "submitButton": "Save Changes",
       "cancelButton": "Cancel",
+      "deleteButton": "Delete Schedule",
+      "deleteConfirmMessage": "Are you sure you want to delete this schedule? This action cannot be undone.",
       "fetchToast": {
         "errorTitle": "Failed to Fetch Schedule",
         "errorMessage": "An error occurred while fetching the schedule details. Please try again."
@@ -373,6 +375,12 @@
         "successMessage": "The schedule has been successfully updated.",
         "errorTitle": "Failed to Update Schedule",
         "errorMessage": "An error occurred while updating the schedule. Please try again."
+      },
+      "deleteToast": {
+        "successTitle": "Schedule Deleted Successfully",
+        "successMessage": "The schedule has been successfully deleted.",
+        "errorTitle": "Failed to Delete Schedule",
+        "errorMessage": "An error occurred while deleting the schedule. Please try again."
       }
     }
   },

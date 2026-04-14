@@ -360,6 +360,8 @@
       "title": "Ubah Jadwal",
       "submitButton": "Simpan Perubahan",
       "cancelButton": "Batal",
+      "deleteButton": "Hapus Jadwal",
+      "deleteConfirmMessage": "Apakah Anda yakin ingin menghapus jadwal ini? Tindakan ini tidak dapat dibatalkan.",
       "fetchToast": {
         "errorTitle": "Failed to Fetch Schedule",
         "errorMessage": "An error occurred while fetching the schedule details. Please try again."
@@ -369,6 +371,12 @@
         "successMessage": "Jadwal telah berhasil diperbarui.",
         "errorTitle": "Gagal Memperbarui Jadwal",
         "errorMessage": "Terjadi kesalahan saat memperbarui jadwal. Silakan coba lagi."
+      },
+      "deleteToast": {
+        "successTitle": "Jadwal Berhasil Dihapus",
+        "successMessage": "Jadwal telah berhasil dihapus.",
+        "errorTitle": "Gagal Menghapus Jadwal",
+        "errorMessage": "Terjadi kesalahan saat menghapus jadwal. Silakan coba lagi."
       }
     }
   },

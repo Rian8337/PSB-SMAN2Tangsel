@@ -2,7 +2,7 @@
 
 import { APIError } from "@/api";
 import { useScheduleApiClient } from "@/providers/api/schedule-api-provider";
-import { Flex, Input, NativeSelect, Spinner } from "@chakra-ui/react";
+import { Button, Flex, Input, NativeSelect, Spinner } from "@chakra-ui/react";
 import { ScheduleDay } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { SubmitEvent, useCallback, useEffect, useState } from "react";
@@ -156,6 +156,44 @@ export function EditScheduleModal({
             });
     };
 
+    // Add this new handler next to your handleSubmit
+    const handleDelete = () => {
+        if (!confirm(t("edit.deleteConfirmMessage"))) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        scheduleApiClient
+            .deleteSchedule(scheduleId)
+            .then(() => {
+                toaster.create({
+                    title: t("edit.deleteToast.successTitle"),
+                    description: t("edit.deleteToast.successMessage"),
+                    type: "success",
+                });
+
+                onSuccess();
+                handleClose();
+            })
+            .catch((e: unknown) => {
+                setError(
+                    e instanceof APIError
+                        ? e.message
+                        : t("edit.deleteToast.errorMessage"),
+                );
+
+                toaster.create({
+                    title: t("edit.deleteToast.errorTitle"),
+                    description: t("edit.deleteToast.errorMessage"),
+                    type: "error",
+                });
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
+    };
+
     return (
         <FormDialog
             isOpen={isOpen}
@@ -167,6 +205,17 @@ export function EditScheduleModal({
             error={error}
             submitLabel={t("edit.submitButton")}
             cancelLabel={t("edit.cancelButton")}
+            leftAction={
+                <Button
+                    type="button"
+                    colorPalette="red"
+                    variant="ghost"
+                    onClick={handleDelete}
+                    disabled={isSubmitting || isFetching}
+                >
+                    {t("edit.deleteButton")}
+                </Button>
+            }
         >
             {isFetching ? (
                 <Flex justify="center" align="center" py={12}>
