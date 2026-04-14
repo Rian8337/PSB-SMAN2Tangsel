@@ -112,7 +112,7 @@ export class ClassController extends BaseController {
      * Obtains the details of a class by its unique identifier.
      */
     @Get("/:id")
-    @Roles()
+    @Roles(UserRole.administrator)
     async getById(
         req: Request<{ id: string }, Class | { error: string }>,
         res: Response<Class | { error: string }>,
