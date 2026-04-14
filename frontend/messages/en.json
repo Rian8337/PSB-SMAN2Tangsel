@@ -114,11 +114,7 @@
       },
       "classes": {
         "title": "Classes",
-        "description": "Set up classrooms, capacities, and assign homeroom teachers."
-      },
-      "schedules": {
-        "title": "Schedules",
-        "description": "Create and edit weekly class schedules and subjects."
+        "description": "Set up classrooms for the current academic year and semester."
       }
     }
   },

@@ -114,11 +114,7 @@
       },
       "classes": {
         "title": "Kelas",
-        "description": "Atur ruang kelas, kapasitas, dan tetapkan wali kelas."
-      },
-      "schedules": {
-        "title": "Jadwal",
-        "description": "Buat dan edit jadwal kelas mingguan serta mata pelajaran."
+        "description": "Atur ruang kelas untuk tahun akademik dan semester saat ini."
       }
     }
   },
