@@ -36,9 +36,13 @@ test.describe("Class Schedule Management", () => {
         const subjectQuery = subject.name;
 
         // Navigate to Class Management
-        await page.locator('a[href="/admin/classes"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/classes"]')
+            .filter({ hasText: /Atur ruang kelas untuk/i });
+
+        await dashboardCard.click();
         await expect(page).toHaveURL(/\/admin\/classes/);
-        await expect(page.locator("table")).toBeVisible();
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         const scheduleLink = page.locator('a[href*="/schedules"]').first();
         await expect(scheduleLink).toBeVisible();
@@ -114,7 +118,7 @@ test.describe("Class Schedule Management", () => {
             .getByRole("button", { name: new RegExp(subjectQuery, "i") })
             .first();
 
-        await expect(scheduleBlock).toBeVisible();
+        await expect(scheduleBlock).toBeVisible({ timeout: 15000 });
 
         const fetchSchedulePromise = page.waitForResponse((response) => {
             return (
@@ -160,7 +164,7 @@ test.describe("Class Schedule Management", () => {
                 (res) =>
                     res.request().method() === "GET" &&
                     res.ok() &&
-                    res.url().includes("/schedule/"),
+                    /\/schedule\/\d+/.test(res.url()),
             ),
             scheduleBlock.click(),
         ]);

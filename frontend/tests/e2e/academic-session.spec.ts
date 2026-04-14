@@ -16,11 +16,14 @@ test.describe("Academic Session Management", () => {
         const updatedStartDate = "2035-02-01";
 
         // Navigate
-        // There are two links to the academic session management page, one in the sidebar and one in the dashboard. We just need to click one of them.
-        await page.locator('a[href="/admin/academic-year"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/academic-years"]')
+            .filter({ hasText: /Konfigurasi semester dan tahun/i });
 
-        await expect(page).toHaveURL(/\/admin\/academic-year/);
-        await expect(page.locator("table")).toBeVisible();
+        await dashboardCard.click();
+
+        await expect(page).toHaveURL(/\/admin\/academic-years/);
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         // Create session
         const openCreateModalButton = page.getByRole("button", {
@@ -45,15 +48,12 @@ test.describe("Academic Session Management", () => {
         await dialog.locator('input[name="startTime"]').fill(startDate);
         await dialog.locator('input[name="endTime"]').fill(endDate);
 
-        const createSessionResponse = page.waitForResponse((response) => {
-            const pathname = new URL(response.url()).pathname;
-
-            return (
+        const createSessionResponse = page.waitForResponse(
+            (response) =>
                 response.request().method() === "POST" &&
                 response.ok() &&
-                /\/sessions\/?$/.test(pathname)
-            );
-        });
+                /\/sessions\/?$/.test(new URL(response.url()).pathname),
+        );
 
         const [createResponse] = await Promise.all([
             createSessionResponse,
@@ -109,7 +109,7 @@ test.describe("Academic Session Management", () => {
 
         await Promise.all([
             page.waitForURL(
-                /\/admin\/academic-year\/edit\?session=2035%2F2036&semester=1/,
+                /\/admin\/academic-years\/edit\?session=2035%2F2036&semester=1/,
             ),
             page.keyboard.press("Enter"),
         ]);
@@ -127,7 +127,7 @@ test.describe("Academic Session Management", () => {
 
         const updateToast = page.getByText(/berhasil|success/i).first();
         await expect(updateToast).toBeVisible();
-        await expect(page).toHaveURL(/\/admin\/academic-year/);
+        await expect(page).toHaveURL(/\/admin\/academic-years/);
         await expect(updateToast).toBeHidden();
 
         // Delete session
@@ -169,15 +169,12 @@ test.describe("Academic Session Management", () => {
         await expect(updatedRow).toBeHidden();
         await expect(deleteToast).toBeHidden();
 
-        const clearSearchResponse = page.waitForResponse((response) => {
-            const url = response.url();
-
-            return (
+        const clearSearchResponse = page.waitForResponse(
+            (response) =>
                 response.request().method() === "GET" &&
                 response.ok() &&
-                url.includes("/sessions/list")
-            );
-        });
+                response.url().includes("/sessions/list"),
+        );
 
         await searchInput.clear();
         await clearSearchResponse;

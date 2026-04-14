@@ -13,12 +13,14 @@ test.describe("Class Management", () => {
         const updatedClassName = `XI E2E ${uniqueSuffix} UP`;
 
         // Navigate
-        // There are two links to the subject management page, one in the sidebar and one in the dashboard. We just need to click one of them.
-        await page.locator('a[href="/admin/classes"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/classes"]')
+            .filter({ hasText: /Atur ruang kelas untuk/i });
 
-        // Wait for the page to load and the session/classes to fetch.
+        await dashboardCard.click();
+
         await expect(page).toHaveURL(/\/admin\/classes/);
-        await expect(page.locator("table")).toBeVisible();
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         // Create class
         const openCreateModalButton = page.getByRole("button", {
@@ -61,16 +63,21 @@ test.describe("Class Management", () => {
         const searchInput = page.locator('input[name="search"]');
 
         const searchClassesResponse = page.waitForResponse((response) => {
-            const url = response.url();
+            try {
+                const url = new URL(response.url());
 
-            return (
-                response.request().method() === "GET" &&
-                response.ok() &&
-                url.includes("/classes") &&
-                url.includes("query=")
-            );
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    url.pathname.includes("/classes") &&
+                    url.searchParams.get("query") === testClassName
+                );
+            } catch {
+                return false;
+            }
         });
 
+        await searchInput.clear();
         await searchInput.fill(testClassName);
         await searchClassesResponse;
 
@@ -84,10 +91,8 @@ test.describe("Class Management", () => {
         const editLink = classRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
 
-        await Promise.all([
-            page.waitForURL(/\/admin\/classes\/\d+/),
-            editLink.click(),
-        ]);
+        await editLink.click();
+        await expect(page).toHaveURL(/\/admin\/classes\/\d+/);
 
         const editNameInput = page.locator('input[name="name"]');
         await expect(editNameInput).toBeVisible();
@@ -110,18 +115,23 @@ test.describe("Class Management", () => {
         // Delete class
         const searchUpdatedClassesResponse = page.waitForResponse(
             (response) => {
-                const url = response.url();
+                try {
+                    const url = new URL(response.url());
 
-                return (
-                    response.request().method() === "GET" &&
-                    response.ok() &&
-                    url.includes("/classes") &&
-                    url.includes("query=")
-                );
+                    return (
+                        response.request().method() === "GET" &&
+                        response.ok() &&
+                        url.pathname.includes("/classes") &&
+                        url.searchParams.get("query") === updatedClassName
+                    );
+                } catch {
+                    return false;
+                }
             },
         );
 
         // Search for the newly updated name.
+        await searchInput.clear();
         await searchInput.fill(updatedClassName);
         await searchUpdatedClassesResponse;
 

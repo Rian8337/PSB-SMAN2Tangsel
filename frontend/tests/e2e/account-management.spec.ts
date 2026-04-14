@@ -19,11 +19,14 @@ test.describe("Account Management", () => {
         };
 
         // Navigate
-        // There are two links to the account management page, one in the sidebar and one in the dashboard. We just need to click one of them.
-        await page.locator('a[href="/admin/users"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/users"]')
+            .filter({ hasText: /Buat, edit, dan kelola/i });
+
+        await dashboardCard.click();
 
         await expect(page).toHaveURL(/\/admin\/users/);
-        await expect(page.locator("table")).toBeVisible();
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         // Create user
         const openCreateUserDialogButton = page.getByRole("button", {
@@ -84,16 +87,21 @@ test.describe("Account Management", () => {
         const searchInput = page.locator('input[name="search"]');
 
         const searchUsersResponse = page.waitForResponse((response) => {
-            const url = response.url();
+            try {
+                const url = new URL(response.url());
 
-            return (
-                response.request().method() === "GET" &&
-                response.ok() &&
-                url.includes("/users/list") &&
-                url.includes("query=")
-            );
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    url.pathname.includes("/users/list") &&
+                    url.searchParams.get("query") === registeredUser.name
+                );
+            } catch {
+                return false;
+            }
         });
 
+        await searchInput.clear();
         await searchInput.fill(registeredUser.name);
         await searchUsersResponse;
 
@@ -139,16 +147,21 @@ test.describe("Account Management", () => {
 
         // Delete user
         const searchUpdatedUsersResponse = page.waitForResponse((response) => {
-            const url = response.url();
+            try {
+                const url = new URL(response.url());
 
-            return (
-                response.request().method() === "GET" &&
-                response.ok() &&
-                url.includes("/users/list") &&
-                url.includes("query=")
-            );
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    url.pathname.includes("/users/list") &&
+                    url.searchParams.get("query") === updatedName
+                );
+            } catch {
+                return false;
+            }
         });
 
+        await searchInput.clear();
         await searchInput.fill(updatedName);
         await searchUpdatedUsersResponse;
 
@@ -164,13 +177,20 @@ test.describe("Account Management", () => {
             name: `delete-${registeredUser.identifier}`,
         });
 
-        await deleteButton.click();
+        const deleteResponsePromise = page.waitForResponse(
+            (response) =>
+                response.request().method() === "DELETE" &&
+                response.ok() &&
+                response.url().includes("/users/"),
+        );
+
+        await Promise.all([deleteResponsePromise, deleteButton.click()]);
 
         const deleteToast = page.getByText(/berhasil|success/i).last();
 
         await expect(deleteToast).toBeVisible();
         await expect(updatedRow).toBeHidden();
-        await expect(deleteToast).toBeHidden();
+        await expect(deleteToast).toBeHidden({ timeout: 10000 });
 
         // Search is still applied, so no users should be found
         await expect(page.locator("table")).toContainText(

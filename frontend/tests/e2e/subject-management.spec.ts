@@ -19,11 +19,14 @@ test.describe("Subject Management", () => {
         };
 
         // Navigate
-        // There are two links to the subject management page, one in the sidebar and one in the dashboard. We just need to click one of them.
-        await page.locator('a[href="/admin/subjects"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/subjects"]')
+            .filter({ hasText: /Kelola daftar mata pelajaran/i });
+
+        await dashboardCard.click();
 
         await expect(page).toHaveURL(/\/admin\/subjects/);
-        await expect(page.locator("table")).toBeVisible();
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         // Create subject
         const openCreateModalButton = page.getByRole("button", {

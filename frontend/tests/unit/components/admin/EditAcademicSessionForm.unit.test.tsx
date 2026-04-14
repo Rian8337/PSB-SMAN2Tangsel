@@ -130,7 +130,7 @@ describe("EditAcademicSessionForm (unit)", () => {
             expect.objectContaining({ type: "success" }),
         );
 
-        expect(mockRouter.push).toHaveBeenCalledWith("/admin/academic-year");
+        expect(mockRouter.push).toHaveBeenCalledWith("/admin/academic-years");
         expect(mockRouter.refresh).toHaveBeenCalled();
     });
 

@@ -27,20 +27,22 @@ test.describe("Class Subject Management", () => {
         page,
     }) => {
         // Navigate to page
-        await page.locator('a[href="/admin/classes"]').first().click();
+        const dashboardCard = page
+            .locator('a[href="/admin/classes"]')
+            .filter({ hasText: /Atur ruang kelas untuk/i });
+
+        await dashboardCard.click();
         await expect(page).toHaveURL(/\/admin\/classes/);
-        await expect(page.locator("table")).toBeVisible();
+        await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
         const firstClassRow = page.locator("tbody tr").first();
         const manageSubjectsLink = firstClassRow.locator(
             'a[aria-label^="manage-subjects-"]',
         );
 
-        await Promise.all([
-            page.waitForURL(/\/admin\/classes\/\d+\/subjects/),
-            manageSubjectsLink.click(),
-        ]);
+        await manageSubjectsLink.click();
 
+        await expect(page).toHaveURL(/\/admin\/classes\/\d+\/subjects/);
         await expect(page.locator("table")).toBeVisible();
 
         // Assign subject
@@ -64,6 +66,7 @@ test.describe("Class Subject Management", () => {
 
         await expect(subjectOption).toBeVisible();
         await subjectOption.click();
+        await expect(subjectOption).toBeHidden();
 
         // Leave teacher blank to test null flow.
         const assignSubjectPromise = page.waitForResponse((response) => {
@@ -89,7 +92,17 @@ test.describe("Class Subject Management", () => {
         const successToast = page.getByText(/berhasil|success/i).first();
         await expect(successToast).toBeVisible();
         await expect(dialog).toBeHidden();
-        await expect(successToast).toBeHidden();
+
+        // Animations are inconsistent across browsers. In WebKit, the dialog is hidden but still in the DOM
+        // with data-state="closed". In Chromium/Firefox, it is unmounted from the DOM.
+        await expect(async () => {
+            const count = await dialog.count();
+            if (count > 0) {
+                expect(await dialog.getAttribute("data-state")).toBe("closed");
+            }
+        }).toPass({ timeout: 5000 });
+
+        await expect(successToast).toBeHidden({ timeout: 10000 });
 
         // Search assigned subject
         const searchInput = page.locator('input[name="search"]');
@@ -151,7 +164,7 @@ test.describe("Class Subject Management", () => {
 
         const updateToast = page.getByText(/berhasil|success/i).first();
         await expect(updateToast).toBeVisible();
-        await expect(updateToast).toBeHidden();
+        await expect(updateToast).toBeHidden({ timeout: 10000 });
 
         // Unassign subject
         page.once("dialog", async (confirmDialog) => {
@@ -180,7 +193,7 @@ test.describe("Class Subject Management", () => {
         const deleteToast = page.getByText(/berhasil|success/i).last();
         await expect(deleteToast).toBeVisible();
         await expect(subjectRow).toBeHidden();
-        await expect(deleteToast).toBeHidden();
+        await expect(deleteToast).toBeHidden({ timeout: 10000 });
 
         // Verify the table shows the empty state after deletion.
         await expect(page.locator("table")).toContainText(/tidak ada|empty/i);

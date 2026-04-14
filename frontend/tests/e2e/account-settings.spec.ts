@@ -4,7 +4,7 @@ import { loginStudent } from "./utils/login";
 test.describe("Account Settings", () => {
     test.beforeEach(async ({ page }) => {
         await loginStudent(page);
-        await page.goto("/settings");
+        await page.goto("/settings", { waitUntil: "domcontentloaded" });
     });
 
     test("should prevent submission if fields are empty", async ({ page }) => {
