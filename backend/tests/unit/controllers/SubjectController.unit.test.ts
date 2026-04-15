@@ -17,6 +17,12 @@ describe("SubjectController (unit)", () => {
         name: "Matematika",
     };
 
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        res = createMockResponse();
+    });
+
     describe("getSubject", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
@@ -24,11 +30,9 @@ describe("SubjectController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should return subject details for valid ID", async () => {
@@ -66,11 +70,9 @@ describe("SubjectController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should decode query and pass pagination parameters", async () => {
@@ -136,11 +138,9 @@ describe("SubjectController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should create subject with valid data", async () => {
@@ -174,11 +174,9 @@ describe("SubjectController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should default active to true if not provided", async () => {
@@ -220,11 +218,9 @@ describe("SubjectController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should delete subject with valid ID", async () => {

@@ -9,6 +9,7 @@ import {
 
 describe("SessionController (unit)", () => {
     const controller = new SessionController(mockSessionService);
+    let res: ReturnType<typeof createMockResponse>;
 
     const mockDateStart = new Date("2024-08-01T00:00:00Z");
     const mockDateEnd = new Date("2024-12-15T00:00:00Z");
@@ -29,6 +30,10 @@ describe("SessionController (unit)", () => {
         endTime: mockDateEnd.getTime(),
     };
 
+    beforeEach(() => {
+        res = createMockResponse();
+    });
+
     describe("getActive", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
@@ -36,11 +41,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return the active academic session", async () => {
@@ -62,11 +65,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return the session for given session and semester", async () => {
@@ -112,11 +113,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return a list of academic sessions", async () => {
@@ -194,11 +193,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should parse dates, create session, and return 201", async () => {
@@ -253,11 +250,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should parse dates, update session, and return 204", async () => {
@@ -295,11 +290,9 @@ describe("SessionController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should delete session and return 204", async () => {

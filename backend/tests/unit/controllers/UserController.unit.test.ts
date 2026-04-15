@@ -8,6 +8,11 @@ import {
 
 describe("UserController (unit)", () => {
     const controller = new UserController(mockUserService);
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        res = createMockResponse();
+    });
 
     describe("getUser", () => {
         const createMockRequest = createMockRequestFactory<
@@ -16,7 +21,6 @@ describe("UserController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -27,8 +31,6 @@ describe("UserController (unit)", () => {
                 },
                 params: { id: "2" },
             });
-
-            res = createMockResponse();
         });
 
         it("should return user details for valid ID", async () => {
@@ -88,7 +90,6 @@ describe("UserController (unit)", () => {
 
         const mockUsers: UserListItem[] = [];
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -98,8 +99,6 @@ describe("UserController (unit)", () => {
                     identifier: "1",
                 },
             });
-
-            res = createMockResponse();
 
             mockUserService.listUsers.mockResolvedValue(mockUsers);
         });
@@ -200,7 +199,6 @@ describe("UserController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -216,8 +214,6 @@ describe("UserController (unit)", () => {
                     identifier: "1234567890",
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should return 201 on successful user creation", async () => {
@@ -264,7 +260,6 @@ describe("UserController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -279,8 +274,6 @@ describe("UserController (unit)", () => {
                     active: false,
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should return 200 on successful state update", async () => {
@@ -354,7 +347,6 @@ describe("UserController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -368,8 +360,6 @@ describe("UserController (unit)", () => {
                     newPassword: "NewPassword123!",
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should return 200 on successful password update", async () => {
@@ -408,7 +398,6 @@ describe("UserController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -421,8 +410,6 @@ describe("UserController (unit)", () => {
                     id: "2",
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should return 204 on successful user deletion", async () => {

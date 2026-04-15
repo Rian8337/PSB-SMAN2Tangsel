@@ -9,6 +9,11 @@ import {
 
 describe("NotificationController (unit)", () => {
     const controller = new NotificationController(mockNotificationService);
+    let res: ReturnType<typeof createMockResponse>;
+
+    beforeEach(() => {
+        res = createMockResponse();
+    });
 
     describe("getMyNotifications", () => {
         const createMockRequest = createMockRequestFactory<
@@ -17,11 +22,9 @@ describe("NotificationController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return 401 if no session is present", async () => {
@@ -93,11 +96,9 @@ describe("NotificationController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return 401 if no session is present", async () => {
@@ -138,11 +139,9 @@ describe("NotificationController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest();
-            res = createMockResponse();
         });
 
         it("should return 401 if no session is present", async () => {

@@ -131,8 +131,6 @@ describe("AuthService (unit)", () => {
             });
 
             it("should clear session", () => {
-                const res = createMockResponse();
-
                 service.clearSession(res);
 
                 expect(res.clearCookie).toHaveBeenCalled();

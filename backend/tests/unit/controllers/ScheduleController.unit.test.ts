@@ -260,7 +260,6 @@ describe("ScheduleController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({
@@ -271,8 +270,6 @@ describe("ScheduleController (unit)", () => {
                     endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 },
             });
-
-            res = createMockResponse();
         });
 
         it("should call service and return 200 on success", async () => {
@@ -336,11 +333,9 @@ describe("ScheduleController (unit)", () => {
         >();
 
         let req: ReturnType<typeof createMockRequest>;
-        let res: ReturnType<typeof createMockResponse>;
 
         beforeEach(() => {
             req = createMockRequest({ params: { id: "1" } });
-            res = createMockResponse();
         });
 
         it("should call service and return 204 on success", async () => {
