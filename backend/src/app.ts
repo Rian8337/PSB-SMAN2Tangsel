@@ -8,6 +8,7 @@ import { dependencyTokens } from "./dependencies/tokens";
 import { i18nMiddleware } from "./i18n";
 import { createRouter } from "./router";
 import { EnvironmentVariableKey } from "./types";
+import helmet from "helmet";
 
 function getAllowedCorsOrigins(container: DependencyContainer) {
     const configService = container.resolve(dependencyTokens.configService);
@@ -42,6 +43,7 @@ export function createApp(container = getContainer()) {
     const configService = container.resolve(dependencyTokens.configService);
 
     app.set("trust proxy", 1)
+        .use(helmet())
         .use(express.json())
         .use(express.urlencoded({ extended: true }))
         .use(
