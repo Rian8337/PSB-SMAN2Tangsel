@@ -42,6 +42,10 @@ interface Localization {
         readonly classHasContent: string;
     };
 
+    readonly classStudentService: {
+        readonly studentIsEnrolled: string;
+    };
+
     readonly notification: {
         readonly invalidId: string;
     };
@@ -152,6 +156,9 @@ export const messages = {
             classHasContent:
                 "Tidak dapat menghapus mata pelajaran ini karena sudah memiliki materi ajar atau tugas siswa.",
         },
+        classStudentService: {
+            studentIsEnrolled: "Siswa sudah terdaftar dalam kelas {className}.",
+        },
         notification: {
             invalidId: "ID notifikasi harus berupa bilangan bulat positif.",
         },
@@ -254,6 +261,9 @@ export const messages = {
         classSubjectService: {
             classHasContent:
                 "Cannot unassign this subject. It already has teaching materials or student assignments associated with it.",
+        },
+        classStudentService: {
+            studentIsEnrolled: "Student is already enrolled in {className}.",
         },
         notification: {
             invalidId: "Notification ID must be a positive integer.",

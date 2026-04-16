@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IClassRepository,
+    IClassStudentRepository,
     IClassSubjectRepository,
     INotificationRepository,
     IScheduleRepository,
@@ -14,6 +15,7 @@ import {
 import {
     IAuthService,
     IClassService,
+    IClassStudentService,
     IClassSubjectService,
     IConfigService,
     INotificationService,
@@ -63,6 +65,13 @@ export const dependencyTokens = {
     classSubjectRepository: Symbol.for(
         "classSubjectRepository",
     ) as InjectionToken<IClassSubjectRepository>,
+
+    /**
+     * Injection token for an {@link IClassStudentRepository}.
+     */
+    classStudentRepository: Symbol.for(
+        "classStudentRepository",
+    ) as InjectionToken<IClassStudentRepository>,
 
     /**
      * Injection token for an {@link INotificationRepository}.
@@ -133,6 +142,13 @@ export const dependencyTokens = {
     classSubjectService: Symbol.for(
         "classSubjectService",
     ) as InjectionToken<IClassSubjectService>,
+
+    /**
+     * Injection token for an {@link IClassStudentService}.
+     */
+    classStudentService: Symbol.for(
+        "classStudentService",
+    ) as InjectionToken<IClassStudentService>,
 
     /**
      * Injection token for an {@link IConfigService}.

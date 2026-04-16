@@ -1,5 +1,6 @@
 export * from "./AuthController";
 export * from "./ClassController";
+export * from "./ClassStudentController";
 export * from "./ClassSubjectController";
 export * from "./NotificationController";
 export * from "./ScheduleController";
