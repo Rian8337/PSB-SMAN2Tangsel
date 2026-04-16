@@ -65,9 +65,13 @@ declare global {
              * be translated according to the {@link locale} of the request.
              *
              * @param path The path to the key of the message.
+             * @param variables An optional object containing variables to replace in the message.
              * @returns The localized message.
              */
-            t: (path: MessageKey) => string;
+            t: (
+                path: MessageKey,
+                variables?: Record<string, string | number>,
+            ) => string;
 
             /**
              * The locale of the request.

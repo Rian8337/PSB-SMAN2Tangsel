@@ -20,7 +20,9 @@ export abstract class BaseController {
         error: unknown,
     ) {
         if (error instanceof APIError) {
-            res.status(error.statusCode).json({ error: req.t(error.key) });
+            res.status(error.statusCode).json({
+                error: req.t(error.key, error.variables),
+            });
 
             return;
         }

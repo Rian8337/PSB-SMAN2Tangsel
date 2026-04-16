@@ -13,6 +13,11 @@ export class APIError extends Error {
         readonly key: MessageKey,
 
         /**
+         * An optional object containing variables to replace in the message.
+         */
+        readonly variables?: Record<string, string | number>,
+
+        /**
          * The HTTP status code that should be returned to the client. Defaults to 500.
          */
         readonly statusCode = 500,

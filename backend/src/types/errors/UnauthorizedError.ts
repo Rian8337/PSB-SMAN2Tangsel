@@ -5,7 +5,10 @@ import { APIError } from "./APIError";
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
  */
 export class UnauthorizedError extends APIError {
-    constructor(key: MessageKey = "http.unauthorized") {
-        super(key, 401);
+    constructor(
+        key: MessageKey = "http.unauthorized",
+        variables?: Record<string, string | number>,
+    ) {
+        super(key, variables, 401);
     }
 }

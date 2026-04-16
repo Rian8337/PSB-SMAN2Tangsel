@@ -14,13 +14,34 @@ export function i18nMiddleware(
 
     req.locale = locale;
 
-    req.t = (path) =>
-        path
+    req.t = (path, variables) => {
+        let message = path
             .split(".")
             .reduce(
-                (acc: unknown, part) => (acc as Record<string, unknown>)[part],
+                (acc: unknown, part) =>
+                    (acc as Record<string, unknown> | undefined)?.[part],
                 messages[locale],
-            ) as string;
+            ) as string | undefined;
+
+        if (!message) {
+            console.warn(
+                `[i18n] Missing translation for key "${path}" in locale "${locale}".`,
+            );
+
+            return path;
+        }
+
+        if (variables) {
+            message = message.replace(/\{([^}]+)\}/g, (match, key: string) => {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                return variables[key] !== undefined
+                    ? String(variables[key])
+                    : match;
+            });
+        }
+
+        return message;
+    };
 
     next();
 }
