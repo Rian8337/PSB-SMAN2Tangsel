@@ -6,7 +6,7 @@ import {
     tinyint,
     varchar,
 } from "drizzle-orm/mysql-core";
-import { ValidSemester } from "../../types";
+import { ValidSemester, ValidSession } from "../../types";
 import { sessions } from "./sessions";
 import { classSubjects } from "./classSubjects";
 import { studentClasses } from "./studentClasses";
@@ -36,7 +36,7 @@ export const classes = mysqlTable(
         /**
          * The academic session this class is registered in.
          */
-        session: varchar({ length: 9 }).notNull(),
+        session: varchar({ length: 9 }).$type<ValidSession>().notNull(),
     },
     (table) => [
         foreignKey({
