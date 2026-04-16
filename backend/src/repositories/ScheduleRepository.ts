@@ -82,7 +82,7 @@ export class ScheduleRepository
                 eq(schedules.classSubjectId, classSubjects.id),
             )
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
-            .where(eq(classSubjects.id, classId));
+            .where(eq(classSubjects.classId, classId));
 
         return this.mapToDTO(records);
     }

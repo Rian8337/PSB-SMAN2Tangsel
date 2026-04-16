@@ -16,6 +16,13 @@ describe("ScheduleRepository (integration)", () => {
     beforeAll(async () => {
         const session = seededPrimaryData.sessions[0];
 
+        // Seed a class without a classSubject first so class IDs and classSubject IDs differ.
+        await seeders.classes.seedOne({
+            name: "Class Seed Gap",
+            session: session.session,
+            semester: session.semester,
+        });
+
         const clazz = await seeders.classes.seedOne({
             name: "Class 1",
             session: session.session,
