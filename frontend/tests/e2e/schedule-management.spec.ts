@@ -5,13 +5,14 @@ import { loginAdministrator } from "./utils/login";
 
 test.describe("Class Schedule Management", () => {
     const subject = seededPrimaryData.subjects[0];
+    const className = `X-1 E2E ${Date.now().toString().slice(-6)}`;
 
     test.beforeAll(async ({ workerSetup: { dbManager } }) => {
         const { seeders } = dbManager;
         const session = seededPrimaryData.sessions[0];
 
         const clazz = await seeders.classes.seedOne({
-            name: "X-1",
+            name: className,
             session: session.session,
             semester: session.semester,
         });
@@ -44,11 +45,29 @@ test.describe("Class Schedule Management", () => {
         await expect(page).toHaveURL(/\/admin\/classes/);
         await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
-        const scheduleLink = page.locator('a[href*="/schedules"]').first();
+        const classRow = page
+            .locator("table tr")
+            .filter({ hasText: new RegExp(className, "i") })
+            .first();
+
+        await expect(classRow).toBeVisible({ timeout: 15000 });
+
+        const scheduleLink = classRow.locator('a[href*="/schedules"]').first();
         await expect(scheduleLink).toBeVisible();
         await scheduleLink.click();
 
         await expect(page).toHaveURL(/\/admin\/classes\/\d+\/schedules/);
+
+        const waitForScheduleGridRefresh = () =>
+            page.waitForResponse((response) => {
+                const url = new URL(response.url());
+
+                return (
+                    response.request().method() === "GET" &&
+                    response.ok() &&
+                    /\/classes\/\d+\/schedules\/?$/.test(url.pathname)
+                );
+            });
 
         // Create schedule
         const openCreateModalButton = page.getByRole("button", {
@@ -90,8 +109,11 @@ test.describe("Class Schedule Management", () => {
                 /\/schedule\/?$/.test(new URL(response.url()).pathname),
         );
 
+        const refreshAfterCreateResponse = waitForScheduleGridRefresh();
+
         await Promise.all([
             createScheduleResponse,
+            refreshAfterCreateResponse,
             createDialog.getByRole("button", { name: /tambah|add/i }).click(),
         ]);
 
@@ -150,8 +172,11 @@ test.describe("Class Schedule Management", () => {
                 response.url().includes("/schedule/"),
         );
 
+        const refreshAfterUpdateResponse = waitForScheduleGridRefresh();
+
         await Promise.all([
             updateScheduleResponse,
+            refreshAfterUpdateResponse,
             editDialog.getByRole("button", { name: /simpan|save/i }).click(),
         ]);
 
@@ -182,8 +207,11 @@ test.describe("Class Schedule Management", () => {
                 response.url().includes("/schedule/"),
         );
 
+        const refreshAfterDeleteResponse = waitForScheduleGridRefresh();
+
         await Promise.all([
             deleteScheduleResponse,
+            refreshAfterDeleteResponse,
             editDialog.getByRole("button", { name: /hapus|delete/i }).click(),
         ]);
 
