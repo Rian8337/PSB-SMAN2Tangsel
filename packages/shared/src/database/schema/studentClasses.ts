@@ -44,7 +44,6 @@ export const studentClassRelations = relations(studentClasses, ({ one }) => ({
     /**
      * The class associated with the student class.
      */
-
     class: one(classes, {
         fields: [studentClasses.classId],
         references: [classes.id],
