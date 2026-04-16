@@ -10,7 +10,7 @@ export class ClassSubjectAPIClient
     implements IClassSubjectAPIClient
 {
     protected override get baseURL(): string {
-        return super.baseURL + "/class-subjects";
+        return super.baseURL + "/classes";
     }
 
     listAssignedSubjects(
@@ -66,23 +66,32 @@ export class ClassSubjectAPIClient
         subjectId: number,
         teacherId: number | null,
     ): Promise<void> {
-        await this.post(`/${classId.toString()}`, {
+        await this.post(`/${classId.toString()}/subjects`, {
             body: JSON.stringify({ subjectId, teacherId }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
     async updateAssignedSubject(
+        classId: number,
         assignmentId: number,
         teacherId: number | null,
     ): Promise<void> {
-        await this.patch(`/${assignmentId.toString()}`, {
-            body: JSON.stringify({ teacherId }),
-            headers: { "Content-Type": "application/json" },
-        });
+        await this.patch(
+            `/${classId.toString()}/subjects/${assignmentId.toString()}`,
+            {
+                body: JSON.stringify({ teacherId }),
+                headers: { "Content-Type": "application/json" },
+            },
+        );
     }
 
-    async unassignSubject(assignmentId: number): Promise<void> {
-        await this.delete(`/${assignmentId.toString()}`);
+    async unassignSubject(
+        classId: number,
+        assignmentId: number,
+    ): Promise<void> {
+        await this.delete(
+            `/${classId.toString()}/subjects/${assignmentId.toString()}`,
+        );
     }
 }

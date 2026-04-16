@@ -105,6 +105,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
     ) => {
         try {
             await classSubjectApiClient.updateAssignedSubject(
+                clazz.id,
                 assignmentId,
                 teacher?.id ?? null,
             );
@@ -151,7 +152,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
         }
 
         try {
-            await classSubjectApiClient.unassignSubject(assignmentId);
+            await classSubjectApiClient.unassignSubject(clazz.id, assignmentId);
 
             toaster.create({
                 title: t("remove.toast.successTitle"),

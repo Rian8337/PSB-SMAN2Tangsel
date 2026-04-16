@@ -40,11 +40,11 @@ describe("ClassSubjectController (integration)", () => {
 
     afterAll(testDbManager.cleanupSecondaryTables);
 
-    describe("GET /class-subjects/:id/assigned", () => {
+    describe("GET /classes/:id/subjects", () => {
         let endpoint: string;
 
         beforeAll(() => {
-            endpoint = `/class-subjects/${classId.toString()}/assigned`;
+            endpoint = `/classes/${classId.toString()}/subjects`;
         });
 
         it("should return 401 if requested without authentication", async () => {
@@ -84,11 +84,11 @@ describe("ClassSubjectController (integration)", () => {
         });
     });
 
-    describe("GET /class-subjects/:id/unassigned", () => {
+    describe("GET /classes/:id/subjects/unassigned", () => {
         let endpoint: string;
 
         beforeAll(() => {
-            endpoint = `/class-subjects/${classId.toString()}/unassigned`;
+            endpoint = `/classes/${classId.toString()}/subjects/unassigned`;
         });
 
         it("should return 401 if requested without authentication", async () => {
@@ -127,12 +127,12 @@ describe("ClassSubjectController (integration)", () => {
         });
     });
 
-    describe("POST /class-subjects/:id", () => {
+    describe("POST /classes/:id/subjects", () => {
         const payload = { subjectId: 2, teacherId: null };
         let endpoint: string;
 
         beforeAll(() => {
-            endpoint = `/class-subjects/${classId.toString()}`;
+            endpoint = `/classes/${classId.toString()}/subjects`;
         });
 
         it("should return 401 if requested without authentication", async () => {
@@ -171,12 +171,12 @@ describe("ClassSubjectController (integration)", () => {
         });
     });
 
-    describe("PATCH /class-subjects/:id", () => {
+    describe("PATCH /classes/:id/subjects/:classSubjectId", () => {
         const payload = { teacherId: null };
         let endpoint: string;
 
         beforeAll(() => {
-            endpoint = `/class-subjects/${classSubjectId.toString()}`;
+            endpoint = `/classes/${classId.toString()}/subjects/${classSubjectId.toString()}`;
         });
 
         it("should return 401 if requested without authentication", async () => {
@@ -213,11 +213,11 @@ describe("ClassSubjectController (integration)", () => {
         });
     });
 
-    describe("DELETE /class-subjects/:id", () => {
+    describe("DELETE /classes/:id/subjects/:classSubjectId", () => {
         let endpoint: string;
 
         beforeAll(() => {
-            endpoint = `/class-subjects/${classSubjectId.toString()}`;
+            endpoint = `/classes/${classId.toString()}/subjects/${classSubjectId.toString()}`;
         });
 
         it("should return 401 if requested without authentication", async () => {

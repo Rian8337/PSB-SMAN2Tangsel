@@ -25,7 +25,7 @@ const assignedSubjectsQuerySchema = listQuerySchema.extend({
 /**
  * Controller that handles endpoints related to subject management of classes.
  */
-@Controller("/class-subjects")
+@Controller("/classes/:id/subjects")
 export class ClassSubjectController extends BaseController {
     constructor(
         @inject(dependencyTokens.classSubjectService)
@@ -37,7 +37,7 @@ export class ClassSubjectController extends BaseController {
     /**
      * Obtains a list of subjects assigned to a specific class, optionally filtered by a search query and paginated with limit and offset parameters.
      */
-    @Get("/:id/assigned")
+    @Get("/")
     @Roles(UserRole.administrator)
     async listAssignedSubjects(
         req: Request<
@@ -81,7 +81,7 @@ export class ClassSubjectController extends BaseController {
     /**
      * Lists subjects that are not yet assigned to a specific class for display in the subject selection dropdown when assigning subjects to a class.
      */
-    @Get("/:id/unassigned")
+    @Get("/unassigned")
     @Roles(UserRole.administrator)
     async listUnassignedSubjects(
         req: Request<
@@ -126,7 +126,7 @@ export class ClassSubjectController extends BaseController {
     /**
      * Assigns a subject to a class. If the teacher ID is not provided, the subject will be assigned to the class without a teacher.
      */
-    @Post("/:id")
+    @Post("/")
     @Roles(UserRole.administrator)
     async assignSubject(
         req: Request<
@@ -180,11 +180,11 @@ export class ClassSubjectController extends BaseController {
     /**
      * Updates the teacher assigned to a class subject. If the teacher ID is not provided, the subject will be unassigned from any teacher.
      */
-    @Patch("/:id")
+    @Patch("/:classSubjectId")
     @Roles(UserRole.administrator)
     async updateAssignedSubject(
         req: Request<
-            { id: string },
+            { id: string; classSubjectId: string },
             { error: string },
             Partial<{ teacherId: number | null }>
         >,
@@ -192,7 +192,7 @@ export class ClassSubjectController extends BaseController {
     ) {
         try {
             const parsedId = coercedClassSubjectIdSchema.safeParse(
-                req.params.id,
+                req.params.classSubjectId,
             );
 
             if (!parsedId.success) {
@@ -226,15 +226,15 @@ export class ClassSubjectController extends BaseController {
      * Removes a subject assignment from a class. This operation is only possible if there are no assignments and materials associated with
      * the class subject assignment.
      */
-    @Delete("/:id")
+    @Delete("/:classSubjectId")
     @Roles(UserRole.administrator)
     async unassignSubject(
-        req: Request<{ id: string }, { error: string }>,
+        req: Request<{ id: string; classSubjectId: string }, { error: string }>,
         res: Response<{ error: string }>,
     ) {
         try {
             const parsedId = coercedClassSubjectIdSchema.safeParse(
-                req.params.id,
+                req.params.classSubjectId,
             );
 
             if (!parsedId.success) {
