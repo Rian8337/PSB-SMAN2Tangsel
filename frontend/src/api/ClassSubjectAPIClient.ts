@@ -20,7 +20,7 @@ export class ClassSubjectAPIClient
         offset?: number,
         signal?: AbortSignal,
     ): Promise<ClassSubjectAssignment[]> {
-        const url = new URL(this.baseURL + `/${classId.toString()}/assigned`);
+        const url = new URL(this.baseURL + `/${classId.toString()}/subjects`);
 
         if (typeof query === "string" && query.trim().length > 0) {
             url.searchParams.append("query", query.trim());
@@ -44,7 +44,9 @@ export class ClassSubjectAPIClient
         offset?: number,
         signal?: AbortSignal,
     ): Promise<Subject[]> {
-        const url = new URL(this.baseURL + `/${classId.toString()}/unassigned`);
+        const url = new URL(
+            this.baseURL + `/${classId.toString()}/subjects/unassigned`,
+        );
 
         if (typeof query === "string" && query.trim().length > 0) {
             url.searchParams.append("query", query.trim());
