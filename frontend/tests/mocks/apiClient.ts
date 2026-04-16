@@ -1,6 +1,7 @@
 import {
     IAuthAPIClient,
     IClassAPIClient,
+    IClassStudentAPIClient,
     IClassSubjectAPIClient,
     INotificationAPIClient,
     IScheduleAPIClient,
@@ -29,6 +30,16 @@ export const mockClassApiClient: Mocked<IClassAPIClient> = {
     createClass: vi.fn(),
     updateClass: vi.fn(),
     deleteClass: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassStudentAPIClient}.
+ */
+export const mockClassStudentApiClient: Mocked<IClassStudentAPIClient> = {
+    getEnrolledStudents: vi.fn(),
+    getUnenrolledStudents: vi.fn(),
+    enrollStudent: vi.fn(),
+    unenrollStudent: vi.fn(),
 };
 
 /**
