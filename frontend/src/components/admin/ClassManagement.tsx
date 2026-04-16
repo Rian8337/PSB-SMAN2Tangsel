@@ -15,7 +15,14 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { AcademicSessionDTO, Class } from "@psb/shared/types";
-import { BookOpen, CalendarDays, Plus, Search, Trash2 } from "lucide-react";
+import {
+    BookOpen,
+    CalendarDays,
+    Plus,
+    Search,
+    Trash2,
+    Users,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { Pagination } from "../ui/Pagination";
@@ -302,6 +309,20 @@ export function ClassManagement() {
                                                     aria-label={`manage-subjects-${c.name}`}
                                                 >
                                                     <BookOpen size={16} />
+                                                </Link>
+                                            </Button>
+
+                                            <Button
+                                                asChild
+                                                variant="ghost"
+                                                size="sm"
+                                                colorPalette="blue"
+                                                aria-label={`manage-students-${c.id.toString()}`}
+                                            >
+                                                <Link
+                                                    href={`/admin/classes/${c.id.toString()}/students`}
+                                                >
+                                                    <Users size={16} />
                                                 </Link>
                                             </Button>
 

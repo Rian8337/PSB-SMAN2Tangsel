@@ -246,8 +246,60 @@
       "edit": "Edit"
     }
   },
+  "ClassStudentManagement": {
+    "metaTitle": "Manajemen Siswa Kelas",
+    "title": "Siswa Kelas {class}",
+    "searchPlaceholder": "Cari siswa berdasarkan nama atau NISN...",
+    "enrollNewStudent": "Tambah Siswa",
+    "enroll": {
+      "title": "Tambah Siswa ke Kelas",
+      "submitButton": "Tambah Siswa",
+      "cancelButton": "Batal",
+      "dialog": {
+        "context": "Tambah siswa ke {class}",
+        "studentLabel": "Pilih Siswa",
+        "studentPlaceholder": "Cari dan pilih siswa...",
+        "cancelButton": "Batal",
+        "submitButton": "Tambah Siswa"
+      },
+      "toast": {
+        "successTitle": "Siswa Berhasil Ditambahkan",
+        "successMessage": "Siswa {student} telah berhasil ditambahkan ke kelas {class}.",
+        "errorTitle": "Gagal Menambahkan Siswa",
+        "errorMessage": "Terjadi kesalahan saat menambahkan siswa. Silakan coba lagi."
+      },
+      "validation": {
+        "selectStudent": "Harap pilih siswa."
+      },
+      "fields": {
+        "student": {
+          "label": "Siswa",
+          "placeholder": "Cari dan pilih siswa..."
+        }
+      }
+    },
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Siswa Kelas",
+      "errorMessage": "Terjadi kesalahan saat mengambil siswa kelas. Silakan coba lagi."
+    },
+    "columns": {
+      "identifier": "NISN",
+      "name": "Nama",
+      "actions": "Aksi"
+    },
+    "emptyState": "Tidak ada siswa yang ditemukan untuk kelas ini.",
+    "remove": {
+      "confirmation": "Apakah Anda yakin ingin menghapus siswa {student} dari kelas {class}? Tindakan ini tidak dapat dibatalkan.",
+      "toast": {
+        "successTitle": "Siswa Berhasil Dihapus",
+        "successMessage": "Siswa {student} telah berhasil dihapus dari kelas {class}.",
+        "errorTitle": "Gagal Menghapus Siswa",
+        "errorMessage": "Terjadi kesalahan saat menghapus siswa. Silakan coba lagi."
+      }
+    }
+  },
   "ClassSubjectManagement": {
-    "metaTitle": "Mata Pelajaran Kelas",
+    "metaTitle": "Manajemen Mata Pelajaran Kelas",
     "title": "Mata Pelajaran Kelas {class}",
     "searchPlaceholder": "Cari mata pelajaran berdasarkan nama atau kode...",
     "emptyState": "Tidak ada mata pelajaran yang ditemukan untuk kelas ini.",

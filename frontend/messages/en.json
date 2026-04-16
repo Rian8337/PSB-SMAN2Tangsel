@@ -250,6 +250,58 @@
       "edit": "Edit"
     }
   },
+  "ClassStudentManagement": {
+    "metaTitle": "Class Student Management",
+    "title": "Students in {class}",
+    "searchPlaceholder": "Search students by name or NISN...",
+    "enrollNewStudent": "Enroll New Student",
+    "enroll": {
+      "title": "Enroll Student to Class",
+      "submitButton": "Enroll Student",
+      "cancelButton": "Cancel",
+      "dialog": {
+        "context": "Enroll student in {class}",
+        "studentLabel": "Student",
+        "studentPlaceholder": "Search and select a student...",
+        "cancelButton": "Cancel",
+        "submitButton": "Enroll Student"
+      },
+      "toast": {
+        "successTitle": "Student Enrolled",
+        "successMessage": "{student} has been successfully enrolled in {class}.",
+        "errorTitle": "Failed to Enroll Student",
+        "errorMessage": "An error occurred while enrolling the student. Please try again."
+      },
+      "validation": {
+        "selectStudent": "Please select a student."
+      },
+      "fields": {
+        "student": {
+          "label": "Student",
+          "placeholder": "Search and select a student..."
+        }
+      }
+    },
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Class Students",
+      "errorMessage": "An error occurred while fetching class students. Please try again."
+    },
+    "columns": {
+      "identifier": "NISN",
+      "name": "Name",
+      "actions": "Actions"
+    },
+    "emptyState": "No students found for this class.",
+    "remove": {
+      "confirmation": "Are you sure you want to remove {student} from {class}? This action cannot be undone.",
+      "toast": {
+        "successTitle": "Student Removed",
+        "successMessage": "{student} has been successfully removed from {class}.",
+        "errorTitle": "Failed to Remove Student",
+        "errorMessage": "An error occurred while removing the student. Please try again."
+      }
+    }
+  },
   "ClassSubjectManagement": {
     "metaTitle": "Class Subject Management",
     "title": "Class Subject Management for {class}",
