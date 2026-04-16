@@ -44,10 +44,6 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    useEffect(() => {
-        setPage(1);
-    }, [debouncedSearchQuery]);
-
     const fetchAssignments = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
             setIsLoading(true);
@@ -219,6 +215,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
+                            setPage(1);
                         }}
                         bg="white"
                         borderRadius="md"
@@ -397,6 +394,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                 onSuccess={() => {
                     // Reset to page 1 to see the new assignment.
                     setPage(1);
+                    setSearchQuery("");
                     setRefreshTrigger((prev) => prev + 1);
                 }}
             />

@@ -35,10 +35,6 @@ export function SubjectManagement() {
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    useEffect(() => {
-        setPage(1);
-    }, [debouncedSearchQuery]);
-
     const fetchSubjects = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
             setIsLoading(true);
@@ -157,6 +153,7 @@ export function SubjectManagement() {
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
+                            setPage(1);
                         }}
                         bg="white"
                         borderRadius="md"
@@ -300,6 +297,8 @@ export function SubjectManagement() {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
+                    setPage(1);
+                    setSearchQuery("");
                     setRefreshTrigger((prev) => prev + 1);
                 }}
             />

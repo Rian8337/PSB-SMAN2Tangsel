@@ -44,10 +44,6 @@ export function ClassManagement() {
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     useEffect(() => {
-        setPage(1);
-    }, [debouncedSearchQuery]);
-
-    useEffect(() => {
         const fetchActiveSession = async () => {
             setIsLoadingSession(true);
 
@@ -227,6 +223,7 @@ export function ClassManagement() {
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
+                            setPage(1);
                         }}
                         bg="white"
                         borderRadius="md"
@@ -371,6 +368,8 @@ export function ClassManagement() {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
+                    setPage(1);
+                    setSearchQuery("");
                     setRefreshTrigger((prev) => prev + 1);
                 }}
             />

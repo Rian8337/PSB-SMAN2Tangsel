@@ -73,10 +73,6 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     );
 
     useEffect(() => {
-        setPage(1);
-    }, [debouncedSearchQuery]);
-
-    useEffect(() => {
         // Prevent fetching if user is still actively typing.
         if (searchQuery !== debouncedSearchQuery) {
             return;
@@ -158,6 +154,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
+                            setPage(1);
                         }}
                         bg="white"
                         borderRadius="md"
@@ -329,6 +326,8 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={() => {
+                    setPage(1);
+                    setSearchQuery("");
                     setRefreshTrigger((prev) => prev + 1);
                 }}
             />
