@@ -74,7 +74,8 @@ test.describe("Class Subject Management", () => {
 
             return (
                 response.request().method() === "POST" &&
-                url.includes("/class-subjects/")
+                url.includes("/classes/") &&
+                url.includes("/subjects")
             );
         });
 
@@ -112,7 +113,7 @@ test.describe("Class Subject Management", () => {
 
             return (
                 response.request().method() === "GET" &&
-                url.includes("/assigned") &&
+                url.includes("/subjects") &&
                 url.includes("query=MA2")
             );
         });
@@ -151,7 +152,8 @@ test.describe("Class Subject Management", () => {
 
             return (
                 response.request().method() === "PATCH" &&
-                url.includes("/class-subjects/")
+                url.includes("/classes/") &&
+                url.includes("/subjects")
             );
         });
 
@@ -177,9 +179,11 @@ test.describe("Class Subject Management", () => {
 
         const deletePromise = page.waitForResponse((response) => {
             const url = response.url();
+
             return (
                 response.request().method() === "DELETE" &&
-                url.includes("/class-subjects/")
+                url.includes("/classes/") &&
+                url.includes("/subjects")
             );
         });
 
