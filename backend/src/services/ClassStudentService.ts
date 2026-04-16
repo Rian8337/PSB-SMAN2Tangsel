@@ -18,8 +18,18 @@ export class ClassStudentService implements IClassStudentService {
         private readonly classStudentRepository: IClassStudentRepository,
     ) {}
 
-    getEnrolledStudents(classId: number): Promise<UserListItem[]> {
-        return this.classStudentRepository.getEnrolledStudents(classId);
+    getEnrolledStudents(
+        classId: number,
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<UserListItem[]> {
+        return this.classStudentRepository.getEnrolledStudents(
+            classId,
+            query,
+            limit,
+            offset,
+        );
     }
 
     async getUnenrolledStudents(

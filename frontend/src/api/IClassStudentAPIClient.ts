@@ -8,11 +8,17 @@ export interface IClassStudentAPIClient {
      * Obtains a list of students enrolled in a specific class.
      *
      * @param classId The unique identifier of the class to obtain enrolled students for.
+     * @param query An optional search query to filter enrolled students by name.
+     * @param limit The maximum number of enrolled students to return. Defaults to 5.
+     * @param offset The number of enrolled students to skip before starting to collect the result set. Defaults to 0.
      * @param signal An optional {@link AbortSignal} that can be used to cancel the request to obtain enrolled students.
      * @returns A list of students enrolled in the specified class.
      */
     getEnrolledStudents(
         classId: number,
+        query?: string,
+        limit?: number,
+        offset?: number,
         signal?: AbortSignal,
     ): Promise<UserListItem[]>;
 
@@ -20,7 +26,7 @@ export interface IClassStudentAPIClient {
      * Obtains a list of students not enrolled in a specific class, optionally filtered by a search query and paginated with limit and offset parameters.
      *
      * @param classId The unique identifier of the class to obtain unenrolled students for.
-     * @param query An optional search query to filter unenrolled students by name or username.
+     * @param query An optional search query to filter unenrolled students by name.
      * @param limit The maximum number of unenrolled students to return. Defaults to 5.
      * @param offset The number of unenrolled students to skip before starting to collect the result set. Defaults to 0.
      * @param signal An optional {@link AbortSignal} that can be used to cancel the request to obtain unenrolled students.

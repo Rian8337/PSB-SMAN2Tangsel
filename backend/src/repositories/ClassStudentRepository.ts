@@ -9,7 +9,7 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { and, eq, like, notInArray } from "drizzle-orm";
+import { and, eq, like, notInArray, or, SQL } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IClassStudentRepository } from "./IClassStudentRepository";
@@ -29,7 +29,27 @@ export class ClassStudentRepository
         super(db);
     }
 
-    getEnrolledStudents(classId: number): Promise<UserListItem[]> {
+    getEnrolledStudents(
+        classId: number,
+        query?: string,
+        limit = 5,
+        offset = 0,
+    ): Promise<UserListItem[]> {
+        const filters: (SQL | undefined)[] = [
+            eq(studentClasses.classId, classId),
+        ];
+
+        if (query) {
+            const searchParam = `%${query.trim()}%`;
+
+            filters.push(
+                or(
+                    like(users.name, searchParam),
+                    like(users.identifier, searchParam),
+                ),
+            );
+        }
+
         return this.db
             .select({
                 id: users.id,
@@ -41,7 +61,9 @@ export class ClassStudentRepository
             .from(studentClasses)
             .innerJoin(students, eq(studentClasses.studentId, students.userId))
             .innerJoin(users, eq(students.userId, users.id))
-            .where(eq(studentClasses.classId, classId));
+            .where(eq(studentClasses.classId, classId))
+            .limit(limit)
+            .offset(offset);
     }
 
     getUnenrolledStudents(
@@ -62,10 +84,19 @@ export class ClassStudentRepository
                 ),
             );
 
-        const filters = [notInArray(students.userId, occupiedStudentSubquery)];
+        const filters: (SQL | undefined)[] = [
+            notInArray(students.userId, occupiedStudentSubquery),
+        ];
 
         if (query) {
-            filters.push(like(users.name, `%${query}%`));
+            const searchParam = `%${query.trim()}%`;
+
+            filters.push(
+                or(
+                    like(users.name, searchParam),
+                    like(users.identifier, searchParam),
+                ),
+            );
         }
 
         return this.db

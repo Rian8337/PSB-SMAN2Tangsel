@@ -34,20 +34,36 @@ export class ClassStudentController extends BaseController {
     @Get("/")
     @Roles(UserRole.administrator)
     async getEnrolledStudents(
-        req: Request<{ id: string }, UserListItem[] | { error: string }>,
+        req: Request<
+            { id: string },
+            UserListItem[] | { error: string },
+            unknown,
+            Partial<{ query: string; limit: string; offset: string }>
+        >,
         res: Response<UserListItem[] | { error: string }>,
     ) {
         try {
-            const parsed = coercedClassIdSchema.safeParse(req.params.id);
+            const parsedId = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (!parsed.success) {
+            if (!parsedId.success) {
                 throw new BadRequestError(
-                    parsed.error.issues[0].message as MessageKey,
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsedQuery = listQuerySchema.safeParse(req.query);
+
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
                 );
             }
 
             const students = await this.classStudentService.getEnrolledStudents(
-                parsed.data,
+                parsedId.data,
+                parsedQuery.data.query,
+                parsedQuery.data.limit,
+                parsedQuery.data.offset,
             );
 
             res.json(students);

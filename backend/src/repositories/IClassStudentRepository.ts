@@ -13,9 +13,17 @@ export interface IClassStudentRepository {
      * Obtains students currently enrolled in a class.
      *
      * @param classId The unique identifier of the class to obtain enrolled students for.
+     * @param query An optional search query to filter enrolled students by name or identifier.
+     * @param limit The maximum number of enrolled students to return. Defaults to 5.
+     * @param offset The number of enrolled students to skip before starting to collect the result set. Defaults to 0.
      * @returns A list of students currently enrolled in the specified class.
      */
-    getEnrolledStudents(classId: number): Promise<UserListItem[]>;
+    getEnrolledStudents(
+        classId: number,
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<UserListItem[]>;
 
     /**
      * Obtains students that are not yet enrolled in any class in a specific academic session.

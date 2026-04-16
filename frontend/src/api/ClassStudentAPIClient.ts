@@ -15,9 +15,24 @@ export class ClassStudentAPIClient
 
     getEnrolledStudents(
         classId: number,
+        query?: string,
+        limit?: number,
+        offset?: number,
         signal?: AbortSignal,
     ): Promise<UserListItem[]> {
         const url = new URL(this.baseURL + `/${classId.toString()}/students`);
+
+        if (typeof query === "string" && query.trim().length > 0) {
+            url.searchParams.append("query", query.trim());
+        }
+
+        if (limit !== undefined) {
+            url.searchParams.append("limit", limit.toString());
+        }
+
+        if (offset !== undefined) {
+            url.searchParams.append("offset", offset.toString());
+        }
 
         return this.get(url, { signal }).then((res) => res.json());
     }
