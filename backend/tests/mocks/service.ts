@@ -1,6 +1,7 @@
 import {
     IAuthService,
     IClassService,
+    IClassStudentService,
     IClassSubjectService,
     IConfigService,
     INotificationService,
@@ -32,6 +33,16 @@ export const mockClassService: Mocked<IClassService> = {
     createClass: vi.fn(),
     updateClass: vi.fn(),
     deleteClass: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassStudentService}.
+ */
+export const mockClassStudentService: Mocked<IClassStudentService> = {
+    getEnrolledStudents: vi.fn(),
+    getUnenrolledStudents: vi.fn(),
+    enrollStudent: vi.fn(),
+    unenrollStudent: vi.fn(),
 };
 
 /**

@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IClassRepository,
+    IClassStudentRepository,
     IClassSubjectRepository,
     INotificationRepository,
     IScheduleRepository,
@@ -50,6 +51,17 @@ export const mockClassRepository: Mocked<IClassRepository> = {
     hasSubjects: vi.fn(),
     hasStudents: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IClassStudentRepository}.
+ */
+export const mockClassStudentRepository: Mocked<IClassStudentRepository> = {
+    getEnrolledStudents: vi.fn(),
+    getUnenrolledStudents: vi.fn(),
+    findActiveEnrollment: vi.fn(),
+    enrollStudent: vi.fn(),
+    unenrollStudent: vi.fn(),
 };
 
 /**
