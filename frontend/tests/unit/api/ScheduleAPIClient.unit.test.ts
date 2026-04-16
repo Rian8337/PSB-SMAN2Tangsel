@@ -24,6 +24,7 @@ describe("ScheduleAPIClient (unit)", () => {
             const mockScheduleData: ScheduleDTO[] = [
                 {
                     id: 1,
+                    classSubjectId: 1,
                     day: ScheduleDay.monday,
                     startTime: 0,
                     endTime: 100,

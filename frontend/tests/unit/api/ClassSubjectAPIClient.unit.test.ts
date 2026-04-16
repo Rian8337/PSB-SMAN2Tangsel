@@ -33,7 +33,7 @@ describe("ClassSubjectAPIClient (unit)", () => {
             const [url, options] = fetchSpy.mock.calls[0];
             const urlStr = (url as URL | string).toString();
 
-            expect(urlStr).toContain("/class-subjects/10/assigned");
+            expect(urlStr).toContain("/classes/10/subjects");
             expect(urlStr).toContain("query=Math");
             expect(urlStr).toContain("limit=5");
             expect(urlStr).toContain("offset=20");
@@ -49,7 +49,7 @@ describe("ClassSubjectAPIClient (unit)", () => {
             const [url] = fetchSpy.mock.calls[0];
             const urlStr = (url as URL | string).toString();
 
-            expect(urlStr).toContain("/class-subjects/10/assigned");
+            expect(urlStr).toContain("/classes/10/subjects");
             expect(urlStr).not.toContain("query=");
             expect(urlStr).not.toContain("limit=");
             expect(urlStr).not.toContain("offset=");
@@ -65,7 +65,7 @@ describe("ClassSubjectAPIClient (unit)", () => {
             const [url] = fetchSpy.mock.calls[0];
             const urlStr = (url as URL | string).toString();
 
-            expect(urlStr).toContain("/class-subjects/10/unassigned");
+            expect(urlStr).toContain("/classes/10/subjects/unassigned");
             expect(urlStr).toContain("query=Phys");
             expect(urlStr).toContain("limit=10");
             expect(urlStr).toContain("offset=0");
@@ -80,7 +80,7 @@ describe("ClassSubjectAPIClient (unit)", () => {
             const [url, options] = fetchSpy.mock.calls[0];
 
             expect((url as URL | string).toString()).toContain(
-                "/class-subjects/10",
+                "/classes/10/subjects",
             );
 
             expect(options?.method).toBe("POST");
@@ -110,13 +110,16 @@ describe("ClassSubjectAPIClient (unit)", () => {
 
     describe("updateAssignedSubject", () => {
         it("should send a PATCH request with the updated teacherId", async () => {
-            await client.updateAssignedSubject(42, 99);
+            await client.updateAssignedSubject(10, 42, 99);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
             const [url, options] = fetchSpy.mock.calls[0];
 
-            expect((url as URL).toString()).toContain("/class-subjects/42");
+            expect((url as URL).toString()).toContain(
+                "/classes/10/subjects/42",
+            );
+
             expect(options?.method).toBe("PATCH");
 
             expect(options?.headers).toEqual(
@@ -131,14 +134,14 @@ describe("ClassSubjectAPIClient (unit)", () => {
 
     describe("unassignSubject", () => {
         it("should send a DELETE request targeting the assignment ID", async () => {
-            await client.unassignSubject(42);
+            await client.unassignSubject(10, 42);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
             const [url, options] = fetchSpy.mock.calls[0];
 
             expect((url as URL | string).toString()).toContain(
-                "/class-subjects/42",
+                "/classes/10/subjects/42",
             );
 
             expect(options?.method).toBe("DELETE");
