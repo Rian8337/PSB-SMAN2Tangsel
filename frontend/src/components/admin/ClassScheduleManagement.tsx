@@ -31,8 +31,10 @@ export function ClassScheduleManagement({
     );
 
     const fetchSchedules = useCallback(
-        async (signal?: AbortSignal) => {
-            setIsLoading(true);
+        async (isBackgroundRefresh: boolean, signal?: AbortSignal) => {
+            if (!isBackgroundRefresh) {
+                setIsLoading(true);
+            }
 
             try {
                 const data = await classApiClient.getClassSchedule(
@@ -63,7 +65,7 @@ export function ClassScheduleManagement({
     useEffect(() => {
         const controller = new AbortController();
 
-        void fetchSchedules(controller.signal);
+        void fetchSchedules(refreshTrigger > 0, controller.signal);
 
         return () => {
             controller.abort();
