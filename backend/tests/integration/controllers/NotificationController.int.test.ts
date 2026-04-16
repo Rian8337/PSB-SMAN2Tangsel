@@ -90,6 +90,11 @@ describe("NotificationController (integration)", () => {
     describe("GET /notifications/unread-count", () => {
         const endpoint = "/notifications/unread-count";
 
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+            expect(res.status).toBe(401);
+        });
+
         describe("Authenticated Student", () => {
             const agent = request.agent(app);
 
@@ -109,6 +114,22 @@ describe("NotificationController (integration)", () => {
     });
 
     describe("PATCH /notifications/:id/read-status", () => {
+        let studentEndpoint: string;
+        let teacherEndpoint: string;
+
+        beforeAll(() => {
+            studentEndpoint = `/notifications/${unreadNotificationId.toString()}/read-status`;
+            teacherEndpoint = `/notifications/${teacherNotificationId.toString()}/read-status`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app)
+                .patch(studentEndpoint)
+                .send({ read: true });
+
+            expect(res.status).toBe(401);
+        });
+
         describe("Authenticated Student", () => {
             const agent = request.agent(app);
 
@@ -118,9 +139,7 @@ describe("NotificationController (integration)", () => {
 
             it("should successfully update the read status of an owned notification", async () => {
                 const res = await agent
-                    .patch(
-                        `/notifications/${unreadNotificationId.toString()}/read-status`,
-                    )
+                    .patch(studentEndpoint)
                     .send({ read: true });
 
                 expect(res.status).toBe(204);
@@ -137,9 +156,7 @@ describe("NotificationController (integration)", () => {
 
             it("should return 400 for invalid read status payload", async () => {
                 const res = await agent
-                    .patch(
-                        `/notifications/${unreadNotificationId.toString()}/read-status`,
-                    )
+                    .patch(studentEndpoint)
                     .send({ read: "yes" });
 
                 expect(res.status).toBe(400);
@@ -154,11 +171,9 @@ describe("NotificationController (integration)", () => {
             });
 
             it("should return 403 when attempting to update another user's notification", async () => {
-                // Mark the teacher's notification as read as a student
+                // Mark the teacher's notification as read as a student.
                 const res = await agent
-                    .patch(
-                        `/notifications/${teacherNotificationId.toString()}/read-status`,
-                    )
+                    .patch(teacherEndpoint)
                     .send({ read: true });
 
                 expect(res.status).toBe(403);

@@ -53,45 +53,34 @@ describe("ClassSubjectController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => await loginStudent(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.get(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Teacher", () => {
+        it("should return 403 if user is teacher", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => await loginTeacher(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.get(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Administrator", () => {
+        it("should return 200 and the assigned subjects if user is administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => await loginAdministrator(agent));
+            const res = await agent.get(endpoint);
+            const body = res.body as ClassSubjectAssignment[];
 
-            it("should return the assigned subjects", async () => {
-                const res = await agent.get(endpoint);
-                const body = res.body as ClassSubjectAssignment[];
+            expect(res.status).toBe(200);
 
-                expect(res.status).toBe(200);
-
-                expect(body).toBeInstanceOf(Array);
-                expect(body).toHaveLength(1);
-                expect(body[0].subject.id).toBe(subjectAssigned.id);
-            });
+            expect(body).toBeInstanceOf(Array);
+            expect(body).toHaveLength(1);
+            expect(body[0].subject.id).toBe(subjectAssigned.id);
         });
     });
 
@@ -108,46 +97,33 @@ describe("ClassSubjectController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => await loginStudent(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.get(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Teacher", () => {
+        it("should return 403 if user is teacher", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => await loginTeacher(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.get(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Administrator", () => {
+        it("should return 200 and the unassigned subjects if user is administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => await loginAdministrator(agent));
+            const res = await agent.get(endpoint);
+            const body = res.body as Subject[];
 
-            it("should return the unassigned subjects", async () => {
-                const res = await agent.get(endpoint);
-                const body = res.body as Subject[];
+            expect(res.status).toBe(200);
 
-                expect(res.status).toBe(200);
-
-                expect(body).toBeInstanceOf(Array);
-                expect(body.some((s) => s.id === subjectUnassigned.id)).toBe(
-                    true,
-                );
-            });
+            expect(body).toBeInstanceOf(Array);
+            expect(body.some((s) => s.id === subjectUnassigned.id)).toBe(true);
         });
     });
 
@@ -165,44 +141,33 @@ describe("ClassSubjectController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => await loginStudent(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.post(endpoint).send(payload);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
         });
 
-        describe("Teacher", () => {
+        it("should return 403 if user is teacher", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => await loginTeacher(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.post(endpoint).send(payload);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
         });
 
-        describe("Administrator", () => {
+        it("should assign the subject and return 201 if user is administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => await loginAdministrator(agent));
-
-            it("should assign the subject and return 201", async () => {
-                // Dynamically use the real unassigned subject ID
-                const res = await agent.post(endpoint).send({
-                    subjectId: subjectUnassigned.id,
-                    teacherId: null,
-                });
-
-                expect(res.status).toBe(201);
+            // Dynamically use the real unassigned subject ID.
+            const res = await agent.post(endpoint).send({
+                subjectId: subjectUnassigned.id,
+                teacherId: null,
             });
+
+            expect(res.status).toBe(201);
         });
     });
 
@@ -220,42 +185,31 @@ describe("ClassSubjectController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => await loginStudent(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.patch(endpoint).send(payload);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.patch(endpoint).send(payload);
+            expect(res.status).toBe(403);
         });
 
-        describe("Teacher", () => {
+        it("should return 403 if user is teacher", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => await loginTeacher(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.patch(endpoint).send(payload);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.patch(endpoint).send(payload);
+            expect(res.status).toBe(403);
         });
 
-        describe("Administrator", () => {
+        it("should update the assigned teacher and return 204 if user is administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => await loginAdministrator(agent));
+            const res = await agent
+                .patch(endpoint)
+                .send({ teacherId: teacher.userId });
 
-            it("should update the assigned teacher and return 204", async () => {
-                const res = await agent.patch(endpoint).send({
-                    teacherId: teacher.userId,
-                });
-
-                expect(res.status).toBe(204);
-            });
+            expect(res.status).toBe(204);
         });
     });
 
@@ -272,40 +226,28 @@ describe("ClassSubjectController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => await loginStudent(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.delete(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Teacher", () => {
+        it("should return 403 if user is teacher", async () => {
             const agent = request.agent(app);
+            await loginTeacher(agent);
 
-            beforeAll(async () => await loginTeacher(agent));
-
-            it("should restrict access", async () => {
-                const res = await agent.delete(endpoint);
-
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
         });
 
-        describe("Administrator", () => {
+        it("should unassign the subject and return 204 if user is administrator", async () => {
             const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-            beforeAll(async () => await loginAdministrator(agent));
-
-            it("should unassign the subject and return 204", async () => {
-                const res = await agent.delete(endpoint);
-
-                expect(res.status).toBe(204);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(204);
         });
     });
 });

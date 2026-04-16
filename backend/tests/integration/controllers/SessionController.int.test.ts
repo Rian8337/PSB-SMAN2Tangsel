@@ -9,6 +9,7 @@ import { app } from "@test/setup/app";
 import {
     loginAdministrator,
     loginStudent,
+    loginTeacher,
     seeders,
     testDbManager,
 } from "@test/utils";
@@ -86,6 +87,12 @@ describe("SessionController (integration)", () => {
     describe("GET /sessions", () => {
         const endpoint = "/sessions";
 
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+
+            expect(res.status).toBe(401);
+        });
+
         describe("Student", () => {
             const agent = request.agent(app);
 
@@ -114,17 +121,26 @@ describe("SessionController (integration)", () => {
     describe("GET /sessions/list", () => {
         const endpoint = "/sessions/list";
 
-        describe("Student", () => {
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginStudent(agent);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-            it("should restrict access for students", async () => {
-                const res = await agent.get(endpoint);
-                expect(res.status).toBe(403);
-            });
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
         describe("Administrator", () => {
@@ -157,93 +173,142 @@ describe("SessionController (integration)", () => {
     describe("POST /sessions", () => {
         const endpoint = "/sessions";
 
-        describe("Administrator", () => {
+        const payload: AcademicSessionDTO = {
+            session: "2025/2026",
+            semester: 1,
+            startTime: new Date(2025, 6, 1).getTime(),
+            endTime: new Date(2025, 11, 31).getTime(),
+            active: false,
+        };
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).post(endpoint).send(payload);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should successfully create a new session", async () => {
-                const res = await agent.post(endpoint).send({
-                    session: "2025/2026",
-                    semester: 1,
-                    startTime: new Date(2025, 6, 1).getTime(),
-                    endTime: new Date(2025, 11, 31).getTime(),
-                    active: false,
-                } satisfies AcademicSessionDTO);
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(201);
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-                // Verify insertion
-                const getRes = await agent.get(
-                    `${endpoint}?session=2025%2F2026&semester=1`,
-                );
+        it("should successfully create a new session if user is administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                const getBody = getRes.body as AcademicSessionDTO;
-                expect(getBody.session).toBe("2025/2026");
-            });
+            const res = await agent.post(endpoint).send(payload);
+
+            expect(res.status).toBe(201);
+
+            // Verify insertion
+            const getRes = await agent.get(
+                `${endpoint}?session=2025%2F2026&semester=1`,
+            );
+
+            const getBody = getRes.body as AcademicSessionDTO;
+            expect(getBody.session).toBe("2025/2026");
         });
     });
 
     describe("PUT /sessions", () => {
         const endpoint = "/sessions";
 
-        describe("Administrator", () => {
+        const newStartTime = new Date(2024, 0, 5).getTime();
+
+        const payload: AcademicSessionDTO = {
+            session: inactiveSession,
+            semester: inactiveSemester,
+            startTime: newStartTime,
+            endTime: new Date(2024, 5, 30).getTime(),
+            active: true,
+        };
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).put(endpoint).send(payload);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should update an existing session", async () => {
-                const newStartTime = new Date(2024, 0, 5).getTime();
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                const res = await agent.put(endpoint).send({
-                    session: inactiveSession,
-                    semester: inactiveSemester,
-                    startTime: newStartTime,
-                    endTime: new Date(2024, 5, 30).getTime(),
-                    active: true,
-                } satisfies AcademicSessionDTO);
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-                expect(res.status).toBe(204);
+        it("should update an existing session", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                // Verify the update via the /active endpoint since we made it active
-                const activeRes = await agent.get(`${endpoint}/active`);
-                const activeBody = activeRes.body as AcademicSessionDTO;
+            const res = await agent.put(endpoint).send(payload);
 
-                expect(activeBody.session).toBe(inactiveSession);
-                expect(activeBody.startTime).toBe(newStartTime);
-            });
+            expect(res.status).toBe(204);
+
+            // Verify the update via the /active endpoint since we made it active
+            const activeRes = await agent.get(`${endpoint}/active`);
+            const activeBody = activeRes.body as AcademicSessionDTO;
+
+            expect(activeBody.session).toBe(inactiveSession);
+            expect(activeBody.startTime).toBe(newStartTime);
         });
     });
 
     describe("DELETE /sessions", () => {
         const endpoint = "/sessions";
 
-        describe("Administrator", () => {
+        const payload = {
+            session: sessionToDelete,
+            semester: sessionToDeleteSemester,
+        };
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).delete(endpoint).send(payload);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.delete(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should delete the session via body payload", async () => {
-                const res = await agent.delete(endpoint).send({
-                    session: sessionToDelete,
-                    semester: sessionToDeleteSemester,
-                });
+        it("should delete the session via body payload if user is administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                expect(res.status).toBe(204);
+            const res = await agent.delete(endpoint).send(payload);
 
-                // Verify it's gone
-                const getRes = await agent.get(
-                    `${endpoint}?session=${encodeURIComponent(sessionToDelete)}&semester=${sessionToDeleteSemester.toString()}`,
-                );
+            expect(res.status).toBe(204);
 
-                expect(getRes.status).toBe(404);
-            });
+            // Verify it's gone
+            const getRes = await agent.get(
+                `${endpoint}?session=${encodeURIComponent(sessionToDelete)}&semester=${sessionToDeleteSemester.toString()}`,
+            );
+
+            expect(getRes.status).toBe(404);
         });
     });
 });

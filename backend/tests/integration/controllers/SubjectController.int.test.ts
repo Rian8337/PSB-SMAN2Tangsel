@@ -4,6 +4,7 @@ import { app } from "@test/setup/app";
 import {
     loginAdministrator,
     loginStudent,
+    loginTeacher,
     seeders,
     testDbManager,
 } from "@test/utils";
@@ -82,6 +83,17 @@ describe("SubjectController (integration)", () => {
     });
 
     describe("GET /subjects/:id", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/subjects/${testSubjectId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+            expect(res.status).toBe(401);
+        });
+
         describe("Student", () => {
             const agent = request.agent(app);
 
@@ -90,10 +102,7 @@ describe("SubjectController (integration)", () => {
             });
 
             it("should return a specific subject by ID", async () => {
-                const res = await agent.get(
-                    `/subjects/${testSubjectId.toString()}`,
-                );
-
+                const res = await agent.get(endpoint);
                 const body = res.body as Subject;
 
                 expect(res.status).toBe(200);
@@ -111,21 +120,31 @@ describe("SubjectController (integration)", () => {
     describe("POST /subjects", () => {
         const endpoint = "/subjects";
 
-        describe("Student", () => {
+        const payload = {
+            code: "NEW-CHEM",
+            name: "New Chemistry",
+        };
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).post(endpoint).send(payload);
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginStudent(agent);
-            });
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should restrict creation for students", async () => {
-                const res = await agent.post(endpoint).send({
-                    code: "STU-FAIL",
-                    name: "Student Attempt",
-                });
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.post(endpoint).send(payload);
+            expect(res.status).toBe(403);
         });
 
         describe("Administrator", () => {
@@ -136,16 +155,12 @@ describe("SubjectController (integration)", () => {
             });
 
             it("should successfully create a new subject", async () => {
-                const res = await agent.post(endpoint).send({
-                    code: "NEW-CHEM",
-                    name: "New Chemistry",
-                });
-
+                const res = await agent.post(endpoint).send(payload);
                 expect(res.status).toBe(201);
 
                 // Verify insertion
                 const listRes = await agent.get(
-                    `${endpoint}/list?query=NEW-CHEM`,
+                    `${endpoint}/list?query=${payload.code}`,
                 );
 
                 const listBody = listRes.body as Subject[];
@@ -165,60 +180,97 @@ describe("SubjectController (integration)", () => {
     });
 
     describe("PUT /subjects/:id", () => {
-        describe("Administrator", () => {
+        let endpoint: string;
+
+        const payload = {
+            code: "UPD-PHYS",
+            name: "Updated Physics",
+            active: false,
+        };
+
+        beforeAll(() => {
+            endpoint = `/subjects/${testSubjectId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).put(endpoint).send(payload);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should update an existing subject", async () => {
-                const res = await agent
-                    .put(`/subjects/${testSubjectId.toString()}`)
-                    .send({
-                        code: "UPD-PHYS",
-                        name: "Updated Physics",
-                        active: false,
-                    });
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(200);
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-                // Verify the update
-                const getRes = await agent.get(
-                    `/subjects/${testSubjectId.toString()}`,
-                );
+        it("should update an existing subject if user is administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                const getBody = getRes.body as Subject;
+            const res = await agent.put(endpoint).send(payload);
+            expect(res.status).toBe(200);
 
-                expect(getBody.code).toBe("UPD-PHYS");
-                expect(getBody.name).toBe("Updated Physics");
-                expect(getBody.active).toBe(false);
-            });
+            // Verify the update
+            const getRes = await agent.get(
+                `/subjects/${testSubjectId.toString()}`,
+            );
+
+            const getBody = getRes.body as Subject;
+
+            expect(getBody.code).toBe("UPD-PHYS");
+            expect(getBody.name).toBe("Updated Physics");
+            expect(getBody.active).toBe(false);
         });
     });
 
     describe("DELETE /subjects/:id", () => {
-        describe("Administrator", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/subjects/${testSubjectToDeleteId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).delete(endpoint);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-            it("should delete the subject", async () => {
-                const res = await agent.delete(
-                    `/subjects/${testSubjectToDeleteId.toString()}`,
-                );
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(204);
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-                // Verify it's gone
-                const getRes = await agent.get(
-                    `/subjects/${testSubjectToDeleteId.toString()}`,
-                );
+        it("should delete the subject", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                expect(getRes.status).toBe(404);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(204);
+
+            // Verify it's gone
+            const getRes = await agent.get(endpoint);
+            expect(getRes.status).toBe(404);
         });
     });
 });

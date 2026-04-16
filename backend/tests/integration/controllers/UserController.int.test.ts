@@ -5,6 +5,7 @@ import { app } from "@test/setup/app";
 import {
     loginAdministrator,
     loginStudent,
+    loginTeacher,
     loginWithCredentials,
     seeders,
     testDbManager,
@@ -78,18 +79,20 @@ describe("UserController (integration)", () => {
             expect(res.status).toBe(401);
         });
 
-        describe("Student", () => {
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginStudent(agent);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-            it("should restrict access to list users", async () => {
-                const res = await agent.get(endpoint);
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(403);
-            });
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
         });
 
         describe("Administrator", () => {
@@ -130,6 +133,33 @@ describe("UserController (integration)", () => {
     });
 
     describe("GET /users/:id", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/users/${testUserId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+
         describe("Administrator", () => {
             const agent = request.agent(app);
 
@@ -138,7 +168,7 @@ describe("UserController (integration)", () => {
             });
 
             it("should return detailed user information", async () => {
-                const res = await agent.get(`/users/${testUserId.toString()}`);
+                const res = await agent.get(endpoint);
                 const body = res.body as UserListItem;
 
                 expect(res.status).toBe(200);
@@ -199,41 +229,69 @@ describe("UserController (integration)", () => {
     });
 
     describe("PATCH /users/:id", () => {
-        describe("Administrator", () => {
+        let endpoint: string;
+
+        const payload = {
+            name: "Updated Integration User",
+            active: false,
+        };
+
+        beforeAll(() => {
+            endpoint = `/users/${testUserId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).patch(endpoint).send(payload);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.patch(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-            it("should update user name and active status", async () => {
-                const res = await agent
-                    .patch(`/users/${testUserId.toString()}`)
-                    .send({
-                        name: "Updated Integration User",
-                        active: false,
-                    });
-                expect(res.status).toBe(200);
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                // Verify the update
-                const getRes = await agent.get(
-                    `/users/${testUserId.toString()}`,
-                );
+            const res = await agent.patch(endpoint).send(payload);
+            expect(res.status).toBe(403);
+        });
 
-                const getBody = getRes.body as UserListItem;
+        it("should update user name and active status if user is administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                expect(getBody.name).toBe("Updated Integration User");
-                expect(getBody.active).toBe(false);
-            });
+            const res = await agent.patch(endpoint).send(payload);
+            expect(res.status).toBe(200);
+
+            // Verify the update
+            const getRes = await agent.get(endpoint);
+            const getBody = getRes.body as UserListItem;
+
+            expect(getBody.name).toBe(payload.name);
+            expect(getBody.active).toBe(payload.active);
         });
     });
 
     describe("PATCH /users/update-password", () => {
         const endpoint = "/users/update-password";
+        const newPassword = "NewStrongPassword456!";
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).patch(endpoint).send({
+                currentPassword: testPassword,
+                newPassword: newPassword,
+            });
+
+            expect(res.status).toBe(401);
+        });
 
         describe("Authenticated User", () => {
             const agent = request.agent(app);
-            const newPassword = "NewStrongPassword456!";
 
             beforeAll(async () => {
                 await loginWithCredentials(agent, passwordTestIdentifier);
@@ -271,29 +329,47 @@ describe("UserController (integration)", () => {
     });
 
     describe("DELETE /users/:id", () => {
-        describe("Administrator", () => {
+        let endpoint: string;
+
+        beforeAll(() => {
+            endpoint = `/users/${testUserToDeleteId.toString()}`;
+        });
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).delete(endpoint);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if user is student", async () => {
             const agent = request.agent(app);
+            await loginStudent(agent);
 
-            beforeAll(async () => {
-                await loginAdministrator(agent);
-            });
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-            it("should delete the user", async () => {
-                const res = await agent.delete(
-                    `/users/${testUserToDeleteId.toString()}`,
-                );
+        it("should return 403 if user is teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
 
-                expect(res.status).toBe(204);
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(403);
+        });
 
-                // Verify it's gone from the list
-                const listRes = await agent.get(
-                    `/users/list?query=${deleteUserIdentifier}`,
-                );
+        it("should delete the user if requested by an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
 
-                const listBody = listRes.body as UserListItem[];
+            const res = await agent.delete(endpoint);
+            expect(res.status).toBe(204);
 
-                expect(listBody.length).toBe(0);
-            });
+            // Verify it's gone from the list
+            const listRes = await agent.get(
+                `/users/list?query=${deleteUserIdentifier}`,
+            );
+
+            const listBody = listRes.body as UserListItem[];
+            expect(listBody.length).toBe(0);
         });
     });
 });
