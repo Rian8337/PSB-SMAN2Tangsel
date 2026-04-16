@@ -51,7 +51,7 @@ test.describe("Account Settings", () => {
             .click();
 
         await expect(
-            page.getByText(/kata sandi baru tidak valid/i),
+            page.getByText(/kata sandi baru tidak valid|invalid new password/i),
         ).toBeVisible();
     });
 
