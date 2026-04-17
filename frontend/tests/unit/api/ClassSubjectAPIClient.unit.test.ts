@@ -70,6 +70,20 @@ describe("ClassSubjectAPIClient (unit)", () => {
             expect(urlStr).toContain("limit=10");
             expect(urlStr).toContain("offset=0");
         });
+
+        it("should omit optional query parameters when not provided", async () => {
+            await client.listUnassignedSubjects(10);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/classes/10/subjects/unassigned");
+            expect(urlStr).not.toContain("query=");
+            expect(urlStr).not.toContain("limit=");
+            expect(urlStr).not.toContain("offset=");
+        });
     });
 
     describe("assignSubject", () => {
