@@ -38,7 +38,7 @@ function render(props: Partial<ClassStudentManagementProps> = {}) {
     );
 }
 
-describe("ClassStudentManagement (unit)", () => {
+describe("ClassStudentManagement (integration)", () => {
     beforeEach(() => {
         vi.spyOn(window, "confirm").mockImplementation(() => true);
     });

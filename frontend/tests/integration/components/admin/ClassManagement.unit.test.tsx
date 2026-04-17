@@ -42,7 +42,7 @@ function render() {
     );
 }
 
-describe("ClassManagement (unit)", () => {
+describe("ClassManagement (integration)", () => {
     beforeEach(() => {
         // Auto-accept window.confirm for deletion tests.
         vi.spyOn(window, "confirm").mockImplementation(() => true);

@@ -34,7 +34,7 @@ function render() {
     );
 }
 
-describe("AcademicSessionManagement (unit)", () => {
+describe("AcademicSessionManagement (integration)", () => {
     beforeEach(() => {
         // Auto-accept window.confirm for deletion tests.
         vi.spyOn(window, "confirm").mockImplementation(() => true);
