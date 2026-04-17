@@ -268,7 +268,7 @@ describe("ClassSubjectController (unit)", () => {
 
     describe("updateAssignedSubject", () => {
         const createMockRequest = createMockRequestFactory<
-            { id: string },
+            { id: string; classSubjectId: string },
             { error: string },
             Partial<{ teacherId: number | null }>
         >();
@@ -277,7 +277,7 @@ describe("ClassSubjectController (unit)", () => {
 
         beforeEach(() => {
             req = createMockRequest({
-                params: { id: "1" },
+                params: { id: "1", classSubjectId: "2" },
                 body: { teacherId: 5 },
             });
         });
@@ -287,9 +287,28 @@ describe("ClassSubjectController (unit)", () => {
 
             expect(
                 mockClassSubjectService.updateAssignedSubject,
-            ).toHaveBeenCalledWith(1, 5);
+            ).toHaveBeenCalledWith(1, 2, 5);
 
             expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-5" },
+        ])("should return 400 for an invalid class ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.updateAssignedSubject(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+
+            expect(
+                mockClassSubjectService.updateAssignedSubject,
+            ).not.toHaveBeenCalled();
         });
 
         it.each([
@@ -302,7 +321,7 @@ describe("ClassSubjectController (unit)", () => {
         ])(
             "should return 400 for an invalid assignment ID: $id",
             async ({ id }) => {
-                req.params.id = id;
+                req.params.classSubjectId = id;
 
                 await controller.updateAssignedSubject(req, res);
 
@@ -339,14 +358,16 @@ describe("ClassSubjectController (unit)", () => {
 
     describe("unassignSubject", () => {
         const createMockRequest = createMockRequestFactory<
-            { id: string },
+            { id: string; classSubjectId: string },
             { error: string }
         >();
 
         let req: ReturnType<typeof createMockRequest>;
 
         beforeEach(() => {
-            req = createMockRequest({ params: { id: "1" } });
+            req = createMockRequest({
+                params: { id: "1", classSubjectId: "2" },
+            });
         });
 
         it("should call service and return 204 on success", async () => {
@@ -354,9 +375,28 @@ describe("ClassSubjectController (unit)", () => {
 
             expect(
                 mockClassSubjectService.unassignSubject,
-            ).toHaveBeenCalledWith(1);
+            ).toHaveBeenCalledWith(1, 2);
 
             expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it.each([
+            // NaN
+            { id: "abc" },
+            // Zero ID
+            { id: "0" },
+            // Negative ID
+            { id: "-5" },
+        ])("should return 400 for an invalid class ID: $id", async ({ id }) => {
+            req.params.id = id;
+
+            await controller.unassignSubject(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+
+            expect(
+                mockClassSubjectService.unassignSubject,
+            ).not.toHaveBeenCalled();
         });
 
         it.each([
@@ -369,7 +409,7 @@ describe("ClassSubjectController (unit)", () => {
         ])(
             "should return 400 for an invalid assignment ID: $id",
             async ({ id }) => {
-                req.params.id = id;
+                req.params.classSubjectId = id;
 
                 await controller.unassignSubject(req, res);
 

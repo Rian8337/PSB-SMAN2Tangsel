@@ -151,6 +151,7 @@ describe("ClassSubjectRepository (integration)", () => {
     describe("updateAssignedSubject", () => {
         it("should update the teacher ID to null for an existing assignment", async () => {
             await repository.updateAssignedSubject(
+                mutableClassSubject.classId,
                 mutableClassSubject.id!,
                 null,
             );
@@ -207,7 +208,10 @@ describe("ClassSubjectRepository (integration)", () => {
 
     describe("unassignSubject", () => {
         it("should delete the assignment from the database", async () => {
-            await repository.unassignSubject(readOnlyClassSubject.id!);
+            await repository.unassignSubject(
+                readOnlyClassSubject.classId,
+                readOnlyClassSubject.id!,
+            );
 
             const dbRecords = await testDb
                 .select()

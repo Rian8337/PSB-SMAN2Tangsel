@@ -33,7 +33,11 @@ describe("BaseController (unit)", () => {
 
         controller.triggerError(req, res, error);
 
-        expect(req.t).toHaveBeenCalledWith("auth.invalidCredentials");
+        expect(req.t).toHaveBeenCalledWith(
+            "auth.invalidCredentials",
+            undefined,
+        );
+
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
             error: "translated_auth.invalidCredentials",

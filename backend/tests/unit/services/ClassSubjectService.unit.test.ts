@@ -93,11 +93,11 @@ describe("ClassSubjectService (unit)", () => {
 
     describe("updateAssignedSubject", () => {
         it("should call repository.updateAssignedSubject with correct parameters", async () => {
-            await service.updateAssignedSubject(42, 99);
+            await service.updateAssignedSubject(10, 42, 99);
 
             expect(
                 mockClassSubjectRepository.updateAssignedSubject,
-            ).toHaveBeenCalledWith(42, 99);
+            ).toHaveBeenCalledWith(10, 42, 99);
         });
     });
 
@@ -107,7 +107,7 @@ describe("ClassSubjectService (unit)", () => {
                 true,
             );
 
-            await expect(service.unassignSubject(42)).rejects.toThrow(
+            await expect(service.unassignSubject(10, 42)).rejects.toThrow(
                 new ConflictError("classSubjectService.classHasContent"),
             );
 
@@ -125,11 +125,11 @@ describe("ClassSubjectService (unit)", () => {
                 false,
             );
 
-            await service.unassignSubject(42);
+            await service.unassignSubject(10, 42);
 
             expect(
                 mockClassSubjectRepository.unassignSubject,
-            ).toHaveBeenCalledWith(42);
+            ).toHaveBeenCalledWith(10, 42);
         });
     });
 });
