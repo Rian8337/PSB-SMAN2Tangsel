@@ -226,6 +226,7 @@ export function SubjectManagement() {
                                                 <Badge
                                                     colorPalette="green"
                                                     variant="subtle"
+                                                    aria-label={`active-badge-${subject.code}`}
                                                 >
                                                     <Check size={16} />
                                                 </Badge>
