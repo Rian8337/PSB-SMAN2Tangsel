@@ -21,8 +21,8 @@ import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateUserModal } from "./CreateUserModal";
 
-interface AccountManagementProps {
-    currentUserId: number;
+export interface AccountManagementProps {
+    readonly currentUserId: number;
 }
 
 export function AccountManagement({ currentUserId }: AccountManagementProps) {
