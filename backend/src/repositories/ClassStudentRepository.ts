@@ -9,7 +9,7 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { and, eq, like, notInArray, or, SQL } from "drizzle-orm";
+import { and, eq, like, notExists, or, sql, SQL } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IClassStudentRepository } from "./IClassStudentRepository";
@@ -73,19 +73,21 @@ export class ClassStudentRepository
         limit = 5,
         offset = 0,
     ): Promise<UserListItem[]> {
-        const occupiedStudentSubquery = this.db
-            .select({ studentId: studentClasses.studentId })
-            .from(studentClasses)
-            .innerJoin(classes, eq(studentClasses.classId, classes.id))
-            .where(
-                and(
-                    eq(classes.session, session),
-                    eq(classes.semester, semester),
-                ),
-            );
-
+        // For each student, check if an enrollment exists in the target session/semester.
         const filters: (SQL | undefined)[] = [
-            notInArray(students.userId, occupiedStudentSubquery),
+            notExists(
+                this.db
+                    .select({ dummy: sql`1` })
+                    .from(studentClasses)
+                    .innerJoin(classes, eq(studentClasses.classId, classes.id))
+                    .where(
+                        and(
+                            eq(classes.session, session),
+                            eq(classes.semester, semester),
+                            eq(studentClasses.studentId, students.userId),
+                        ),
+                    ),
+            ),
         ];
 
         if (query) {
