@@ -122,13 +122,19 @@ export class ClassSubjectRepository
     }
 
     async updateAssignedSubject(
+        classId: number,
         assignmentId: number,
         teacherId: number | null,
     ): Promise<void> {
         await this.db
             .update(classSubjects)
             .set({ teacherId })
-            .where(eq(classSubjects.id, assignmentId));
+            .where(
+                and(
+                    eq(classSubjects.id, assignmentId),
+                    eq(classSubjects.classId, classId),
+                ),
+            );
     }
 
     async hasAssociatedContent(assignmentId: number): Promise<boolean> {
@@ -151,9 +157,17 @@ export class ClassSubjectRepository
         return assignmentCount.length > 0;
     }
 
-    async unassignSubject(assignmentId: number): Promise<void> {
+    async unassignSubject(
+        classId: number,
+        assignmentId: number,
+    ): Promise<void> {
         await this.db
             .delete(classSubjects)
-            .where(eq(classSubjects.id, assignmentId));
+            .where(
+                and(
+                    eq(classSubjects.id, assignmentId),
+                    eq(classSubjects.classId, classId),
+                ),
+            );
     }
 }

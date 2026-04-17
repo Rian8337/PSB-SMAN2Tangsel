@@ -77,16 +77,21 @@ export class ClassSubjectService implements IClassSubjectService {
     }
 
     async updateAssignedSubject(
+        classId: number,
         assignmentId: number,
         teacherId: number | null,
     ): Promise<void> {
         await this.classSubjectRepository.updateAssignedSubject(
+            classId,
             assignmentId,
             teacherId,
         );
     }
 
-    async unassignSubject(assignmentId: number): Promise<void> {
+    async unassignSubject(
+        classId: number,
+        assignmentId: number,
+    ): Promise<void> {
         const hasContent =
             await this.classSubjectRepository.hasAssociatedContent(
                 assignmentId,
@@ -96,6 +101,6 @@ export class ClassSubjectService implements IClassSubjectService {
             throw new ConflictError("classSubjectService.classHasContent");
         }
 
-        await this.classSubjectRepository.unassignSubject(assignmentId);
+        await this.classSubjectRepository.unassignSubject(classId, assignmentId);
     }
 }

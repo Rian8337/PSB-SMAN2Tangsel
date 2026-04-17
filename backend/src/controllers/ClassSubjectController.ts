@@ -191,13 +191,21 @@ export class ClassSubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const parsedId = coercedClassSubjectIdSchema.safeParse(
+            const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
+
+            if (!parsedClassId.success) {
+                throw new BadRequestError(
+                    parsedClassId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsedClassSubjectId = coercedClassSubjectIdSchema.safeParse(
                 req.params.classSubjectId,
             );
 
-            if (!parsedId.success) {
+            if (!parsedClassSubjectId.success) {
                 throw new BadRequestError(
-                    parsedId.error.issues[0].message as MessageKey,
+                    parsedClassSubjectId.error.issues[0].message as MessageKey,
                 );
             }
 
@@ -212,7 +220,8 @@ export class ClassSubjectController extends BaseController {
             }
 
             await this.classSubjectService.updateAssignedSubject(
-                parsedId.data,
+                parsedClassId.data,
+                parsedClassSubjectId.data,
                 parsedTeacherId.data,
             );
 
@@ -233,17 +242,28 @@ export class ClassSubjectController extends BaseController {
         res: Response<{ error: string }>,
     ) {
         try {
-            const parsedId = coercedClassSubjectIdSchema.safeParse(
-                req.params.classSubjectId,
-            );
+            const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
 
-            if (!parsedId.success) {
+            if (!parsedClassId.success) {
                 throw new BadRequestError(
-                    parsedId.error.issues[0].message as MessageKey,
+                    parsedClassId.error.issues[0].message as MessageKey,
                 );
             }
 
-            await this.classSubjectService.unassignSubject(parsedId.data);
+            const parsedClassSubjectId = coercedClassSubjectIdSchema.safeParse(
+                req.params.classSubjectId,
+            );
+
+            if (!parsedClassSubjectId.success) {
+                throw new BadRequestError(
+                    parsedClassSubjectId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.classSubjectService.unassignSubject(
+                parsedClassId.data,
+                parsedClassSubjectId.data,
+            );
 
             res.sendStatus(204);
         } catch (e) {

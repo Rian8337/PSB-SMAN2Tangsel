@@ -53,10 +53,12 @@ export interface IClassSubjectService {
     /**
      * Updates the teacher assigned to a class subject. If the teacher ID is not provided, the subject will be unassigned from any teacher.
      *
+     * @param classId The unique identifier of the class that the subject is assigned to.
      * @param assignmentId The unique identifier of the class subject assignment to update the assigned teacher for.
      * @param teacherId The unique identifier of the teacher to assign to the class subject. If `null`, the subject will be unassigned from any teacher.
      */
     updateAssignedSubject(
+        classId: number,
         assignmentId: number,
         teacherId: number | null,
     ): Promise<void>;
@@ -65,7 +67,8 @@ export interface IClassSubjectService {
      * Removes a subject assignment from a class, effectively unassigning the subject from the class. This operation is only possible if there are no
      * assignments and materials associated with the class subject assignment.
      *
+     * @param classId The unique identifier of the class that the subject is assigned to.
      * @param assignmentId The unique identifier of the class subject assignment to remove.
      */
-    unassignSubject(assignmentId: number): Promise<void>;
+    unassignSubject(classId: number, assignmentId: number): Promise<void>;
 }
