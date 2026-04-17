@@ -87,6 +87,8 @@ describe("ClassStudentManagement (unit)", () => {
         );
 
         mockClassStudentApiClient.unenrollStudent.mockResolvedValue(undefined);
+
+        // After deletion, no one is enrolled.
         mockClassStudentApiClient.getEnrolledStudents.mockResolvedValueOnce([]);
 
         render();

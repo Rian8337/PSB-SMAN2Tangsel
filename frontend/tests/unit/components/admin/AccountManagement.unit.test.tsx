@@ -110,6 +110,8 @@ describe("AccountManagement (unit)", () => {
         // Sequential returns: initial load -> delete -> reload
         mockUserApiClient.listUsers.mockResolvedValueOnce(mockUsers);
         mockUserApiClient.deleteUser.mockResolvedValue(undefined);
+
+        // After deletion, only the first user is returned, since the second user was "deleted" and the third user is inactive.
         mockUserApiClient.listUsers.mockResolvedValueOnce([mockUsers[0]]);
 
         render();

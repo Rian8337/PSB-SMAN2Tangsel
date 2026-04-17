@@ -99,6 +99,8 @@ describe("AcademicSessionManagement (unit)", () => {
         // Sequential returns: initial load -> delete -> reload.
         mockSessionApiClient.listSessions.mockResolvedValueOnce(mockSessions);
         mockSessionApiClient.deleteSession.mockResolvedValue(undefined);
+
+        // After deletion, only the active session is returned, since the inactive session was deleted.
         mockSessionApiClient.listSessions.mockResolvedValueOnce([
             mockSessions[0],
         ]);
