@@ -30,7 +30,7 @@ describe("ClassController (unit)", () => {
     describe("getById", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            Class | { error: string }
+            Class
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -67,7 +67,7 @@ describe("ClassController (unit)", () => {
     describe("getClassSchedule", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            ScheduleDTO[] | { error: string }
+            ScheduleDTO[]
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -111,7 +111,7 @@ describe("ClassController (unit)", () => {
     describe("list", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            Class[] | { error: string },
+            Class[],
             unknown,
             Partial<{
                 session: string;
@@ -186,7 +186,7 @@ describe("ClassController (unit)", () => {
     describe("create", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<Class>
         >();
 
@@ -225,7 +225,7 @@ describe("ClassController (unit)", () => {
     describe("update", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             { name: string }
         >();
 
@@ -279,7 +279,7 @@ describe("ClassController (unit)", () => {
     describe("delete", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string }
+            never
         >();
 
         let req: ReturnType<typeof createMockRequest>;

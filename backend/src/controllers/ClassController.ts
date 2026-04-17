@@ -4,7 +4,7 @@ import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
 import { IClassService, IScheduleService } from "@/services";
-import { BadRequestError } from "@/types";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import { coercedClassIdSchema, listQuerySchema } from "@/validators";
 import { Class, ScheduleDTO, UserRole } from "@psb/shared/types";
 import {
@@ -13,10 +13,9 @@ import {
     validSemesterSchema,
     validSessionSchema,
 } from "@psb/shared/validator";
-import { Request, Response } from "express";
 import { inject } from "tsyringe";
-import { BaseController } from "./BaseController";
 import z from "zod";
+import { BaseController } from "./BaseController";
 
 const classListQuerySchema = listQuerySchema.extend({
     session: validSessionSchema.optional(),
@@ -43,9 +42,9 @@ export class ClassController extends BaseController {
     @Get("/list")
     @Roles(UserRole.administrator)
     async list(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            Class[] | { error: string },
+            Class[],
             unknown,
             Partial<{
                 session?: string;
@@ -55,7 +54,7 @@ export class ClassController extends BaseController {
                 offset?: string;
             }>
         >,
-        res: Response<Class[] | { error: string }>,
+        res: ApiResponse<Class[]>,
     ) {
         try {
             const parsed = classListQuerySchema.safeParse(req.query);
@@ -86,8 +85,8 @@ export class ClassController extends BaseController {
     @Get("/:id/schedules")
     @Roles(UserRole.administrator)
     async getClassSchedule(
-        req: Request<{ id: string }, ScheduleDTO[] | { error: string }>,
-        res: Response<ScheduleDTO[] | { error: string }>,
+        req: ApiRequest<{ id: string }, ScheduleDTO[]>,
+        res: ApiResponse<ScheduleDTO[]>,
     ) {
         try {
             const parsed = coercedClassIdSchema.safeParse(req.params.id);
@@ -114,8 +113,8 @@ export class ClassController extends BaseController {
     @Get("/:id")
     @Roles(UserRole.administrator)
     async getById(
-        req: Request<{ id: string }, Class | { error: string }>,
-        res: Response<Class | { error: string }>,
+        req: ApiRequest<{ id: string }, Class>,
+        res: ApiResponse<Class>,
     ) {
         try {
             const parsed = coercedClassIdSchema.safeParse(req.params.id);
@@ -140,8 +139,8 @@ export class ClassController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async create(
-        req: Request<unknown, { error: string }, Partial<Class>>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<unknown, never, Partial<Class>>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedData = insertClassSchema.safeParse(req.body);
@@ -170,8 +169,8 @@ export class ClassController extends BaseController {
     @Patch("/:id")
     @Roles(UserRole.administrator)
     async update(
-        req: Request<{ id: string }, { error: string }, { name: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never, { name: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsed = coercedClassIdSchema.safeParse(req.params.id);
@@ -204,8 +203,8 @@ export class ClassController extends BaseController {
     @Delete("/:id")
     @Roles(UserRole.administrator)
     async delete(
-        req: Request<{ id: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsed = coercedClassIdSchema.safeParse(req.params.id);

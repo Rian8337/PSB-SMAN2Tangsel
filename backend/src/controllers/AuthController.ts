@@ -6,9 +6,8 @@ import { getContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IUserService } from "@/services";
 import { IAuthService } from "@/services/IAuthService";
-import { EnvironmentVariableKey } from "@/types";
+import { ApiRequest, ApiResponse, EnvironmentVariableKey } from "@/types";
 import { LoginResponseBody } from "@psb/shared/types";
-import { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
@@ -58,12 +57,12 @@ export class AuthController extends BaseController {
         }),
     )
     async login(
-        req: Request<
+        req: ApiRequest<
             unknown,
             LoginResponseBody,
             Partial<{ id: string; password: string }>
         >,
-        res: Response<LoginResponseBody>,
+        res: ApiResponse<LoginResponseBody>,
     ) {
         const { id, password } = req.body;
 
@@ -91,7 +90,7 @@ export class AuthController extends BaseController {
      * Destroys the current session cookie, logging the user out.
      */
     @Post("/logout")
-    logout(_req: Request, res: Response) {
+    logout(_req: ApiRequest, res: ApiResponse) {
         this.authService.clearSession(res);
 
         res.json({ message: "Logged out successfully." });
@@ -102,7 +101,7 @@ export class AuthController extends BaseController {
      */
     @Get("/me")
     @Roles()
-    async me(req: Request, res: Response<LoginResponseBody>) {
+    async me(req: ApiRequest<unknown>, res: ApiResponse<LoginResponseBody>) {
         if (!this.verifySession(req, res)) {
             return;
         }

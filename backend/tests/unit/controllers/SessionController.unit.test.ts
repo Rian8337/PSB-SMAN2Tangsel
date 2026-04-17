@@ -37,7 +37,7 @@ describe("SessionController (unit)", () => {
     describe("getActive", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            AcademicSessionDTO | { error: string }
+            AcademicSessionDTO
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -59,7 +59,7 @@ describe("SessionController (unit)", () => {
     describe("getSession", () => {
         const createMockRequest = createMockRequestFactory<
             { session: string; semester: string },
-            AcademicSessionDTO | { error: string },
+            AcademicSessionDTO,
             unknown,
             Partial<{ session: string; semester: string }>
         >();
@@ -107,7 +107,7 @@ describe("SessionController (unit)", () => {
     describe("listSessions", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            AcademicSessionDTO[] | { error: string },
+            AcademicSessionDTO[],
             unknown,
             Partial<{ query?: string; limit?: string; offset?: string }>
         >();
@@ -188,7 +188,7 @@ describe("SessionController (unit)", () => {
     describe("createSession", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<AcademicSessionDTO>
         >();
 
@@ -245,7 +245,7 @@ describe("SessionController (unit)", () => {
     describe("updateSession", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<AcademicSessionDTO>
         >();
 
@@ -285,7 +285,7 @@ describe("SessionController (unit)", () => {
     describe("deleteSession", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<{ session: string; semester: number }>
         >();
 

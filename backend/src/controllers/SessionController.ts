@@ -2,8 +2,10 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
 import { ISessionService } from "@/services";
-import { BadRequestError } from "@/types";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
+import { listQuerySchema } from "@/validators";
 import {
     AcademicSession,
     AcademicSessionDTO,
@@ -14,11 +16,8 @@ import {
     validSemesterSchema,
     validSessionSchema,
 } from "@psb/shared/validator";
-import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
-import { MessageKey } from "@/i18n";
-import { listQuerySchema } from "@/validators";
 
 /**
  * Controller that handles academic session endpoints.
@@ -38,8 +37,8 @@ export class SessionController extends BaseController {
     @Get("/active")
     @Roles()
     async getActive(
-        req: Request<unknown, AcademicSessionDTO | { error: string }>,
-        res: Response<AcademicSessionDTO | { error: string }>,
+        req: ApiRequest<unknown, AcademicSessionDTO>,
+        res: ApiResponse<AcademicSessionDTO>,
     ) {
         try {
             const active = await this.sessionService.getActive();
@@ -56,13 +55,13 @@ export class SessionController extends BaseController {
     @Get("/")
     @Roles()
     async getSession(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            AcademicSessionDTO | { error: string },
+            AcademicSessionDTO,
             unknown,
             Partial<{ session: string; semester: string }>
         >,
-        res: Response<AcademicSessionDTO | { error: string }>,
+        res: ApiResponse<AcademicSessionDTO>,
     ) {
         try {
             const parsedSession = validSessionSchema.safeParse(
@@ -102,13 +101,13 @@ export class SessionController extends BaseController {
     @Get("/list")
     @Roles(UserRole.administrator)
     async listSessions(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            AcademicSessionDTO[] | { error: string },
+            AcademicSessionDTO[],
             unknown,
             Partial<{ query?: string; limit?: string; offset?: string }>
         >,
-        res: Response<AcademicSessionDTO[] | { error: string }>,
+        res: ApiResponse<AcademicSessionDTO[]>,
     ) {
         try {
             const parsedQuery = listQuerySchema.safeParse(req.query);
@@ -139,8 +138,8 @@ export class SessionController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async createSession(
-        req: Request<unknown, { error: string }, Partial<AcademicSessionDTO>>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<unknown, never, Partial<AcademicSessionDTO>>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedBody = academicSessionDtoSchema.safeParse(req.body);
@@ -172,8 +171,8 @@ export class SessionController extends BaseController {
     @Put("/")
     @Roles(UserRole.administrator)
     async updateSession(
-        req: Request<unknown, { error: string }, Partial<AcademicSessionDTO>>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<unknown, never, Partial<AcademicSessionDTO>>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedBody = academicSessionDtoSchema.safeParse(req.body);
@@ -205,12 +204,12 @@ export class SessionController extends BaseController {
     @Delete("/")
     @Roles(UserRole.administrator)
     async deleteSession(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            { error: string },
+            never,
             Partial<{ session: string; semester: number }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedSession = validSessionSchema.safeParse(

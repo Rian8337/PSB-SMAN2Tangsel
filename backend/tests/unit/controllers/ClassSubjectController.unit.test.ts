@@ -18,7 +18,7 @@ describe("ClassSubjectController (unit)", () => {
     describe("listAssignedSubjects", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            ClassSubjectAssignment[] | { error: string },
+            ClassSubjectAssignment[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >();
@@ -99,7 +99,7 @@ describe("ClassSubjectController (unit)", () => {
     describe("listUnassignedSubjects", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            Subject[] | { error: string },
+            Subject[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >();
@@ -182,7 +182,7 @@ describe("ClassSubjectController (unit)", () => {
     describe("assignSubject", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             Partial<{ subjectId: number; teacherId: number | null }>
         >();
 
@@ -269,7 +269,7 @@ describe("ClassSubjectController (unit)", () => {
     describe("updateAssignedSubject", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string; classSubjectId: string },
-            { error: string },
+            never,
             Partial<{ teacherId: number | null }>
         >();
 
@@ -359,7 +359,7 @@ describe("ClassSubjectController (unit)", () => {
     describe("unassignSubject", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string; classSubjectId: string },
-            { error: string }
+            never
         >();
 
         let req: ReturnType<typeof createMockRequest>;

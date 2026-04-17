@@ -8,7 +8,7 @@ import {
     UnauthorizedError,
 } from "@/types";
 import { sessionDataValidator } from "@/validators";
-import { UserRole } from "@psb/shared/types";
+import { ApiErrorBody, UserRole } from "@psb/shared/types";
 import { compare, hashSync } from "bcrypt";
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import { RequestHandler, Response } from "express";
@@ -141,7 +141,7 @@ export class AuthService implements IAuthService {
 
     verifySession(
         ...allowedRoles: UserRole[]
-    ): RequestHandler<unknown, { error: string }> {
+    ): RequestHandler<unknown, ApiErrorBody> {
         return (req, res, next) => {
             const token = (
                 req.signedCookies as Record<string, string | undefined>

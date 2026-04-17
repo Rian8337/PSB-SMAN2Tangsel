@@ -1,14 +1,9 @@
 import { BaseController } from "@/controllers/BaseController";
-import { UnauthorizedError } from "@/types";
+import { ApiRequest, ApiResponse, UnauthorizedError } from "@/types";
 import { createMockRequestFactory, createMockResponse } from "@test/mocks";
-import { Request, Response } from "express";
 
 class TestController extends BaseController {
-    triggerError(
-        req: Request<unknown>,
-        res: Response<{ error: string }>,
-        error: unknown,
-    ) {
+    triggerError(req: ApiRequest<unknown>, res: ApiResponse, error: unknown) {
         this.handleError(req, res, error);
     }
 }

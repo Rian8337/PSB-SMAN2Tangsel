@@ -1,20 +1,19 @@
 import { Controller } from "@/decorators/controller";
-import { BaseController } from "./BaseController";
-import { inject } from "tsyringe";
-import { IClassStudentService } from "@/services";
-import { dependencyTokens } from "@/dependencies/tokens";
-import { Delete, Get, Post } from "@/decorators/routes";
 import { Roles } from "@/decorators/roles";
-import { UserListItem, UserRole } from "@psb/shared/types";
-import { Request, Response } from "express";
+import { Delete, Get, Post } from "@/decorators/routes";
+import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
+import { IClassStudentService } from "@/services";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import {
     coercedClassIdSchema,
     coercedUserIdSchema,
     listQuerySchema,
     userIdSchema,
 } from "@/validators";
-import { BadRequestError } from "@/types";
-import { MessageKey } from "@/i18n";
+import { UserListItem, UserRole } from "@psb/shared/types";
+import { inject } from "tsyringe";
+import { BaseController } from "./BaseController";
 
 /**
  * Controller that handles endpoints related to student enrollments in classes.
@@ -34,13 +33,13 @@ export class ClassStudentController extends BaseController {
     @Get("/")
     @Roles(UserRole.administrator)
     async getEnrolledStudents(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >,
-        res: Response<UserListItem[] | { error: string }>,
+        res: ApiResponse<UserListItem[]>,
     ) {
         try {
             const parsedId = coercedClassIdSchema.safeParse(req.params.id);
@@ -78,13 +77,13 @@ export class ClassStudentController extends BaseController {
     @Get("/unenrolled")
     @Roles(UserRole.administrator)
     async getUnenrolledStudents(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >,
-        res: Response<UserListItem[] | { error: string }>,
+        res: ApiResponse<UserListItem[]>,
     ) {
         try {
             const parsedId = coercedClassIdSchema.safeParse(req.params.id);
@@ -123,8 +122,8 @@ export class ClassStudentController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async enrollStudent(
-        req: Request<{ id: string }, { error: string }, { studentId: number }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never, { studentId: number }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
@@ -160,8 +159,8 @@ export class ClassStudentController extends BaseController {
     @Delete("/:studentId")
     @Roles(UserRole.administrator)
     async unenrollStudent(
-        req: Request<{ id: string; studentId: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string; studentId: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);

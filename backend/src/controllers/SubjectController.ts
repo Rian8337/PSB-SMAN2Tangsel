@@ -4,11 +4,10 @@ import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
 import { ISubjectService } from "@/services";
-import { BadRequestError } from "@/types";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import { coercedSubjectIdSchema, listQuerySchema } from "@/validators";
 import { Subject, UserRole } from "@psb/shared/types";
 import { insertSubjectSchema } from "@psb/shared/validator";
-import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
 
@@ -30,13 +29,13 @@ export class SubjectController extends BaseController {
     @Get("/list")
     @Roles()
     async listSubjects(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            Subject[] | { error: string },
+            Subject[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >,
-        res: Response<Subject[] | { error: string }>,
+        res: ApiResponse<Subject[]>,
     ) {
         try {
             const parsedQuery = listQuerySchema.safeParse(req.query);
@@ -65,8 +64,8 @@ export class SubjectController extends BaseController {
     @Get("/:id")
     @Roles()
     async getSubject(
-        req: Request<{ id: string }, Subject | { error: string }>,
-        res: Response<Subject | { error: string }>,
+        req: ApiRequest<{ id: string }, Subject>,
+        res: ApiResponse<Subject>,
     ) {
         try {
             const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);
@@ -91,8 +90,8 @@ export class SubjectController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async createSubject(
-        req: Request<unknown, { error: string }, Partial<Subject>>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<unknown, never, Partial<Subject>>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedData = insertSubjectSchema.safeParse(req.body);
@@ -118,8 +117,8 @@ export class SubjectController extends BaseController {
     @Put("/:id")
     @Roles(UserRole.administrator)
     async updateSubject(
-        req: Request<{ id: string }, { error: string }, Partial<Subject>>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never, Partial<Subject>>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);
@@ -155,8 +154,8 @@ export class SubjectController extends BaseController {
     @Delete("/:id")
     @Roles(UserRole.administrator)
     async deleteSubject(
-        req: Request<{ id: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedId = coercedSubjectIdSchema.safeParse(req.params.id);

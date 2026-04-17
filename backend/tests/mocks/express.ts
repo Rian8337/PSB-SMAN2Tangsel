@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { ApiRequest, ApiResponse } from "@/types";
 
 interface ParamsDictionary {
     [key: string]: string | string[];
@@ -16,7 +16,7 @@ export function createMockRequestFactory<
     TBody = unknown,
     TQuery extends Record<string, string> = Record<string, string>,
 >() {
-    type Req = Request<TParams, TResponse, TBody, TQuery>;
+    type Req = ApiRequest<TParams, TResponse, TBody, TQuery>;
 
     /**
      * Creates a mock request object with default values and the provided overrides.
@@ -49,7 +49,7 @@ export function createMockRequestFactory<
  * **Do not reuse this mock across tests.**
  */
 export function createMockResponse<TResponse = unknown>() {
-    type Res = Response<TResponse>;
+    type Res = ApiResponse<TResponse>;
 
     const mock = {
         cookie: vi.fn<Res["cookie"]>().mockReturnThis(),

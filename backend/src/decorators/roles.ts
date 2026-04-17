@@ -1,6 +1,6 @@
 import { getContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { UserRole } from "@psb/shared/types";
+import { ApiErrorBody, UserRole } from "@psb/shared/types";
 import { RequestHandler } from "express";
 import { Use } from "./middleware";
 
@@ -12,7 +12,7 @@ import { Use } from "./middleware";
  */
 export function Roles(...roles: UserRole[]): MethodDecorator {
     return (target, propertyKey, descriptor) => {
-        const middleware: RequestHandler<unknown, { error: string }> = async (
+        const middleware: RequestHandler<unknown, ApiErrorBody> = async (
             req,
             res,
             next,

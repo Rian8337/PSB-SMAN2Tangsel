@@ -2,12 +2,11 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
 import { IScheduleService, ISessionService } from "@/services";
-import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
-import { Request, Response } from "express";
-import { inject } from "tsyringe";
-import { BaseController } from "./BaseController";
 import {
+    ApiRequest,
+    ApiResponse,
     BadRequestError,
     ForbiddenError,
     SessionData,
@@ -18,7 +17,9 @@ import {
     createScheduleSchema,
     updateScheduleSchema,
 } from "@/validators";
-import { MessageKey } from "@/i18n";
+import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
+import { inject } from "tsyringe";
+import { BaseController } from "./BaseController";
 
 /**
  * Controller that handles schedule endpoints.
@@ -40,8 +41,8 @@ export class ScheduleController extends BaseController {
     @Get("/")
     @Roles(UserRole.student, UserRole.teacher)
     async getMySchedule(
-        req: Request<unknown, { error: string } | ScheduleDTO[]>,
-        res: Response<{ error: string } | ScheduleDTO[]>,
+        req: ApiRequest<unknown, ScheduleDTO[]>,
+        res: ApiResponse<ScheduleDTO[]>,
     ) {
         try {
             const schedule = await this.getSchedule(req.sessionData);
@@ -59,8 +60,8 @@ export class ScheduleController extends BaseController {
     @Get("/download")
     @Roles(UserRole.student, UserRole.teacher)
     async downloadSchedule(
-        req: Request<unknown, Buffer | { error: string }>,
-        res: Response<Buffer | { error: string }>,
+        req: ApiRequest<unknown, Buffer>,
+        res: ApiResponse<Buffer>,
     ) {
         try {
             const activeSession = await this.sessionService.getActive();
@@ -93,8 +94,8 @@ export class ScheduleController extends BaseController {
     @Get("/:id")
     @Roles(UserRole.administrator)
     async getById(
-        req: Request<{ id: string }, ScheduleDTO | { error: string }>,
-        res: Response<ScheduleDTO | { error: string }>,
+        req: ApiRequest<{ id: string }, ScheduleDTO>,
+        res: ApiResponse<ScheduleDTO>,
     ) {
         try {
             const parsed = coercedScheduleIdSchema.safeParse(req.params.id);
@@ -119,9 +120,9 @@ export class ScheduleController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async create(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            { error: string },
+            never,
             Partial<{
                 classSubjectId: number;
                 day: ScheduleDay;
@@ -129,7 +130,7 @@ export class ScheduleController extends BaseController {
                 endTime: number;
             }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsed = createScheduleSchema.safeParse(req.body);
@@ -154,16 +155,16 @@ export class ScheduleController extends BaseController {
     @Put("/:id")
     @Roles(UserRole.administrator)
     async update(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            { error: string },
+            never,
             Partial<{
                 day: ScheduleDay;
                 startTime: number;
                 endTime: number;
             }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const paramsParsed = coercedScheduleIdSchema.safeParse(
@@ -201,8 +202,8 @@ export class ScheduleController extends BaseController {
     @Delete("/:id")
     @Roles(UserRole.administrator)
     async delete(
-        req: Request<{ id: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsed = coercedScheduleIdSchema.safeParse(req.params.id);

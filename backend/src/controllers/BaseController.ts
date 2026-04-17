@@ -1,5 +1,10 @@
-import { APIError, SessionData, UnauthorizedError } from "@/types";
-import { Request, Response } from "express";
+import {
+    APIError,
+    ApiRequest,
+    ApiResponse,
+    SessionData,
+    UnauthorizedError,
+} from "@/types";
 
 /**
  * Base class for controllers.
@@ -14,9 +19,9 @@ export abstract class BaseController {
      * @param res The response object to send the error response with.
      * @param error The error to handle.
      */
-    protected handleError(
-        req: Request<unknown>,
-        res: Response<{ error: string }>,
+    protected handleError<Params, ResBody, ReqBody, ReqQuery>(
+        req: ApiRequest<Params, ResBody, ReqBody, ReqQuery>,
+        res: ApiResponse<ResBody>,
         error: unknown,
     ) {
         if (error instanceof APIError) {
@@ -40,10 +45,14 @@ export abstract class BaseController {
      * @returns Whether the request has valid session data.
      */
     protected verifySession<
-        TRequest extends Request<unknown, { error: string }>,
+        Params,
+        ResBody,
+        ReqBody,
+        ReqQuery,
+        TRequest extends ApiRequest<Params, ResBody, ReqBody, ReqQuery>,
     >(
         req: TRequest,
-        res: Response<{ error: string }>,
+        res: ApiResponse<ResBody>,
     ): req is TRequest & { readonly sessionData: SessionData } {
         if (!req.sessionData) {
             this.handleError(req, res, BaseController.unauthorizedError);

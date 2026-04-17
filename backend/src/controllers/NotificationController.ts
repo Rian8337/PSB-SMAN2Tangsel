@@ -2,15 +2,14 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Get, Patch } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { INotificationService } from "@/services";
-import { BadRequestError } from "@/types";
-import { NotificationDTO } from "@psb/shared/types";
-import { Request, Response } from "express";
-import { inject } from "tsyringe";
-import { BaseController } from "./BaseController";
-import { limitSchema, notificationIdSchema, offsetSchema } from "@/validators";
 import { MessageKey } from "@/i18n/messages";
+import { INotificationService } from "@/services";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
+import { limitSchema, notificationIdSchema, offsetSchema } from "@/validators";
+import { NotificationDTO } from "@psb/shared/types";
+import { inject } from "tsyringe";
 import z from "zod";
+import { BaseController } from "./BaseController";
 
 const coercedNotificationIdSchema = z.coerce
     .number({ error: "notification.invalidId" satisfies MessageKey })
@@ -34,13 +33,13 @@ export class NotificationController extends BaseController {
     @Get("/")
     @Roles()
     async getMyNotifications(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            { error: string } | NotificationDTO[],
+            NotificationDTO[],
             unknown,
             Partial<{ limit?: string; offset?: string }>
         >,
-        res: Response<{ error: string } | NotificationDTO[]>,
+        res: ApiResponse<NotificationDTO[]>,
     ) {
         if (!this.verifySession(req, res)) {
             return;
@@ -82,8 +81,8 @@ export class NotificationController extends BaseController {
     @Get("/unread-count")
     @Roles()
     async getUnreadCount(
-        req: Request<unknown, { error: string } | { count: number }>,
-        res: Response<{ error: string } | { count: number }>,
+        req: ApiRequest<unknown, { count: number }>,
+        res: ApiResponse<{ count: number }>,
     ) {
         if (!this.verifySession(req, res)) {
             return;
@@ -106,8 +105,8 @@ export class NotificationController extends BaseController {
     @Patch("/:id/read-status")
     @Roles()
     async updateReadStatus(
-        req: Request<{ id: string }, { error: string }, { read: boolean }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never, { read: boolean }>,
+        res: ApiResponse<never>,
     ) {
         if (!this.verifySession(req, res)) {
             return;

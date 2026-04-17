@@ -4,7 +4,7 @@ import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
 import { IUserService } from "@/services";
-import { BadRequestError } from "@/types";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import {
     coercedUserIdSchema,
     createUserSchema,
@@ -14,7 +14,6 @@ import {
     validRoleSchema,
 } from "@/validators";
 import { UserListItem, UserRole } from "@psb/shared/types";
-import { Request, Response } from "express";
 import { inject } from "tsyringe";
 import z from "zod";
 import { BaseController } from "./BaseController";
@@ -44,9 +43,9 @@ export class UserController extends BaseController {
     @Get("/list")
     @Roles(UserRole.administrator)
     async listUsers(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{
                 query?: string;
@@ -55,7 +54,7 @@ export class UserController extends BaseController {
                 role?: string;
             }>
         >,
-        res: Response<UserListItem[] | { error: string }>,
+        res: ApiResponse<UserListItem[]>,
     ) {
         try {
             const parsed = listUsersValidationSchema.safeParse(req.query);
@@ -87,8 +86,8 @@ export class UserController extends BaseController {
     @Get("/:id")
     @Roles(UserRole.administrator)
     async getUser(
-        req: Request<{ id: string }, UserListItem | { error: string }>,
-        res: Response<UserListItem | { error: string }>,
+        req: ApiRequest<{ id: string }, UserListItem>,
+        res: ApiResponse<UserListItem>,
     ) {
         try {
             const parsedId = coercedUserIdSchema.safeParse(req.params.id);
@@ -119,9 +118,9 @@ export class UserController extends BaseController {
     @Post("/create")
     @Roles(UserRole.administrator)
     async createUser(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            { error: string },
+            never,
             Partial<{
                 name: string;
                 password: string;
@@ -129,7 +128,7 @@ export class UserController extends BaseController {
                 identifier: string;
             }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedData = createUserSchema.safeParse(req.body);
@@ -156,12 +155,12 @@ export class UserController extends BaseController {
     @Patch("/update-password")
     @Roles()
     async updatePassword(
-        req: Request<
+        req: ApiRequest<
             unknown,
-            { error: string },
+            never,
             Partial<{ currentPassword: string; newPassword: string }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         if (!this.verifySession(req, res)) {
             return;
@@ -206,12 +205,12 @@ export class UserController extends BaseController {
     @Patch("/:id")
     @Roles(UserRole.administrator)
     async updateUser(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            { error: string },
+            never,
             Partial<{ name: string; active: boolean }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedId = coercedUserIdSchema.safeParse(req.params.id);
@@ -254,8 +253,8 @@ export class UserController extends BaseController {
     @Delete("/:id")
     @Roles(UserRole.administrator)
     async deleteUser(
-        req: Request<{ id: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const paramsId = coercedUserIdSchema.safeParse(req.params.id);

@@ -18,7 +18,7 @@ describe("NotificationController (unit)", () => {
     describe("getMyNotifications", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string } | NotificationDTO[]
+            NotificationDTO[]
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -92,7 +92,7 @@ describe("NotificationController (unit)", () => {
     describe("getUnreadCount", () => {
         const createMockRequest = createMockRequestFactory<
             "/unread-count",
-            { error: string } | { count: number }
+            { count: number }
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -134,7 +134,7 @@ describe("NotificationController (unit)", () => {
     describe("updateReadStatus", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             { read: boolean }
         >();
 

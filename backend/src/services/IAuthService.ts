@@ -1,5 +1,5 @@
 import { LoginResult, SessionData } from "@/types";
-import { UserRole } from "@psb/shared/types";
+import { ApiErrorBody, UserRole } from "@psb/shared/types";
 import { RequestHandler, Response } from "express";
 
 /**
@@ -41,7 +41,7 @@ export interface IAuthService {
      */
     verifySession(
         ...allowedRoles: UserRole[]
-    ): RequestHandler<unknown, { error: string }>;
+    ): RequestHandler<unknown, ApiErrorBody>;
 
     /**
      * Encrypts a session using AES-256-GCM encryption.

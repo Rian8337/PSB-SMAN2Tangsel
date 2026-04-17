@@ -2,12 +2,9 @@ import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
 import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
+import { MessageKey } from "@/i18n";
 import { IClassSubjectService } from "@/services";
-import { BadRequestError } from "@/types";
-import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
-import { Request, Response } from "express";
-import { inject } from "tsyringe";
-import { BaseController } from "./BaseController";
+import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import {
     classIdSchema,
     coercedClassIdSchema,
@@ -16,7 +13,9 @@ import {
     subjectIdSchema,
     userIdSchema,
 } from "@/validators";
-import { MessageKey } from "@/i18n";
+import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
+import { inject } from "tsyringe";
+import { BaseController } from "./BaseController";
 
 const assignedSubjectsQuerySchema = listQuerySchema.extend({
     classId: classIdSchema,
@@ -40,13 +39,13 @@ export class ClassSubjectController extends BaseController {
     @Get("/")
     @Roles(UserRole.administrator)
     async listAssignedSubjects(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            ClassSubjectAssignment[] | { error: string },
+            ClassSubjectAssignment[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >,
-        res: Response<ClassSubjectAssignment[] | { error: string }>,
+        res: ApiResponse<ClassSubjectAssignment[]>,
     ) {
         try {
             const parsed = assignedSubjectsQuerySchema.safeParse({
@@ -84,13 +83,13 @@ export class ClassSubjectController extends BaseController {
     @Get("/unassigned")
     @Roles(UserRole.administrator)
     async listUnassignedSubjects(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            Subject[] | { error: string },
+            Subject[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >,
-        res: Response<Subject[] | { error: string }>,
+        res: ApiResponse<Subject[]>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
@@ -129,12 +128,12 @@ export class ClassSubjectController extends BaseController {
     @Post("/")
     @Roles(UserRole.administrator)
     async assignSubject(
-        req: Request<
+        req: ApiRequest<
             { id: string },
-            { error: string },
+            never,
             Partial<{ subjectId: number; teacherId: number | null }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
@@ -183,12 +182,12 @@ export class ClassSubjectController extends BaseController {
     @Patch("/:classSubjectId")
     @Roles(UserRole.administrator)
     async updateAssignedSubject(
-        req: Request<
+        req: ApiRequest<
             { id: string; classSubjectId: string },
-            { error: string },
+            never,
             Partial<{ teacherId: number | null }>
         >,
-        res: Response<{ error: string }>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);
@@ -238,8 +237,8 @@ export class ClassSubjectController extends BaseController {
     @Delete("/:classSubjectId")
     @Roles(UserRole.administrator)
     async unassignSubject(
-        req: Request<{ id: string; classSubjectId: string }, { error: string }>,
-        res: Response<{ error: string }>,
+        req: ApiRequest<{ id: string; classSubjectId: string }, never>,
+        res: ApiResponse<never>,
     ) {
         try {
             const parsedClassId = coercedClassIdSchema.safeParse(req.params.id);

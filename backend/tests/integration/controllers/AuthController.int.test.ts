@@ -4,7 +4,11 @@ import {
     testPassword,
     testPasswordHash,
 } from "@psb/shared/tests";
-import { SuccessfulLoginResponse, UserRole } from "@psb/shared/types";
+import {
+    ApiErrorBody,
+    SuccessfulLoginResponse,
+    UserRole,
+} from "@psb/shared/types";
 import { app } from "@test/setup/app";
 import { loginWithCredentials, seeders, testDbManager } from "@test/utils";
 import { eq } from "drizzle-orm";
@@ -60,7 +64,7 @@ describe("AuthController (integration)", () => {
                 password: testPassword,
             });
 
-            const body = res.body as { error: string };
+            const body = res.body as ApiErrorBody;
 
             expect(res.status).toBe(400);
             expect(body.error).toBeDefined();
@@ -71,7 +75,7 @@ describe("AuthController (integration)", () => {
                 id: activeUser.identifier,
             });
 
-            const body = res.body as { error: string };
+            const body = res.body as ApiErrorBody;
 
             expect(res.status).toBe(400);
             expect(body.error).toBeDefined();
@@ -136,7 +140,7 @@ describe("AuthController (integration)", () => {
 
             it("should return 401 if the user is no longer active", async () => {
                 const res = await agent.get(endpoint);
-                const body = res.body as { error: string };
+                const body = res.body as ApiErrorBody;
 
                 expect(res.status).toBe(401);
                 expect(body.error).toBeDefined();

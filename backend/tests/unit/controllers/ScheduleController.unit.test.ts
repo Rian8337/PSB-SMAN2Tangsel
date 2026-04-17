@@ -22,7 +22,7 @@ describe("ScheduleController (unit)", () => {
     describe("getById", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            ScheduleDTO | { error: string }
+            ScheduleDTO
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -67,7 +67,7 @@ describe("ScheduleController (unit)", () => {
     describe("getMySchedule", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string } | ScheduleDTO[]
+            ScheduleDTO[]
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -115,10 +115,7 @@ describe("ScheduleController (unit)", () => {
     });
 
     describe("downloadSchedule", () => {
-        const createMockRequest = createMockRequestFactory<
-            unknown,
-            { error: string } | Buffer
-        >();
+        const createMockRequest = createMockRequestFactory<unknown, Buffer>();
 
         let req: ReturnType<typeof createMockRequest>;
 
@@ -168,7 +165,7 @@ describe("ScheduleController (unit)", () => {
     describe("create", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string } | { success: boolean },
+            { success: boolean },
             Partial<{
                 classSubjectId: number;
                 day: ScheduleDay;
@@ -251,7 +248,7 @@ describe("ScheduleController (unit)", () => {
     describe("update", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             Partial<{
                 day: ScheduleDay;
                 startTime: number;
@@ -329,7 +326,7 @@ describe("ScheduleController (unit)", () => {
     describe("delete", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string }
+            never
         >();
 
         let req: ReturnType<typeof createMockRequest>;

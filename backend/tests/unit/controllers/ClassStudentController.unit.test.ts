@@ -18,7 +18,7 @@ describe("ClassStudentController (unit)", () => {
     describe("getEnrolledStudents", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >();
@@ -95,7 +95,7 @@ describe("ClassStudentController (unit)", () => {
     describe("getUnenrolledStudents", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{ query: string; limit: string; offset: string }>
         >();
@@ -172,7 +172,7 @@ describe("ClassStudentController (unit)", () => {
     describe("enrollStudent", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             { studentId: number }
         >();
 
@@ -235,7 +235,7 @@ describe("ClassStudentController (unit)", () => {
     describe("unenrollStudent", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string; studentId: string },
-            { error: string }
+            never
         >();
 
         let req: ReturnType<typeof createMockRequest>;

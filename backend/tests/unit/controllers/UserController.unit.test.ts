@@ -17,7 +17,7 @@ describe("UserController (unit)", () => {
     describe("getUser", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            UserListItem | { error: string }
+            UserListItem
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -78,7 +78,7 @@ describe("UserController (unit)", () => {
     describe("listUsers", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            UserListItem[] | { error: string },
+            UserListItem[],
             unknown,
             Partial<{
                 query?: string;
@@ -189,7 +189,7 @@ describe("UserController (unit)", () => {
     describe("createUser", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<{
                 name: string;
                 password: string;
@@ -255,7 +255,7 @@ describe("UserController (unit)", () => {
     describe("updateUser", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string },
+            never,
             Partial<{ name: string; active: boolean }>
         >();
 
@@ -342,7 +342,7 @@ describe("UserController (unit)", () => {
     describe("updatePassword", () => {
         const createMockRequest = createMockRequestFactory<
             unknown,
-            { error: string },
+            never,
             Partial<{ currentPassword: string; newPassword: string }>
         >();
 
@@ -394,7 +394,7 @@ describe("UserController (unit)", () => {
     describe("deleteUser", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
-            { error: string }
+            never
         >();
 
         let req: ReturnType<typeof createMockRequest>;

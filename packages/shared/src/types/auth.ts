@@ -1,3 +1,4 @@
+import { ApiErrorBody } from "./api";
 import { UserRole } from "./users";
 
 /**
@@ -12,9 +13,7 @@ export interface SuccessfulLoginResponse {
 /**
  * Represents a failed login response.
  */
-export interface FailedLoginResponse {
-    readonly error: string;
-}
+export type FailedLoginResponse = ApiErrorBody;
 
 /**
  * The response that is given when a user logs in or checks for their identity.
