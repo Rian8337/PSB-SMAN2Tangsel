@@ -489,6 +489,7 @@
     "appName": "PSB SMAN 2 Tangerang Selatan"
   },
   "Day": {
+    "time": "Waktu",
     "monday": "Senin",
     "tuesday": "Selasa",
     "wednesday": "Rabu",
