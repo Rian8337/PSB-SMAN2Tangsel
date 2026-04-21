@@ -7,31 +7,45 @@ import { NotificationBell } from "./NotificationBell";
 interface PageHeaderProps {
     title: string;
     showBackButton?: boolean;
+    rightElement?: React.ReactNode;
 }
 
-export function PageHeader({ title, showBackButton = true }: PageHeaderProps) {
+export function PageHeader({
+    title,
+    showBackButton = true,
+    rightElement,
+}: PageHeaderProps) {
     return (
         <HStack
-            px={8}
+            px={{ base: 4, md: 8 }}
             py={4}
             borderBottom="2px solid black"
             justifyContent="space-between"
             alignItems="center"
             bg="white"
         >
-            <IconButton
-                aria-label="Go back"
-                variant="ghost"
-                visibility={showBackButton ? "visible" : "hidden"}
-            >
-                <ArrowLeft size={32} color="black" strokeWidth={3} />
-            </IconButton>
+            <HStack spaceX={4}>
+                <IconButton
+                    aria-label="Go back"
+                    variant="ghost"
+                    visibility={showBackButton ? "visible" : "hidden"}
+                >
+                    <ArrowLeft size={32} color="black" strokeWidth={3} />
+                </IconButton>
 
-            <Text fontSize="3xl" fontWeight="bold" color="black">
-                {title}
-            </Text>
+                <Text
+                    fontSize={{ base: "xl", md: "3xl" }}
+                    fontWeight="bold"
+                    color="black"
+                >
+                    {title}
+                </Text>
+            </HStack>
 
-            <NotificationBell />
+            <HStack spaceX={4}>
+                {rightElement}
+                <NotificationBell />
+            </HStack>
         </HStack>
     );
 }
