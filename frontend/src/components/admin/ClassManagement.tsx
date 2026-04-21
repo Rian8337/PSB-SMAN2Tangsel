@@ -28,6 +28,7 @@ import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateClassModal } from "./CreateClassModal";
+import { APIError } from "@/api";
 
 export function ClassManagement() {
     const t = useTranslations("ClassManagement");
@@ -51,24 +52,40 @@ export function ClassManagement() {
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     useEffect(() => {
-        const fetchActiveSession = async () => {
+        const fetchActiveSession = async (signal?: AbortSignal) => {
             setIsLoadingSession(true);
 
             try {
-                const session = await sessionApiClient.getActive();
+                const session = await sessionApiClient.getActive(signal);
                 setActiveSession(session);
-            } catch {
+            } catch (e) {
+                if (e instanceof Error && e.name === "AbortError") {
+                    return;
+                }
+
+                if (e instanceof APIError && e.code === 404) {
+                    return;
+                }
+
                 toaster.create({
                     title: t("fetchSessionToast.errorTitle"),
                     description: t("fetchSessionToast.errorMessage"),
                     type: "error",
                 });
             } finally {
-                setIsLoadingSession(false);
+                if (!signal?.aborted) {
+                    setIsLoadingSession(false);
+                }
             }
         };
 
-        void fetchActiveSession();
+        const controller = new AbortController();
+
+        void fetchActiveSession(controller.signal);
+
+        return () => {
+            controller.abort();
+        };
     }, [sessionApiClient, t]);
 
     const fetchClasses = useCallback(
