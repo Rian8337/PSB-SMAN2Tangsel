@@ -22,7 +22,9 @@ export abstract class APIClient {
                     ? runtimeBaseUrlCandidate
                     : undefined;
 
-            return runtimeBaseUrl ?? fallbackBaseUrl;
+            return this.normalizeBrowserApiBaseUrl(
+                runtimeBaseUrl ?? fallbackBaseUrl,
+            );
         }
 
         return process.env.API_BASE_URL ?? fallbackBaseUrl;
@@ -159,5 +161,35 @@ export abstract class APIClient {
         }
 
         return res;
+    }
+
+    private normalizeBrowserApiBaseUrl(url: string): string {
+        if (typeof window === "undefined") {
+            return url;
+        }
+
+        try {
+            const parsedUrl = new URL(url);
+            const currentHost = window.location.hostname;
+
+            const isLoopbackHost =
+                parsedUrl.hostname === "localhost" ||
+                parsedUrl.hostname === "127.0.0.1";
+
+            const isCurrentLoopbackHost =
+                currentHost === "localhost" || currentHost === "127.0.0.1";
+
+            if (
+                isLoopbackHost &&
+                isCurrentLoopbackHost &&
+                parsedUrl.hostname !== currentHost
+            ) {
+                parsedUrl.hostname = currentHost;
+            }
+
+            return parsedUrl.toString().replace(/\/$/, "");
+        } catch {
+            return url;
+        }
     }
 }
