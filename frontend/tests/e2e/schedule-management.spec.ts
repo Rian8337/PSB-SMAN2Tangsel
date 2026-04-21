@@ -121,19 +121,7 @@ test.describe("Class Schedule Management", () => {
 
         await expect(successToast).toBeVisible();
         await expect(successToast).toBeHidden();
-
-        // Animations are inconsistent across browsers. In WebKit, the dialog is hidden but still in the DOM
-        // with data-state="closed". In Chromium/Firefox, it is unmounted from the DOM. Both are valid
-        // implementations of hiding the dialog, so we check for both possibilities here.
-        await expect(async () => {
-            const count = await createDialog.count();
-
-            if (count > 0) {
-                expect(await createDialog.getAttribute("data-state")).toBe(
-                    "closed",
-                );
-            }
-        }).toPass({ timeout: 5000 });
+        await expect(createDialog).toBeHidden({ timeout: 10000 });
 
         // Verify & Edit Schedule
         const scheduleBlock = page
@@ -182,6 +170,7 @@ test.describe("Class Schedule Management", () => {
 
         await expect(successToast).toBeVisible();
         await expect(successToast).toBeHidden();
+        await expect(editDialog).toBeHidden({ timeout: 10000 });
 
         // Delete Schedule
         await Promise.all([

@@ -101,16 +101,9 @@ test.describe("Class Student Management", () => {
         expect(enrollResponse.ok()).toBe(true);
 
         const successToast = page.getByText(/berhasil|success/i).first();
+
         await expect(successToast).toBeVisible();
-
-        // Animations are inconsistent across browsers.
-        await expect(async () => {
-            const count = await dialog.count();
-            if (count > 0) {
-                expect(await dialog.getAttribute("data-state")).toBe("closed");
-            }
-        }).toPass({ timeout: 5000 });
-
+        await expect(dialog).toBeHidden();
         await expect(successToast).toBeHidden({ timeout: 10000 });
 
         // Search enrolled student

@@ -64,19 +64,10 @@ test.describe("Subject Management", () => {
         ]);
 
         const successToast = page.getByText(/berhasil|success/i).first();
+
         await expect(successToast).toBeVisible();
         await expect(successToast).toBeHidden();
-
-        // Animations are inconsistent across browsers. In WebKit, the dialog is hidden but still in the DOM
-        // with data-state="closed". In Chromium/Firefox, it is unmounted from the DOM. Both are valid
-        // implementations of hiding the dialog, so we check for both possibilities here.
-        await expect(async () => {
-            const count = await dialog.count();
-
-            if (count > 0) {
-                expect(await dialog.getAttribute("data-state")).toBe("closed");
-            }
-        }).toPass({ timeout: 5000 });
+        await expect(dialog).toBeHidden({ timeout: 10000 });
 
         // Search subject
         const searchInput = page.locator('input[name="search"]');
