@@ -90,7 +90,7 @@ test.describe("Notifications", () => {
         await expect(popoverBody).toBeVisible();
 
         const actionButtons = popoverBody.getByRole("button", {
-            name: /mark as (read|unread)/i,
+            name: /markAs(Read|Unread)/i,
         });
 
         await expect(actionButtons).toHaveCount(2);
@@ -109,7 +109,7 @@ test.describe("Notifications", () => {
         await expect(firstNotification.getByText("TN1")).toBeVisible();
         await expect(
             firstNotification.getByRole("button", {
-                name: /mark as read/i,
+                name: /markAsRead/i,
             }),
         ).toBeVisible();
 
@@ -117,7 +117,7 @@ test.describe("Notifications", () => {
         await expect(secondNotification.getByText("TN2")).toBeVisible();
         await expect(
             secondNotification.getByRole("button", {
-                name: /mark as unread/i,
+                name: /markAsUnread/i,
             }),
         ).toBeVisible();
     });
@@ -141,14 +141,14 @@ test.describe("Notifications", () => {
         const notificationContainer = tn1Text.locator("..");
 
         const markAsReadButton = notificationContainer.getByRole("button", {
-            name: /mark as read/i,
+            name: /markAsRead/i,
         });
 
         await markAsReadButton.click();
 
         await expect(
             notificationContainer.getByRole("button", {
-                name: /mark as unread/i,
+                name: /markAsUnread/i,
             }),
         ).toBeVisible();
 
