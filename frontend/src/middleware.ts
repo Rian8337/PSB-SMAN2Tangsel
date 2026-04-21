@@ -128,7 +128,7 @@ export default async function middleware(request: NextRequest) {
         }
 
         // If the decryption failed or the cookie is invalid, clear it and force login.
-        if (!role) {
+        if (role === null) {
             const response = NextResponse.redirect(
                 new URL(`/${locale}/login`, request.url),
             );
