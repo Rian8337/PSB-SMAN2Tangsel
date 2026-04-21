@@ -3,6 +3,7 @@
 import { Heading, HStack, IconButton } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import { NotificationBell } from "./NotificationBell";
+import { useRouter } from "@/i18n/navigation";
 
 interface PageHeaderProps {
     title: string;
@@ -15,6 +16,8 @@ export function PageHeader({
     showBackButton = true,
     rightElement,
 }: PageHeaderProps) {
+    const router = useRouter();
+
     return (
         <HStack
             px={{ base: 4, md: 8 }}
@@ -29,6 +32,9 @@ export function PageHeader({
                     aria-label="Go back"
                     variant="ghost"
                     visibility={showBackButton ? "visible" : "hidden"}
+                    onClick={() => {
+                        router.back();
+                    }}
                 >
                     <ArrowLeft size={32} color="black" strokeWidth={3} />
                 </IconButton>
