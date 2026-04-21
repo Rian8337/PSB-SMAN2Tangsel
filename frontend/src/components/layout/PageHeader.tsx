@@ -1,6 +1,6 @@
 "use client";
 
-import { HStack, IconButton, Text } from "@chakra-ui/react";
+import { Heading, HStack, IconButton } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import { NotificationBell } from "./NotificationBell";
 
@@ -33,13 +33,9 @@ export function PageHeader({
                     <ArrowLeft size={32} color="black" strokeWidth={3} />
                 </IconButton>
 
-                <Text
-                    fontSize={{ base: "xl", md: "3xl" }}
-                    fontWeight="bold"
-                    color="black"
-                >
+                <Heading as="h2" size={{ base: "lg", md: "xl" }} color="black">
                     {title}
-                </Text>
+                </Heading>
             </HStack>
 
             <HStack spaceX={4}>
