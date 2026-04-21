@@ -1,9 +1,10 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { Box, Card, Flex, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Card, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { BookOpen, Calendar, PersonStanding, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { PageHeader } from "../layout/PageHeader";
 
 interface AdminDashboardClientViewProps {
     name: string;
@@ -47,15 +48,7 @@ export function AdminDashboardClientView({
 
     return (
         <Box p={{ base: 4, md: 8 }} w="full">
-            <Box mb={8}>
-                <Heading as="h1" size="2xl" mb={2}>
-                    {t("title")}
-                </Heading>
-
-                <Text color="gray.600" fontSize="lg">
-                    {t("welcome", { name })}
-                </Text>
-            </Box>
+            <PageHeader title={t("welcome", { name })} />
 
             <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
                 {actions.map((action, index) => (

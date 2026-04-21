@@ -8,7 +8,6 @@ import {
     Box,
     Button,
     Flex,
-    Heading,
     Input,
     Spinner,
     Table,
@@ -17,6 +16,7 @@ import { UserListItem, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateUserModal } from "./CreateUserModal";
@@ -115,222 +115,222 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     };
 
     return (
-        <Box
-            p={{ base: 4, md: 8 }}
-            w="full"
-            h="full"
-            display="flex"
-            flexDirection="column"
-        >
-            <Heading as="h2" size={{ base: "lg", md: "xl" }} mb={6}>
-                {t("title")}
-            </Heading>
-
-            <Flex
-                direction={{ base: "column", md: "row" }}
-                justify="space-between"
-                align={{ base: "stretch", md: "center" }}
-                gap={4}
-                mb={6}
-            >
-                <Box
-                    position="relative"
-                    maxW={{ base: "full", md: "400px" }}
-                    w="full"
-                >
-                    <Box
-                        position="absolute"
-                        left={3}
-                        top="50%"
-                        transform="translateY(-50%)"
-                    >
-                        <Search size={18} />
-                    </Box>
-
-                    <Input
-                        name="search"
-                        pl={10}
-                        placeholder={t("searchPlaceholder")}
-                        value={searchQuery}
-                        onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            setPage(1);
-                        }}
-                        bg="white"
-                        borderRadius="md"
-                    />
-                </Box>
-
-                <Button
-                    w={{ base: "full", md: "auto" }}
-                    colorPalette="blue"
-                    bg="blue.600"
-                    color="white"
-                    _hover={{ bg: "blue.700" }}
-                    onClick={() => {
-                        setIsCreateModalOpen(true);
-                    }}
-                >
-                    <Plus size={18} style={{ marginRight: "8px" }} />
-                    {t("registerButton")}
-                </Button>
-            </Flex>
+        <>
+            <PageHeader title={t("title")} />
 
             <Box
-                bg="white"
-                borderRadius="md"
-                borderWidth="1px"
-                overflowX="auto"
-                flex={1}
+                p={{ base: 4, md: 8 }}
                 w="full"
+                h="full"
+                display="flex"
+                flexDirection="column"
             >
-                {isLoading ? (
-                    <Flex justify="center" align="center" h="200px">
-                        <Spinner size="xl" />
-                    </Flex>
-                ) : (
-                    <Table.Root variant="line" minW="600px">
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.ColumnHeader>
-                                    {t("columns.name")}
-                                </Table.ColumnHeader>
+                <Flex
+                    direction={{ base: "column", md: "row" }}
+                    justify="space-between"
+                    align={{ base: "stretch", md: "center" }}
+                    gap={4}
+                    mb={6}
+                >
+                    <Box
+                        position="relative"
+                        maxW={{ base: "full", md: "400px" }}
+                        w="full"
+                    >
+                        <Box
+                            position="absolute"
+                            left={3}
+                            top="50%"
+                            transform="translateY(-50%)"
+                        >
+                            <Search size={18} />
+                        </Box>
 
-                                <Table.ColumnHeader>
-                                    {t("columns.identifier")}
-                                </Table.ColumnHeader>
+                        <Input
+                            name="search"
+                            pl={10}
+                            placeholder={t("searchPlaceholder")}
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setPage(1);
+                            }}
+                            bg="white"
+                            borderRadius="md"
+                        />
+                    </Box>
 
-                                <Table.ColumnHeader>
-                                    {t("columns.role")}
-                                </Table.ColumnHeader>
+                    <Button
+                        w={{ base: "full", md: "auto" }}
+                        colorPalette="blue"
+                        bg="blue.600"
+                        color="white"
+                        _hover={{ bg: "blue.700" }}
+                        onClick={() => {
+                            setIsCreateModalOpen(true);
+                        }}
+                    >
+                        <Plus size={18} style={{ marginRight: "8px" }} />
+                        {t("registerButton")}
+                    </Button>
+                </Flex>
 
-                                <Table.ColumnHeader>
-                                    {t("columns.status")}
-                                </Table.ColumnHeader>
+                <Box
+                    bg="white"
+                    borderRadius="md"
+                    borderWidth="1px"
+                    overflowX="auto"
+                    flex={1}
+                    w="full"
+                >
+                    {isLoading ? (
+                        <Flex justify="center" align="center" h="200px">
+                            <Spinner size="xl" />
+                        </Flex>
+                    ) : (
+                        <Table.Root variant="line" minW="600px">
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.ColumnHeader>
+                                        {t("columns.name")}
+                                    </Table.ColumnHeader>
 
-                                <Table.ColumnHeader textAlign="right">
-                                    {t("columns.actions")}
-                                </Table.ColumnHeader>
-                            </Table.Row>
-                        </Table.Header>
+                                    <Table.ColumnHeader>
+                                        {t("columns.identifier")}
+                                    </Table.ColumnHeader>
 
-                        <Table.Body>
-                            {users.length > 0 ? (
-                                users.map((user) => (
-                                    <Table.Row key={user.id}>
-                                        <Table.Cell fontWeight="medium">
-                                            {user.name}
-                                        </Table.Cell>
+                                    <Table.ColumnHeader>
+                                        {t("columns.role")}
+                                    </Table.ColumnHeader>
 
-                                        <Table.Cell color="gray.600">
-                                            {user.identifier}
-                                        </Table.Cell>
+                                    <Table.ColumnHeader>
+                                        {t("columns.status")}
+                                    </Table.ColumnHeader>
 
-                                        <Table.Cell>
-                                            <Badge
-                                                colorPalette={
-                                                    user.role ===
-                                                    UserRole.administrator
-                                                        ? "purple"
-                                                        : user.role ===
-                                                            UserRole.teacher
-                                                          ? "blue"
-                                                          : "green"
-                                                }
-                                            >
-                                                {t(
-                                                    `roles.${user.role.toString() as "0" | "1" | "2"}`,
-                                                )}
-                                            </Badge>
-                                        </Table.Cell>
+                                    <Table.ColumnHeader textAlign="right">
+                                        {t("columns.actions")}
+                                    </Table.ColumnHeader>
+                                </Table.Row>
+                            </Table.Header>
 
-                                        <Table.Cell>
-                                            <Badge
-                                                colorPalette={
-                                                    user.active
-                                                        ? "green"
-                                                        : "red"
-                                                }
-                                                variant="subtle"
-                                            >
-                                                {t(
-                                                    `status.${user.active ? "active" : "inactive"}`,
-                                                )}
-                                            </Badge>
-                                        </Table.Cell>
+                            <Table.Body>
+                                {users.length > 0 ? (
+                                    users.map((user) => (
+                                        <Table.Row key={user.id}>
+                                            <Table.Cell fontWeight="medium">
+                                                {user.name}
+                                            </Table.Cell>
 
-                                        <Table.Cell textAlign="right">
-                                            <Button
-                                                asChild
-                                                variant="ghost"
-                                                colorPalette="blue"
-                                            >
-                                                <Link
-                                                    href={`/admin/users/${user.id.toString()}`}
+                                            <Table.Cell color="gray.600">
+                                                {user.identifier}
+                                            </Table.Cell>
+
+                                            <Table.Cell>
+                                                <Badge
+                                                    colorPalette={
+                                                        user.role ===
+                                                        UserRole.administrator
+                                                            ? "purple"
+                                                            : user.role ===
+                                                                UserRole.teacher
+                                                              ? "blue"
+                                                              : "green"
+                                                    }
                                                 >
-                                                    {t("actions.edit")}
-                                                </Link>
-                                            </Button>
+                                                    {t(
+                                                        `roles.${user.role.toString() as "0" | "1" | "2"}`,
+                                                    )}
+                                                </Badge>
+                                            </Table.Cell>
 
-                                            {user.id !== currentUserId && (
+                                            <Table.Cell>
+                                                <Badge
+                                                    colorPalette={
+                                                        user.active
+                                                            ? "green"
+                                                            : "red"
+                                                    }
+                                                    variant="subtle"
+                                                >
+                                                    {t(
+                                                        `status.${user.active ? "active" : "inactive"}`,
+                                                    )}
+                                                </Badge>
+                                            </Table.Cell>
+
+                                            <Table.Cell textAlign="right">
                                                 <Button
-                                                    aria-label={`delete-${user.identifier}`}
-                                                    size="sm"
+                                                    asChild
                                                     variant="ghost"
-                                                    colorPalette="red"
-                                                    onClick={() => {
-                                                        handleDelete(
-                                                            user.id,
-                                                            user.name,
-                                                        );
-                                                    }}
+                                                    colorPalette="blue"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Link
+                                                        href={`/admin/users/${user.id.toString()}`}
+                                                    >
+                                                        {t("actions.edit")}
+                                                    </Link>
                                                 </Button>
-                                            )}
+
+                                                {user.id !== currentUserId && (
+                                                    <Button
+                                                        aria-label={`delete-${user.identifier}`}
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        colorPalette="red"
+                                                        onClick={() => {
+                                                            handleDelete(
+                                                                user.id,
+                                                                user.name,
+                                                            );
+                                                        }}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                )}
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))
+                                ) : (
+                                    <Table.Row>
+                                        <Table.Cell
+                                            colSpan={5}
+                                            textAlign="center"
+                                            py={8}
+                                            color="gray.500"
+                                        >
+                                            {t("emptyState")}
                                         </Table.Cell>
                                     </Table.Row>
-                                ))
-                            ) : (
-                                <Table.Row>
-                                    <Table.Cell
-                                        colSpan={5}
-                                        textAlign="center"
-                                        py={8}
-                                        color="gray.500"
-                                    >
-                                        {t("emptyState")}
-                                    </Table.Cell>
-                                </Table.Row>
-                            )}
-                        </Table.Body>
-                    </Table.Root>
-                )}
+                                )}
+                            </Table.Body>
+                        </Table.Root>
+                    )}
+                </Box>
+
+                <Pagination
+                    page={page}
+                    hasMore={users.length >= limit}
+                    isLoading={isLoading}
+                    onPrevPage={() => {
+                        setPage((p) => p - 1);
+                    }}
+                    onNextPage={() => {
+                        setPage((p) => p + 1);
+                    }}
+                />
+
+                <CreateUserModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => {
+                        setIsCreateModalOpen(false);
+                    }}
+                    onSuccess={() => {
+                        setPage(1);
+                        setSearchQuery("");
+                        setRefreshTrigger((prev) => prev + 1);
+                    }}
+                />
             </Box>
-
-            <Pagination
-                page={page}
-                hasMore={users.length >= limit}
-                isLoading={isLoading}
-                onPrevPage={() => {
-                    setPage((p) => p - 1);
-                }}
-                onNextPage={() => {
-                    setPage((p) => p + 1);
-                }}
-            />
-
-            <CreateUserModal
-                isOpen={isCreateModalOpen}
-                onClose={() => {
-                    setIsCreateModalOpen(false);
-                }}
-                onSuccess={() => {
-                    setPage(1);
-                    setSearchQuery("");
-                    setRefreshTrigger((prev) => prev + 1);
-                }}
-            />
-        </Box>
+        </>
     );
 }

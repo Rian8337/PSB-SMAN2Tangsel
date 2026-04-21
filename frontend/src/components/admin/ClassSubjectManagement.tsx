@@ -4,19 +4,12 @@ import { APIError } from "@/api";
 import { useDebounce } from "@/hooks";
 import { useClassSubjectApiClient } from "@/providers/api/class-subject-api-provider";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
-import {
-    Box,
-    Button,
-    Flex,
-    Heading,
-    Input,
-    Spinner,
-    Table,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Spinner, Table } from "@chakra-ui/react";
 import { Class, ClassSubjectAssignment, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { PageHeader } from "../layout/PageHeader";
 import { AsyncSelect } from "../ui/AsyncSelect";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -174,230 +167,229 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
     };
 
     return (
-        <Box
-            p={{ base: 4, md: 8 }}
-            w="full"
-            h="full"
-            display="flex"
-            flexDirection="column"
-        >
-            <Box mb={6}>
-                <Heading as="h2" size={{ base: "lg", md: "xl" }} mb={2}>
-                    {t("title", { class: clazz.name })}
-                </Heading>
-            </Box>
-
-            <Flex
-                direction={{ base: "column", md: "row" }}
-                justify="space-between"
-                align={{ base: "stretch", md: "center" }}
-                gap={4}
-                mb={6}
-            >
-                <Box
-                    position="relative"
-                    maxW={{ base: "full", md: "400px" }}
-                    w="full"
-                >
-                    <Box
-                        position="absolute"
-                        left={3}
-                        top="50%"
-                        transform="translateY(-50%)"
-                    >
-                        <Search size={18} />
-                    </Box>
-
-                    <Input
-                        name="search"
-                        pl={10}
-                        placeholder={t("searchPlaceholder")}
-                        value={searchQuery}
-                        onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            setPage(1);
-                        }}
-                        bg="white"
-                        borderRadius="md"
-                    />
-                </Box>
-
-                <Button
-                    w={{ base: "full", md: "auto" }}
-                    colorPalette="blue"
-                    bg="blue.600"
-                    color="white"
-                    _hover={{ bg: "blue.700" }}
-                    onClick={() => {
-                        setIsAssignModalOpen(true);
-                    }}
-                >
-                    <Plus size={18} style={{ marginRight: "8px" }} />
-                    {t("assignNewSubject")}
-                </Button>
-            </Flex>
+        <>
+            <PageHeader title={t("title", { class: clazz.name })} />
 
             <Box
-                bg="white"
-                borderRadius="md"
-                borderWidth="1px"
-                overflowX="auto"
-                flex={1}
+                p={{ base: 4, md: 8 }}
                 w="full"
+                h="full"
+                display="flex"
+                flexDirection="column"
             >
-                {isLoading && assignments.length === 0 ? (
-                    <Flex justify="center" align="center" h="200px">
-                        <Spinner size="xl" />
-                    </Flex>
-                ) : (
-                    <Table.Root variant="line" minW="800px">
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.ColumnHeader>
-                                    {t("columns.subjectCode")}
-                                </Table.ColumnHeader>
+                <Flex
+                    direction={{ base: "column", md: "row" }}
+                    justify="space-between"
+                    align={{ base: "stretch", md: "center" }}
+                    gap={4}
+                    mb={6}
+                >
+                    <Box
+                        position="relative"
+                        maxW={{ base: "full", md: "400px" }}
+                        w="full"
+                    >
+                        <Box
+                            position="absolute"
+                            left={3}
+                            top="50%"
+                            transform="translateY(-50%)"
+                        >
+                            <Search size={18} />
+                        </Box>
 
-                                <Table.ColumnHeader>
-                                    {t("columns.subjectName")}
-                                </Table.ColumnHeader>
+                        <Input
+                            name="search"
+                            pl={10}
+                            placeholder={t("searchPlaceholder")}
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setPage(1);
+                            }}
+                            bg="white"
+                            borderRadius="md"
+                        />
+                    </Box>
 
-                                <Table.ColumnHeader>
-                                    {t("columns.teacher")}
-                                </Table.ColumnHeader>
+                    <Button
+                        w={{ base: "full", md: "auto" }}
+                        colorPalette="blue"
+                        bg="blue.600"
+                        color="white"
+                        _hover={{ bg: "blue.700" }}
+                        onClick={() => {
+                            setIsAssignModalOpen(true);
+                        }}
+                    >
+                        <Plus size={18} style={{ marginRight: "8px" }} />
+                        {t("assignNewSubject")}
+                    </Button>
+                </Flex>
 
-                                <Table.ColumnHeader textAlign="right">
-                                    {t("columns.actions")}
-                                </Table.ColumnHeader>
-                            </Table.Row>
-                        </Table.Header>
+                <Box
+                    bg="white"
+                    borderRadius="md"
+                    borderWidth="1px"
+                    overflowX="auto"
+                    flex={1}
+                    w="full"
+                >
+                    {isLoading && assignments.length === 0 ? (
+                        <Flex justify="center" align="center" h="200px">
+                            <Spinner size="xl" />
+                        </Flex>
+                    ) : (
+                        <Table.Root variant="line" minW="800px">
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.ColumnHeader>
+                                        {t("columns.subjectCode")}
+                                    </Table.ColumnHeader>
 
-                        <Table.Body>
-                            {assignments.length > 0 ? (
-                                assignments.map((assignment) => (
-                                    <Table.Row key={assignment.id}>
-                                        <Table.Cell fontWeight="medium">
-                                            {assignment.subject.code}
-                                        </Table.Cell>
+                                    <Table.ColumnHeader>
+                                        {t("columns.subjectName")}
+                                    </Table.ColumnHeader>
 
-                                        <Table.Cell>
-                                            {assignment.subject.name}
-                                        </Table.Cell>
+                                    <Table.ColumnHeader>
+                                        {t("columns.teacher")}
+                                    </Table.ColumnHeader>
 
-                                        <Table.Cell>
-                                            <Box maxW="300px">
-                                                <AsyncSelect
-                                                    placeholder={t(
-                                                        "unassignedTeacherPlaceholder",
-                                                    )}
-                                                    value={
-                                                        assignment.teacher
-                                                            ? {
-                                                                  value: assignment
-                                                                      .teacher
-                                                                      .id,
-                                                                  label: assignment
-                                                                      .teacher
-                                                                      .name,
-                                                              }
-                                                            : null
-                                                    }
-                                                    onChange={(
-                                                        selectedOption,
-                                                    ) => {
-                                                        void handleUpdateTeacher(
-                                                            assignment.id,
-                                                            selectedOption
+                                    <Table.ColumnHeader textAlign="right">
+                                        {t("columns.actions")}
+                                    </Table.ColumnHeader>
+                                </Table.Row>
+                            </Table.Header>
+
+                            <Table.Body>
+                                {assignments.length > 0 ? (
+                                    assignments.map((assignment) => (
+                                        <Table.Row key={assignment.id}>
+                                            <Table.Cell fontWeight="medium">
+                                                {assignment.subject.code}
+                                            </Table.Cell>
+
+                                            <Table.Cell>
+                                                {assignment.subject.name}
+                                            </Table.Cell>
+
+                                            <Table.Cell>
+                                                <Box maxW="300px">
+                                                    <AsyncSelect
+                                                        placeholder={t(
+                                                            "unassignedTeacherPlaceholder",
+                                                        )}
+                                                        value={
+                                                            assignment.teacher
                                                                 ? {
-                                                                      id: selectedOption.value,
-                                                                      name: selectedOption.label,
+                                                                      value: assignment
+                                                                          .teacher
+                                                                          .id,
+                                                                      label: assignment
+                                                                          .teacher
+                                                                          .name,
                                                                   }
-                                                                : null,
-                                                        );
-                                                    }}
-                                                    fetchOptions={async (
-                                                        query,
-                                                        signal,
-                                                    ) => {
-                                                        const teachers =
-                                                            await userApiClient.listUsers(
-                                                                UserRole.teacher,
-                                                                query,
-                                                                10,
-                                                                undefined,
-                                                                signal,
+                                                                : null
+                                                        }
+                                                        onChange={(
+                                                            selectedOption,
+                                                        ) => {
+                                                            void handleUpdateTeacher(
+                                                                assignment.id,
+                                                                selectedOption
+                                                                    ? {
+                                                                          id: selectedOption.value,
+                                                                          name: selectedOption.label,
+                                                                      }
+                                                                    : null,
                                                             );
+                                                        }}
+                                                        fetchOptions={async (
+                                                            query,
+                                                            signal,
+                                                        ) => {
+                                                            const teachers =
+                                                                await userApiClient.listUsers(
+                                                                    UserRole.teacher,
+                                                                    query,
+                                                                    10,
+                                                                    undefined,
+                                                                    signal,
+                                                                );
 
-                                                        return teachers.map(
-                                                            (t) => ({
-                                                                value: t.id,
-                                                                label: t.name,
-                                                            }),
+                                                            return teachers.map(
+                                                                (t) => ({
+                                                                    value: t.id,
+                                                                    label: t.name,
+                                                                }),
+                                                            );
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Table.Cell>
+
+                                            <Table.Cell textAlign="right">
+                                                <Button
+                                                    aria-label={`remove-subject-${assignment.subject.code}`}
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    colorPalette="red"
+                                                    onClick={() => {
+                                                        void handleRemoveAssignment(
+                                                            assignment.id,
+                                                            assignment.subject
+                                                                .name,
                                                         );
                                                     }}
-                                                />
-                                            </Box>
-                                        </Table.Cell>
-
-                                        <Table.Cell textAlign="right">
-                                            <Button
-                                                aria-label={`remove-subject-${assignment.subject.code}`}
-                                                size="sm"
-                                                variant="ghost"
-                                                colorPalette="red"
-                                                onClick={() => {
-                                                    void handleRemoveAssignment(
-                                                        assignment.id,
-                                                        assignment.subject.name,
-                                                    );
-                                                }}
-                                            >
-                                                <Trash2 size={16} />
-                                            </Button>
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))
+                                ) : (
+                                    <Table.Row>
+                                        <Table.Cell
+                                            colSpan={4}
+                                            textAlign="center"
+                                            py={8}
+                                            color="gray.500"
+                                        >
+                                            {t("emptyState")}
                                         </Table.Cell>
                                     </Table.Row>
-                                ))
-                            ) : (
-                                <Table.Row>
-                                    <Table.Cell
-                                        colSpan={4}
-                                        textAlign="center"
-                                        py={8}
-                                        color="gray.500"
-                                    >
-                                        {t("emptyState")}
-                                    </Table.Cell>
-                                </Table.Row>
-                            )}
-                        </Table.Body>
-                    </Table.Root>
-                )}
+                                )}
+                            </Table.Body>
+                        </Table.Root>
+                    )}
+                </Box>
+
+                <Pagination
+                    page={page}
+                    hasMore={assignments.length >= limit}
+                    isLoading={isLoading}
+                    onPrevPage={() => {
+                        setPage((p) => p - 1);
+                    }}
+                    onNextPage={() => {
+                        setPage((p) => p + 1);
+                    }}
+                />
+
+                <AssignClassSubjectModal
+                    isOpen={isAssignModalOpen}
+                    clazz={clazz}
+                    onClose={() => {
+                        setIsAssignModalOpen(false);
+                    }}
+                    onSuccess={() => {
+                        // Reset to page 1 to see the new assignment.
+                        setPage(1);
+                        setSearchQuery("");
+                        setRefreshTrigger((prev) => prev + 1);
+                    }}
+                />
             </Box>
-
-            <Pagination
-                page={page}
-                hasMore={assignments.length >= limit}
-                isLoading={isLoading}
-                onPrevPage={() => {
-                    setPage((p) => p - 1);
-                }}
-                onNextPage={() => {
-                    setPage((p) => p + 1);
-                }}
-            />
-
-            <AssignClassSubjectModal
-                isOpen={isAssignModalOpen}
-                clazz={clazz}
-                onClose={() => {
-                    setIsAssignModalOpen(false);
-                }}
-                onSuccess={() => {
-                    // Reset to page 1 to see the new assignment.
-                    setPage(1);
-                    setSearchQuery("");
-                    setRefreshTrigger((prev) => prev + 1);
-                }}
-            />
-        </Box>
+        </>
     );
 }

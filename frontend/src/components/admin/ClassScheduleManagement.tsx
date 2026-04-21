@@ -1,11 +1,12 @@
 "use client";
 
 import { useClassApiClient } from "@/providers/api/class-api-provider";
-import { Box, Button, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner } from "@chakra-ui/react";
 import { Class, ScheduleDTO } from "@psb/shared/types";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { PageHeader } from "../layout/PageHeader";
 import { ScheduleGrid } from "../schedule/ScheduleGrid";
 import { toaster } from "../ui/toaster";
 import { CreateScheduleModal } from "./CreateScheduleModal";
@@ -73,71 +74,71 @@ export function ClassScheduleManagement({
     }, [fetchSchedules, refreshTrigger]);
 
     return (
-        <Box
-            p={{ base: 4, md: 8 }}
-            w="full"
-            h="full"
-            display="flex"
-            flexDirection="column"
-        >
-            <Heading as="h2" size={{ base: "lg", md: "xl" }} mb={6}>
-                {t("title", { class: clazz.name })}
-            </Heading>
+        <>
+            <PageHeader title={t("title", { class: clazz.name })} />
 
-            <Flex justify="flex-end" mb={6}>
-                <Button
-                    colorPalette="blue"
-                    bg="blue.600"
-                    color="white"
-                    _hover={{ bg: "blue.700" }}
-                    onClick={() => {
-                        setIsCreateModalOpen(true);
-                    }}
-                >
-                    <Plus size={18} style={{ marginRight: "8px" }} />
-                    {t("addButton")}
-                </Button>
-            </Flex>
-
-            <Box flex={1} w="full">
-                {isLoading ? (
-                    <Flex justify="center" align="center" h="400px">
-                        <Spinner size="xl" />
-                    </Flex>
-                ) : (
-                    <ScheduleGrid
-                        data={schedules}
-                        editMode={true}
-                        onScheduleClick={(id) => {
-                            setEditingScheduleId(id);
+            <Box
+                p={{ base: 4, md: 8 }}
+                w="full"
+                h="full"
+                display="flex"
+                flexDirection="column"
+            >
+                <Flex justify="flex-end" mb={6}>
+                    <Button
+                        colorPalette="blue"
+                        bg="blue.600"
+                        color="white"
+                        _hover={{ bg: "blue.700" }}
+                        onClick={() => {
+                            setIsCreateModalOpen(true);
                         }}
-                    />
-                )}
-            </Box>
+                    >
+                        <Plus size={18} style={{ marginRight: "8px" }} />
+                        {t("addButton")}
+                    </Button>
+                </Flex>
 
-            <CreateScheduleModal
-                clazz={clazz}
-                isOpen={isCreateModalOpen}
-                onClose={() => {
-                    setIsCreateModalOpen(false);
-                }}
-                onSuccess={() => {
-                    setRefreshTrigger((prev) => prev + 1);
-                }}
-            />
+                <Box flex={1} w="full">
+                    {isLoading ? (
+                        <Flex justify="center" align="center" h="400px">
+                            <Spinner size="xl" />
+                        </Flex>
+                    ) : (
+                        <ScheduleGrid
+                            data={schedules}
+                            editMode={true}
+                            onScheduleClick={(id) => {
+                                setEditingScheduleId(id);
+                            }}
+                        />
+                    )}
+                </Box>
 
-            {editingScheduleId && (
-                <EditScheduleModal
-                    scheduleId={editingScheduleId}
-                    isOpen={!!editingScheduleId}
+                <CreateScheduleModal
+                    clazz={clazz}
+                    isOpen={isCreateModalOpen}
                     onClose={() => {
-                        setEditingScheduleId(null);
+                        setIsCreateModalOpen(false);
                     }}
                     onSuccess={() => {
                         setRefreshTrigger((prev) => prev + 1);
                     }}
                 />
-            )}
-        </Box>
+
+                {editingScheduleId && (
+                    <EditScheduleModal
+                        scheduleId={editingScheduleId}
+                        isOpen={!!editingScheduleId}
+                        onClose={() => {
+                            setEditingScheduleId(null);
+                        }}
+                        onSuccess={() => {
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
+            </Box>
+        </>
     );
 }
