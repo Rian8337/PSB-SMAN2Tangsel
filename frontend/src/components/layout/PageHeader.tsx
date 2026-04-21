@@ -29,7 +29,7 @@ export function PageHeader({
         >
             <HStack spaceX={4}>
                 <IconButton
-                    aria-label="Go back"
+                    aria-label="go-back"
                     variant="ghost"
                     visibility={showBackButton ? "visible" : "hidden"}
                     onClick={() => {
