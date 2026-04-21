@@ -106,8 +106,8 @@ export function CreateSessionModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(

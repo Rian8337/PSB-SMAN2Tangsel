@@ -72,8 +72,8 @@ export function CreateUserModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(

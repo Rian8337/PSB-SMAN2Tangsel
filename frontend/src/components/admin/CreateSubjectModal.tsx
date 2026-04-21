@@ -65,8 +65,8 @@ export function CreateSubjectModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(

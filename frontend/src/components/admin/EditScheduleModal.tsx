@@ -135,8 +135,8 @@ export function EditScheduleModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(
@@ -173,8 +173,8 @@ export function EditScheduleModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(

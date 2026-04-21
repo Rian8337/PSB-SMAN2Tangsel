@@ -124,8 +124,8 @@ export function CreateScheduleModal({
                     type: "success",
                 });
 
-                onSuccess();
                 handleClose();
+                onSuccess();
             })
             .catch((e: unknown) => {
                 setError(
