@@ -111,7 +111,9 @@ export function ClassManagement() {
 
     // Trigger Class Fetching
     useEffect(() => {
-        if (!activeSession) return;
+        if (!activeSession) {
+            return;
+        }
 
         if (searchQuery !== debouncedSearchQuery) {
             return;
@@ -158,48 +160,58 @@ export function ClassManagement() {
             });
     };
 
+    const header = (
+        <PageHeader
+            title={t("title")}
+            rightElement={
+                <Text
+                    color="gray.500"
+                    fontWeight="medium"
+                    display={{ base: "none", md: "block" }}
+                >
+                    {t("activeSessionLabel", {
+                        session: activeSession?.session ?? "",
+                        semester: activeSession?.semester.toString() ?? "",
+                    })}
+                </Text>
+            }
+        />
+    );
+
     if (isLoadingSession) {
         return (
-            <Flex justify="center" align="center" h="100vh">
-                <Spinner size="xl" />
-            </Flex>
+            <>
+                {header}
+
+                <Flex justify="center" align="center" h="100vh">
+                    <Spinner size="xl" />
+                </Flex>
+            </>
         );
     }
 
     if (!activeSession) {
         return (
-            <Flex
-                justify="center"
-                align="center"
-                h="100vh"
-                direction="column"
-                gap={4}
-            >
-                <Text color="gray.500" fontSize="lg">
-                    {t("noActiveSession")}
-                </Text>
-            </Flex>
+            <>
+                {header}
+
+                <Flex
+                    justify="center"
+                    align="center"
+                    h="100vh"
+                    direction="column"
+                    gap={4}
+                >
+                    <Text color="gray.500" fontSize="lg">
+                        {t("noActiveSession")}
+                    </Text>
+                </Flex>
+            </>
         );
     }
 
     return (
         <>
-            <PageHeader
-                title={t("title")}
-                rightElement={
-                    <Text
-                        color="gray.500"
-                        fontWeight="medium"
-                        display={{ base: "none", md: "block" }}
-                    >
-                        {t("activeSessionLabel", {
-                            session: activeSession.session,
-                            semester: activeSession.semester.toString(),
-                        })}
-                    </Text>
-                }
-            />
-
             <Box
                 p={{ base: 4, md: 8 }}
                 w="full"
