@@ -1,10 +1,5 @@
-import {
-    APIError,
-    ApiRequest,
-    ApiResponse,
-    SessionData,
-    UnauthorizedError,
-} from "@/types";
+import { APIError, ApiRequest, ApiResponse, UnauthorizedError } from "@/types";
+import { SessionData } from "@psb/shared/types";
 
 /**
  * Base class for controllers.

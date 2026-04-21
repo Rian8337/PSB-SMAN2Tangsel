@@ -2,10 +2,9 @@ import { AuthService } from "@/services";
 import {
     EnvironmentVariableKey,
     LoginResult,
-    StudentSessionData,
     UnauthorizedError,
 } from "@/types";
-import { Student, UserRole } from "@psb/shared/types";
+import { Student, StudentSessionData, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,

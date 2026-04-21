@@ -1,5 +1,4 @@
-import { User } from "@psb/shared/types";
-import { SessionData } from "./session";
+import { User, SessionData } from "@psb/shared/types";
 
 /**
  * The result of a login operation.

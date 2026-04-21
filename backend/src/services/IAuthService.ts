@@ -1,5 +1,5 @@
-import { LoginResult, SessionData } from "@/types";
-import { ApiErrorBody, UserRole } from "@psb/shared/types";
+import { LoginResult } from "@/types";
+import { ApiErrorBody, SessionData, UserRole } from "@psb/shared/types";
 import { RequestHandler, Response } from "express";
 
 /**

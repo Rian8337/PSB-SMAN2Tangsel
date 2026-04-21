@@ -9,7 +9,6 @@ import {
     ApiResponse,
     BadRequestError,
     ForbiddenError,
-    SessionData,
     UnauthorizedError,
 } from "@/types";
 import {
@@ -17,7 +16,12 @@ import {
     createScheduleSchema,
     updateScheduleSchema,
 } from "@/validators";
-import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
+import {
+    ScheduleDay,
+    ScheduleDTO,
+    SessionData,
+    UserRole,
+} from "@psb/shared/types";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
 

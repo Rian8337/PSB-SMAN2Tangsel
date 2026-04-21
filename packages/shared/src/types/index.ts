@@ -5,6 +5,7 @@ export * from "./classSubjects";
 export * from "./db";
 export * from "./notifications";
 export * from "./schedules";
+export * from "./session";
 export * from "./sessions";
 export * from "./subjects";
 export * from "./users";

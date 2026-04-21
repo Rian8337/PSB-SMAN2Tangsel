@@ -49,3 +49,18 @@ export type SessionData =
     | StudentSessionData
     | TeacherSessionData
     | AdministratorSessionData;
+
+/**
+ * Represents a session cookie's payload after decryption.
+ */
+export interface SessionCookie {
+    /**
+     * The actual session data.
+     */
+    readonly data: unknown;
+
+    /**
+     * The timestamp (in milliseconds since the Unix epoch) when the session expires.
+     */
+    readonly expiresAt: number;
+}

@@ -4,11 +4,15 @@ import { IStudentRepository, IUserRepository } from "@/repositories";
 import {
     EnvironmentVariableKey,
     LoginResult,
-    SessionData,
     UnauthorizedError,
 } from "@/types";
-import { sessionDataValidator } from "@/validators";
-import { ApiErrorBody, UserRole } from "@psb/shared/types";
+import {
+    ApiErrorBody,
+    SessionCookie,
+    SessionData,
+    UserRole,
+} from "@psb/shared/types";
+import { sessionDataValidator } from "@psb/shared/validator";
 import { compare, hashSync } from "bcrypt";
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import { RequestHandler, Response } from "express";
@@ -119,7 +123,7 @@ export class AuthService implements IAuthService {
 
     createSession(res: Response, data: unknown): void {
         const expiresAt = Date.now() + this.sessionTtlMs;
-        const sessionData = { data, expiresAt };
+        const sessionData: SessionCookie = { data, expiresAt };
 
         res.cookie(this.sessionCookieName, this.encryptSession(sessionData), {
             httpOnly: true,

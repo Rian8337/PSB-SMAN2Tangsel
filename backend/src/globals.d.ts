@@ -1,5 +1,5 @@
 import type { Locale, MessageKey } from "./i18n";
-import type { SessionData } from "./types";
+import type { SessionData } from "@psb/shared/types";
 
 declare global {
     namespace NodeJS {
