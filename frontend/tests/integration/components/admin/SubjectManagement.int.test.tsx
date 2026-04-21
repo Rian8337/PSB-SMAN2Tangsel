@@ -1,11 +1,11 @@
 import { SubjectManagement } from "@/components/admin/SubjectManagement";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
 import { Subject } from "@psb/shared/types";
-import { mockSubjectApiClient } from "@test/mocks";
+import { mockNotificationApiClient, mockSubjectApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { NextIntlClientProvider } from "next-intl";
 
 const mockSubjects: Subject[] = [
     {
@@ -24,11 +24,11 @@ const mockSubjects: Subject[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <NextIntlClientProvider locale="id">
+        <NotificationApiProvider client={mockNotificationApiClient}>
             <SubjectApiProvider client={mockSubjectApiClient}>
                 <SubjectManagement />
             </SubjectApiProvider>
-        </NextIntlClientProvider>,
+        </NotificationApiProvider>,
     );
 }
 

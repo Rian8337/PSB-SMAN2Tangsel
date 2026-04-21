@@ -1,12 +1,16 @@
 import { ClassSubjectManagement } from "@/components/admin/ClassSubjectManagement";
 import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { Class, ClassSubjectAssignment, UserRole } from "@psb/shared/types";
-import { mockClassSubjectApiClient, mockUserApiClient } from "@test/mocks";
+import {
+    mockClassSubjectApiClient,
+    mockNotificationApiClient,
+    mockUserApiClient,
+} from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { NextIntlClientProvider } from "next-intl";
 import { vi } from "vitest";
 
 const mockClass: Class = {
@@ -31,13 +35,13 @@ const mockAssignments: ClassSubjectAssignment[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <NextIntlClientProvider locale="id">
+        <NotificationApiProvider client={mockNotificationApiClient}>
             <UserApiProvider client={mockUserApiClient}>
                 <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
                     <ClassSubjectManagement clazz={mockClass} />
                 </ClassSubjectApiProvider>
             </UserApiProvider>
-        </NextIntlClientProvider>,
+        </NotificationApiProvider>,
     );
 }
 

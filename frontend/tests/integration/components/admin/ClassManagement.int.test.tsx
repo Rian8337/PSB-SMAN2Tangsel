@@ -1,9 +1,14 @@
 import { APIError } from "@/api";
 import { ClassManagement } from "@/components/admin/ClassManagement"; // Adjust path if necessary
 import { ClassApiProvider } from "@/providers/api/class-api-provider";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { SessionApiProvider } from "@/providers/api/session-api-provider";
 import { AcademicSessionDTO, Class } from "@psb/shared/types";
-import { mockClassApiClient, mockSessionApiClient } from "@test/mocks";
+import {
+    mockClassApiClient,
+    mockNotificationApiClient,
+    mockSessionApiClient,
+} from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -34,11 +39,13 @@ const mockClasses: Class[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <SessionApiProvider client={mockSessionApiClient}>
-            <ClassApiProvider client={mockClassApiClient}>
-                <ClassManagement />
-            </ClassApiProvider>
-        </SessionApiProvider>,
+        <NotificationApiProvider client={mockNotificationApiClient}>
+            <SessionApiProvider client={mockSessionApiClient}>
+                <ClassApiProvider client={mockClassApiClient}>
+                    <ClassManagement />
+                </ClassApiProvider>
+            </SessionApiProvider>
+        </NotificationApiProvider>,
     );
 }
 

@@ -1,17 +1,18 @@
 import { ClassScheduleManagement } from "@/components/admin/ClassScheduleManagement";
 import { ClassApiProvider } from "@/providers/api/class-api-provider";
 import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
 import { Class, ScheduleDay, ScheduleDTO } from "@psb/shared/types";
 import {
     mockClassApiClient,
     mockClassSubjectApiClient,
+    mockNotificationApiClient,
     mockScheduleApiClient,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { NextIntlClientProvider } from "next-intl";
 
 const mockClass: Class = {
     id: 1,
@@ -36,7 +37,7 @@ const mockSchedules: ScheduleDTO[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <NextIntlClientProvider locale="id">
+        <NotificationApiProvider client={mockNotificationApiClient}>
             <ScheduleApiProvider client={mockScheduleApiClient}>
                 <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
                     <ClassApiProvider client={mockClassApiClient}>
@@ -44,7 +45,7 @@ function render() {
                     </ClassApiProvider>
                 </ClassSubjectApiProvider>
             </ScheduleApiProvider>
-        </NextIntlClientProvider>,
+        </NotificationApiProvider>,
     );
 }
 

@@ -1,8 +1,14 @@
 import { APIError } from "@/api";
 import { EditAcademicSessionForm } from "@/components/admin/EditAcademicSessionForm";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { SessionApiProvider } from "@/providers/api/session-api-provider";
 import { AcademicSessionDTO } from "@psb/shared/types";
-import { mockRouter, mockSessionApiClient, mockToaster } from "@test/mocks";
+import {
+    mockNotificationApiClient,
+    mockRouter,
+    mockSessionApiClient,
+    mockToaster,
+} from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -20,9 +26,11 @@ const mockSession: AcademicSessionDTO = {
 
 function render() {
     return renderWithChakraProvider(
-        <SessionApiProvider client={mockSessionApiClient}>
-            <EditAcademicSessionForm session={mockSession} />,
-        </SessionApiProvider>,
+        <NotificationApiProvider client={mockNotificationApiClient}>
+            <SessionApiProvider client={mockSessionApiClient}>
+                <EditAcademicSessionForm session={mockSession} />,
+            </SessionApiProvider>
+        </NotificationApiProvider>,
     );
 }
 

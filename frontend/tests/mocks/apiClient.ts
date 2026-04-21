@@ -57,8 +57,8 @@ export const mockClassSubjectApiClient: Mocked<IClassSubjectAPIClient> = {
  * Mock implementation of {@link INotificationAPIClient}.
  */
 export const mockNotificationApiClient: Mocked<INotificationAPIClient> = {
-    getNotifications: vi.fn(),
-    getUnreadCount: vi.fn(),
+    getNotifications: vi.fn(() => Promise.resolve([])),
+    getUnreadCount: vi.fn(() => Promise.resolve(0)),
     updateReadStatus: vi.fn(),
 };
 

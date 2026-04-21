@@ -2,9 +2,10 @@ import {
     AccountManagement,
     AccountManagementProps,
 } from "@/components/admin/AccountManagement";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { UserListItem, UserRole } from "@psb/shared/types";
-import { mockUserApiClient } from "@test/mocks";
+import { mockNotificationApiClient, mockUserApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -38,11 +39,13 @@ const mockUsers: UserListItem[] = [
 
 function render(props: Partial<AccountManagementProps> = {}) {
     return renderWithChakraProvider(
-        <UserApiProvider client={mockUserApiClient}>
-            <AccountManagement
-                currentUserId={props.currentUserId ?? currentUserId}
-            />
-        </UserApiProvider>,
+        <NotificationApiProvider client={mockNotificationApiClient}>
+            <UserApiProvider client={mockUserApiClient}>
+                <AccountManagement
+                    currentUserId={props.currentUserId ?? currentUserId}
+                />
+            </UserApiProvider>
+        </NotificationApiProvider>,
     );
 }
 

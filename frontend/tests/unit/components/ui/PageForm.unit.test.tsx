@@ -1,4 +1,6 @@
 import { PageForm, PageFormProps } from "@/components/ui/PageForm";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
+import { mockNotificationApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -12,12 +14,15 @@ function render(props: Partial<PageFormProps> = {}) {
         });
 
     const result = renderWithChakraProvider(
-        <PageForm
-            {...props}
-            title={props.title ?? "Test Form"}
-            submitLabel={props.submitLabel ?? "Submit"}
-            onSubmit={onSubmit}
-        />,
+        <NotificationApiProvider client={mockNotificationApiClient}>
+            <PageForm
+                {...props}
+                title={props.title ?? "Test Form"}
+                submitLabel={props.submitLabel ?? "Submit"}
+                onSubmit={onSubmit}
+            />
+            ,
+        </NotificationApiProvider>,
     );
 
     return { ...result, onSubmit };

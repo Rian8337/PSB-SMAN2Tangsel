@@ -1,7 +1,8 @@
 import { AcademicSessionManagement } from "@/components/admin/AcademicSessionManagement";
+import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { SessionApiProvider } from "@/providers/api/session-api-provider";
 import { AcademicSessionDTO } from "@psb/shared/types";
-import { mockSessionApiClient } from "@test/mocks";
+import { mockNotificationApiClient, mockSessionApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -28,9 +29,11 @@ const mockSessions: AcademicSessionDTO[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <SessionApiProvider client={mockSessionApiClient}>
-            <AcademicSessionManagement />
-        </SessionApiProvider>,
+        <NotificationApiProvider client={mockNotificationApiClient}>
+            <SessionApiProvider client={mockSessionApiClient}>
+                <AcademicSessionManagement />
+            </SessionApiProvider>
+        </NotificationApiProvider>,
     );
 }
 
