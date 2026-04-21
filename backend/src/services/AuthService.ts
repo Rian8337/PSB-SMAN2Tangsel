@@ -240,6 +240,7 @@ export class AuthService implements IAuthService {
                 data?: unknown;
                 expiresAt?: unknown;
             };
+
             if (
                 typeof rawJson !== "object" ||
                 typeof rawJson.expiresAt !== "number" ||

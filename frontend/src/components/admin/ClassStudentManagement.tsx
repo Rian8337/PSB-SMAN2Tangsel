@@ -48,6 +48,7 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
     const fetchStudents = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
             setIsLoading(true);
+
             try {
                 const students =
                     await classStudentApiClient.getEnrolledStudents(
@@ -57,6 +58,7 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                         (page - 1) * limit,
                         signal,
                     );
+
                 setEnrolledStudents(students);
             } catch (e) {
                 if (e instanceof Error && e.name === "AbortError") {
