@@ -38,6 +38,8 @@ export function FormDialog({
                 }
             }}
             placement="center"
+            lazyMount
+            unmountOnExit
         >
             <Dialog.Backdrop />
 
