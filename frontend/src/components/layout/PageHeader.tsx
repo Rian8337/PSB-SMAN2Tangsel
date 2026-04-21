@@ -31,7 +31,9 @@ export function PageHeader({
                 <IconButton
                     aria-label="go-back"
                     variant="ghost"
-                    visibility={showBackButton ? "visible" : "hidden"}
+                    style={{
+                        visibility: showBackButton ? "visible" : "hidden",
+                    }}
                     onClick={() => {
                         router.back();
                     }}
