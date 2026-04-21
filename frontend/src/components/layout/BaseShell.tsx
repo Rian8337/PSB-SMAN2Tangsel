@@ -223,6 +223,7 @@ function SidebarContent({
                                 value="logout"
                                 cursor="pointer"
                                 onClick={logout}
+                                color="red.500"
                             >
                                 {t("logout")}
                             </Menu.Item>
