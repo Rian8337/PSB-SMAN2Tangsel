@@ -291,17 +291,19 @@ export function SubjectManagement() {
                     }}
                 />
 
-                <CreateSubjectModal
-                    isOpen={isCreateModalOpen}
-                    onClose={() => {
-                        setIsCreateModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        setPage(1);
-                        setSearchQuery("");
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isCreateModalOpen && (
+                    <CreateSubjectModal
+                        isOpen={isCreateModalOpen}
+                        onClose={() => {
+                            setIsCreateModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            setPage(1);
+                            setSearchQuery("");
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
             </Box>
         </>
     );

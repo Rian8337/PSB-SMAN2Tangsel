@@ -376,19 +376,21 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                     }}
                 />
 
-                <AssignClassSubjectModal
-                    isOpen={isAssignModalOpen}
-                    clazz={clazz}
-                    onClose={() => {
-                        setIsAssignModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        // Reset to page 1 to see the new assignment.
-                        setPage(1);
-                        setSearchQuery("");
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isAssignModalOpen && (
+                    <AssignClassSubjectModal
+                        isOpen={isAssignModalOpen}
+                        clazz={clazz}
+                        onClose={() => {
+                            setIsAssignModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            // Reset to page 1 to see the new assignment.
+                            setPage(1);
+                            setSearchQuery("");
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
             </Box>
         </>
     );

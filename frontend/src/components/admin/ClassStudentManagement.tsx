@@ -283,19 +283,21 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                     }}
                 />
 
-                <AssignClassStudentModal
-                    isOpen={isAssignModalOpen}
-                    clazz={clazz}
-                    onClose={() => {
-                        setIsAssignModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        // Reset to page 1 to see the new assignment.
-                        setPage(1);
-                        setSearchQuery("");
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isAssignModalOpen && (
+                    <AssignClassStudentModal
+                        isOpen={isAssignModalOpen}
+                        clazz={clazz}
+                        onClose={() => {
+                            setIsAssignModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            // Reset to page 1 to see the new assignment.
+                            setPage(1);
+                            setSearchQuery("");
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
             </Box>
         </>
     );

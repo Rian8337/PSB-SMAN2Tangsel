@@ -323,17 +323,19 @@ export function AcademicSessionManagement() {
                     }}
                 />
 
-                <CreateSessionModal
-                    isOpen={isCreateModalOpen}
-                    onClose={() => {
-                        setisCreateModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        setPage(1);
-                        setSearchQuery("");
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isCreateModalOpen && (
+                    <CreateSessionModal
+                        isOpen={isCreateModalOpen}
+                        onClose={() => {
+                            setisCreateModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            setPage(1);
+                            setSearchQuery("");
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
             </Box>
         </>
     );

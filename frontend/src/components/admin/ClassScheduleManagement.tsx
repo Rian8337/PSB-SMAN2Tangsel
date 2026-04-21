@@ -115,16 +115,18 @@ export function ClassScheduleManagement({
                     )}
                 </Box>
 
-                <CreateScheduleModal
-                    clazz={clazz}
-                    isOpen={isCreateModalOpen}
-                    onClose={() => {
-                        setIsCreateModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isCreateModalOpen && (
+                    <CreateScheduleModal
+                        clazz={clazz}
+                        isOpen={isCreateModalOpen}
+                        onClose={() => {
+                            setIsCreateModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
 
                 {editingScheduleId && (
                     <EditScheduleModal

@@ -392,18 +392,20 @@ export function ClassManagement() {
                     }}
                 />
 
-                <CreateClassModal
-                    isOpen={isCreateModalOpen}
-                    activeSession={activeSession}
-                    onClose={() => {
-                        setIsCreateModalOpen(false);
-                    }}
-                    onSuccess={() => {
-                        setPage(1);
-                        setSearchQuery("");
-                        setRefreshTrigger((prev) => prev + 1);
-                    }}
-                />
+                {isCreateModalOpen && (
+                    <CreateClassModal
+                        activeSession={activeSession}
+                        isOpen={isCreateModalOpen}
+                        onClose={() => {
+                            setIsCreateModalOpen(false);
+                        }}
+                        onSuccess={() => {
+                            setPage(1);
+                            setSearchQuery("");
+                            setRefreshTrigger((prev) => prev + 1);
+                        }}
+                    />
+                )}
             </Box>
         </>
     );
