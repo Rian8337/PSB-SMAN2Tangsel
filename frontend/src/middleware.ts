@@ -99,11 +99,13 @@ export default async function middleware(request: NextRequest) {
     if (sessionCookie) {
         let role: UserRole | null = null;
 
+        const decodedCookie = decodeURIComponent(sessionCookie);
+
         // Express 'signed: true' cookies look like: "s:ENCRYPTED_PAYLOAD.SIGNATURE".
         // We are only interested in the ENCRYPTED_PAYLOAD part for decryption.
-        const encryptedToken = sessionCookie.startsWith("s:")
-            ? sessionCookie.slice(2).split(".")[0]
-            : sessionCookie;
+        const encryptedToken = decodedCookie.startsWith("s:")
+            ? decodedCookie.slice(2).split(".")[0]
+            : decodedCookie;
 
         const decryptedString = await decryptSession(encryptedToken);
 
