@@ -1,6 +1,7 @@
 "use client";
 
 import { useNotifications } from "@/hooks";
+import { useRouter } from "@/i18n/navigation";
 import {
     Box,
     HStack,
@@ -14,6 +15,7 @@ import { useTranslations } from "next-intl";
 
 export function NotificationBell() {
     const t = useTranslations("NotificationBell");
+    const router = useRouter();
     const { notifications, unreadCount, updateReadStatus } = useNotifications();
 
     return (
@@ -107,6 +109,21 @@ export function NotificationBell() {
                                         p={4}
                                         bg={n.read ? "white" : "blue.50"}
                                         transition="background 0.2s"
+                                        cursor={n.url ? "pointer" : "default"}
+                                        _hover={
+                                            n.url
+                                                ? {
+                                                      bg: n.read
+                                                          ? "gray.50"
+                                                          : "blue.100",
+                                                  }
+                                                : undefined
+                                        }
+                                        onClick={() => {
+                                            if (n.url) {
+                                                router.push(n.url);
+                                            }
+                                        }}
                                     >
                                         <HStack
                                             justify="space-between"
@@ -124,8 +141,8 @@ export function NotificationBell() {
                                             <IconButton
                                                 aria-label={
                                                     n.read
-                                                        ? "Mark as unread"
-                                                        : "Mark as read"
+                                                        ? "markAsUnread"
+                                                        : "markAsRead"
                                                 }
                                                 size="xs"
                                                 variant="ghost"
@@ -136,6 +153,7 @@ export function NotificationBell() {
                                                 }
                                                 onClick={(e) => {
                                                     e.stopPropagation();
+
                                                     void updateReadStatus(
                                                         n.id,
                                                         !n.read,
