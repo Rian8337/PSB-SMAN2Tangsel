@@ -71,7 +71,9 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                     type: "error",
                 });
             } finally {
-                setIsLoading(false);
+                if (!signal?.aborted) {
+                    setIsLoading(false);
+                }
             }
         },
         [clazz.id, classStudentApiClient, limit, t],
