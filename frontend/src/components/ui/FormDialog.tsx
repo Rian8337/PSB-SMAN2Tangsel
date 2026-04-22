@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Dialog, Flex, VStack } from "@chakra-ui/react";
+import { Button, Dialog, Flex, Portal, VStack } from "@chakra-ui/react";
 import { PropsWithChildren, ReactNode, SubmitEventHandler } from "react";
 
 export interface FormDialogProps extends PropsWithChildren {
@@ -41,66 +41,69 @@ export function FormDialog({
             lazyMount
             unmountOnExit
         >
-            <Dialog.Backdrop />
+            <Portal>
+                <Dialog.Backdrop />
 
-            <Dialog.Content>
-                <Dialog.Header>
-                    <Dialog.Title>{title}</Dialog.Title>
-                </Dialog.Header>
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>{title}</Dialog.Title>
+                        </Dialog.Header>
 
-                <Dialog.Body>
-                    <VStack
-                        as="form"
-                        id={formId}
-                        spaceY={4}
-                        onSubmit={onSubmit}
-                        align="stretch"
-                    >
-                        {error && (
-                            <Dialog.Description
-                                color="red.500"
-                                fontSize="sm"
-                                fontWeight="medium"
+                        <Dialog.Body>
+                            <VStack
+                                as="form"
+                                id={formId}
+                                spaceY={4}
+                                onSubmit={onSubmit}
+                                align="stretch"
                             >
-                                {error}
-                            </Dialog.Description>
-                        )}
+                                {error && (
+                                    <Dialog.Description
+                                        color="red.500"
+                                        fontSize="sm"
+                                        fontWeight="medium"
+                                    >
+                                        {error}
+                                    </Dialog.Description>
+                                )}
 
-                        {children}
-                    </VStack>
-                </Dialog.Body>
+                                {children}
+                            </VStack>
+                        </Dialog.Body>
 
-                {/* UPDATED: Flex layout to split left/right actions */}
-                <Dialog.Footer
-                    display="flex"
-                    justifyContent="space-between"
-                    w="full"
-                >
-                    <Flex>{leftAction}</Flex>
-
-                    <Flex gap={3}>
-                        <Button
-                            variant="outline"
-                            onClick={onClose}
-                            disabled={isLoading}
+                        <Dialog.Footer
+                            display="flex"
+                            justifyContent="space-between"
+                            w="full"
                         >
-                            {cancelLabel}
-                        </Button>
+                            <Flex>{leftAction}</Flex>
 
-                        <Button
-                            type="submit"
-                            form={formId}
-                            colorPalette="blue"
-                            loading={isLoading}
-                            disabled={isLoading}
-                        >
-                            {submitLabel}
-                        </Button>
-                    </Flex>
-                </Dialog.Footer>
+                            <Flex gap={3}>
+                                <Button
+                                    variant="outline"
+                                    onClick={onClose}
+                                    disabled={isLoading}
+                                >
+                                    {cancelLabel}
+                                </Button>
 
-                <Dialog.CloseTrigger disabled={isLoading} />
-            </Dialog.Content>
+                                <Button
+                                    type="submit"
+                                    form={formId}
+                                    colorPalette="blue"
+                                    loading={isLoading}
+                                    disabled={isLoading}
+                                >
+                                    {submitLabel}
+                                </Button>
+                            </Flex>
+                        </Dialog.Footer>
+
+                        <Dialog.CloseTrigger disabled={isLoading} />
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
         </Dialog.Root>
     );
 }
