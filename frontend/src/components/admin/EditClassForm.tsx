@@ -94,6 +94,34 @@ export function EditClassForm({ clazz }: EditClassFormProps) {
             isLoading={isLoading}
             submitLabel={t("edit.submitButton")}
         >
+            <FormField label={t("fields.session.label")}>
+                <Input
+                    name="session"
+                    value={clazz.session}
+                    readOnly
+                    disabled
+                    bg="gray.200"
+                    border="none"
+                    borderRadius="sm"
+                    color="gray.500"
+                    cursor="not-allowed"
+                />
+            </FormField>
+
+            <FormField label={t("fields.semester.label")}>
+                <Input
+                    name="semester"
+                    value={clazz.semester}
+                    readOnly
+                    disabled
+                    bg="gray.200"
+                    border="none"
+                    borderRadius="sm"
+                    color="gray.500"
+                    cursor="not-allowed"
+                />
+            </FormField>
+
             <FormField label={t("fields.name.label")}>
                 <Input
                     name="name"

@@ -232,6 +232,12 @@
       "invalidName": "Invalid class name. Must be a combination of numbers and letters (e.g., X Science 1)."
     },
     "fields": {
+      "session": {
+        "label": "Academic Year"
+      },
+      "semester": {
+        "label": "Semester"
+      },
       "name": {
         "label": "Class Name",
         "placeholder": "Enter class name (e.g., X Science 1)"

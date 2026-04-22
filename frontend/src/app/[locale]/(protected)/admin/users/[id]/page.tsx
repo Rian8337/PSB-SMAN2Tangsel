@@ -1,5 +1,6 @@
-import { getServerUserApiClient } from "@/api/server";
+import { getServerAuthApiClient, getServerUserApiClient } from "@/api/server";
 import { EditUserForm } from "@/components/admin/EditUserForm";
+import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -23,8 +24,23 @@ export async function generateMetadata({ params }: EditUserPageProps) {
 }
 
 export default async function EditUserPage({ params }: EditUserPageProps) {
-    const { id } = await params;
+    const { id, locale } = await params;
     const userApiClient = await getServerUserApiClient();
+    const authApiClient = await getServerAuthApiClient();
+
+    const currentUser = await authApiClient.getMe();
+
+    if (!currentUser) {
+        redirect({
+            href: "/login",
+            locale: hasLocale(routing.locales, locale)
+                ? locale
+                : routing.defaultLocale,
+        });
+
+        return;
+    }
+
     const userId = parseInt(id, 10);
 
     if (Number.isNaN(userId)) {
@@ -33,5 +49,5 @@ export default async function EditUserPage({ params }: EditUserPageProps) {
 
     const user = await userApiClient.getUser(userId);
 
-    return <EditUserForm user={user} />;
+    return <EditUserForm user={user} currentUserId={currentUser.id} />;
 }

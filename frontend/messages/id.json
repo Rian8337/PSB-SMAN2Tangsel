@@ -228,6 +228,12 @@
       "invalidName": "Nama kelas tidak valid. Harus berupa kombinasi angka dan huruf (misal: X IPA 1)."
     },
     "fields": {
+      "session": {
+        "label": "Tahun Ajaran"
+      },
+      "semester": {
+        "label": "Semester"
+      },
       "name": {
         "label": "Nama Kelas",
         "placeholder": "Masukkan nama kelas (misal: X IPA 1)"

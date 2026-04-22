@@ -13,10 +13,11 @@ import { Switch } from "../ui/switch";
 import { toaster } from "../ui/toaster";
 
 export interface EditUserFormProps {
+    readonly currentUserId: number;
     readonly user: UserListItem;
 }
 
-export function EditUserForm({ user }: EditUserFormProps) {
+export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
     const formT = useTranslations("Form");
     const t = useTranslations("EditUser");
     const userApiClient = useUserApiClient();
@@ -108,6 +109,8 @@ export function EditUserForm({ user }: EditUserFormProps) {
                 <Switch
                     colorPalette="blue"
                     checked={isActive}
+                    readOnly={user.id === currentUserId}
+                    disabled={user.id === currentUserId}
                     onCheckedChange={(e) => {
                         setIsActive(e.checked);
                     }}
