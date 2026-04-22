@@ -3,7 +3,15 @@
 import { APIError } from "@/api";
 import { useDebounce } from "@/hooks";
 import { useClassStudentApiClient } from "@/providers/api/class-student-api-provider";
-import { Box, Button, Flex, Input, Spinner, Table } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Flex,
+    Input,
+    Spinner,
+    Table,
+    Text,
+} from "@chakra-ui/react";
 import { Class, UserListItem } from "@psb/shared/types";
 import { Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -139,6 +147,18 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
             <PageHeader
                 title={t("title", { class: clazz.name })}
                 backButtonUrl="/admin/classes"
+                rightElement={
+                    <Text
+                        color="gray.500"
+                        fontWeight="medium"
+                        display={{ base: "none", md: "block" }}
+                    >
+                        {t("sessionLabel", {
+                            session: clazz.session,
+                            semester: clazz.semester.toString(),
+                        })}
+                    </Text>
+                }
             />
 
             <Box

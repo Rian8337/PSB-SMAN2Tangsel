@@ -250,6 +250,7 @@
     "metaTitle": "Manajemen Siswa Kelas",
     "title": "Siswa Kelas {class}",
     "searchPlaceholder": "Cari siswa berdasarkan nama atau NISN...",
+    "sessionLabel": "Tahun Ajaran: {session} {semester}",
     "enrollNewStudent": "Tambah Siswa",
     "enroll": {
       "title": "Tambah Siswa ke Kelas",
@@ -302,6 +303,7 @@
     "metaTitle": "Manajemen Mata Pelajaran Kelas",
     "title": "Mata Pelajaran Kelas {class}",
     "searchPlaceholder": "Cari mata pelajaran berdasarkan nama atau kode...",
+    "sessionLabel": "Tahun Ajaran: {session} {semester}",
     "emptyState": "Tidak ada mata pelajaran yang ditemukan untuk kelas ini.",
     "unassignedTeacherPlaceholder": "Belum ada guru pengampu",
     "assignNewSubject": "Tambah Mata Pelajaran",
@@ -367,6 +369,7 @@
   "ClassScheduleManagement": {
     "metaTitle": "Jadwal Kelas",
     "title": "Jadwal Kelas {class}",
+    "sessionLabel": "Tahun Ajaran: {session} {semester}",
     "emptyState": "Tidak ada jadwal yang ditemukan untuk kelas ini.",
     "addButton": "Tambah Jadwal",
     "fetchToast": {
@@ -411,8 +414,8 @@
       "deleteButton": "Hapus Jadwal",
       "deleteConfirmMessage": "Apakah Anda yakin ingin menghapus jadwal ini? Tindakan ini tidak dapat dibatalkan.",
       "fetchToast": {
-        "errorTitle": "Failed to Fetch Schedule",
-        "errorMessage": "An error occurred while fetching the schedule details. Please try again."
+        "errorTitle": "Gagal Mengambil Jadwal",
+        "errorMessage": "Terjadi kesalahan saat mengambil detail jadwal. Silakan coba lagi."
       },
       "submitToast": {
         "successTitle": "Jadwal Berhasil Diperbarui",

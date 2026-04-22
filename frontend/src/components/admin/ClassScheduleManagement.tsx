@@ -1,7 +1,7 @@
 "use client";
 
 import { useClassApiClient } from "@/providers/api/class-api-provider";
-import { Box, Button, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { Class, ScheduleDTO } from "@psb/shared/types";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -78,6 +78,18 @@ export function ClassScheduleManagement({
             <PageHeader
                 title={t("title", { class: clazz.name })}
                 backButtonUrl="/admin/classes"
+                rightElement={
+                    <Text
+                        color="gray.500"
+                        fontWeight="medium"
+                        display={{ base: "none", md: "block" }}
+                    >
+                        {t("sessionLabel", {
+                            session: clazz.session,
+                            semester: clazz.semester.toString(),
+                        })}
+                    </Text>
+                }
             />
 
             <Box

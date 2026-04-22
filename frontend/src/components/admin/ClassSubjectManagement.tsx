@@ -4,7 +4,15 @@ import { APIError } from "@/api";
 import { useDebounce } from "@/hooks";
 import { useClassSubjectApiClient } from "@/providers/api/class-subject-api-provider";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
-import { Box, Button, Flex, Input, Spinner, Table } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Flex,
+    Input,
+    Spinner,
+    Table,
+    Text,
+} from "@chakra-ui/react";
 import { Class, ClassSubjectAssignment, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -171,6 +179,18 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
             <PageHeader
                 title={t("title", { class: clazz.name })}
                 backButtonUrl="/admin/classes"
+                rightElement={
+                    <Text
+                        color="gray.500"
+                        fontWeight="medium"
+                        display={{ base: "none", md: "block" }}
+                    >
+                        {t("sessionLabel", {
+                            session: clazz.session,
+                            semester: clazz.semester.toString(),
+                        })}
+                    </Text>
+                }
             />
 
             <Box
