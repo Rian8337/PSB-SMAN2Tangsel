@@ -137,8 +137,9 @@ export function CreateSessionModal({
             submitLabel={t("dialog.submitButton")}
             cancelLabel={t("dialog.cancelButton")}
         >
-            <FormField label={t("dialog.session.label")}>
+            <FormField label={t("dialog.session.label")} id="session">
                 <Input
+                    id="session"
                     name="session"
                     value={session}
                     onChange={(e) => {
@@ -170,8 +171,9 @@ export function CreateSessionModal({
                 </NativeSelect.Root>
             </FormField>
 
-            <FormField label={t("dialog.startDate.label")}>
+            <FormField label={t("dialog.startDate.label")} id="startTime">
                 <Input
+                    id="startTime"
                     name="startTime"
                     type="date"
                     value={startTime}
@@ -181,8 +183,9 @@ export function CreateSessionModal({
                 />
             </FormField>
 
-            <FormField label={t("dialog.endDate.label")}>
+            <FormField label={t("dialog.endDate.label")} id="endTime">
                 <Input
+                    id="endTime"
                     name="endTime"
                     type="date"
                     value={endTime}

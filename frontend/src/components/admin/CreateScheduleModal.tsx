@@ -198,8 +198,9 @@ export function CreateScheduleModal({
                 </NativeSelect.Root>
             </FormField>
 
-            <FormField label={t("fields.startTime.label")}>
+            <FormField label={t("fields.startTime.label")} id="startTime">
                 <Input
+                    id="startTime"
                     name="startTime"
                     type="time"
                     value={startTime}
@@ -209,8 +210,9 @@ export function CreateScheduleModal({
                 />
             </FormField>
 
-            <FormField label={t("fields.endTime.label")}>
+            <FormField label={t("fields.endTime.label")} id="endTime">
                 <Input
+                    id="endTime"
                     name="endTime"
                     type="time"
                     value={endTime}
