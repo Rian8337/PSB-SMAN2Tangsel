@@ -8,6 +8,7 @@ import {
     mockClassApiClient,
     mockNotificationApiClient,
     mockSessionApiClient,
+    mockToaster,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -67,6 +68,25 @@ describe("ClassManagement (integration)", () => {
         });
 
         expect(mockClassApiClient.listClasses).not.toHaveBeenCalled();
+        expect(mockToaster.create).not.toHaveBeenCalled();
+    });
+
+    it("should display a fallback message with toast if active session fetch fails with an unexpected error", async () => {
+        mockSessionApiClient.getActive.mockRejectedValue(
+            new APIError(500, "Internal Server Error"),
+        );
+
+        render();
+
+        expect(mockClassApiClient.listClasses).not.toHaveBeenCalled();
+
+        await waitFor(() => {
+            expect(mockToaster.create).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: "error",
+                }),
+            );
+        });
     });
 
     it("should fetch the active session and then display the classes", async () => {
