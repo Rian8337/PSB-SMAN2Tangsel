@@ -48,7 +48,7 @@ export function AdminDashboardClientView({
 
     return (
         <>
-            <PageHeader title={t("welcome", { name })} showBackButton={false} />
+            <PageHeader title={t("welcome", { name })} />
 
             <Box p={{ base: 4, md: 8 }} w="full">
                 <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>

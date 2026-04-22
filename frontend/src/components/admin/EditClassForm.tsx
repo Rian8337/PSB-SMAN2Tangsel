@@ -88,6 +88,7 @@ export function EditClassForm({ clazz }: EditClassFormProps) {
     return (
         <PageForm
             title={t("edit.title")}
+            backButtonUrl="/admin/classes"
             onSubmit={handleSubmit}
             error={error}
             isLoading={isLoading}

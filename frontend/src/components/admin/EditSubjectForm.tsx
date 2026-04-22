@@ -78,6 +78,7 @@ export function EditSubjectForm({ subject }: EditSubjectFormProps) {
     return (
         <PageForm
             title={t("title")}
+            backButtonUrl="/admin/subjects"
             onSubmit={handleSubmit}
             error={error}
             isLoading={isLoading}

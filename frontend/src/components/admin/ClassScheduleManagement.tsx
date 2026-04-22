@@ -75,7 +75,10 @@ export function ClassScheduleManagement({
 
     return (
         <>
-            <PageHeader title={t("title", { class: clazz.name })} />
+            <PageHeader
+                title={t("title", { class: clazz.name })}
+                backButtonUrl="/admin/classes"
+            />
 
             <Box
                 p={{ base: 4, md: 8 }}

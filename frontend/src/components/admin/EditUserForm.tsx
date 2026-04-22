@@ -69,6 +69,7 @@ export function EditUserForm({ user }: EditUserFormProps) {
     return (
         <PageForm
             title={t("title")}
+            backButtonUrl="/admin/users"
             onSubmit={handleSubmit}
             error={error}
             isLoading={isLoading}

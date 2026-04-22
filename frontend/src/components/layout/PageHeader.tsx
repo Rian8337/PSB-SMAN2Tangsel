@@ -7,13 +7,13 @@ import { useRouter } from "@/i18n/navigation";
 
 interface PageHeaderProps {
     title: string;
-    showBackButton?: boolean;
+    backButtonUrl?: string;
     rightElement?: React.ReactNode;
 }
 
 export function PageHeader({
     title,
-    showBackButton = true,
+    backButtonUrl,
     rightElement,
 }: PageHeaderProps) {
     const router = useRouter();
@@ -32,10 +32,12 @@ export function PageHeader({
                     aria-label="go-back"
                     variant="ghost"
                     style={{
-                        visibility: showBackButton ? "visible" : "hidden",
+                        visibility: backButtonUrl ? "visible" : "hidden",
                     }}
                     onClick={() => {
-                        router.back();
+                        if (backButtonUrl) {
+                            router.push(backButtonUrl);
+                        }
                     }}
                 >
                     <ArrowLeft size={32} color="black" strokeWidth={3} />

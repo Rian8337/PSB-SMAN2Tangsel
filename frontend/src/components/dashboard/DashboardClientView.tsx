@@ -50,7 +50,7 @@ export function DashboardClientView({
 
     return (
         <>
-            <PageHeader title={t("welcome", { name })} showBackButton={false} />
+            <PageHeader title={t("welcome", { name })} />
 
             <Box flex={1} p={8} overflowY="auto">
                 <Box mb={4}>

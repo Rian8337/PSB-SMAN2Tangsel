@@ -9,8 +9,8 @@ export interface PageFormProps extends PropsWithChildren {
     readonly onSubmit: SubmitEventHandler<HTMLDivElement>;
     readonly error?: string | null;
     readonly isLoading?: boolean;
+    readonly backButtonUrl?: string;
     readonly submitLabel: string;
-    readonly showBackButton?: boolean;
 }
 
 export function PageForm({
@@ -19,12 +19,12 @@ export function PageForm({
     error = null,
     isLoading = false,
     submitLabel,
-    showBackButton = true,
+    backButtonUrl,
     children,
 }: PageFormProps) {
     return (
         <>
-            <PageHeader title={title} showBackButton={showBackButton} />
+            <PageHeader title={title} backButtonUrl={backButtonUrl} />
 
             <Box p={{ base: 4, md: 8 }} maxW="md">
                 <VStack

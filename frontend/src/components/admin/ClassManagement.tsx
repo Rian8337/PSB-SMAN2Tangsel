@@ -180,6 +180,7 @@ export function ClassManagement() {
     const header = (
         <PageHeader
             title={t("title")}
+            backButtonUrl="/admin"
             rightElement={
                 <Text
                     color="gray.500"

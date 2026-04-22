@@ -20,7 +20,7 @@ vi.mock("@/components/layout/NotificationBell", () => ({
 
 describe("PageHeader (unit)", () => {
     it("should render the title and default elements", () => {
-        render();
+        render({ backButtonUrl: "/previous-page" });
 
         expect(
             screen.getByRole("heading", { level: 2, name: "Dashboard" }),
@@ -33,21 +33,21 @@ describe("PageHeader (unit)", () => {
         ).toBeInTheDocument();
     });
 
-    it("should visually hide the back button when showBackButton is false", () => {
-        render({ showBackButton: false });
+    it("should visually hide the back button when URL is not provided", () => {
+        render();
 
         const backButton = screen.getByLabelText("go-back");
         expect(backButton).toHaveStyle({ visibility: "hidden" });
     });
 
-    it("should call router.back() when the back button is clicked", async () => {
+    it("should call router.push() when the back button is clicked", async () => {
         const user = userEvent.setup();
-        render();
+        render({ backButtonUrl: "/previous-page" });
 
         const backButton = screen.getByLabelText("go-back");
         await user.click(backButton);
 
-        expect(mockRouter.back).toHaveBeenCalledOnce();
+        expect(mockRouter.push).toHaveBeenCalledOnce();
     });
 
     it("should render the rightElement if provided", () => {

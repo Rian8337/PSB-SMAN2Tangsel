@@ -129,7 +129,7 @@ export function AcademicSessionManagement() {
 
     return (
         <>
-            <PageHeader title={t("title")} />
+            <PageHeader title={t("title")} backButtonUrl="/admin" />
 
             <Box
                 p={{ base: 4, md: 8 }}

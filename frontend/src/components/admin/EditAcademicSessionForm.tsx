@@ -103,6 +103,7 @@ export function EditAcademicSessionForm({
     return (
         <PageForm
             title={t("title")}
+            backButtonUrl="/admin/academic-years"
             onSubmit={handleSubmit}
             error={error}
             isLoading={isLoading}
