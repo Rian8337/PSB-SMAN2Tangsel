@@ -18,7 +18,7 @@ import {
     ValidSession,
 } from "@psb/shared/types";
 import { Check, Plus, Search, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
@@ -26,6 +26,7 @@ import { toaster } from "../ui/toaster";
 import { CreateSessionModal } from "./CreateSessionModal";
 
 export function AcademicSessionManagement() {
+    const locale = useLocale();
     const t = useTranslations("AcademicSession");
     const sessionApiClient = useSessionApiClient();
 
@@ -120,7 +121,7 @@ export function AcademicSessionManagement() {
     };
 
     const formatDate = (timestamp: number) =>
-        new Date(timestamp).toLocaleDateString(undefined, {
+        new Date(timestamp).toLocaleDateString(locale, {
             year: "numeric",
             month: "short",
             day: "numeric",
