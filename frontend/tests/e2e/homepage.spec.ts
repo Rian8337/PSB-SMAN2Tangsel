@@ -12,7 +12,7 @@ test.describe("Homepage & i18n Localization", () => {
         );
 
         await expect(page.locator("p")).toContainText(
-            "Portal e-learning resmi",
+            "Portal sumber belajar resmi",
         );
 
         const enButton = page.getByRole("button", { name: "EN" });
