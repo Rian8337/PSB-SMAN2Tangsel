@@ -229,6 +229,8 @@ export function ClassManagement() {
 
     return (
         <>
+            {header}
+
             <Box
                 p={{ base: 4, md: 8 }}
                 w="full"
