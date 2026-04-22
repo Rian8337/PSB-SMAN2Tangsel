@@ -21,11 +21,11 @@ const mockUser: UserListItem = {
     role: UserRole.student,
 };
 
-function render() {
+function render(currentUserId = 2) {
     return renderWithChakraProvider(
         <NotificationApiProvider client={mockNotificationApiClient}>
             <UserApiProvider client={mockUserApiClient}>
-                <EditUserForm user={mockUser} />
+                <EditUserForm user={mockUser} currentUserId={currentUserId} />
             </UserApiProvider>
         </NotificationApiProvider>,
     );
@@ -79,6 +79,13 @@ describe("EditUserForm (unit)", () => {
 
         expect(mockUserApiClient.updateUser).not.toHaveBeenCalled();
         expect(await screen.findByText("missingFields")).toBeInTheDocument();
+    });
+
+    it("disables the active switch when editing own user", () => {
+        render(1);
+
+        const activeSwitch = screen.getByRole("checkbox");
+        expect(activeSwitch).toBeDisabled();
     });
 
     it("submits successfully and redirects", async () => {
