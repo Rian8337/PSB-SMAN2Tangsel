@@ -43,10 +43,10 @@ function render(props: Partial<CreateScheduleModalProps> = {}) {
 
 describe("CreateScheduleModal (unit)", () => {
     it("renders the modal with all form fields and defaults when open", () => {
-        const { container } = render();
+        render();
 
         expect(
-            screen.getByRole("heading", { name: "create.title" }),
+            screen.getByRole("heading", { name: /create\.title/ }),
         ).toBeInTheDocument();
 
         expect(
@@ -61,8 +61,8 @@ describe("CreateScheduleModal (unit)", () => {
         expect(daySelect).toHaveValue(ScheduleDay.monday.toString());
 
         // Inputs for time
-        const startInput = container.querySelector('input[name="startTime"]');
-        const endInput = container.querySelector('input[name="endTime"]');
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         expect(startInput).toBeInTheDocument();
         expect(endInput).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe("CreateScheduleModal (unit)", () => {
 
     it("shows a validation error if end time is before start time", async () => {
         const user = userEvent.setup();
-        const { container } = render();
+        render();
 
         mockClassSubjectApiClient.listAssignedSubjects.mockResolvedValueOnce([
             {
@@ -101,13 +101,8 @@ describe("CreateScheduleModal (unit)", () => {
         await user.type(subjectInput, "Math");
         await user.click(await screen.findByText("MA1 - Math"));
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         await user.type(startInput, "10:00");
         await user.type(endInput, "09:00");
@@ -126,7 +121,7 @@ describe("CreateScheduleModal (unit)", () => {
         const user = userEvent.setup();
         mockScheduleApiClient.createSchedule.mockResolvedValueOnce(undefined);
 
-        const { container } = render();
+        render();
 
         mockClassSubjectApiClient.listAssignedSubjects.mockResolvedValueOnce([
             {
@@ -148,13 +143,8 @@ describe("CreateScheduleModal (unit)", () => {
             ScheduleDay.tuesday.toString(),
         );
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         await user.type(startInput, "08:00");
         await user.type(endInput, "09:30");
@@ -202,7 +192,7 @@ describe("CreateScheduleModal (unit)", () => {
             },
         ]);
 
-        const { container } = render();
+        render();
 
         const subjectInput = screen.getByPlaceholderText(
             "fields.subject.placeholder",
@@ -211,13 +201,8 @@ describe("CreateScheduleModal (unit)", () => {
         await user.type(subjectInput, "Math");
         await user.click(await screen.findByText("MA1 - Math"));
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         await user.type(startInput, "08:00");
         await user.type(endInput, "09:30");
@@ -241,11 +226,9 @@ describe("CreateScheduleModal (unit)", () => {
 
     it("resets the form and closes when the cancel button is clicked", async () => {
         const user = userEvent.setup();
-        const { container } = render();
+        render();
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
 
         await user.type(startInput, "08:00");
         await user.click(

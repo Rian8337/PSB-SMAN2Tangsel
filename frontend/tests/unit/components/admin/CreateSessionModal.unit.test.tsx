@@ -8,6 +8,7 @@ import { mockSessionApiClient, mockToaster } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { vi } from "vitest";
 
 function renderModal(props: Partial<CreateSessionModalProps> = {}) {
     const onClose = props.onClose ?? vi.fn();
@@ -37,8 +38,9 @@ describe("CreateSessionModal (unit)", () => {
             screen.getByRole("heading", { name: "dialog.title" }),
         ).toBeInTheDocument();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
         expect(sessionInput).toBeInTheDocument();
+        expect(sessionInput).toHaveValue(defaultSession);
 
         expect(
             screen.getByRole("combobox", { name: "dialog.semester.label" }),
@@ -54,7 +56,7 @@ describe("CreateSessionModal (unit)", () => {
 
         renderModal();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
         const submitButton = screen.getByRole("button", {
             name: "dialog.submitButton",
         });
@@ -68,17 +70,12 @@ describe("CreateSessionModal (unit)", () => {
 
     it("shows a validation error for invalid session format", async () => {
         const user = userEvent.setup();
-        const { container } = renderModal();
+        renderModal();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         await user.clear(sessionInput);
         await user.type(sessionInput, "abcd/efgh");
@@ -101,17 +98,12 @@ describe("CreateSessionModal (unit)", () => {
 
     it("shows a validation error if session year range is invalid", async () => {
         const user = userEvent.setup();
-        const { container } = renderModal();
+        renderModal();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         await user.clear(sessionInput);
         await user.type(sessionInput, "2024/2029");
@@ -134,15 +126,10 @@ describe("CreateSessionModal (unit)", () => {
 
     it("shows a validation error is end date is before start date", async () => {
         const user = userEvent.setup();
-        const { container } = renderModal();
+        renderModal();
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         await user.type(startInput, "2024-08-01");
         await user.type(endInput, "2024-07-01");
@@ -161,17 +148,12 @@ describe("CreateSessionModal (unit)", () => {
         const user = userEvent.setup();
         mockSessionApiClient.createSession.mockResolvedValueOnce(undefined);
 
-        const { onClose, onSuccess, container } = renderModal();
+        const { onClose, onSuccess } = renderModal();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         const activeSwitch = screen.getByRole("checkbox");
 
@@ -222,15 +204,10 @@ describe("CreateSessionModal (unit)", () => {
             new APIError(400, "Session already exists"),
         );
 
-        const { onClose, onSuccess, container } = renderModal();
+        const { onClose, onSuccess } = renderModal();
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         await user.type(startInput, "2025-01-10");
         await user.type(endInput, "2025-06-20");
@@ -255,17 +232,12 @@ describe("CreateSessionModal (unit)", () => {
 
     it("resets the form and closes when the cancel button is clicked", async () => {
         const user = userEvent.setup();
-        const { onClose, container } = renderModal();
+        const { onClose } = renderModal();
 
-        const sessionInput = screen.getByDisplayValue(defaultSession);
+        const sessionInput = screen.getByLabelText("dialog.session.label");
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
 
         const roleSelect = screen.getByRole("combobox");
 

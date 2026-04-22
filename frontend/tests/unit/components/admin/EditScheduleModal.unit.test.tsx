@@ -47,7 +47,7 @@ describe("EditScheduleModal (unit)", () => {
     it("fetches the schedule and populates the form fields on mount", async () => {
         mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
 
-        const { container } = render();
+        render();
 
         expect(mockScheduleApiClient.getById).toHaveBeenCalledWith(
             mockSchedule.id,
@@ -64,13 +64,8 @@ describe("EditScheduleModal (unit)", () => {
 
         expect(daySelect).toHaveValue(ScheduleDay.monday.toString());
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        );
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        );
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         expect(startInput).toHaveValue("08:00");
         expect(endInput).toHaveValue("09:30");
@@ -95,18 +90,14 @@ describe("EditScheduleModal (unit)", () => {
 
         mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
 
-        const { container } = render();
+        render();
 
         await waitFor(() => {
             expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
         });
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         await user.clear(startInput);
         await user.type(startInput, "10:00");
@@ -130,7 +121,7 @@ describe("EditScheduleModal (unit)", () => {
         mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
         mockScheduleApiClient.updateSchedule.mockResolvedValue(undefined);
 
-        const { container } = render();
+        render();
 
         await waitFor(() => {
             expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
@@ -141,13 +132,8 @@ describe("EditScheduleModal (unit)", () => {
             ScheduleDay.tuesday.toString(),
         );
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
-
-        const endInput = container.querySelector<HTMLInputElement>(
-            'input[name="endTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
+        const endInput = screen.getByLabelText("fields.endTime.label");
 
         await user.clear(startInput);
         await user.type(startInput, "10:30");
@@ -314,15 +300,13 @@ describe("EditScheduleModal (unit)", () => {
 
         mockScheduleApiClient.getById.mockResolvedValue(mockSchedule);
 
-        const { container } = render();
+        render();
 
         await waitFor(() => {
             expect(screen.getByDisplayValue("(MA1) Math")).toBeInTheDocument();
         });
 
-        const startInput = container.querySelector<HTMLInputElement>(
-            'input[name="startTime"]',
-        )!;
+        const startInput = screen.getByLabelText("fields.startTime.label");
 
         await user.clear(startInput);
         await user.type(startInput, "11:00");
