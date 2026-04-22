@@ -10,6 +10,11 @@ export interface FormFieldProps extends PropsWithChildren {
     readonly label: string;
 
     /**
+     * The unique identifier for the field, used to associate the label with the input.
+     */
+    readonly id?: string;
+
+    /**
      * Secondary text or icon next to the label.
      */
     readonly labelAccessory?: ReactNode;
@@ -22,6 +27,7 @@ export interface FormFieldProps extends PropsWithChildren {
 
 export function FormField({
     label,
+    id,
     labelAccessory,
     error,
     children,
@@ -29,6 +35,7 @@ export function FormField({
     return (
         <Field.Root invalid={!!error} w="full">
             <Field.Label
+                htmlFor={id}
                 display="flex"
                 justifyContent="space-between"
                 w="full"
