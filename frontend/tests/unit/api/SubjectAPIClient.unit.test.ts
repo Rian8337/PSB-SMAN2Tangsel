@@ -44,6 +44,40 @@ describe("SubjectAPIClient (unit)", () => {
         });
     });
 
+    describe("getMySubjects", () => {
+        it("should construct the URL without query parameters if none are provided", async () => {
+            await client.getMySubjects();
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/subjects/me");
+            expect(urlStr).not.toContain("?");
+            expect(options?.signal).toBeUndefined();
+        });
+
+        it("should append all provided query parameters and pass the AbortSignal", async () => {
+            const controller = new AbortController();
+
+            await client.getMySubjects(" Science ", 15, 30, controller.signal);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/subjects/me");
+            // Also check for trimmed space.
+            expect(urlStr).toContain("query=Science");
+            expect(urlStr).toContain("limit=15");
+            expect(urlStr).toContain("offset=30");
+
+            expect(options?.signal).toBe(controller.signal);
+        });
+    });
+
     describe("listSubjects", () => {
         it("should construct the URL without query parameters if none are provided", async () => {
             await client.listSubjects();
