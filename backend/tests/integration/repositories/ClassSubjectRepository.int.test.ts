@@ -101,6 +101,68 @@ describe("ClassSubjectRepository (integration)", () => {
         });
     });
 
+    describe("listAssignedSubjectsForTeacher", () => {
+        it("should return the correctly mapped subject and class data for the teacher", async () => {
+            const assigned = await repository.listAssignedSubjectsForTeacher(
+                teacher.userId,
+                session.session,
+                session.semester,
+            );
+
+            expect(assigned.length).toBeGreaterThanOrEqual(2);
+
+            const match = assigned.find(
+                (a) => a.id === readOnlyClassSubject.id,
+            );
+
+            expect(match).toBeDefined();
+
+            expect(match).toMatchObject({
+                id: readOnlyClassSubject.id!,
+                subject: {
+                    id: subject1.id,
+                    code: subject1.code,
+                    name: subject1.name,
+                },
+                class: {
+                    id: readOnlyClass.id,
+                    name: readOnlyClass.name,
+                },
+            });
+        });
+
+        it("should return an empty array if the teacher has no assignments in the session/semester", async () => {
+            const assigned = await repository.listAssignedSubjectsForTeacher(
+                teacher.userId,
+                "2000/2001",
+                1,
+            );
+
+            expect(assigned).toHaveLength(0);
+        });
+
+        it("should correctly filter results by search query (subject or class name)", async () => {
+            const assigned = await repository.listAssignedSubjectsForTeacher(
+                teacher.userId,
+                session.session,
+                session.semester,
+                "Read-Only",
+            );
+
+            expect(assigned).toHaveLength(1);
+            expect(assigned[0].class.name).toBe(readOnlyClass.name);
+
+            const byCode = await repository.listAssignedSubjectsForTeacher(
+                teacher.userId,
+                session.session,
+                session.semester,
+                subject1.code,
+            );
+
+            expect(byCode.length).toBeGreaterThanOrEqual(2);
+        });
+    });
+
     describe("listUnassignedSubjects", () => {
         it("should return subjects that are NOT assigned to the class", async () => {
             const unassigned = await repository.listUnassignedSubjects(
