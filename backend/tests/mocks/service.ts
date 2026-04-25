@@ -50,6 +50,7 @@ export const mockClassStudentService: Mocked<IClassStudentService> = {
  */
 export const mockClassSubjectService: Mocked<IClassSubjectService> = {
     listAssignedSubjects: vi.fn(),
+    listAssignedSubjectsForTeacher: vi.fn(),
     listUnassignedSubjects: vi.fn(),
     assignSubject: vi.fn(),
     updateAssignedSubject: vi.fn(),

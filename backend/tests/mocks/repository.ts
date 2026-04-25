@@ -69,6 +69,7 @@ export const mockClassStudentRepository: Mocked<IClassStudentRepository> = {
  */
 export const mockClassSubjectRepository: Mocked<IClassSubjectRepository> = {
     listAssignedSubjects: vi.fn(),
+    listAssignedSubjectsForTeacher: vi.fn(),
     listUnassignedSubjects: vi.fn(),
     assignSubject: vi.fn(),
     updateAssignedSubject: vi.fn(),
