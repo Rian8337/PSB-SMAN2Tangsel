@@ -38,6 +38,23 @@ describe("ClassSubjectService (unit)", () => {
         });
     });
 
+    describe("listAssignedSubjectsForTeacher", () => {
+        it("should call repository.listAssignedSubjectsForTeacher with correct parameters", async () => {
+            await service.listAssignedSubjectsForTeacher(
+                1,
+                "2024/2025",
+                2,
+                "Math",
+                15,
+                30,
+            );
+
+            expect(
+                mockClassSubjectRepository.listAssignedSubjectsForTeacher,
+            ).toHaveBeenCalledWith(1, "2024/2025", 2, "Math", 15, 30);
+        });
+    });
+
     describe("listUnassignedSubjects", () => {
         it("should call repository.listUnassignedSubjects with correct parameters", async () => {
             await service.listUnassignedSubjects(10, "Phys", 5, 0);
