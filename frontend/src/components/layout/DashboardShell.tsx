@@ -1,6 +1,6 @@
 "use client";
 
-import { Book, Home } from "lucide-react";
+import { BookOpen, Calendar, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PropsWithChildren } from "react";
 import { BaseShell, NavItem } from "./BaseShell";
@@ -10,7 +10,8 @@ export function DashboardShell({ children }: PropsWithChildren) {
 
     const navItems: NavItem[] = [
         { label: t("home"), icon: Home, href: "/dashboard", exact: true },
-        { label: t("schedule"), icon: Book, href: "/schedule", exact: false },
+        { label: t("schedule"), icon: Calendar, href: "/schedule", exact: false },
+        { label: t("subjects"), icon: BookOpen, href: "/subjects", exact: false },
     ];
 
     return (

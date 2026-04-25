@@ -1,73 +1,84 @@
 "use client";
 
-import { useScheduleApiClient } from "@/providers/api/schedule-api-provider";
-import { Box, Button } from "@chakra-ui/react";
-import { ScheduleDTO } from "@psb/shared/types";
+import { Link } from "@/i18n/navigation";
+import { Box, Card, Flex, SimpleGrid, Text } from "@chakra-ui/react";
+import { BookOpen, Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../layout/PageHeader";
-import { ScheduleGrid } from "../schedule/ScheduleGrid";
-import { toaster } from "../ui/toaster";
 
 interface DashboardClientViewProps {
     name: string;
-    schedules: ScheduleDTO[];
 }
 
-export function DashboardClientView({
-    name,
-    schedules,
-}: DashboardClientViewProps) {
+export function DashboardClientView({ name }: DashboardClientViewProps) {
     const t = useTranslations("Dashboard");
-    const scheduleApiClient = useScheduleApiClient();
 
-    function handleDownload() {
-        scheduleApiClient
-            .download()
-            .then(({ blob, filename }) => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-
-                a.style.display = "none";
-                a.href = url;
-
-                a.download = filename ?? `${t("scheduleFilename")}.ics`;
-                document.body.appendChild(a);
-                a.click();
-
-                URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            })
-            .catch(() => {
-                toaster.create({
-                    title: t("downloadScheduleErrorTitle"),
-                    description: t("downloadScheduleErrorMessage"),
-                    type: "error",
-                    duration: 5000,
-                    closable: true,
-                });
-            });
-    }
+    const actions = [
+        {
+            href: "/schedule",
+            icon: Calendar,
+            color: "blue.500",
+            title: t("cards.schedule.title"),
+            description: t("cards.schedule.description"),
+        },
+        {
+            href: "/subjects",
+            icon: BookOpen,
+            color: "teal.500",
+            title: t("cards.subjects.title"),
+            description: t("cards.subjects.description"),
+        },
+    ];
 
     return (
         <>
             <PageHeader title={t("welcome", { name })} />
 
-            <Box flex={1} p={8} overflowY="auto">
-                <Box mb={4}>
-                    <Button
-                        variant="outline"
-                        onClick={handleDownload}
-                        borderColor="black"
-                        color="black"
-                        borderWidth="1px"
-                        borderRadius="none"
-                        _hover={{ bg: "blackAlpha.100" }}
-                    >
-                        {t("downloadSchedule")}
-                    </Button>
-                </Box>
-
-                <ScheduleGrid data={schedules} />
+            <Box p={{ base: 4, md: 8 }} w="full">
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
+                    {actions.map((action, index) => (
+                        <Link
+                            key={index}
+                            href={action.href}
+                            style={{ display: "block", textDecoration: "none" }}
+                        >
+                            <Card.Root
+                                h="full"
+                                variant="elevated"
+                                cursor="pointer"
+                                transition="all 0.2s"
+                                _hover={{
+                                    transform: "translateY(-4px)",
+                                    shadow: "lg",
+                                    borderColor: action.color,
+                                }}
+                                borderWidth="2px"
+                                borderColor="transparent"
+                            >
+                                <Card.Body>
+                                    <Flex direction="column" h="full">
+                                        <Box
+                                            p={3}
+                                            bg={`${action.color.split(".")[0]}.100`}
+                                            color={action.color}
+                                            borderRadius="md"
+                                            w="fit-content"
+                                            mb={4}
+                                        >
+                                            <action.icon size={28} />
+                                        </Box>
+                                        <Card.Title mb={2} fontSize="xl">
+                                            {action.title}
+                                        </Card.Title>
+                                        <Text color="gray.600">
+                                            {action.description}
+                                        </Text>
+                                    </Flex>
+                                </Card.Body>
+                            </Card.Root>
+                        </Link>
+                    ))}
+                </SimpleGrid>
             </Box>
         </>
     );
