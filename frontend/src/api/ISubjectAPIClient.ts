@@ -1,4 +1,4 @@
-import { Subject } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
 
 /**
  * Provides operations for subject-related API calls.
@@ -12,6 +12,22 @@ export interface ISubjectAPIClient {
      * @returns The details of the subject with the specified ID.
      */
     getSubject(id: number, signal?: AbortSignal): Promise<Subject>;
+
+    /**
+     * Obtains the subjects for the currently authenticated user.
+     *
+     * @param query The search query to filter subjects by name or code.
+     * @param limit The maximum number of subjects to return. Defaults to 5.
+     * @param offset The number of subjects to skip before starting to collect the result set. Defaults to 0.
+     * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list subjects.
+     * @returns A list of subjects matching the search query.
+     */
+    getMySubjects(
+        query?: string,
+        limit?: number,
+        offset?: number,
+        signal?: AbortSignal,
+    ): Promise<ClassSubjectAssignment[]>;
 
     /**
      * Lists subjects for display in the UI.

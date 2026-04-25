@@ -1,4 +1,4 @@
-import { Subject } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { ISubjectAPIClient } from "./ISubjectAPIClient";
 
@@ -14,6 +14,29 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
         return this.get(`/${id.toString()}`, { signal }).then((res) =>
             res.json(),
         );
+    }
+
+    getMySubjects(
+        query?: string,
+        limit?: number,
+        offset?: number,
+        signal?: AbortSignal,
+    ): Promise<ClassSubjectAssignment[]> {
+        const url = new URL(this.baseURL + "/me");
+
+        if (typeof query === "string" && query.trim().length > 0) {
+            url.searchParams.append("query", query.trim());
+        }
+
+        if (limit !== undefined) {
+            url.searchParams.append("limit", limit.toString());
+        }
+
+        if (offset !== undefined) {
+            url.searchParams.append("offset", offset.toString());
+        }
+
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     listSubjects(

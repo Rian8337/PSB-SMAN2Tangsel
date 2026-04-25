@@ -91,6 +91,7 @@ export const mockSessionApiClient: Mocked<ISessionAPIClient> = {
  */
 export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
     getSubject: vi.fn(),
+    getMySubjects: vi.fn(),
     listSubjects: vi.fn(),
     createSubject: vi.fn(),
     updateSubject: vi.fn(),
