@@ -1,5 +1,6 @@
 import { subjects } from "@psb/shared/schema";
-import { Subject } from "@psb/shared/types";
+import { seededPrimaryData } from "@psb/shared/tests";
+import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
 import { app } from "@test/setup/app";
 import {
     loginAdministrator,
@@ -41,6 +42,110 @@ describe("SubjectController (integration)", () => {
             .where(
                 inArray(subjects.id, [testSubjectId, testSubjectToDeleteId]),
             );
+    });
+
+    describe("GET /subjects/me", () => {
+        const endpoint = "/subjects/me";
+
+        it("should return 401 if requested without authentication", async () => {
+            const res = await request(app).get(endpoint);
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 if requested by an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.get(endpoint);
+            expect(res.status).toBe(403);
+        });
+
+        describe("Student", () => {
+            const agent = request.agent(app);
+
+            const studentUser = seededPrimaryData.users.find(
+                (u) => u.role === UserRole.student,
+            )!;
+
+            const student = seededPrimaryData.students.find(
+                (s) => s.userId === studentUser.id,
+            )!;
+
+            const session = seededPrimaryData.sessions[0];
+
+            beforeAll(async () => {
+                const testClass = await seeders.classes.seedOne({
+                    name: "Test Class",
+                    session: session.session,
+                    semester: session.semester,
+                });
+
+                await seeders.studentClasses.seedOne({
+                    classId: testClass.id!,
+                    studentId: student.userId,
+                });
+
+                await seeders.classSubjects.seedOne({
+                    classId: testClass.id!,
+                    subjectId: testSubjectId,
+                });
+
+                await loginStudent(agent);
+            });
+
+            it("should return subjects registered by the student's class", async () => {
+                const res = await agent.get(endpoint);
+                const body = res.body as ClassSubjectAssignment[];
+
+                expect(res.status).toBe(200);
+                expect(body).toBeInstanceOf(Array);
+                expect(body.length).toBeGreaterThan(0);
+                expect(body[0]).toHaveProperty("subject");
+                expect(body[0]).toHaveProperty("teacher");
+            });
+        });
+
+        describe("Teacher", () => {
+            const agent = request.agent(app);
+
+            const teacherUser = seededPrimaryData.users.find(
+                (u) => u.role === UserRole.teacher,
+            )!;
+
+            const teacher = seededPrimaryData.teachers.find(
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                (t) => t.userId === teacherUser.id,
+            )!;
+
+            const session = seededPrimaryData.sessions[0];
+
+            beforeAll(async () => {
+                const teacherClass = await seeders.classes.seedOne({
+                    name: "Teacher Class for GET /me",
+                    session: session.session,
+                    semester: session.semester,
+                });
+
+                await seeders.classSubjects.seedOne({
+                    classId: teacherClass.id!,
+                    subjectId: testSubjectId,
+                    teacherId: teacher.userId,
+                });
+
+                await loginTeacher(agent);
+            });
+
+            it("should return subjects taught by the teacher in the active session", async () => {
+                const res = await agent.get(endpoint);
+                const body = res.body as ClassSubjectAssignment[];
+
+                expect(res.status).toBe(200);
+                expect(body).toBeInstanceOf(Array);
+                expect(body.length).toBeGreaterThan(0);
+                expect(body[0]).toHaveProperty("subject");
+                expect(body[0]).toHaveProperty("class");
+            });
+        });
     });
 
     describe("GET /subjects/list", () => {
