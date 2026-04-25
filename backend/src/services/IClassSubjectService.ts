@@ -1,6 +1,5 @@
 import {
     ClassSubjectAssignment,
-    MySubjectDTO,
     Subject,
     ValidSemester,
     ValidSession,
@@ -44,7 +43,7 @@ export interface IClassSubjectService {
         query?: string,
         limit?: number,
         offset?: number,
-    ): Promise<MySubjectDTO[]>;
+    ): Promise<ClassSubjectAssignment[]>;
 
     /**
      * Lists subjects that are not yet assigned to a specific class for display in the subject selection dropdown when assigning subjects to a class.

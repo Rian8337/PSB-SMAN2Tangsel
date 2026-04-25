@@ -8,7 +8,6 @@ import {
 import { ConflictError, NotFoundError } from "@/types";
 import {
     ClassSubjectAssignment,
-    MySubjectDTO,
     Subject,
     ValidSemester,
     ValidSession,
@@ -51,7 +50,7 @@ export class ClassSubjectService implements IClassSubjectService {
         query?: string,
         limit?: number,
         offset?: number,
-    ): Promise<MySubjectDTO[]> {
+    ): Promise<ClassSubjectAssignment[]> {
         return this.classSubjectRepository.listAssignedSubjectsForTeacher(
             teacherId,
             session,

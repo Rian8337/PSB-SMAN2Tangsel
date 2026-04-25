@@ -1,3 +1,4 @@
+import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import {
     assignments,
@@ -11,7 +12,6 @@ import {
 import {
     ClassSubjectAssignment,
     DrizzleDb,
-    MySubjectDTO,
     Subject,
     ValidSemester,
     ValidSession,
@@ -20,7 +20,6 @@ import { and, asc, eq, like, notInArray, or } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IClassSubjectRepository } from "./IClassSubjectRepository";
-import { Injectable } from "@/decorators/injectable";
 
 /**
  * Defines operations for accessing and managing subject assignments to classes in the database.
@@ -70,9 +69,14 @@ export class ClassSubjectRepository
                     id: users.id,
                     name: users.name,
                 },
+                class: {
+                    id: classes.id,
+                    name: classes.name,
+                },
             })
             .from(classSubjects)
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+            .innerJoin(classes, eq(classSubjects.classId, classes.id))
             .leftJoin(teachers, eq(classSubjects.teacherId, teachers.userId))
             .leftJoin(users, eq(teachers.userId, users.id))
             .where(and(...conditions))
@@ -88,7 +92,7 @@ export class ClassSubjectRepository
         query?: string,
         limit = 5,
         offset = 0,
-    ): Promise<MySubjectDTO[]> {
+    ): Promise<ClassSubjectAssignment[]> {
         const conditions = [
             eq(classSubjects.teacherId, teacherId),
             eq(classes.session, session),
@@ -115,6 +119,10 @@ export class ClassSubjectRepository
                     code: subjects.code,
                     name: subjects.name,
                 },
+                teacher: {
+                    id: users.id,
+                    name: users.name,
+                },
                 class: {
                     id: classes.id,
                     name: classes.name,
@@ -123,6 +131,8 @@ export class ClassSubjectRepository
             .from(classSubjects)
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
             .innerJoin(classes, eq(classSubjects.classId, classes.id))
+            .leftJoin(teachers, eq(classSubjects.teacherId, teachers.userId))
+            .leftJoin(users, eq(teachers.userId, users.id))
             .where(and(...conditions))
             .limit(limit)
             .offset(offset)

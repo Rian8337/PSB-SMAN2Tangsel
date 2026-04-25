@@ -3,10 +3,20 @@ import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { ISubjectService } from "@/services";
-import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
+import {
+    IClassSubjectService,
+    ISessionService,
+    ISubjectService,
+} from "@/services";
+import {
+    ApiRequest,
+    ApiResponse,
+    BadRequestError,
+    ForbiddenError,
+    UnauthorizedError,
+} from "@/types";
 import { coercedSubjectIdSchema, listQuerySchema } from "@/validators";
-import { Subject, UserRole } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
 import { insertSubjectSchema } from "@psb/shared/validator";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
@@ -19,8 +29,84 @@ export class SubjectController extends BaseController {
     constructor(
         @inject(dependencyTokens.subjectService)
         private readonly subjectService: ISubjectService,
+        @inject(dependencyTokens.classSubjectService)
+        private readonly classSubjectService: IClassSubjectService,
+        @inject(dependencyTokens.sessionService)
+        private readonly sessionService: ISessionService,
     ) {
         super();
+    }
+
+    /**
+     * Obtains the subjects for the currently authenticated user.
+     */
+    @Get("/me")
+    @Roles(UserRole.student, UserRole.teacher)
+    async getMySubjects(
+        req: ApiRequest<
+            unknown,
+            ClassSubjectAssignment[],
+            unknown,
+            Partial<{ query: string; limit: string; offset: string }>
+        >,
+        res: ApiResponse<ClassSubjectAssignment[]>,
+    ) {
+        try {
+            const parsedQuery = listQuerySchema.safeParse(req.query);
+
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const { query, limit, offset } = parsedQuery.data;
+            const sessionData = req.sessionData;
+
+            if (!sessionData) {
+                throw new UnauthorizedError();
+            }
+
+            let subjects: ClassSubjectAssignment[] = [];
+
+            switch (sessionData.role) {
+                case UserRole.student:
+                    if (typeof sessionData.classId === "number") {
+                        subjects =
+                            await this.classSubjectService.listAssignedSubjects(
+                                sessionData.classId,
+                                query,
+                                limit,
+                                offset,
+                            );
+                    }
+                    break;
+
+                case UserRole.teacher:
+                    {
+                        const activeSession =
+                            await this.sessionService.getActive();
+
+                        subjects =
+                            await this.classSubjectService.listAssignedSubjectsForTeacher(
+                                sessionData.userId,
+                                activeSession.session,
+                                activeSession.semester,
+                                query,
+                                limit,
+                                offset,
+                            );
+                    }
+                    break;
+
+                default:
+                    throw new ForbiddenError();
+            }
+
+            res.json(subjects);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
     }
 
     /**
