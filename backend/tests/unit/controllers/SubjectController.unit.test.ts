@@ -1,14 +1,20 @@
 import { SubjectController } from "@/controllers";
 import { MessageKey } from "@/i18n";
-import { Subject } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
+    mockClassSubjectService,
+    mockSessionService,
     mockSubjectService,
 } from "@test/mocks";
 
 describe("SubjectController (unit)", () => {
-    const controller = new SubjectController(mockSubjectService);
+    const controller = new SubjectController(
+        mockSubjectService,
+        mockClassSubjectService,
+        mockSessionService,
+    );
 
     const mockSubject: Subject = {
         id: 1,
@@ -21,6 +27,93 @@ describe("SubjectController (unit)", () => {
 
     beforeEach(() => {
         res = createMockResponse();
+    });
+
+    describe("getMySubjects", () => {
+        const mockSubjects: ClassSubjectAssignment[] = [
+            {
+                id: 1,
+                class: {
+                    id: 10,
+                    name: "X IPA 1",
+                },
+                subject: {
+                    id: 1,
+                    code: "MA101",
+                    name: "Matematika",
+                },
+                teacher: {
+                    id: 2,
+                    name: "Bu Siti",
+                },
+            },
+        ];
+
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            ClassSubjectAssignment[],
+            unknown,
+            Partial<{ query: string; limit: string; offset: string }>
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+
+        beforeEach(() => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    identifier: "1",
+                    role: UserRole.student,
+                    classId: 10,
+                },
+            });
+        });
+
+        it("should return subjects for authenticated user", async () => {
+            mockClassSubjectService.listAssignedSubjects.mockResolvedValueOnce(
+                mockSubjects,
+            );
+
+            await controller.getMySubjects(req, res);
+
+            expect(
+                mockClassSubjectService.listAssignedSubjects,
+            ).toHaveBeenCalledWith(10, undefined, undefined, undefined);
+
+            expect(res.json).toHaveBeenCalledWith(mockSubjects);
+        });
+
+        it.each<[string, MessageKey]>([
+            ["abc", "controller.invalidLimitFormat"],
+            ["0", "controller.invalidLimitRange"],
+            ["-5", "controller.invalidLimitRange"],
+            ["51", "controller.invalidLimitRange"],
+        ])(
+            "should return 400 for invalid limit: %s",
+            async (limit, errorKey) => {
+                req.query.limit = limit;
+
+                await controller.getMySubjects(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(res.json).toHaveBeenCalledWith({ error: errorKey });
+            },
+        );
+
+        it.each<[string, MessageKey]>([
+            ["abc", "controller.invalidOffsetFormat"],
+            ["-1", "controller.invalidOffsetRange"],
+        ])(
+            "should return 400 for invalid offset: %s",
+            async (offset, errorKey) => {
+                req.query.offset = offset;
+
+                await controller.getMySubjects(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(res.json).toHaveBeenCalledWith({ error: errorKey });
+            },
+        );
     });
 
     describe("getSubject", () => {
