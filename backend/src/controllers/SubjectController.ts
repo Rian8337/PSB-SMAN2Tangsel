@@ -13,7 +13,6 @@ import {
     ApiResponse,
     BadRequestError,
     ForbiddenError,
-    UnauthorizedError,
 } from "@/types";
 import { coercedSubjectIdSchema, listQuerySchema } from "@/validators";
 import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
@@ -51,6 +50,10 @@ export class SubjectController extends BaseController {
         >,
         res: ApiResponse<ClassSubjectAssignment[]>,
     ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
         try {
             const parsedQuery = listQuerySchema.safeParse(req.query);
 
@@ -61,12 +64,7 @@ export class SubjectController extends BaseController {
             }
 
             const { query, limit, offset } = parsedQuery.data;
-            const sessionData = req.sessionData;
-
-            if (!sessionData) {
-                throw new UnauthorizedError();
-            }
-
+            const { sessionData } = req;
             let subjects: ClassSubjectAssignment[] = [];
 
             switch (sessionData.role) {
