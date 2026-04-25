@@ -5,14 +5,14 @@ import { Box, Button } from "@chakra-ui/react";
 import { ScheduleDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../layout/PageHeader";
-import { ScheduleGrid } from "../schedule/ScheduleGrid";
+import { ScheduleGrid } from "./ScheduleGrid";
 import { toaster } from "../ui/toaster";
 
 interface MyScheduleClientViewProps {
     schedules: ScheduleDTO[];
 }
 
-export function MyScheduleClientView({ schedules }: MyScheduleClientViewProps) {
+export function MySchedule({ schedules }: MyScheduleClientViewProps) {
     const t = useTranslations("Dashboard");
     const tMy = useTranslations("MySchedule");
     const scheduleApiClient = useScheduleApiClient();

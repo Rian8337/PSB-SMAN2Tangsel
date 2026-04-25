@@ -1,5 +1,5 @@
 import { getServerScheduleApiClient } from "@/api/server";
-import { MyScheduleClientView } from "@/components/schedule/MyScheduleClientView";
+import { MySchedule } from "@/components/schedule/MySchedule";
 import { routing } from "@/i18n/routing";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -10,6 +10,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
+
     const t = await getTranslations({
         locale: hasLocale(routing.locales, locale)
             ? locale
@@ -24,5 +25,5 @@ export default async function MySchedulePage() {
     const scheduleApiClient = await getServerScheduleApiClient();
     const schedules = await scheduleApiClient.getSchedule();
 
-    return <MyScheduleClientView schedules={schedules} />;
+    return <MySchedule schedules={schedules} />;
 }
