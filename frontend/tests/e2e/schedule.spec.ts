@@ -46,6 +46,13 @@ test.describe("Student Dashboard Schedule", () => {
 
     test.beforeEach(async ({ page }) => {
         await loginStudent(page);
+
+        await page
+            .locator('a[href="/schedule"]')
+            .filter({ hasText: /jadwal/i })
+            .click();
+
+        await page.waitForURL(/schedule/);
     });
 
     test("should log in as a student and display the scheduled class", async ({
