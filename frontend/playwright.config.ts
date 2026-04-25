@@ -14,7 +14,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     workers: process.env.CI ? 1 : undefined,
     retries: process.env.CI ? 2 : 0,
-    reporter: "html",
+    reporter: [["html", { open: "never" }]],
     use: {
         locale: "id-ID",
         trace: "on-first-retry",
