@@ -1,4 +1,5 @@
 import { classSubjects } from "../database/schema";
+import { Class } from "./classes";
 import { Subject } from "./subjects";
 import { Teacher } from "./users";
 
@@ -14,5 +15,6 @@ export type ClassSubject = typeof classSubjects.$inferSelect;
 export interface ClassSubjectAssignment {
     readonly id: number;
     readonly subject: Pick<Subject, "id" | "code" | "name">;
+    readonly class: Pick<Class, "id" | "name">;
     readonly teacher: Pick<Teacher, "id" | "name"> | null;
 }

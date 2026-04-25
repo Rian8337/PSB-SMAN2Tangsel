@@ -6,12 +6,18 @@ import {
     ISubjectRepository,
 } from "@/repositories";
 import { ConflictError, NotFoundError } from "@/types";
-import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
+import {
+    ClassSubjectAssignment,
+    MySubjectDTO,
+    Subject,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { inject } from "tsyringe";
 import { IClassSubjectService } from "./IClassSubjectService";
 
 /**
- * Service layer for handling business logic related to class-subject assignments.
+ * A service that is responsible for handling operations related to subject management of classes.
  */
 @Injectable(dependencyTokens.classSubjectService)
 export class ClassSubjectService implements IClassSubjectService {
@@ -32,6 +38,24 @@ export class ClassSubjectService implements IClassSubjectService {
     ): Promise<ClassSubjectAssignment[]> {
         return this.classSubjectRepository.listAssignedSubjects(
             classId,
+            query,
+            limit,
+            offset,
+        );
+    }
+
+    async listAssignedSubjectsForTeacher(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<MySubjectDTO[]> {
+        return this.classSubjectRepository.listAssignedSubjectsForTeacher(
+            teacherId,
+            session,
+            semester,
             query,
             limit,
             offset,
@@ -101,6 +125,9 @@ export class ClassSubjectService implements IClassSubjectService {
             throw new ConflictError("classSubjectService.classHasContent");
         }
 
-        await this.classSubjectRepository.unassignSubject(classId, assignmentId);
+        await this.classSubjectRepository.unassignSubject(
+            classId,
+            assignmentId,
+        );
     }
 }

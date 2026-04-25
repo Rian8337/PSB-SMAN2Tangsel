@@ -1,4 +1,10 @@
-import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
+import {
+    ClassSubjectAssignment,
+    MySubjectDTO,
+    Subject,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 
 /**
  * A service that is responsible for handling operations related to subject management of classes.
@@ -19,6 +25,26 @@ export interface IClassSubjectService {
         limit?: number,
         offset?: number,
     ): Promise<ClassSubjectAssignment[]>;
+
+    /**
+     * Obtains a list of subjects taught by a specific teacher in a specific academic session and semester, optionally filtered by a search query and paginated.
+     *
+     * @param teacherId The unique identifier of the teacher to obtain taught subjects for.
+     * @param session The academic session to filter subjects by.
+     * @param semester The semester of the academic session to filter subjects by.
+     * @param query An optional search query to filter the subjects by code or name.
+     * @param limit The maximum number of subjects to return. Defaults to 5.
+     * @param offset The number of subjects to skip before starting to collect the result set. Defaults to 0.
+     * @returns A list of subjects taught by the teacher, optionally filtered by the search query and paginated.
+     */
+    listAssignedSubjectsForTeacher(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+        query?: string,
+        limit?: number,
+        offset?: number,
+    ): Promise<MySubjectDTO[]>;
 
     /**
      * Lists subjects that are not yet assigned to a specific class for display in the subject selection dropdown when assigning subjects to a class.

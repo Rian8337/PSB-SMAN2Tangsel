@@ -2,12 +2,20 @@ import { dependencyTokens } from "@/dependencies/tokens";
 import {
     assignments,
     classSubjects,
+    classes,
     materials,
     subjects,
     teachers,
     users,
 } from "@psb/shared/schema";
-import { ClassSubjectAssignment, DrizzleDb, Subject } from "@psb/shared/types";
+import {
+    ClassSubjectAssignment,
+    DrizzleDb,
+    MySubjectDTO,
+    Subject,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { and, asc, eq, like, notInArray, or } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
@@ -67,6 +75,54 @@ export class ClassSubjectRepository
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
             .leftJoin(teachers, eq(classSubjects.teacherId, teachers.userId))
             .leftJoin(users, eq(teachers.userId, users.id))
+            .where(and(...conditions))
+            .limit(limit)
+            .offset(offset)
+            .orderBy(asc(subjects.name));
+    }
+
+    async listAssignedSubjectsForTeacher(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+        query?: string,
+        limit = 5,
+        offset = 0,
+    ): Promise<MySubjectDTO[]> {
+        const conditions = [
+            eq(classSubjects.teacherId, teacherId),
+            eq(classes.session, session),
+            eq(classes.semester, semester),
+        ];
+
+        if (query) {
+            const searchPattern = `%${query}%`;
+
+            conditions.push(
+                or(
+                    like(subjects.code, searchPattern),
+                    like(subjects.name, searchPattern),
+                    like(classes.name, searchPattern),
+                )!,
+            );
+        }
+
+        return this.db
+            .select({
+                id: classSubjects.id,
+                subject: {
+                    id: subjects.id,
+                    code: subjects.code,
+                    name: subjects.name,
+                },
+                class: {
+                    id: classes.id,
+                    name: classes.name,
+                },
+            })
+            .from(classSubjects)
+            .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+            .innerJoin(classes, eq(classSubjects.classId, classes.id))
             .where(and(...conditions))
             .limit(limit)
             .offset(offset)
