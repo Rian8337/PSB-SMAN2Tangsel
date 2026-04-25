@@ -470,11 +470,40 @@
   },
   "Dashboard": {
     "title": "Dasbor",
-    "welcome": "Selamat datang, {name}!",
+    "welcome": "Selamat datang kembali, {name}!",
+    "cards": {
+      "schedule": {
+        "title": "Jadwal Saya",
+        "description": "Lihat dan unduh jadwal pelajaran mingguan Anda."
+      },
+      "subjects": {
+        "title": "Mata Pelajaran Saya",
+        "description": "Lihat daftar mata pelajaran yang Anda ambil atau ajarkan saat ini."
+      }
+    },
     "downloadSchedule": "Unduh Jadwal",
     "downloadScheduleErrorTitle": "Gagal Mengunduh Jadwal",
     "downloadScheduleErrorMessage": "Terjadi kesalahan saat mengunduh jadwal. Silakan coba lagi.",
     "scheduleFilename": "jadwal_pelajaran"
+  },
+  "Subjects": {
+    "title": "Mata Pelajaran Saya",
+    "searchPlaceholder": "Cari mata pelajaran...",
+    "columns": {
+      "code": "Kode",
+      "name": "Nama",
+      "teacher": "Guru",
+      "class": "Kelas"
+    },
+    "emptyState": "Tidak ada mata pelajaran yang ditemukan.",
+    "fetchToast": {
+      "errorTitle": "Gagal Mengambil Mata Pelajaran",
+      "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran terdaftar Anda. Silakan coba lagi."
+    }
+  },
+  "MySchedule": {
+    "title": "Jadwal Saya",
+    "downloadButton": "Unduh Jadwal"
   },
   "BaseShell": {
     "logout": "Keluar",
@@ -492,7 +521,8 @@
   "DashboardShell": {
     "mobileTitle": "Dasbor | PSB SMAN 2 Tangerang Selatan",
     "home": "Beranda",
-    "schedule": "Jadwal"
+    "schedule": "Jadwal",
+    "subjects": "Mata Pelajaran"
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"

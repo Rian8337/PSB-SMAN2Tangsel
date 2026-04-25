@@ -474,11 +474,40 @@
   },
   "Dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome, {name}!",
+    "welcome": "Welcome back, {name}!",
+    "cards": {
+      "schedule": {
+        "title": "My Schedule",
+        "description": "View and download your weekly class schedule."
+      },
+      "subjects": {
+        "title": "My Subjects",
+        "description": "View a list of subjects you are currently taking or teaching."
+      }
+    },
     "downloadSchedule": "Download Schedule",
     "downloadScheduleErrorTitle": "Failed to Download Schedule",
     "downloadScheduleErrorMessage": "An error occurred while downloading the schedule. Please try again.",
     "scheduleFilename": "class_schedule"
+  },
+  "Subjects": {
+    "title": "My Subjects",
+    "searchPlaceholder": "Search subjects...",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "teacher": "Teacher",
+      "class": "Class"
+    },
+    "emptyState": "No subjects found.",
+    "fetchToast": {
+      "errorTitle": "Failed to Fetch Subjects",
+      "errorMessage": "An error occurred while fetching your registered subjects. Please try again."
+    }
+  },
+  "MySchedule": {
+    "title": "My Schedule",
+    "downloadButton": "Download Schedule"
   },
   "BaseShell": {
     "logout": "Logout",
@@ -496,7 +525,8 @@
   "DashboardShell": {
     "mobileTitle": "Dashboard | PSB SMAN 2 Tangerang Selatan",
     "home": "Home",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "subjects": "Subjects"
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
