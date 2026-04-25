@@ -1,5 +1,5 @@
 import { ClassSubjectRepository } from "@/repositories";
-import { classSubjects, materials } from "@psb/shared/schema";
+import { classes, classSubjects, materials } from "@psb/shared/schema";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ClassSubjectAssignment } from "@psb/shared/types";
 import { seeders, testDb, testDbManager } from "@test/utils";
@@ -18,12 +18,13 @@ describe("ClassSubjectRepository (integration)", () => {
     const subject1 = seededPrimaryData.subjects[0];
     const subject2 = seededPrimaryData.subjects[1];
 
+    let readOnlyClass: typeof classes.$inferInsert;
     let readOnlyClassSubject: typeof classSubjects.$inferInsert;
     let mutableClassSubject: typeof classSubjects.$inferInsert;
 
     beforeAll(async () => {
         // For read operations
-        const readOnlyClass = await seeders.classes.seedOne({
+        readOnlyClass = await seeders.classes.seedOne({
             name: "Read-Only Class",
             session: session.session,
             semester: session.semester,
@@ -65,6 +66,10 @@ describe("ClassSubjectRepository (integration)", () => {
                     id: subject1.id,
                     code: subject1.code,
                     name: subject1.name,
+                },
+                class: {
+                    id: readOnlyClassSubject.classId,
+                    name: readOnlyClass.name,
                 },
                 teacher: {
                     id: teacher.userId,
