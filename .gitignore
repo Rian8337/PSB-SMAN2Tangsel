@@ -57,3 +57,7 @@ frontend/html/
 
 # next-intl
 frontend/messages/*.d.json.ts
+
+# Claude
+.claude/settings.local.json
+.claude/worktrees/
