@@ -5,6 +5,7 @@ import { useSubjectApiClient } from "@/providers/api/subject-api-provider";
 import { Box, Flex, Input, Spinner, Table } from "@chakra-ui/react";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
@@ -14,6 +15,7 @@ import { ClassSubjectAssignment } from "@psb/shared/types";
 export function MySubjects() {
     const t = useTranslations("Subjects");
     const subjectApiClient = useSubjectApiClient();
+    const router = useRouter();
 
     const [subjects, setSubjects] = useState<ClassSubjectAssignment[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -146,7 +148,16 @@ export function MySubjects() {
                             <Table.Body>
                                 {subjects.length > 0 ? (
                                     subjects.map((item) => (
-                                        <Table.Row key={item.id}>
+                                        <Table.Row
+                                            key={item.id}
+                                            cursor="pointer"
+                                            _hover={{ bg: "gray.50" }}
+                                            onClick={() => {
+                                                router.push(
+                                                    `/subjects/${item.id.toString()}`,
+                                                );
+                                            }}
+                                        >
                                             <Table.Cell fontWeight="medium">
                                                 {item.subject.code}
                                             </Table.Cell>
