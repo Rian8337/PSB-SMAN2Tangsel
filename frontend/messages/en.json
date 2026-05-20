@@ -482,7 +482,8 @@
       },
       "subjects": {
         "title": "My Subjects",
-        "description": "View a list of subjects you are currently taking or teaching."
+        "studentDescription": "View a list of subjects you are currently taking.",
+        "teacherDescription": "View a list of subjects you are currently teaching."
       }
     },
     "downloadSchedule": "Download Schedule",
@@ -504,6 +505,16 @@
       "errorTitle": "Failed to Fetch Subjects",
       "errorMessage": "An error occurred while fetching your registered subjects. Please try again."
     }
+  },
+  "SubjectDashboard": {
+    "materials": "Materials",
+    "assignments": "Assignments",
+    "addMaterial": "Add",
+    "addAssignment": "Add",
+    "noMaterials": "No materials yet.",
+    "noAssignments": "No assignments yet.",
+    "fetchErrorTitle": "Failed to Load Subject",
+    "fetchErrorMessage": "An error occurred while loading the subject dashboard. Please try again."
   },
   "MySchedule": {
     "title": "My Schedule",

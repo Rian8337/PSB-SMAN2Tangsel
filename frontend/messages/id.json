@@ -478,7 +478,8 @@
       },
       "subjects": {
         "title": "Mata Pelajaran Saya",
-        "description": "Lihat daftar mata pelajaran yang Anda ambil atau ajarkan saat ini."
+        "studentDescription": "Lihat daftar mata pelajaran yang Anda ambil saat ini.",
+        "teacherDescription": "Lihat daftar mata pelajaran yang Anda ajar saat ini."
       }
     },
     "downloadSchedule": "Unduh Jadwal",
@@ -500,6 +501,16 @@
       "errorTitle": "Gagal Mengambil Mata Pelajaran",
       "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran terdaftar Anda. Silakan coba lagi."
     }
+  },
+  "SubjectDashboard": {
+    "materials": "Materi",
+    "assignments": "Tugas",
+    "addMaterial": "Tambah",
+    "addAssignment": "Tambah",
+    "noMaterials": "Belum ada materi.",
+    "noAssignments": "Belum ada tugas.",
+    "fetchErrorTitle": "Gagal Memuat Mata Pelajaran",
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat dasbor mata pelajaran. Silakan coba lagi."
   },
   "MySchedule": {
     "title": "Jadwal Saya",
