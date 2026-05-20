@@ -1,6 +1,6 @@
 import { ClassSubjectService } from "@/services/ClassSubjectService";
 import { ConflictError, NotFoundError } from "@/types";
-import { Class, Subject } from "@psb/shared/types";
+import { Class, Subject, SubjectDashboard } from "@psb/shared/types";
 import {
     mockClassRepository,
     mockClassSubjectRepository,
@@ -147,6 +147,63 @@ describe("ClassSubjectService (unit)", () => {
             expect(
                 mockClassSubjectRepository.unassignSubject,
             ).toHaveBeenCalledWith(10, 42);
+        });
+    });
+
+    const mockDashboard: SubjectDashboard = {
+        subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
+        class: { id: 1, name: "X-IPA-1" },
+        materials: [],
+        assignments: [],
+    };
+
+    describe("getStudentDashboard", () => {
+        it("should return the dashboard when the repository returns data", async () => {
+            mockClassSubjectRepository.getStudentDashboard.mockResolvedValue(
+                mockDashboard,
+            );
+
+            const result = await service.getStudentDashboard(1, 3);
+
+            expect(
+                mockClassSubjectRepository.getStudentDashboard,
+            ).toHaveBeenCalledWith(1, 3);
+            expect(result).toBe(mockDashboard);
+        });
+
+        it("should throw NotFoundError when the repository returns null", async () => {
+            mockClassSubjectRepository.getStudentDashboard.mockResolvedValue(
+                null,
+            );
+
+            await expect(service.getStudentDashboard(99, 3)).rejects.toThrow(
+                new NotFoundError("classSubjectService.notFound"),
+            );
+        });
+    });
+
+    describe("getTeacherDashboard", () => {
+        it("should return the dashboard when the repository returns data", async () => {
+            mockClassSubjectRepository.getTeacherDashboard.mockResolvedValue(
+                mockDashboard,
+            );
+
+            const result = await service.getTeacherDashboard(1, 2);
+
+            expect(
+                mockClassSubjectRepository.getTeacherDashboard,
+            ).toHaveBeenCalledWith(1, 2);
+            expect(result).toBe(mockDashboard);
+        });
+
+        it("should throw NotFoundError when the repository returns null", async () => {
+            mockClassSubjectRepository.getTeacherDashboard.mockResolvedValue(
+                null,
+            );
+
+            await expect(service.getTeacherDashboard(99, 2)).rejects.toThrow(
+                new NotFoundError("classSubjectService.notFound"),
+            );
         });
     });
 });
