@@ -132,3 +132,22 @@ Localizations are located in two places:
 - For backend, they are in `backend/src/i18n/messages.ts`
 
 After changing localizations in the frontend, run `pnpm typegen` to regenerate the `d.ts` files if localization-related compilation errors appear.
+
+## Implementation Steps
+
+When implementing a new use case, use the following base steps (you can add more if needed):
+
+1. Design DTOs to be shared between the backend and frontend, add to `packages/shared` shared package.
+2. Build shared package (`pnpm build-shared`) to update shared package artifacts.
+3. Implement backend components.
+4. Build backend components (`pnpm --filter backend build`).
+5. Implement/modify backend unit tests for new endpoints in controllers and new behaviors in services. See existing tests for examples.
+6. Implement backend integration tests at controller level (to e.g., verify role-based access controls) and repository level to verify database queries. See existing tests for examples.
+7. Run backend tests (`pnpm --filter backend test`) and verify that everything passed.
+8. Implement frontend components.
+9. Implement/modify frontend unit tests for new components or behaviors. See existing tests for examples.
+10. Implement frontend integration tests if needed. See existing tests for examples.
+11. Run frontend tests (`pnpm --filter frontend test`) and verify that everything passed.
+12. Implement end-to-end tests in frontend. See existing tests for examples.
+13. Run **that** end-to-end test using `pnpm --filter frontend test:e2e` and verify that everything passed.
+14. Run all end-to-end tests (just `pnpm --filter frontend test:e2e`) and verify that everything passed.
