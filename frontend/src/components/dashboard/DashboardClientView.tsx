@@ -5,12 +5,14 @@ import { Box, Card, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { BookOpen, Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../layout/PageHeader";
+import { UserRole } from "@psb/shared/types";
 
 interface DashboardClientViewProps {
-    name: string;
+    readonly name: string;
+    readonly role: UserRole;
 }
 
-export function DashboardClientView({ name }: DashboardClientViewProps) {
+export function DashboardClientView({ name, role }: DashboardClientViewProps) {
     const t = useTranslations("Dashboard");
 
     const actions = [
@@ -26,7 +28,11 @@ export function DashboardClientView({ name }: DashboardClientViewProps) {
             icon: BookOpen,
             color: "teal.500",
             title: t("cards.subjects.title"),
-            description: t("cards.subjects.description"),
+            description: t(
+                role === UserRole.student
+                    ? "cards.subjects.studentDescription"
+                    : "cards.subjects.teacherDescription",
+            ),
         },
     ];
 

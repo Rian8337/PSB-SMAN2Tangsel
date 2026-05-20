@@ -3,6 +3,7 @@ import { DashboardClientView } from "@/components/dashboard/DashboardClientView"
 import { routing } from "@/i18n/routing";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { unauthorized } from "next/navigation";
 
 export async function generateMetadata({
     params,
@@ -22,10 +23,13 @@ export async function generateMetadata({
 
 export default async function DashboardPage() {
     const authApiClient = await getServerAuthApiClient();
-
     const user = await authApiClient.getMe();
 
-    const firstName = user?.name.split(" ")[0] ?? "Student";
+    if (!user) {
+        unauthorized();
+    }
 
-    return <DashboardClientView name={firstName} />;
+    return (
+        <DashboardClientView name={user.name.split(" ")[0]} role={user.role} />
+    );
 }
