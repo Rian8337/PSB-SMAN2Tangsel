@@ -6,4 +6,5 @@ export * from "./NotificationController";
 export * from "./ScheduleController";
 export * from "./SessionController";
 export * from "./SubjectController";
+export * from "./SubjectDashboardController";
 export * from "./UserController";
