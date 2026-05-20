@@ -108,3 +108,27 @@ This project does not provide grading or examination features.
 - The system must only allow passwords that are at least 8 characters long, contain at least 1 uppercase character, and contain at least 1 lowercase character
 - The system must be compatible with Ubuntu 20.04 operating system
 - The system must only accept files from students and teachers that are at most 100 MB in size
+
+## Design Artifacts
+
+Design artifacts for this project can be found under `./artifacts`. These should be followed as close as possible, with the exception of interface mockups and DTOs, but if new methods or properties are needed, it is fine to add them.
+
+Artifact folders are as follow:
+
+- Class diagrams: `./artifacts/class-diagram`
+    - API layer: `./artifacts/class-diagram/API.png`
+    - Controller layer: `./artifacts/class-diagram/Application.png`
+    - Service layer: `./artifacts/class-diagram/Business.png`
+    - Repository layer: `./artifacts/class-diagram/Data Access.png`
+    - DTOs: `./artifacts/class-diagram/Data Transfer Objects.png`
+- Mockup: `./artifacts/mockup`, but see how other interfaces are implemented for examples
+- Sequence diagram: `./artifacts/sequence-diagram` for each scenario (file always starts with numbering, e.g. `UC09 View Subject_SequenceGraph_StudentView.png`).
+
+## Localizations
+
+Localizations are located in two places:
+
+- For frontend, they are in `frontend/messages/` (JSON files)
+- For backend, they are in `backend/src/i18n/messages.ts`
+
+After changing localizations in the frontend, run `pnpm typegen` to regenerate the `d.ts` files if localization-related compilation errors appear.
