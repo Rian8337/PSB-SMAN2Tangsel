@@ -1,6 +1,7 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
 import { routing } from "@/i18n/routing";
+import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { unauthorized } from "next/navigation";
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
-    if (!user) {
+    if (!user || user.role === UserRole.administrator) {
         unauthorized();
     }
 
