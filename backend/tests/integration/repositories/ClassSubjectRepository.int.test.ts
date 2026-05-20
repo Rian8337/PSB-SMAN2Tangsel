@@ -288,4 +288,173 @@ describe("ClassSubjectRepository (integration)", () => {
             expect(dbRecords).toHaveLength(0);
         });
     });
+
+    describe("getStudentDashboard", () => {
+        const student = seededPrimaryData.users.find(
+            (u) => u.id === seededPrimaryData.students[0].userId,
+        )!;
+
+        let dashboardClassSubject: typeof classSubjects.$inferInsert;
+
+        beforeAll(async () => {
+            const dashboardClass = await seeders.classes.seedOne({
+                name: "Student Dashboard Class",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: dashboardClass.id!,
+                studentId: student.id,
+            });
+
+            dashboardClassSubject = await seeders.classSubjects.seedOne({
+                classId: dashboardClass.id!,
+                subjectId: subject1.id,
+                teacherId: teacher.userId,
+            });
+
+            await seeders.materials.seedMany(
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Visible Material",
+                    visible: true,
+                },
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Hidden Material",
+                    visible: false,
+                },
+            );
+
+            await seeders.assignments.seedMany(
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Visible Assignment",
+                    visible: true,
+                },
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Hidden Assignment",
+                    visible: false,
+                },
+            );
+        });
+
+        it("should return the dashboard with only visible items for an enrolled student", async () => {
+            const result = (await repository.getStudentDashboard(
+                dashboardClassSubject.id!,
+                student.id,
+            ))!;
+
+            expect(result).not.toBeNull();
+            expect(result.subject.id).toBe(subject1.id);
+            expect(result.class.id).toBe(dashboardClassSubject.classId);
+
+            expect(result.materials).toHaveLength(1);
+            expect(result.materials[0].title).toBe("Visible Material");
+            expect(result.materials[0].visible).toBe(true);
+
+            expect(result.assignments).toHaveLength(1);
+            expect(result.assignments[0].title).toBe("Visible Assignment");
+        });
+
+        it("should return null if the student is not enrolled in the class", async () => {
+            const unenrolledStudentId = seededPrimaryData.students[1].userId;
+
+            const result = await repository.getStudentDashboard(
+                dashboardClassSubject.id!,
+                unenrolledStudentId,
+            );
+
+            expect(result).toBeNull();
+        });
+
+        it("should return null for a non-existent class subject ID", async () => {
+            const result = await repository.getStudentDashboard(
+                99999,
+                student.id,
+            );
+
+            expect(result).toBeNull();
+        });
+    });
+
+    describe("getTeacherDashboard", () => {
+        let dashboardClassSubject: typeof classSubjects.$inferInsert;
+
+        beforeAll(async () => {
+            const dashboardClass = await seeders.classes.seedOne({
+                name: "Teacher Dashboard Class",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            dashboardClassSubject = await seeders.classSubjects.seedOne({
+                classId: dashboardClass.id!,
+                subjectId: subject1.id,
+                teacherId: teacher.userId,
+            });
+
+            await seeders.materials.seedMany(
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Visible Material",
+                    visible: true,
+                },
+                {
+                    classSubjectId: dashboardClassSubject.id!,
+                    title: "Hidden Material",
+                    visible: false,
+                },
+            );
+
+            await seeders.assignments.seedOne({
+                classSubjectId: dashboardClassSubject.id!,
+                title: "Teacher Assignment",
+                visible: false,
+            });
+        });
+
+        it("should return the dashboard with all items (including hidden) for an assigned teacher", async () => {
+            const result = (await repository.getTeacherDashboard(
+                dashboardClassSubject.id!,
+                teacher.userId,
+            ))!;
+
+            expect(result).not.toBeNull();
+            expect(result.subject.id).toBe(subject1.id);
+
+            // Both visible and hidden materials should appear.
+            expect(result.materials).toHaveLength(2);
+
+            const titles = result.materials.map((m) => m.title);
+            expect(titles).toContain("Visible Material");
+            expect(titles).toContain("Hidden Material");
+
+            // Hidden assignment should also appear.
+            expect(result.assignments).toHaveLength(1);
+            expect(result.assignments[0].title).toBe("Teacher Assignment");
+        });
+
+        it("should return null if the teacher is not assigned to the class subject", async () => {
+            const otherTeacherId = 999;
+
+            const result = await repository.getTeacherDashboard(
+                dashboardClassSubject.id!,
+                otherTeacherId,
+            );
+
+            expect(result).toBeNull();
+        });
+
+        it("should return null for a non-existent class subject ID", async () => {
+            const result = await repository.getTeacherDashboard(
+                99999,
+                teacher.userId,
+            );
+
+            expect(result).toBeNull();
+        });
+    });
 });
