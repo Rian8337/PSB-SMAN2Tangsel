@@ -75,6 +75,8 @@ export const mockClassSubjectRepository: Mocked<IClassSubjectRepository> = {
     updateAssignedSubject: vi.fn(),
     hasAssociatedContent: vi.fn(),
     unassignSubject: vi.fn(),
+    getStudentDashboard: vi.fn(),
+    getTeacherDashboard: vi.fn(),
 };
 
 /**
