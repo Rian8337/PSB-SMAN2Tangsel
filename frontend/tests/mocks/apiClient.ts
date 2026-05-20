@@ -7,6 +7,7 @@ import {
     IScheduleAPIClient,
     ISessionAPIClient,
     ISubjectAPIClient,
+    ISubjectDashboardAPIClient,
     IUserAPIClient,
 } from "@/api";
 import { Mocked } from "vitest";
@@ -97,6 +98,14 @@ export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
     updateSubject: vi.fn(),
     deleteSubject: vi.fn(),
 };
+
+/**
+ * Mock implementation of {@link ISubjectDashboardAPIClient}.
+ */
+export const mockSubjectDashboardApiClient: Mocked<ISubjectDashboardAPIClient> =
+    {
+        getDashboard: vi.fn(),
+    };
 
 /**
  * Mock implementation of {@link IUserAPIClient}.
