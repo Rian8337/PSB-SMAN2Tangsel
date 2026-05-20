@@ -9,6 +9,7 @@ import { ConflictError, NotFoundError } from "@/types";
 import {
     ClassSubjectAssignment,
     Subject,
+    SubjectDashboard,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -128,5 +129,39 @@ export class ClassSubjectService implements IClassSubjectService {
             classId,
             assignmentId,
         );
+    }
+
+    async getStudentDashboard(
+        classSubjectId: number,
+        studentId: number,
+    ): Promise<SubjectDashboard> {
+        const dashboard =
+            await this.classSubjectRepository.getStudentDashboard(
+                classSubjectId,
+                studentId,
+            );
+
+        if (!dashboard) {
+            throw new NotFoundError("classSubjectService.notFound");
+        }
+
+        return dashboard;
+    }
+
+    async getTeacherDashboard(
+        classSubjectId: number,
+        teacherId: number,
+    ): Promise<SubjectDashboard> {
+        const dashboard =
+            await this.classSubjectRepository.getTeacherDashboard(
+                classSubjectId,
+                teacherId,
+            );
+
+        if (!dashboard) {
+            throw new NotFoundError("classSubjectService.notFound");
+        }
+
+        return dashboard;
     }
 }

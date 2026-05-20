@@ -1,6 +1,7 @@
 import {
     ClassSubjectAssignment,
     Subject,
+    SubjectDashboard,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -96,4 +97,28 @@ export interface IClassSubjectService {
      * @param assignmentId The unique identifier of the class subject assignment to remove.
      */
     unassignSubject(classId: number, assignmentId: number): Promise<void>;
+
+    /**
+     * Obtains the subject dashboard for a student. Throws {@link NotFoundError} if the class subject does not exist
+     * or the student is not enrolled in the associated class.
+     *
+     * @param classSubjectId The unique identifier of the class subject.
+     * @param studentId The unique identifier of the student.
+     */
+    getStudentDashboard(
+        classSubjectId: number,
+        studentId: number,
+    ): Promise<SubjectDashboard>;
+
+    /**
+     * Obtains the subject dashboard for a teacher. Throws {@link NotFoundError} if the class subject does not exist
+     * or the teacher is not assigned to it.
+     *
+     * @param classSubjectId The unique identifier of the class subject.
+     * @param teacherId The unique identifier of the teacher.
+     */
+    getTeacherDashboard(
+        classSubjectId: number,
+        teacherId: number,
+    ): Promise<SubjectDashboard>;
 }

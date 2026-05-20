@@ -55,6 +55,8 @@ export const mockClassSubjectService: Mocked<IClassSubjectService> = {
     assignSubject: vi.fn(),
     updateAssignedSubject: vi.fn(),
     unassignSubject: vi.fn(),
+    getStudentDashboard: vi.fn(),
+    getTeacherDashboard: vi.fn(),
 };
 
 /**

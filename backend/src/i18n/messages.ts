@@ -40,6 +40,7 @@ interface Localization {
 
     readonly classSubjectService: {
         readonly classHasContent: string;
+        readonly notFound: string;
     };
 
     readonly classStudentService: {
@@ -155,6 +156,7 @@ export const messages = {
         classSubjectService: {
             classHasContent:
                 "Tidak dapat menghapus mata pelajaran ini karena sudah memiliki materi ajar atau tugas siswa.",
+            notFound: "Mata pelajaran tidak ditemukan.",
         },
         classStudentService: {
             studentIsEnrolled: "Siswa sudah terdaftar dalam kelas {className}.",
@@ -261,6 +263,7 @@ export const messages = {
         classSubjectService: {
             classHasContent:
                 "Cannot unassign this subject. It already has teaching materials or student assignments associated with it.",
+            notFound: "Subject not found.",
         },
         classStudentService: {
             studentIsEnrolled: "Student is already enrolled in {className}.",
