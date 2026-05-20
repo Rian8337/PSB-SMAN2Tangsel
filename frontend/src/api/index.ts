@@ -16,4 +16,6 @@ export * from "./NotificationAPIClient";
 export * from "./ScheduleAPIClient";
 export * from "./SessionAPIClient";
 export * from "./SubjectAPIClient";
+export * from "./SubjectDashboardAPIClient";
+export * from "./ISubjectDashboardAPIClient";
 export * from "./UserAPIClient";

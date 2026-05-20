@@ -12,6 +12,8 @@ import { SessionAPIClient } from "./SessionAPIClient";
 import { UserAPIClient } from "./UserAPIClient";
 import { SubjectAPIClient } from "./SubjectAPIClient";
 import { ISubjectAPIClient } from "./ISubjectAPIClient";
+import { SubjectDashboardAPIClient } from "./SubjectDashboardAPIClient";
+import { ISubjectDashboardAPIClient } from "./ISubjectDashboardAPIClient";
 import { APIClient } from "./APIClient";
 import { ClassAPIClient } from "./ClassAPIClient";
 import { IClassAPIClient } from "./IClassAPIClient";
@@ -122,6 +124,19 @@ export async function getServerSubjectApiClient(
     locale?: Locale,
 ): Promise<ISubjectAPIClient> {
     return initializeClient(SubjectAPIClient, locale);
+}
+
+/**
+ * Server-side factory to retrieve an {@link ISubjectDashboardAPIClient}.
+ *
+ * @param locale Optional locale to initialize the {@link ISubjectDashboardAPIClient} with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link ISubjectDashboardAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerSubjectDashboardApiClient(
+    locale?: Locale,
+): Promise<ISubjectDashboardAPIClient> {
+    return initializeClient(SubjectDashboardAPIClient, locale);
 }
 
 /**
