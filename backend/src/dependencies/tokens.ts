@@ -19,6 +19,7 @@ import {
     IClassStudentService,
     IClassSubjectService,
     IConfigService,
+    IMaterialService,
     INotificationService,
     IScheduleService,
     ISessionService,
@@ -164,6 +165,13 @@ export const dependencyTokens = {
     configService: Symbol.for(
         "configService",
     ) as InjectionToken<IConfigService>,
+
+    /**
+     * Injection token for an {@link IMaterialService}.
+     */
+    materialService: Symbol.for(
+        "materialService",
+    ) as InjectionToken<IMaterialService>,
 
     /**
      * Injection token for an {@link INotificationService}.

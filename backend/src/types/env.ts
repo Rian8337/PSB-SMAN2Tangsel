@@ -59,4 +59,9 @@ export enum EnvironmentVariableKey {
      * test-specific behavior in the codebase.
      */
     isE2ETest = "IS_E2E_TEST",
+
+    /**
+     * The root path of the file storage directory. Attachment files are resolved relative to this path.
+     */
+    storagePath = "STORAGE_PATH",
 }
