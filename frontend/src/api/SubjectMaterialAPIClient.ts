@@ -13,8 +13,12 @@ export class SubjectMaterialAPIClient
         return super.baseURL + "/materials";
     }
 
-    async getMaterial(materialId: number, signal?: AbortSignal): Promise<SubjectMaterial> {
-        const res = await this.get(`/${materialId.toString()}`, { signal });
-        return res.json();
+    getMaterial(
+        materialId: number,
+        signal?: AbortSignal,
+    ): Promise<SubjectMaterial> {
+        return this.get(`/${materialId.toString()}`, { signal }).then((res) =>
+            res.json(),
+        );
     }
 }
