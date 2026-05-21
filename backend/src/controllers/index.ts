@@ -2,6 +2,7 @@ export * from "./AuthController";
 export * from "./ClassController";
 export * from "./ClassStudentController";
 export * from "./ClassSubjectController";
+export * from "./MaterialController";
 export * from "./NotificationController";
 export * from "./ScheduleController";
 export * from "./SessionController";
