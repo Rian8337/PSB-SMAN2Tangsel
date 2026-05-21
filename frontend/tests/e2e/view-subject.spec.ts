@@ -71,6 +71,7 @@ test.describe("View Subject Flow", () => {
         await expect(
             page.getByRole("link", { name: "Visible Material" }),
         ).toBeVisible();
+
         await expect(
             page.getByRole("link", { name: "Visible Assignment" }),
         ).toBeVisible();
@@ -84,9 +85,9 @@ test.describe("View Subject Flow", () => {
         ).not.toBeVisible();
 
         // Teacher-only "Tambah" (Add) buttons should not be present.
-        await expect(
-            page.getByRole("button", { name: /Tambah/i }),
-        ).toHaveCount(0);
+        await expect(page.getByRole("button", { name: /Tambah/i })).toHaveCount(
+            0,
+        );
     });
 
     test("Teacher should see all content including hidden items and add buttons", async ({
@@ -106,6 +107,7 @@ test.describe("View Subject Flow", () => {
         await expect(
             page.getByRole("link", { name: "Visible Material" }),
         ).toBeVisible();
+
         await expect(
             page.getByRole("link", { name: "Hidden Material" }),
         ).toBeVisible();
@@ -114,13 +116,14 @@ test.describe("View Subject Flow", () => {
         await expect(
             page.getByRole("link", { name: "Visible Assignment" }),
         ).toBeVisible();
+
         await expect(
             page.getByRole("link", { name: "Hidden Assignment" }),
         ).toBeVisible();
 
         // Teacher-only "Tambah" (Add) buttons should be present for each section.
-        await expect(
-            page.getByRole("button", { name: /Tambah/i }),
-        ).toHaveCount(2);
+        await expect(page.getByRole("button", { name: /Tambah/i })).toHaveCount(
+            2,
+        );
     });
 });
