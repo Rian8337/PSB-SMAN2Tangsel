@@ -502,6 +502,17 @@
       "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran terdaftar Anda. Silakan coba lagi."
     }
   },
+  "SubjectMaterial": {
+    "fetchErrorTitle": "Gagal Memuat Materi",
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat materi. Silakan coba lagi.",
+    "noAttachments": "Tidak ada lampiran.",
+    "createdAt": "Dibuat pada",
+    "lastUpdatedAt": "Terakhir diperbarui pada",
+    "editButton": "Edit",
+    "deleteButton": "Hapus",
+    "showToStudents": "Tampilkan ke siswa",
+    "hideFromStudents": "Sembunyikan dari siswa"
+  },
   "SubjectDashboard": {
     "materials": "Materi",
     "assignments": "Tugas",
