@@ -18,4 +18,6 @@ export * from "./SessionAPIClient";
 export * from "./SubjectAPIClient";
 export * from "./SubjectDashboardAPIClient";
 export * from "./ISubjectDashboardAPIClient";
+export * from "./SubjectMaterialAPIClient";
+export * from "./ISubjectMaterialAPIClient";
 export * from "./UserAPIClient";
