@@ -4,6 +4,7 @@ import {
     IClassStudentService,
     IClassSubjectService,
     IConfigService,
+    IMaterialService,
     INotificationService,
     IScheduleService,
     ISessionService,
@@ -133,4 +134,14 @@ export const mockUserService: Mocked<IUserService> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IMaterialService}.
+ */
+export const mockMaterialService: Mocked<IMaterialService> = {
+    getStudentMaterial: vi.fn(),
+    getTeacherMaterial: vi.fn(),
+    getStudentAttachment: vi.fn(),
+    getTeacherAttachment: vi.fn(),
 };

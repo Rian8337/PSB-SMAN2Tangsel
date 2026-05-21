@@ -3,6 +3,7 @@ import {
     IClassRepository,
     IClassStudentRepository,
     IClassSubjectRepository,
+    IMaterialRepository,
     INotificationRepository,
     IScheduleRepository,
     ISessionRepository,
@@ -154,4 +155,14 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IMaterialRepository}.
+ */
+export const mockMaterialRepository: Mocked<IMaterialRepository> = {
+    getStudentMaterial: vi.fn(),
+    getTeacherMaterial: vi.fn(),
+    getStudentAttachment: vi.fn(),
+    getTeacherAttachment: vi.fn(),
 };
