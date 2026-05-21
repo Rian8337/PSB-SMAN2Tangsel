@@ -72,6 +72,7 @@ jobs:
       DB_NAME: psb_sman2_test
       COOKIE_SECRET: f3a2007d-6344-49f4-8705-f1f9818a86d9
       SESSION_ENCRYPTION_KEY: 6e0eb1287fc4afdc22df1fb5f5c205709347cacbe5ed687bec17a48bf511b995
+      STORAGE_PATH: ./tests/storage
 
     defaults:
       run:
@@ -173,6 +174,7 @@ jobs:
       TEST_DB_MANAGE_LIFECYCLE: false
       COOKIE_SECRET: f3a2007d-6344-49f4-8705-f1f9818a86d9
       SESSION_ENCRYPTION_KEY: 6e0eb1287fc4afdc22df1fb5f5c205709347cacbe5ed687bec17a48bf511b995
+      STORAGE_PATH: ./tests/storage
 
     defaults:
       run:
