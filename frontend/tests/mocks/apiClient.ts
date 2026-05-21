@@ -8,6 +8,7 @@ import {
     ISessionAPIClient,
     ISubjectAPIClient,
     ISubjectDashboardAPIClient,
+    ISubjectMaterialAPIClient,
     IUserAPIClient,
 } from "@/api";
 import { Mocked } from "vitest";
@@ -106,6 +107,13 @@ export const mockSubjectDashboardApiClient: Mocked<ISubjectDashboardAPIClient> =
     {
         getDashboard: vi.fn(),
     };
+
+/**
+ * Mock implementation of {@link ISubjectMaterialAPIClient}.
+ */
+export const mockSubjectMaterialApiClient: Mocked<ISubjectMaterialAPIClient> = {
+    getMaterial: vi.fn(),
+};
 
 /**
  * Mock implementation of {@link IUserAPIClient}.
