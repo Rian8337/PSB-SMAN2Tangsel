@@ -9,7 +9,7 @@ import {
     testDbManager,
 } from "@test/utils";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
-import * as nodePath from "path";
+import { join } from "path";
 import request from "supertest";
 
 describe("MaterialController (integration)", () => {
@@ -27,7 +27,7 @@ describe("MaterialController (integration)", () => {
     let unassignedMaterialId: number;
 
     const storagePath = process.env.STORAGE_PATH ?? "./tests/storage";
-    const testFilePath = nodePath.join(storagePath, seededAttachment.path);
+    const testFilePath = join(storagePath, seededAttachment.path);
 
     beforeAll(async () => {
         const cls = await seeders.classes.seedOne({

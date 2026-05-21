@@ -8,11 +8,8 @@ import {
 } from "@test/mocks";
 import { vi } from "vitest";
 
-const pipeMock = vi.fn();
-
 const fsMock = vi.hoisted(() => ({
-    existsSync: vi.fn(),
-    createReadStream: vi.fn(() => ({ pipe: pipeMock })),
+    createReadStream: vi.fn(),
 }));
 
 vi.mock("fs", () => fsMock);
@@ -221,7 +218,12 @@ describe("MaterialController (unit)", () => {
                 "/storage",
             );
 
-            fsMock.existsSync.mockReturnValue(true);
+            const mockPipe = vi.fn();
+
+            fsMock.createReadStream.mockReturnValue({
+                on: vi.fn(),
+                pipe: mockPipe,
+            });
 
             const req = createDownloadRequest({
                 params: { materialId: "1", attachmentId: "1" },
@@ -243,7 +245,7 @@ describe("MaterialController (unit)", () => {
                 'attachment; filename="Test Attachment"',
             );
 
-            expect(pipeMock).toHaveBeenCalledWith(res);
+            expect(mockPipe).toHaveBeenCalledWith(res);
         });
 
         it("should return 404 when the file does not exist on disk", async () => {
@@ -251,12 +253,33 @@ describe("MaterialController (unit)", () => {
                 path: "missing.pdf",
                 name: "Missing File",
             });
-
             mockConfigService.getEnvironmentVariable.mockReturnValue(
                 "/storage",
             );
 
-            fsMock.existsSync.mockReturnValue(false);
+            let errorHandler:
+                | ((err: NodeJS.ErrnoException) => void)
+                | undefined;
+
+            fsMock.createReadStream.mockReturnValue({
+                on: vi.fn(
+                    (
+                        event: string,
+                        handler: (err: NodeJS.ErrnoException) => void,
+                    ) => {
+                        if (event === "error") {
+                            errorHandler = handler;
+                        }
+                    },
+                ),
+                pipe: vi.fn(() => {
+                    errorHandler?.(
+                        Object.assign(new Error("ENOENT: no such file"), {
+                            code: "ENOENT",
+                        }),
+                    );
+                }),
+            });
 
             const req = createDownloadRequest({
                 params: { materialId: "1", attachmentId: "1" },
