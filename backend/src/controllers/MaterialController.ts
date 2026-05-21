@@ -14,8 +14,8 @@ import {
 import { EnvironmentVariableKey } from "@/types";
 import { coercedMaterialIdSchema } from "@/validators";
 import { SubjectMaterial, UserRole } from "@psb/shared/types";
-import { createReadStream, existsSync } from "fs";
-import * as nodePath from "path";
+import { createReadStream } from "fs";
+import { join } from "path";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
 
@@ -148,18 +148,33 @@ export class MaterialController extends BaseController {
                 true,
             );
 
-            const absolutePath = nodePath.join(storagePath, attachment.path);
+            const absolutePath = join(storagePath, attachment.path);
+            const stream = createReadStream(absolutePath);
 
-            if (!existsSync(absolutePath)) {
-                throw new NotFoundError("materialService.notFound");
-            }
+            stream.on("error", (err) => {
+                if (res.headersSent) {
+                    res.end();
+                    return;
+                }
+
+                const isNotFound =
+                    (err as NodeJS.ErrnoException).code === "ENOENT";
+
+                this.handleError(
+                    req,
+                    res,
+                    isNotFound
+                        ? new NotFoundError("materialService.notFound")
+                        : err,
+                );
+            });
 
             res.setHeader(
                 "Content-Disposition",
                 `attachment; filename="${attachment.name}"`,
             );
 
-            createReadStream(absolutePath).pipe(res);
+            stream.pipe(res);
         } catch (e) {
             this.handleError(req, res, e);
         }
