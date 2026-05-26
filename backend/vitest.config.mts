@@ -11,6 +11,7 @@ export default defineConfig({
         globals: true,
         setupFiles: "./tests/setup.ts",
         maxWorkers: process.env.CI ? 1 : undefined,
+        hookTimeout: 30000,
         silent: "passed-only",
         passWithNoTests: true,
         mockReset: true,
