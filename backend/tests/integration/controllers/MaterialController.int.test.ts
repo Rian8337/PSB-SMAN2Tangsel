@@ -8,7 +8,7 @@ import {
     seeders,
     testDbManager,
 } from "@test/utils";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { mkdir, rm, writeFile } from "fs/promises";
 import { join } from "path";
 import request from "supertest";
 
@@ -93,19 +93,12 @@ describe("MaterialController (integration)", () => {
 
         unassignedMaterialId = unassignedMaterial.id!;
 
-        // Create the storage directory and test file for attachment download tests.
-        if (!existsSync(storagePath)) {
-            mkdirSync(storagePath, { recursive: true });
-        }
-
-        writeFileSync(testFilePath, "test attachment content");
+        await mkdir(storagePath, { recursive: true });
+        await writeFile(testFilePath, "test attachment content");
     });
 
     afterAll(async () => {
-        if (existsSync(testFilePath)) {
-            rmSync(testFilePath);
-        }
-
+        await rm(testFilePath, { force: true });
         await testDbManager.cleanupSecondaryTables();
     });
 
