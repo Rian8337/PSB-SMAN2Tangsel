@@ -1,4 +1,5 @@
 import {
+    IAssignmentService,
     IAuthService,
     IClassService,
     IClassStudentService,
@@ -134,6 +135,16 @@ export const mockUserService: Mocked<IUserService> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IAssignmentService}.
+ */
+export const mockAssignmentService: Mocked<IAssignmentService> = {
+    getStudentAssignment: vi.fn(),
+    getTeacherAssignment: vi.fn(),
+    getStudentAttachment: vi.fn(),
+    getTeacherAttachment: vi.fn(),
 };
 
 /**

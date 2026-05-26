@@ -1,5 +1,6 @@
 import {
     IAdministratorRepository,
+    IAssignmentRepository,
     IClassRepository,
     IClassStudentRepository,
     IClassSubjectRepository,
@@ -155,6 +156,16 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IAssignmentRepository}.
+ */
+export const mockAssignmentRepository: Mocked<IAssignmentRepository> = {
+    getStudentAssignment: vi.fn(),
+    getTeacherAssignment: vi.fn(),
+    getStudentAttachment: vi.fn(),
+    getTeacherAttachment: vi.fn(),
 };
 
 /**
