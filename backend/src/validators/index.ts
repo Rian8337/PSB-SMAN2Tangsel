@@ -1,3 +1,4 @@
+export * from "./assignments";
 export * from "./classes";
 export * from "./materials";
 export * from "./notifications";
