@@ -48,6 +48,11 @@ declare global {
              * The key used to encrypt user sessions.
              */
             readonly SESSION_ENCRYPTION_KEY?: string;
+
+            /**
+             * The path to the directory where uploaded files are stored.
+             */
+            readonly STORAGE_PATH?: string;
         }
     }
 
