@@ -506,6 +506,25 @@
       "errorMessage": "An error occurred while fetching your registered subjects. Please try again."
     }
   },
+  "SubjectAssignment": {
+    "fetchErrorTitle": "Failed to Load Assignment",
+    "fetchErrorMessage": "An error occurred while loading the assignment. Please try again.",
+    "noAttachments": "No attachments.",
+    "dueAt": "Due in",
+    "createdAt": "Created at",
+    "lastUpdatedAt": "Last updated at",
+    "submission": "Submission",
+    "submittedAt": "Submitted at",
+    "uploadLabel": "Upload files",
+    "submitButton": "Submit",
+    "editButton": "Edit",
+    "removeButton": "Remove",
+    "editAssignment": "Edit",
+    "deleteAssignment": "Delete",
+    "studentSubmissions": "Student submissions",
+    "showToStudents": "Show to students",
+    "hideFromStudents": "Hide from students"
+  },
   "SubjectMaterial": {
     "fetchErrorTitle": "Failed to Load Material",
     "fetchErrorMessage": "An error occurred while loading the material. Please try again.",

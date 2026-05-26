@@ -502,6 +502,25 @@
       "errorMessage": "Terjadi kesalahan saat mengambil mata pelajaran terdaftar Anda. Silakan coba lagi."
     }
   },
+  "SubjectAssignment": {
+    "fetchErrorTitle": "Gagal Memuat Tugas",
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat tugas. Silakan coba lagi.",
+    "noAttachments": "Tidak ada lampiran.",
+    "dueAt": "Tenggat waktu",
+    "createdAt": "Dibuat pada",
+    "lastUpdatedAt": "Terakhir diperbarui pada",
+    "submission": "Pengumpulan",
+    "submittedAt": "Dikumpulkan pada",
+    "uploadLabel": "Unggah berkas",
+    "submitButton": "Kumpulkan",
+    "editButton": "Edit",
+    "removeButton": "Hapus",
+    "editAssignment": "Edit",
+    "deleteAssignment": "Hapus",
+    "studentSubmissions": "Pengumpulan siswa",
+    "showToStudents": "Tampilkan ke siswa",
+    "hideFromStudents": "Sembunyikan dari siswa"
+  },
   "SubjectMaterial": {
     "fetchErrorTitle": "Gagal Memuat Materi",
     "fetchErrorMessage": "Terjadi kesalahan saat memuat materi. Silakan coba lagi.",
