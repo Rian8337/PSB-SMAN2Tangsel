@@ -15,6 +15,7 @@ import {
     IUserRepository,
 } from "@/repositories";
 import {
+    IAssignmentService,
     IAuthService,
     IClassService,
     IClassStudentService,
@@ -142,6 +143,13 @@ export const dependencyTokens = {
     //#endregion
 
     //#region Services
+
+    /**
+     * Injection token for an {@link IAssignmentService}.
+     */
+    assignmentService: Symbol.for(
+        "assignmentService",
+    ) as InjectionToken<IAssignmentService>,
 
     /**
      * Injection token for an {@link IAuthService}.

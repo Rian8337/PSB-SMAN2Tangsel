@@ -29,6 +29,14 @@ interface Localization {
         readonly invalidId: string;
     };
 
+    readonly assignment: {
+        readonly invalidId: string;
+    };
+
+    readonly assignmentService: {
+        readonly notFound: string;
+    };
+
     readonly material: {
         readonly invalidId: string;
     };
@@ -152,6 +160,12 @@ export const messages = {
         class: {
             invalidId: "ID kelas harus berupa bilangan bulat positif.",
         },
+        assignment: {
+            invalidId: "ID tugas harus berupa bilangan bulat positif.",
+        },
+        assignmentService: {
+            notFound: "Tugas tidak ditemukan.",
+        },
         material: {
             invalidId: "ID materi harus berupa bilangan bulat positif.",
         },
@@ -265,6 +279,12 @@ export const messages = {
         },
         class: {
             invalidId: "Class ID must be a positive integer.",
+        },
+        assignment: {
+            invalidId: "Assignment ID must be a positive integer.",
+        },
+        assignmentService: {
+            notFound: "Assignment not found.",
         },
         material: {
             invalidId: "Material ID must be a positive integer.",
