@@ -40,6 +40,11 @@ export const assignments = mysqlTable("assignment", {
     description: text(),
 
     /**
+     * The deadline of this assignment.
+     */
+    dueAt: timestamp(),
+
+    /**
      * The time at which this assignment was last updated.
      */
     lastUpdatedAt: timestamp().defaultNow().notNull(),
