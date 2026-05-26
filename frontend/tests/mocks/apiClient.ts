@@ -7,6 +7,7 @@ import {
     IScheduleAPIClient,
     ISessionAPIClient,
     ISubjectAPIClient,
+    ISubjectAssignmentAPIClient,
     ISubjectDashboardAPIClient,
     ISubjectMaterialAPIClient,
     IUserAPIClient,
@@ -106,6 +107,14 @@ export const mockSubjectApiClient: Mocked<ISubjectAPIClient> = {
 export const mockSubjectDashboardApiClient: Mocked<ISubjectDashboardAPIClient> =
     {
         getDashboard: vi.fn(),
+    };
+
+/**
+ * Mock implementation of {@link ISubjectAssignmentAPIClient}.
+ */
+export const mockSubjectAssignmentApiClient: Mocked<ISubjectAssignmentAPIClient> =
+    {
+        getAssignment: vi.fn(),
     };
 
 /**
