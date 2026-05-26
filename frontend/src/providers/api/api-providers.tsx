@@ -8,6 +8,7 @@ import { ScheduleApiProvider } from "./schedule-api-provider";
 import { SessionApiProvider } from "./session-api-provider";
 import { SubjectApiProvider } from "./subject-api-provider";
 import { SubjectDashboardApiProvider } from "./subject-dashboard-api-provider";
+import { SubjectAssignmentApiProvider } from "./subject-assignment-api-provider";
 import { SubjectMaterialApiProvider } from "./subject-material-api-provider";
 import { UserApiProvider } from "./user-api-provider";
 
@@ -24,6 +25,7 @@ export const ApiProviders = composeProviders(
     SessionApiProvider,
     SubjectApiProvider,
     SubjectDashboardApiProvider,
+    SubjectAssignmentApiProvider,
     SubjectMaterialApiProvider,
     UserApiProvider,
 );
