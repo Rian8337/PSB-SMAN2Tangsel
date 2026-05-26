@@ -68,7 +68,7 @@ export class AuthService implements IAuthService {
             ) === "production" &&
             this.configService.getEnvironmentVariable(
                 EnvironmentVariableKey.isE2ETest,
-            ) === "true";
+            ) !== "true";
 
         // Secure cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
         this.requireSecureCookies =
