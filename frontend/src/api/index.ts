@@ -1,4 +1,5 @@
 export * from "./APIError";
+export * from "./backendBaseUrl";
 export * from "./AuthAPIClient";
 export * from "./ClassAPIClient";
 export * from "./ClassStudentAPIClient";

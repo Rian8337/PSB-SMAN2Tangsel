@@ -1,5 +1,6 @@
 import { routing } from "@/i18n/routing";
 import { APIError } from "./APIError";
+import { getBackendBaseUrl } from "./backendBaseUrl";
 
 /**
  * Base API client class that provides methods for making HTTP requests to the backend server.
@@ -9,25 +10,7 @@ export abstract class APIClient {
      * The base URL of the backend server. All API requests will be made to this URL.
      */
     protected get baseURL(): string {
-        const fallbackBaseUrl =
-            process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
-
-        if (typeof window !== "undefined") {
-            const runtimeBaseUrlCandidate = (
-                globalThis as Record<string, unknown>
-            ).__API_BASE_URL__;
-
-            const runtimeBaseUrl =
-                typeof runtimeBaseUrlCandidate === "string"
-                    ? runtimeBaseUrlCandidate
-                    : undefined;
-
-            return this.normalizeBrowserApiBaseUrl(
-                runtimeBaseUrl ?? fallbackBaseUrl,
-            );
-        }
-
-        return process.env.API_BASE_URL ?? fallbackBaseUrl;
+        return getBackendBaseUrl();
     }
 
     constructor(
@@ -163,33 +146,4 @@ export abstract class APIClient {
         return res;
     }
 
-    private normalizeBrowserApiBaseUrl(url: string): string {
-        if (typeof window === "undefined") {
-            return url;
-        }
-
-        try {
-            const parsedUrl = new URL(url);
-            const currentHost = window.location.hostname;
-
-            const isLoopbackHost =
-                parsedUrl.hostname === "localhost" ||
-                parsedUrl.hostname === "127.0.0.1";
-
-            const isCurrentLoopbackHost =
-                currentHost === "localhost" || currentHost === "127.0.0.1";
-
-            if (
-                isLoopbackHost &&
-                isCurrentLoopbackHost &&
-                parsedUrl.hostname !== currentHost
-            ) {
-                parsedUrl.hostname = currentHost;
-            }
-
-            return parsedUrl.toString().replace(/\/$/, "");
-        } catch {
-            return url;
-        }
-    }
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { backendBaseUrl } from "@/api/backendBaseUrl";
 import { useRouter } from "@/i18n/navigation";
 import { useSubjectMaterialApiClient } from "@/providers/api/subject-material-api-provider";
 import {
@@ -38,14 +39,6 @@ export function SubjectMaterial({
 
     const isTeacher = role === UserRole.teacher;
     const backButtonUrl = `/subjects/${classSubjectId.toString()}`;
-
-    const backendBaseUrl =
-        (
-            (globalThis as Record<string, unknown>)
-                .__API_BASE_URL__ as string | undefined
-        ) ??
-        process.env.NEXT_PUBLIC_API_URL ??
-        "http://127.0.0.1:3001";
 
     const fetchMaterial = useCallback(
         async (signal?: AbortSignal) => {
