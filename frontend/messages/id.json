@@ -686,6 +686,8 @@
     "heading": "Pengumpulan Siswa",
     "search": "Cari",
     "downloadAll": "Unduh Semua",
+    "downloadErrorTitle": "Gagal Mengunduh Pengumpulan",
+    "downloadErrorMessage": "Terjadi kesalahan saat mengunduh. Silakan coba lagi.",
     "columnId": "ID",
     "columnName": "Nama",
     "columnSubmissionTime": "Waktu Pengumpulan",

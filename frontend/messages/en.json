@@ -690,6 +690,8 @@
     "heading": "Student Submissions",
     "search": "Search",
     "downloadAll": "Download All",
+    "downloadErrorTitle": "Failed to Download Submissions",
+    "downloadErrorMessage": "An error occurred while downloading. Please try again.",
     "columnId": "ID",
     "columnName": "Name",
     "columnSubmissionTime": "Submission Time",

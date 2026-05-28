@@ -27,6 +27,15 @@ export interface StudentSubmissionListProps {
     readonly classSubjectId: number;
 }
 
+function triggerDownload(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 export function StudentSubmissionList({
     assignmentId,
     classSubjectId,
@@ -47,6 +56,10 @@ export function StudentSubmissionList({
 
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [isDownloadingAll, setIsDownloadingAll] = useState(false);
+    const [downloadingStudents, setDownloadingStudents] = useState(
+        new Set<number>(),
+    );
 
     const fetchData = useCallback(
         async (signal?: AbortSignal) => {
@@ -126,6 +139,56 @@ export function StudentSubmissionList({
             : "red.500";
     };
 
+    const handleDownloadAll = () => {
+        setIsDownloadingAll(true);
+
+        submissionApiClient
+            .downloadSubmissions(assignmentId)
+            .then(({ blob, filename }) => {
+                triggerDownload(
+                    blob,
+                    filename ?? `submissions-${assignmentId.toString()}.zip`,
+                );
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("downloadErrorTitle"),
+                    description: t("downloadErrorMessage"),
+                    type: "error",
+                });
+            })
+            .finally(() => {
+                setIsDownloadingAll(false);
+            });
+    };
+
+    const handleDownloadStudent = (studentId: number) => {
+        setDownloadingStudents((prev) => new Set(prev).add(studentId));
+
+        submissionApiClient
+            .downloadSubmissions(assignmentId, studentId)
+            .then(({ blob, filename }) => {
+                triggerDownload(
+                    blob,
+                    filename ?? `submissions-${assignmentId.toString()}.zip`,
+                );
+            })
+            .catch(() => {
+                toaster.create({
+                    title: t("downloadErrorTitle"),
+                    description: t("downloadErrorMessage"),
+                    type: "error",
+                });
+            })
+            .finally(() => {
+                setDownloadingStudents((prev) => {
+                    const next = new Set(prev);
+                    next.delete(studentId);
+                    return next;
+                });
+            });
+    };
+
     if (isLoading) {
         return (
             <>
@@ -166,7 +229,12 @@ export function StudentSubmissionList({
                         />
                     </Flex>
 
-                    <Button variant="outline" size="sm" disabled>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        loading={isDownloadingAll}
+                        onClick={handleDownloadAll}
+                    >
                         {t("downloadAll")}
                     </Button>
                 </Flex>
@@ -229,7 +297,14 @@ export function StudentSubmissionList({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            disabled
+                                            loading={downloadingStudents.has(
+                                                submission.studentId,
+                                            )}
+                                            onClick={() => {
+                                                handleDownloadStudent(
+                                                    submission.studentId,
+                                                );
+                                            }}
                                         >
                                             {t("download")}
                                         </Button>
