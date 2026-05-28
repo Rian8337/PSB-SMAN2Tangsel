@@ -13,14 +13,13 @@ export class SubjectAssignmentSubmissionAPIClient
         return super.baseURL + "/assignments";
     }
 
-    async getSubmissions(
+    getSubmissions(
         assignmentId: number,
         signal?: AbortSignal,
     ): Promise<AssignmentSubmissionRow[]> {
-        const res = await this.get(`/${assignmentId.toString()}/submissions`, {
+        return this.get(`/${assignmentId.toString()}/submissions`, {
             signal,
-        });
-        return res.json();
+        }).then((res) => res.json());
     }
 
     async downloadSubmissions(
@@ -29,9 +28,7 @@ export class SubjectAssignmentSubmissionAPIClient
         signal?: AbortSignal,
     ): Promise<Readonly<{ blob: Blob; filename?: string }>> {
         const params =
-            studentId !== undefined
-                ? `?studentId=${studentId.toString()}`
-                : "";
+            studentId !== undefined ? `?studentId=${studentId.toString()}` : "";
 
         const res = await this.get(
             `/${assignmentId.toString()}/submissions/download${params}`,
