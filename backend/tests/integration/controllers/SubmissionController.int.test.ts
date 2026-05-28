@@ -8,6 +8,8 @@ import {
     seeders,
     testDbManager,
 } from "@test/utils";
+import { mkdir, rm, writeFile } from "fs/promises";
+import { join } from "path";
 import request from "supertest";
 
 describe("SubmissionController (integration)", () => {
@@ -17,6 +19,10 @@ describe("SubmissionController (integration)", () => {
         (u) => u.id === seededPrimaryData.students[0].userId,
     )!;
     const teacher = seededPrimaryData.teachers[0];
+
+    const storagePath = process.env.STORAGE_PATH ?? "./tests/storage";
+    const submissionAttachmentPath = "submission_test_sc.txt";
+    const testFilePath = join(storagePath, submissionAttachmentPath);
 
     let assignmentId: number;
     let unownedAssignmentId: number;
@@ -47,9 +53,19 @@ describe("SubmissionController (integration)", () => {
 
         assignmentId = assignment.id!;
 
-        await seeders.assignmentSubmissions.seedOne({
+        const submission = await seeders.assignmentSubmissions.seedOne({
             assignmentId,
             studentId: student.id,
+        });
+
+        const attachment = await seeders.attachments.seedOne({
+            name: "test_submission_file.txt",
+            path: submissionAttachmentPath,
+        });
+
+        await seeders.assignmentSubmissionAttachments.seedOne({
+            submissionId: submission.id!,
+            attachmentId: attachment.id!,
         });
 
         // An assignment that belongs to a different class subject with no teacher assigned.
@@ -72,9 +88,13 @@ describe("SubmissionController (integration)", () => {
         });
 
         unownedAssignmentId = unownedAssignment.id!;
+
+        await mkdir(storagePath, { recursive: true });
+        await writeFile(testFilePath, "test submission content");
     });
 
     afterAll(async () => {
+        await rm(testFilePath, { force: true });
         await testDbManager.cleanupSecondaryTables();
     });
 
@@ -175,6 +195,128 @@ describe("SubmissionController (integration)", () => {
 
             expect(res.status).toBe(200);
             expect(res.body).toEqual([]);
+        });
+    });
+
+    describe("GET /assignments/:assignmentId/submissions/download", () => {
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).get(
+                `/assignments/${assignmentId.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.get(
+                `/assignments/${assignmentId.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 for an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.get(
+                `/assignments/${assignmentId.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid assignment ID", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                "/assignments/abc/submissions/download",
+            );
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 400 for an invalid studentId query param", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                `/assignments/${assignmentId.toString()}/submissions/download?studentId=abc`,
+            );
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 404 when the teacher does not own the assignment", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                `/assignments/${unownedAssignmentId.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(404);
+        });
+
+        it("should return 200 with application/zip content type for an owned assignment", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                `/assignments/${assignmentId.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.headers["content-type"]).toContain("application/zip");
+            expect(res.headers["content-disposition"]).toContain(
+                `submissions-${assignmentId.toString()}.zip`,
+            );
+        });
+
+        it("should return 200 with an empty zip when the assignment has no attachments", async () => {
+            const noAttachAssignment = await seeders.assignments.seedOne({
+                classSubjectId: (
+                    await seeders.classSubjects.seedOne({
+                        classId: (
+                            await seeders.classes.seedOne({
+                                name: "No Attach SC",
+                                session: session.session,
+                                semester: session.semester,
+                            })
+                        ).id!,
+                        subjectId: subject.id,
+                        teacherId: teacher.userId,
+                    })
+                ).id!,
+                title: "No Attachment Assignment SC",
+                visible: true,
+            });
+
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                `/assignments/${noAttachAssignment.id!.toString()}/submissions/download`,
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.headers["content-type"]).toContain("application/zip");
+        });
+
+        it("should return 200 when filtering by a valid studentId", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.get(
+                `/assignments/${assignmentId.toString()}/submissions/download?studentId=${student.id.toString()}`,
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.headers["content-type"]).toContain("application/zip");
         });
     });
 });
