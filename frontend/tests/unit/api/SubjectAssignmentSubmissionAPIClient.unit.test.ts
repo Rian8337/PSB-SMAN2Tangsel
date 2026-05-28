@@ -19,6 +19,8 @@ describe("SubjectAssignmentSubmissionAPIClient (unit)", () => {
         fetchSpy = vi.spyOn(global, "fetch").mockResolvedValue({
             ok: true,
             json: () => Promise.resolve(mockSubmissions),
+            blob: () => Promise.resolve(new Blob(["zip"])),
+            headers: new Headers(),
         } as Response);
     });
 
@@ -42,6 +44,71 @@ describe("SubjectAssignmentSubmissionAPIClient (unit)", () => {
             const controller = new AbortController();
 
             await client.getSubmissions(10, controller.signal);
+
+            const [, options] = fetchSpy.mock.calls[0];
+            expect(options?.signal).toBe(controller.signal);
+        });
+    });
+
+    describe("downloadSubmissions", () => {
+        it("should send a GET request to the correct endpoint without studentId", async () => {
+            await client.downloadSubmissions(5);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/assignments/5/submissions/download");
+            expect(urlStr).not.toContain("studentId");
+            expect(options?.method).toBe("GET");
+        });
+
+        it("should include studentId as a query param when provided", async () => {
+            await client.downloadSubmissions(5, 3);
+
+            const [url] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain(
+                "/assignments/5/submissions/download?studentId=3",
+            );
+        });
+
+        it("should return the blob and extract filename from Content-Disposition header", async () => {
+            const mockBlob = new Blob(["zip content"]);
+
+            fetchSpy.mockResolvedValue({
+                ok: true,
+                blob: () => Promise.resolve(mockBlob),
+                headers: new Headers({
+                    "Content-Disposition":
+                        'attachment; filename="submissions-5.zip"',
+                }),
+            } as Response);
+
+            const result = await client.downloadSubmissions(5);
+
+            expect(result.blob).toBe(mockBlob);
+            expect(result.filename).toBe("submissions-5.zip");
+        });
+
+        it("should return undefined filename when Content-Disposition header is absent", async () => {
+            fetchSpy.mockResolvedValue({
+                ok: true,
+                blob: () => Promise.resolve(new Blob()),
+                headers: new Headers(),
+            } as Response);
+
+            const result = await client.downloadSubmissions(5);
+
+            expect(result.filename).toBeUndefined();
+        });
+
+        it("should pass the AbortSignal when provided", async () => {
+            const controller = new AbortController();
+
+            await client.downloadSubmissions(5, undefined, controller.signal);
 
             const [, options] = fetchSpy.mock.calls[0];
             expect(options?.signal).toBe(controller.signal);
