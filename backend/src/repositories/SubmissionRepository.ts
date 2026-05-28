@@ -1,15 +1,17 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import {
+    assignmentSubmissionAttachments,
     assignmentSubmissions,
+    attachments,
     students,
     users,
 } from "@psb/shared/schema";
 import { AssignmentSubmissionRow, DrizzleDb } from "@psb/shared/types";
-import { eq } from "drizzle-orm";
+import { SQL, and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
-import { ISubmissionRepository } from "./ISubmissionRepository";
+import { ISubmissionRepository, SubmissionDownloadRow } from "./ISubmissionRepository";
 
 /**
  * Defines operations for accessing assignment submission data in the database.
@@ -45,5 +47,47 @@ export class SubmissionRepository
             studentName: row.studentName,
             submittedAt: row.submittedAt.toISOString(),
         }));
+    }
+
+    async getForAssignmentWithAttachments(
+        assignmentId: number,
+        studentId?: number,
+    ): Promise<SubmissionDownloadRow[]> {
+        const conditions: SQL[] = [
+            eq(assignmentSubmissions.assignmentId, assignmentId),
+        ];
+
+        if (studentId !== undefined) {
+            conditions.push(eq(students.userId, studentId));
+        }
+
+        return this.db
+            .select({
+                studentName: users.name,
+                studentIdentifier: users.identifier,
+                attachmentName: attachments.name,
+                attachmentPath: attachments.path,
+            })
+            .from(assignmentSubmissions)
+            .innerJoin(
+                students,
+                eq(assignmentSubmissions.studentId, students.userId),
+            )
+            .innerJoin(users, eq(students.userId, users.id))
+            .innerJoin(
+                assignmentSubmissionAttachments,
+                eq(
+                    assignmentSubmissionAttachments.submissionId,
+                    assignmentSubmissions.id,
+                ),
+            )
+            .innerJoin(
+                attachments,
+                eq(
+                    assignmentSubmissionAttachments.attachmentId,
+                    attachments.id,
+                ),
+            )
+            .where(and(...conditions));
     }
 }
