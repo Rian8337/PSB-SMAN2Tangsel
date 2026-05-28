@@ -9,6 +9,7 @@ import {
     IScheduleRepository,
     ISessionRepository,
     IStudentRepository,
+    ISubmissionRepository,
     ISubjectRepository,
     ITeacherRepository,
     ITransactionManager,
@@ -156,6 +157,13 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISubmissionRepository}.
+ */
+export const mockSubmissionRepository: Mocked<ISubmissionRepository> = {
+    getForAssignment: vi.fn(),
 };
 
 /**

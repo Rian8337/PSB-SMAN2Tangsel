@@ -9,6 +9,7 @@ import {
     INotificationService,
     IScheduleService,
     ISessionService,
+    ISubmissionService,
     ISubjectService,
     IUserService,
 } from "@/services";
@@ -135,6 +136,13 @@ export const mockUserService: Mocked<IUserService> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link ISubmissionService}.
+ */
+export const mockSubmissionService: Mocked<ISubmissionService> = {
+    getSubmissions: vi.fn(),
 };
 
 /**
