@@ -28,6 +28,127 @@ describe("SubmissionController (unit)", () => {
         res = createMockResponse();
     });
 
+    describe("downloadSubmissions", () => {
+        const mockZipBuffer = Buffer.from("zip content");
+
+        it("should return 401 if no session is present", async () => {
+            const req = createMockRequest({ params: { assignmentId: "1" } });
+
+            await controller.downloadSubmissions(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(
+                mockSubmissionService.downloadSubmissions,
+            ).not.toHaveBeenCalled();
+        });
+
+        it.each([
+            { assignmentId: "abc" },
+            { assignmentId: "0" },
+            { assignmentId: "-5" },
+        ])(
+            "should return 400 for an invalid assignment ID: $assignmentId",
+            async ({ assignmentId }) => {
+                const req = createMockRequest({
+                    params: { assignmentId },
+                    sessionData: {
+                        userId: 2,
+                        identifier: "2",
+                        role: UserRole.teacher,
+                    },
+                });
+
+                await controller.downloadSubmissions(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(
+                    mockSubmissionService.downloadSubmissions,
+                ).not.toHaveBeenCalled();
+            },
+        );
+
+        it.each([
+            { studentId: "abc" },
+            { studentId: "0" },
+            { studentId: "-1" },
+        ])(
+            "should return 400 for an invalid studentId query param: $studentId",
+            async ({ studentId }) => {
+                const req = createMockRequest({
+                    params: { assignmentId: "1" },
+                    query: { studentId },
+                    sessionData: {
+                        userId: 2,
+                        identifier: "2",
+                        role: UserRole.teacher,
+                    },
+                });
+
+                await controller.downloadSubmissions(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(
+                    mockSubmissionService.downloadSubmissions,
+                ).not.toHaveBeenCalled();
+            },
+        );
+
+        it("should call downloadSubmissions without studentId and send zip buffer with correct headers", async () => {
+            mockSubmissionService.downloadSubmissions.mockResolvedValue(
+                mockZipBuffer,
+            );
+
+            const req = createMockRequest({
+                params: { assignmentId: "1" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.downloadSubmissions(req, res);
+
+            expect(
+                mockSubmissionService.downloadSubmissions,
+            ).toHaveBeenCalledWith(1, 2, undefined);
+
+            expect(res.setHeader).toHaveBeenCalledWith(
+                "Content-Disposition",
+                `attachment; filename="submissions-1.zip"`,
+            );
+
+            expect(res.setHeader).toHaveBeenCalledWith(
+                "Content-Type",
+                "application/zip",
+            );
+
+            expect(res.send).toHaveBeenCalledWith(mockZipBuffer);
+        });
+
+        it("should pass studentId to downloadSubmissions when the query param is provided", async () => {
+            mockSubmissionService.downloadSubmissions.mockResolvedValue(
+                mockZipBuffer,
+            );
+
+            const req = createMockRequest({
+                params: { assignmentId: "1" },
+                query: { studentId: "3" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.downloadSubmissions(req, res);
+
+            expect(
+                mockSubmissionService.downloadSubmissions,
+            ).toHaveBeenCalledWith(1, 2, 3);
+        });
+    });
+
     describe("getSubmissions", () => {
         it("should return 401 if no session is present", async () => {
             const req = createMockRequest({ params: { assignmentId: "1" } });
