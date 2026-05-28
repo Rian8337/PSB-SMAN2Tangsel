@@ -148,5 +148,5 @@ When implementing a new use case, use the following base steps (you can add more
 9. Implement/modify frontend unit tests for new components or behaviors. See existing tests for examples.
 10. Implement frontend integration tests if needed. See existing tests for examples.
 11. Run frontend tests (`pnpm --filter frontend test`) and verify that everything passed.
-12. Implement end-to-end tests in frontend. See existing tests for examples.
+12. Implement end-to-end tests in frontend. Keep in mind that these tests use Indonesian locale. See existing tests for examples.
 13. Run end-to-end tests (just `pnpm --filter frontend test:e2e`) and verify that everything passed.
