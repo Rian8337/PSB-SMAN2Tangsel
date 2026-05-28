@@ -171,4 +171,51 @@ test.describe("View Student Submissions Flow", () => {
             ),
         );
     });
+
+    // The download endpoint returns a valid (possibly empty) ZIP even when the submission has
+    // no attachments, so these tests verify the full browser download flow without requiring
+    // real files to be present on the backend's filesystem.
+    test("Unduh Semua button should trigger a download", async ({ page }) => {
+        await loginTeacher(page);
+
+        await page.goto(
+            `/id/subjects/${classSubjectId.toString()}/assignments/${assignmentWithDeadlineId.toString()}/submissions`,
+        );
+
+        await expect(page.getByText(student.name)).toBeVisible();
+
+        const downloadPromise = page.waitForEvent("download");
+        await page.getByRole("button", { name: "Unduh Semua" }).click();
+
+        const download = await downloadPromise;
+
+        expect(download.suggestedFilename()).toContain(
+            `submissions-${assignmentWithDeadlineId.toString()}.zip`,
+        );
+
+        const failure = await download.failure();
+        expect(failure).toBeNull();
+    });
+
+    test("Per-row Unduh button should trigger a download for the specific student", async ({
+        page,
+    }) => {
+        await loginTeacher(page);
+
+        await page.goto(
+            `/id/subjects/${classSubjectId.toString()}/assignments/${assignmentWithDeadlineId.toString()}/submissions`,
+        );
+
+        await expect(page.getByText(student.name)).toBeVisible();
+
+        const downloadPromise = page.waitForEvent("download");
+        await page.getByRole("button", { name: "Unduh" }).first().click();
+
+        const download = await downloadPromise;
+
+        expect(download.suggestedFilename()).toContain(".zip");
+
+        const failure = await download.failure();
+        expect(failure).toBeNull();
+    });
 });
