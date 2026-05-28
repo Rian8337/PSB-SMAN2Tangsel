@@ -255,7 +255,15 @@ export function SubjectAssignment({
                             {t("deleteAssignment")}
                         </Button>
 
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                router.push(
+                                    `/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/submissions`,
+                                );
+                            }}
+                        >
                             {t("studentSubmissions")}
                         </Button>
 
