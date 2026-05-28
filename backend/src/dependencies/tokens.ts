@@ -26,6 +26,7 @@ import {
     INotificationService,
     IScheduleService,
     ISessionService,
+    ISubmissionService,
     ISubjectService,
     IUserService,
 } from "@/services";
@@ -217,6 +218,13 @@ export const dependencyTokens = {
     sessionService: Symbol.for(
         "sessionService",
     ) as InjectionToken<ISessionService>,
+
+    /**
+     * Injection token for an {@link ISubmissionService}.
+     */
+    submissionService: Symbol.for(
+        "submissionService",
+    ) as InjectionToken<ISubmissionService>,
 
     /**
      * Injection token for an {@link ISubjectService}.

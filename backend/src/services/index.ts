@@ -1,5 +1,6 @@
 export * from "./AssignmentService";
 export * from "./AuthService";
+export * from "./SubmissionService";
 export * from "./ClassService";
 export * from "./ClassStudentService";
 export * from "./ClassSubjectService";
@@ -7,6 +8,7 @@ export * from "./ConfigService";
 export * from "./MaterialService";
 export * from "./IAssignmentService";
 export * from "./IAuthService";
+export * from "./ISubmissionService";
 export * from "./IClassService";
 export * from "./IClassStudentService";
 export * from "./IClassSubjectService";
