@@ -8,6 +8,7 @@ import {
     ISessionAPIClient,
     ISubjectAPIClient,
     ISubjectAssignmentAPIClient,
+    ISubjectAssignmentSubmissionAPIClient,
     ISubjectDashboardAPIClient,
     ISubjectMaterialAPIClient,
     IUserAPIClient,
@@ -115,6 +116,14 @@ export const mockSubjectDashboardApiClient: Mocked<ISubjectDashboardAPIClient> =
 export const mockSubjectAssignmentApiClient: Mocked<ISubjectAssignmentAPIClient> =
     {
         getAssignment: vi.fn(),
+    };
+
+/**
+ * Mock implementation of {@link ISubjectAssignmentSubmissionAPIClient}.
+ */
+export const mockSubjectAssignmentSubmissionApiClient: Mocked<ISubjectAssignmentSubmissionAPIClient> =
+    {
+        getSubmissions: vi.fn(),
     };
 
 /**
