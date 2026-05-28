@@ -49,6 +49,16 @@ export interface StudentSubjectAssignment {
 }
 
 /**
+ * A single row in the student submissions list, as displayed to a teacher.
+ */
+export interface AssignmentSubmissionRow {
+    readonly studentId: number;
+    readonly studentIdentifier: string;
+    readonly studentName: string;
+    readonly submittedAt: string;
+}
+
+/**
  * The detailed data for a single assignment, displayed to a teacher. Includes the visibility flag
  * but no submission data.
  */
