@@ -4,6 +4,7 @@ import {
     IClassRepository,
     IClassStudentRepository,
     IClassSubjectRepository,
+    IFileRepository,
     IMaterialRepository,
     INotificationRepository,
     IScheduleRepository,
@@ -160,10 +161,18 @@ export const mockUserRepository: Mocked<IUserRepository> = {
 };
 
 /**
+ * Mock implementation of {@link IFileRepository}.
+ */
+export const mockFileRepository: Mocked<IFileRepository> = {
+    read: vi.fn(),
+};
+
+/**
  * Mock implementation of {@link ISubmissionRepository}.
  */
 export const mockSubmissionRepository: Mocked<ISubmissionRepository> = {
     getForAssignment: vi.fn(),
+    getForAssignmentWithAttachments: vi.fn(),
 };
 
 /**

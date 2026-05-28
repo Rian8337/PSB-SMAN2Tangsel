@@ -5,6 +5,7 @@ import {
     IClassStudentService,
     IClassSubjectService,
     IConfigService,
+    IFileService,
     IMaterialService,
     INotificationService,
     IScheduleService,
@@ -139,10 +140,18 @@ export const mockUserService: Mocked<IUserService> = {
 };
 
 /**
+ * Mock implementation of {@link IFileService}.
+ */
+export const mockFileService: Mocked<IFileService> = {
+    createZipArchive: vi.fn(),
+};
+
+/**
  * Mock implementation of {@link ISubmissionService}.
  */
 export const mockSubmissionService: Mocked<ISubmissionService> = {
     getSubmissions: vi.fn(),
+    downloadSubmissions: vi.fn(),
 };
 
 /**
