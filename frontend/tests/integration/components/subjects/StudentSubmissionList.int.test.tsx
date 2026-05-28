@@ -10,6 +10,7 @@ import {
     mockNotificationApiClient,
     mockSubjectAssignmentApiClient,
     mockSubjectAssignmentSubmissionApiClient,
+    mockToaster,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -63,12 +64,24 @@ function render() {
 
 describe("StudentSubmissionList (integration)", () => {
     beforeEach(() => {
+        vi.stubGlobal("URL", {
+            createObjectURL: vi.fn(() => "blob:test"),
+            revokeObjectURL: vi.fn(),
+        });
+
         mockSubjectAssignmentApiClient.getAssignment.mockResolvedValue(
             mockTeacherAssignment,
         );
         mockSubjectAssignmentSubmissionApiClient.getSubmissions.mockResolvedValue(
             [earlySubmission, lateSubmission],
         );
+        mockSubjectAssignmentSubmissionApiClient.downloadSubmissions.mockResolvedValue(
+            { blob: new Blob(["zip"]), filename: "submissions-1.zip" },
+        );
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
     });
 
     it("should call getAssignment and getSubmissions with the correct assignment ID on mount", () => {
@@ -152,5 +165,58 @@ describe("StudentSubmissionList (integration)", () => {
 
         expect(earlyEl).toBeDefined();
         expect(lateEl).toBeDefined();
+    });
+
+    it("should call downloadSubmissions with only the assignmentId when Download All is clicked", async () => {
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByText("Reza Mouna Hendrian")).toBeInTheDocument();
+        });
+
+        const user = userEvent.setup();
+        await user.click(screen.getByText("downloadAll"));
+
+        expect(
+            mockSubjectAssignmentSubmissionApiClient.downloadSubmissions,
+        ).toHaveBeenCalledWith(1);
+    });
+
+    it("should call downloadSubmissions with assignmentId and studentId when a per-row Download is clicked", async () => {
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByText("Reza Mouna Hendrian")).toBeInTheDocument();
+        });
+
+        const user = userEvent.setup();
+        const downloadButtons = screen.getAllByText("download");
+
+        await user.click(downloadButtons[0]);
+
+        expect(
+            mockSubjectAssignmentSubmissionApiClient.downloadSubmissions,
+        ).toHaveBeenCalledWith(1, earlySubmission.studentId);
+    });
+
+    it("should call toaster.create with an error when Download All fails", async () => {
+        mockSubjectAssignmentSubmissionApiClient.downloadSubmissions.mockRejectedValue(
+            new Error("Network error"),
+        );
+
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByText("Reza Mouna Hendrian")).toBeInTheDocument();
+        });
+
+        const user = userEvent.setup();
+        await user.click(screen.getByText("downloadAll"));
+
+        await waitFor(() => {
+            expect(mockToaster.create).toHaveBeenCalledWith(
+                expect.objectContaining({ type: "error" }),
+            );
+        });
     });
 });
