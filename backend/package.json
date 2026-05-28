@@ -21,6 +21,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-form-data": "^2.0.5",
+    "@types/jszip": "^3.4.1",
     "@types/node": "^25.3.0",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^4.0.18",
@@ -44,6 +45,7 @@
     "express-rate-limit": "^8.3.1",
     "helmet": "^8.1.0",
     "ics": "^3.8.1",
+    "jszip": "^3.10.1",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "zod": "^4.3.6"
