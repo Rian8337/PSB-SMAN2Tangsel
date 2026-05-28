@@ -21,6 +21,8 @@ export * from "./SubjectDashboardAPIClient";
 export * from "./ISubjectDashboardAPIClient";
 export * from "./SubjectAssignmentAPIClient";
 export * from "./ISubjectAssignmentAPIClient";
+export * from "./SubjectAssignmentSubmissionAPIClient";
+export * from "./ISubjectAssignmentSubmissionAPIClient";
 export * from "./SubjectMaterialAPIClient";
 export * from "./ISubjectMaterialAPIClient";
 export * from "./UserAPIClient";
