@@ -683,4 +683,18 @@
       "errorMessage": "An error occurred while updating the user. Please try again."
     }
   }
+,
+  "StudentSubmissionList": {
+    "fetchErrorTitle": "Failed to Load Submissions",
+    "fetchErrorMessage": "An error occurred while loading submissions. Please try again.",
+    "heading": "Student Submissions",
+    "search": "Search",
+    "downloadAll": "Download All",
+    "columnId": "ID",
+    "columnName": "Name",
+    "columnSubmissionTime": "Submission Time",
+    "columnAction": "Action",
+    "download": "Download",
+    "noSubmissions": "No submissions yet."
+  }
 }

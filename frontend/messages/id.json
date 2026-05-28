@@ -679,4 +679,18 @@
       "errorMessage": "Terjadi kesalahan saat memperbarui pengguna. Silakan coba lagi."
     }
   }
+,
+  "StudentSubmissionList": {
+    "fetchErrorTitle": "Gagal Memuat Pengumpulan",
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat data pengumpulan. Silakan coba lagi.",
+    "heading": "Pengumpulan Siswa",
+    "search": "Cari",
+    "downloadAll": "Unduh Semua",
+    "columnId": "ID",
+    "columnName": "Nama",
+    "columnSubmissionTime": "Waktu Pengumpulan",
+    "columnAction": "Aksi",
+    "download": "Unduh",
+    "noSubmissions": "Belum ada pengumpulan."
+  }
 }
