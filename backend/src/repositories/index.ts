@@ -1,5 +1,6 @@
 export * from "./AdministratorRepository";
 export * from "./AssignmentRepository";
+export * from "./SubmissionRepository";
 export * from "./ClassRepository";
 export * from "./ClassStudentRepository";
 export * from "./ClassSubjectRepository";
@@ -14,6 +15,7 @@ export * from "./INotificationRepository";
 export * from "./IScheduleRepository";
 export * from "./ISessionRepository";
 export * from "./IStudentRepository";
+export * from "./ISubmissionRepository";
 export * from "./ISubjectRepository";
 export * from "./ITeacherRepository";
 export * from "./ITransactionManager";
