@@ -6,6 +6,7 @@ import {
 } from "@psb/shared/types";
 import {
     mockAssignmentRepository,
+    mockFileService,
     mockSubmissionRepository,
 } from "@test/mocks";
 
@@ -13,6 +14,7 @@ describe("SubmissionService (unit)", () => {
     const service = new SubmissionService(
         mockAssignmentRepository,
         mockSubmissionRepository,
+        mockFileService,
     );
 
     const mockTeacherAssignment: TeacherSubjectAssignment = {
@@ -84,6 +86,101 @@ describe("SubmissionService (unit)", () => {
             const result = await service.getSubmissions(1, 2);
 
             expect(result).toEqual([]);
+        });
+    });
+
+    describe("downloadSubmissions", () => {
+        const mockDownloadRows = [
+            {
+                studentName: "Reza Mouna Hendrian",
+                studentIdentifier: "0019217804",
+                attachmentName: "homework.pdf",
+                attachmentPath: "attachments/abc123.pdf",
+            },
+        ];
+
+        const mockZipBuffer = Buffer.from("zip content");
+
+        it("should throw NotFoundError when the teacher does not own the assignment", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue(
+                null,
+            );
+
+            await expect(service.downloadSubmissions(99, 2)).rejects.toThrow(
+                new NotFoundError("assignmentService.notFound"),
+            );
+
+            expect(
+                mockSubmissionRepository.getForAssignmentWithAttachments,
+            ).not.toHaveBeenCalled();
+
+            expect(mockFileService.createZipArchive).not.toHaveBeenCalled();
+        });
+
+        it("should call getForAssignmentWithAttachments and createZipArchive, and return the buffer", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue(
+                mockTeacherAssignment,
+            );
+
+            mockSubmissionRepository.getForAssignmentWithAttachments.mockResolvedValue(
+                mockDownloadRows,
+            );
+
+            mockFileService.createZipArchive.mockResolvedValue(mockZipBuffer);
+
+            const result = await service.downloadSubmissions(1, 2);
+
+            expect(
+                mockAssignmentRepository.getTeacherAssignment,
+            ).toHaveBeenCalledWith(1, 2);
+
+            expect(
+                mockSubmissionRepository.getForAssignmentWithAttachments,
+            ).toHaveBeenCalledWith(1, undefined);
+
+            expect(mockFileService.createZipArchive).toHaveBeenCalledWith([
+                {
+                    folder: "0019217804_Reza Mouna Hendrian",
+                    filename: "homework.pdf",
+                    path: "attachments/abc123.pdf",
+                },
+            ]);
+
+            expect(result).toBe(mockZipBuffer);
+        });
+
+        it("should pass studentId to getForAssignmentWithAttachments when provided", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue(
+                mockTeacherAssignment,
+            );
+
+            mockSubmissionRepository.getForAssignmentWithAttachments.mockResolvedValue(
+                mockDownloadRows,
+            );
+
+            mockFileService.createZipArchive.mockResolvedValue(mockZipBuffer);
+
+            await service.downloadSubmissions(1, 2, 3);
+
+            expect(
+                mockSubmissionRepository.getForAssignmentWithAttachments,
+            ).toHaveBeenCalledWith(1, 3);
+        });
+
+        it("should call createZipArchive with an empty array when there are no attachments", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue(
+                mockTeacherAssignment,
+            );
+
+            mockSubmissionRepository.getForAssignmentWithAttachments.mockResolvedValue(
+                [],
+            );
+
+            mockFileService.createZipArchive.mockResolvedValue(mockZipBuffer);
+
+            await service.downloadSubmissions(1, 2);
+
+            expect(mockFileService.createZipArchive).toHaveBeenCalledWith([]);
         });
     });
 });
