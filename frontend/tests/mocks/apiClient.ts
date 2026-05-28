@@ -124,6 +124,7 @@ export const mockSubjectAssignmentApiClient: Mocked<ISubjectAssignmentAPIClient>
 export const mockSubjectAssignmentSubmissionApiClient: Mocked<ISubjectAssignmentSubmissionAPIClient> =
     {
         getSubmissions: vi.fn(),
+        downloadSubmissions: vi.fn(),
     };
 
 /**
