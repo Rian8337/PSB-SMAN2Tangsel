@@ -7,7 +7,11 @@ import {
     students,
     users,
 } from "@psb/shared/schema";
-import { AssignmentSubmissionRow, DrizzleDb } from "@psb/shared/types";
+import {
+    AssignmentSubmissionRow,
+    DrizzleDb,
+    SubjectAssignmentSubmission,
+} from "@psb/shared/types";
 import { SQL, and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
@@ -89,5 +93,114 @@ export class SubmissionRepository
                 ),
             )
             .where(and(...conditions));
+    }
+
+    async getByStudent(
+        assignmentId: number,
+        studentId: number,
+    ): Promise<SubjectAssignmentSubmission | null> {
+        const rows = await this.db
+            .select({
+                id: assignmentSubmissions.id,
+                submittedAt: assignmentSubmissions.createdAt,
+                attachmentId: assignmentSubmissionAttachments.attachmentId,
+                attachmentName: attachments.name,
+            })
+            .from(assignmentSubmissions)
+            .leftJoin(
+                assignmentSubmissionAttachments,
+                eq(
+                    assignmentSubmissionAttachments.submissionId,
+                    assignmentSubmissions.id,
+                ),
+            )
+            .leftJoin(
+                attachments,
+                eq(
+                    assignmentSubmissionAttachments.attachmentId,
+                    attachments.id,
+                ),
+            )
+            .where(
+                and(
+                    eq(assignmentSubmissions.assignmentId, assignmentId),
+                    eq(assignmentSubmissions.studentId, studentId),
+                ),
+            );
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        const first = rows[0];
+
+        return {
+            id: first.id,
+            submittedAt: first.submittedAt.toISOString(),
+            attachments: rows
+                .filter((r) => r.attachmentId !== null)
+                .map((r) => ({
+                    id: r.attachmentId!,
+                    name: r.attachmentName!,
+                })),
+        };
+    }
+
+    async getAttachmentIds(submissionId: number): Promise<number[]> {
+        const rows = await this.db
+            .select({ attachmentId: assignmentSubmissionAttachments.attachmentId })
+            .from(assignmentSubmissionAttachments)
+            .where(eq(assignmentSubmissionAttachments.submissionId, submissionId));
+
+        return rows.map((r) => r.attachmentId);
+    }
+
+    async add(
+        assignmentId: number,
+        studentId: number,
+        attachmentIds: number[],
+    ): Promise<SubjectAssignmentSubmission> {
+        let insertedId!: number;
+
+        await this.db.transaction(async (tx) => {
+            const [result] = await tx
+                .insert(assignmentSubmissions)
+                .values({ assignmentId, studentId });
+
+            insertedId = result.insertId;
+
+            if (attachmentIds.length > 0) {
+                await tx.insert(assignmentSubmissionAttachments).values(
+                    attachmentIds.map((attachmentId) => ({
+                        submissionId: insertedId,
+                        attachmentId,
+                    })),
+                );
+            }
+        });
+
+        const submission = await this.getByStudent(assignmentId, studentId);
+
+        // The submission was just inserted, so it must exist.
+        return submission!;
+    }
+
+    async addAttachments(
+        submissionId: number,
+        attachmentIds: number[],
+    ): Promise<void> {
+        if (attachmentIds.length === 0) {
+            return;
+        }
+
+        await this.db.insert(assignmentSubmissionAttachments).values(
+            attachmentIds.map((attachmentId) => ({ submissionId, attachmentId })),
+        );
+    }
+
+    async delete(submissionId: number): Promise<void> {
+        await this.db
+            .delete(assignmentSubmissions)
+            .where(eq(assignmentSubmissions.id, submissionId));
     }
 }
