@@ -2,8 +2,8 @@ import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IConfigService } from "@/services/IConfigService";
 import { EnvironmentVariableKey } from "@/types";
-import { readFile } from "fs/promises";
-import { join } from "path";
+import { copyFile, mkdir, readFile, rename, unlink } from "fs/promises";
+import { dirname, join } from "path";
 import { inject } from "tsyringe";
 import { IFileRepository } from "./IFileRepository";
 
@@ -12,17 +12,51 @@ import { IFileRepository } from "./IFileRepository";
  */
 @Injectable(dependencyTokens.fileRepository)
 export class FileRepository implements IFileRepository {
+    private readonly storagePath: string;
+
     constructor(
         @inject(dependencyTokens.configService)
-        private readonly configService: IConfigService,
-    ) {}
-
-    async read(relativePath: string): Promise<Buffer> {
-        const storagePath = this.configService.getEnvironmentVariable(
+        configService: IConfigService,
+    ) {
+        this.storagePath = configService.getEnvironmentVariable(
             EnvironmentVariableKey.storagePath,
             true,
         );
+    }
 
-        return readFile(join(storagePath, relativePath));
+    async read(relativePath: string): Promise<Buffer> {
+        return readFile(join(this.storagePath, relativePath));
+    }
+
+    async saveFile(
+        sourcePath: string,
+        destRelativePath: string,
+    ): Promise<void> {
+        const dest = join(this.storagePath, destRelativePath);
+
+        await mkdir(dirname(dest), { recursive: true });
+        await copyFile(sourcePath, dest);
+    }
+
+    async rename(
+        oldRelativePath: string,
+        newRelativePath: string,
+    ): Promise<void> {
+        const { storagePath } = this;
+
+        await rename(
+            join(storagePath, oldRelativePath),
+            join(storagePath, newRelativePath),
+        );
+    }
+
+    async deleteFile(relativePath: string): Promise<void> {
+        try {
+            await unlink(join(this.storagePath, relativePath));
+        } catch (e) {
+            if ((e as NodeJS.ErrnoException).code !== "ENOENT") {
+                throw e;
+            }
+        }
     }
 }
