@@ -1,14 +1,15 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IAssignmentRepository, ISubmissionRepository } from "@/repositories";
-import { NotFoundError } from "@/types";
-import { AssignmentSubmissionRow } from "@psb/shared/types";
+import { ConflictError, NotFoundError } from "@/types";
+import { AssignmentSubmissionRow, SubjectAssignmentSubmission } from "@psb/shared/types";
 import { inject } from "tsyringe";
+import { IAttachmentService, TempFile } from "./IAttachmentService";
 import { IFileService, ZipEntry } from "./IFileService";
 import { ISubmissionService } from "./ISubmissionService";
 
 /**
- * A service that is responsible for handling operations related to viewing student submissions.
+ * A service that is responsible for handling operations related to student submissions.
  */
 @Injectable(dependencyTokens.submissionService)
 export class SubmissionService implements ISubmissionService {
@@ -17,6 +18,8 @@ export class SubmissionService implements ISubmissionService {
         private readonly assignmentRepository: IAssignmentRepository,
         @inject(dependencyTokens.submissionRepository)
         private readonly submissionRepository: ISubmissionRepository,
+        @inject(dependencyTokens.attachmentService)
+        private readonly attachmentService: IAttachmentService,
         @inject(dependencyTokens.fileService)
         private readonly fileService: IFileService,
     ) {}
@@ -71,5 +74,89 @@ export class SubmissionService implements ISubmissionService {
         );
 
         return this.fileService.createZipArchive(entries);
+    }
+
+    async addSubmission(
+        assignmentId: number,
+        studentId: number,
+        files: TempFile[],
+    ): Promise<SubjectAssignmentSubmission> {
+        const assignment = await this.assignmentRepository.getStudentAssignment(
+            assignmentId,
+            studentId,
+        );
+
+        if (!assignment) {
+            throw new NotFoundError("assignmentService.notFound");
+        }
+
+        const existing = await this.submissionRepository.getByStudent(
+            assignmentId,
+            studentId,
+        );
+
+        if (existing) {
+            throw new ConflictError("submissionService.alreadyExists");
+        }
+
+        const savedAttachments = await Promise.all(
+            files.map((file) => this.attachmentService.saveFile(file)),
+        );
+
+        return this.submissionRepository.add(
+            assignmentId,
+            studentId,
+            savedAttachments.map((a) => a.id),
+        );
+    }
+
+    async updateSubmission(
+        assignmentId: number,
+        studentId: number,
+        newFiles: TempFile[],
+        renamedAttachments: { id: number; newName: string }[],
+        deletedAttachmentIds: number[],
+    ): Promise<void> {
+        const submission = await this.submissionRepository.getByStudent(
+            assignmentId,
+            studentId,
+        );
+
+        if (!submission) {
+            throw new NotFoundError("submissionService.notFound");
+        }
+
+        await this.attachmentService.delete(deletedAttachmentIds);
+        await this.attachmentService.updateRenameAttachments(renamedAttachments);
+
+        const savedAttachments = await Promise.all(
+            newFiles.map((file) => this.attachmentService.saveFile(file)),
+        );
+
+        await this.submissionRepository.addAttachments(
+            submission.id,
+            savedAttachments.map((a) => a.id),
+        );
+    }
+
+    async deleteSubmission(
+        assignmentId: number,
+        studentId: number,
+    ): Promise<void> {
+        const submission = await this.submissionRepository.getByStudent(
+            assignmentId,
+            studentId,
+        );
+
+        if (!submission) {
+            throw new NotFoundError("submissionService.notFound");
+        }
+
+        const attachmentIds = await this.submissionRepository.getAttachmentIds(
+            submission.id,
+        );
+
+        await this.attachmentService.delete(attachmentIds);
+        await this.submissionRepository.delete(submission.id);
     }
 }

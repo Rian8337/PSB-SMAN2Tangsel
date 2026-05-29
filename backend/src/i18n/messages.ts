@@ -40,6 +40,15 @@ interface Localization {
         readonly notFound: string;
     };
 
+    readonly submission: {
+        readonly invalidId: string;
+    };
+
+    readonly submissionService: {
+        readonly notFound: string;
+        readonly alreadyExists: string;
+    };
+
     readonly material: {
         readonly invalidId: string;
         readonly invalidTitle: string;
@@ -174,6 +183,13 @@ export const messages = {
         assignmentService: {
             notFound: "Tugas tidak ditemukan.",
         },
+        submission: {
+            invalidId: "ID pengumpulan harus berupa bilangan bulat positif.",
+        },
+        submissionService: {
+            notFound: "Pengumpulan tidak ditemukan.",
+            alreadyExists: "Anda sudah mengumpulkan tugas ini.",
+        },
         material: {
             invalidId: "ID materi harus berupa bilangan bulat positif.",
             invalidTitle: "Judul materi tidak valid.",
@@ -299,6 +315,13 @@ export const messages = {
         },
         assignmentService: {
             notFound: "Assignment not found.",
+        },
+        submission: {
+            invalidId: "Submission ID must be a positive integer.",
+        },
+        submissionService: {
+            notFound: "Submission not found.",
+            alreadyExists: "You have already submitted this assignment.",
         },
         material: {
             invalidId: "Material ID must be a positive integer.",
