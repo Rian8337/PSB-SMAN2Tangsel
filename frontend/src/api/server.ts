@@ -1,26 +1,28 @@
 import { Locale } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { APIClient } from "./APIClient";
 import { AuthAPIClient } from "./AuthAPIClient";
+import { ClassAPIClient } from "./ClassAPIClient";
+import { ClassStudentAPIClient } from "./ClassStudentAPIClient";
+import { ClassSubjectAPIClient } from "./ClassSubjectAPIClient";
 import { IAuthAPIClient } from "./IAuthAPIClient";
+import { IClassAPIClient } from "./IClassAPIClient";
+import { IClassStudentAPIClient } from "./IClassStudentAPIClient";
+import { IClassSubjectAPIClient } from "./IClassSubjectAPIClient";
 import { INotificationAPIClient } from "./INotificationAPIClient";
 import { IScheduleAPIClient } from "./IScheduleAPIClient";
 import { ISessionAPIClient } from "./ISessionAPIClient";
+import { ISubjectAPIClient } from "./ISubjectAPIClient";
+import { ISubjectDashboardAPIClient } from "./ISubjectDashboardAPIClient";
+import { ISubjectMaterialAPIClient } from "./ISubjectMaterialAPIClient";
 import { IUserAPIClient } from "./IUserAPIClient";
 import { NotificationAPIClient } from "./NotificationAPIClient";
 import { ScheduleAPIClient } from "./ScheduleAPIClient";
 import { SessionAPIClient } from "./SessionAPIClient";
-import { UserAPIClient } from "./UserAPIClient";
 import { SubjectAPIClient } from "./SubjectAPIClient";
-import { ISubjectAPIClient } from "./ISubjectAPIClient";
 import { SubjectDashboardAPIClient } from "./SubjectDashboardAPIClient";
-import { ISubjectDashboardAPIClient } from "./ISubjectDashboardAPIClient";
-import { APIClient } from "./APIClient";
-import { ClassAPIClient } from "./ClassAPIClient";
-import { IClassAPIClient } from "./IClassAPIClient";
-import { IClassSubjectAPIClient } from "./IClassSubjectAPIClient";
-import { ClassSubjectAPIClient } from "./ClassSubjectAPIClient";
-import { ClassStudentAPIClient } from "./ClassStudentAPIClient";
-import { IClassStudentAPIClient } from "./IClassStudentAPIClient";
+import { SubjectMaterialAPIClient } from "./SubjectMaterialAPIClient";
+import { UserAPIClient } from "./UserAPIClient";
 
 /**
  * Server-side factory to retrieve an {@link IAuthAPIClient}.
@@ -137,6 +139,19 @@ export async function getServerSubjectDashboardApiClient(
     locale?: Locale,
 ): Promise<ISubjectDashboardAPIClient> {
     return initializeClient(SubjectDashboardAPIClient, locale);
+}
+
+/**
+ * Server-side factory to retrieve an {@link ISubjectMaterialAPIClient}.
+ *
+ * @param locale Optional locale to initialize the client with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link ISubjectMaterialAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerSubjectMaterialApiClient(
+    locale?: Locale,
+): Promise<ISubjectMaterialAPIClient> {
+    return initializeClient(SubjectMaterialAPIClient, locale);
 }
 
 /**

@@ -132,6 +132,9 @@ export const mockSubjectAssignmentSubmissionApiClient: Mocked<ISubjectAssignment
  */
 export const mockSubjectMaterialApiClient: Mocked<ISubjectMaterialAPIClient> = {
     getMaterial: vi.fn(),
+    createMaterial: vi.fn(),
+    updateMaterial: vi.fn(),
+    deleteMaterial: vi.fn(),
 };
 
 /**
