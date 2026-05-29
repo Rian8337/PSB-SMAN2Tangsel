@@ -1,7 +1,31 @@
 import { test as base } from "@playwright/test";
 import { execSync, spawn } from "child_process";
+import { createServer } from "net";
 import { createConnection } from "mysql2/promise";
 import { createTestDatabaseManager } from "./utils/db";
+
+/**
+ * Asks the OS for a free TCP port by binding a temporary server to port 0. The OS atomically assigns
+ * an available ephemeral port, eliminating the race condition present in probe-then-bind approaches.
+ */
+function findFreePort(): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const server = createServer();
+
+        server.listen(0, "127.0.0.1", () => {
+            const address = server.address();
+
+            const port =
+                typeof address === "object" && address ? address.port : 0;
+
+            server.close(() => {
+                resolve(port);
+            });
+        });
+
+        server.on("error", reject);
+    });
+}
 
 const STARTUP_RETRY_COUNT = 30;
 const STARTUP_RETRY_DELAY_MS = 500;
@@ -46,8 +70,10 @@ export const test = base.extend<{}, WorkerFixture>({
         async ({}, use, workerInfo) => {
             // Setup separate database and server instances for each worker when worker DB mode is enabled.
             const workerId = workerInfo.workerIndex;
-            const backendPort = 4000 + workerId;
-            const frontendPort = 3000 + workerId;
+            const [backendPort, frontendPort] = await Promise.all([
+                findFreePort(),
+                findFreePort(),
+            ]);
             const baseDbName = process.env.DB_NAME;
 
             if (!baseDbName) {
