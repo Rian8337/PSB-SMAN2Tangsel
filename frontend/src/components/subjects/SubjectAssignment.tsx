@@ -25,6 +25,28 @@ import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
 
+function buildVisibilityFormData(
+    assignment: TeacherSubjectAssignment,
+): FormData {
+    const formData = new FormData();
+
+    formData.append("title", assignment.title);
+    formData.append("description", assignment.description ?? "");
+
+    formData.append(
+        "dueAt",
+        assignment.dueAt
+            ? new Date(assignment.dueAt).toISOString().slice(0, 16)
+            : "",
+    );
+
+    formData.append("visible", (!assignment.visible).toString());
+    formData.append("deletedAttachmentIds", JSON.stringify([]));
+    formData.append("renamedAttachments", JSON.stringify([]));
+
+    return formData;
+}
+
 export interface SubjectAssignmentProps {
     readonly assignmentId: number;
     readonly classSubjectId: number;
@@ -43,10 +65,14 @@ export function SubjectAssignment({
     const [assignment, setAssignment] = useState<
         StudentSubjectAssignment | TeacherSubjectAssignment | null
     >(null);
+
     const [isLoading, setIsLoading] = useState(true);
 
     const isStudent = role === UserRole.student;
     const backButtonUrl = `/subjects/${classSubjectId.toString()}`;
+
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
 
     const fetchAssignment = useCallback(
         async (signal?: AbortSignal) => {
@@ -247,11 +273,53 @@ export function SubjectAssignment({
 
                 {!isStudent && teacherAssignment && (
                     <HStack gap={2} mt={4}>
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                router.push(
+                                    `/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/edit`,
+                                );
+                            }}
+                        >
                             {t("editAssignment")}
                         </Button>
 
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            loading={isDeleting}
+                            onClick={() => {
+                                if (
+                                    !window.confirm(t("deleteAssignment") + "?")
+                                ) {
+                                    return;
+                                }
+
+                                setIsDeleting(true);
+
+                                apiClient
+                                    .deleteAssignment(assignmentId)
+                                    .then(() => {
+                                        toaster.create({
+                                            title: t("deleteAssignment"),
+                                            type: "success",
+                                        });
+
+                                        router.push(backButtonUrl);
+                                    })
+                                    .catch(() => {
+                                        toaster.create({
+                                            title: t("deleteAssignment"),
+                                            description: t("fetchErrorMessage"),
+                                            type: "error",
+                                        });
+                                    })
+                                    .finally(() => {
+                                        setIsDeleting(false);
+                                    });
+                            }}
+                        >
                             {t("deleteAssignment")}
                         </Button>
 
@@ -267,7 +335,35 @@ export function SubjectAssignment({
                             {t("studentSubmissions")}
                         </Button>
 
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            loading={isTogglingVisibility}
+                            onClick={() => {
+                                setIsTogglingVisibility(true);
+
+                                apiClient
+                                    .updateAssignment(
+                                        assignmentId,
+                                        buildVisibilityFormData(
+                                            teacherAssignment,
+                                        ),
+                                    )
+                                    .then(() => {
+                                        void fetchAssignment();
+                                    })
+                                    .catch(() => {
+                                        toaster.create({
+                                            title: t("fetchErrorTitle"),
+                                            description: t("fetchErrorMessage"),
+                                            type: "error",
+                                        });
+                                    })
+                                    .finally(() => {
+                                        setIsTogglingVisibility(false);
+                                    });
+                            }}
+                        >
                             {teacherAssignment.visible
                                 ? t("hideFromStudents")
                                 : t("showToStudents")}
