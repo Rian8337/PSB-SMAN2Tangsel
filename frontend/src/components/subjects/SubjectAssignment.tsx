@@ -3,13 +3,13 @@
 import { backendBaseUrl } from "@/api/backendBaseUrl";
 import { useRouter } from "@/i18n/navigation";
 import { useSubjectAssignmentApiClient } from "@/providers/api/subject-assignment-api-provider";
+import { useSubjectAssignmentSubmissionApiClient } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
     Box,
     Button,
     Flex,
     HStack,
     Heading,
-    Input,
     Separator,
     Spinner,
     Text,
@@ -24,6 +24,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
+import { ManageAssignmentSubmissionForm } from "./ManageAssignmentSubmissionForm";
 
 function buildVisibilityFormData(
     assignment: TeacherSubjectAssignment,
@@ -60,6 +61,7 @@ export function SubjectAssignment({
 }: SubjectAssignmentProps) {
     const t = useTranslations("SubjectAssignment");
     const apiClient = useSubjectAssignmentApiClient();
+    const submissionApiClient = useSubjectAssignmentSubmissionApiClient();
 
     const locale = useLocale();
     const router = useRouter();
@@ -75,6 +77,8 @@ export function SubjectAssignment({
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
 
     const fetchAssignment = useCallback(
         async (signal?: AbortSignal) => {
@@ -231,60 +235,121 @@ export function SubjectAssignment({
                         </Heading>
 
                         {studentAssignment.submission ? (
-                            <>
-                                <Flex direction="column" gap={2} mb={3}>
-                                    {studentAssignment.submission.attachments.map(
-                                        (attachment) => (
-                                            <Flex
-                                                key={attachment.id}
-                                                align="center"
-                                                gap={2}
-                                            >
-                                                <FileText size={18} />
-                                                <Text color="blue.500">
-                                                    {attachment.name}
-                                                </Text>
-                                            </Flex>
-                                        ),
-                                    )}
-                                </Flex>
-
-                                <Text
-                                    fontWeight="bold"
-                                    color="green.500"
-                                    mb={4}
-                                >
-                                    {t("submittedAt")}{" "}
-                                    {new Date(
+                            isEditing ? (
+                                <ManageAssignmentSubmissionForm
+                                    assignmentId={assignmentId}
+                                    submission={
                                         studentAssignment.submission
-                                            .submittedAt,
-                                    ).toLocaleString()}
-                                </Text>
-
-                                <HStack gap={2}>
-                                    <Button variant="outline" size="sm">
-                                        {t("editButton")}
-                                    </Button>
-
-                                    <Button variant="outline" size="sm">
-                                        {t("removeButton")}
-                                    </Button>
-                                </HStack>
-                            </>
-                        ) : (
-                            <Flex direction="column" gap={3} mt={2}>
-                                <Input
-                                    type="file"
-                                    multiple
-                                    aria-label={t("uploadLabel")}
+                                    }
+                                    onSuccess={() => {
+                                        setIsEditing(false);
+                                        void fetchAssignment();
+                                    }}
+                                    onCancel={() => {
+                                        setIsEditing(false);
+                                    }}
                                 />
+                            ) : (
+                                <>
+                                    <Flex direction="column" gap={2} mb={3}>
+                                        {studentAssignment.submission.attachments.map(
+                                            (attachment) => (
+                                                <Flex
+                                                    key={attachment.id}
+                                                    align="center"
+                                                    gap={2}
+                                                >
+                                                    <FileText size={18} />
+                                                    <Text color="blue.500">
+                                                        {attachment.name}
+                                                    </Text>
+                                                </Flex>
+                                            ),
+                                        )}
+                                    </Flex>
 
-                                <Box>
-                                    <Button variant="outline" size="sm">
-                                        {t("submitButton")}
-                                    </Button>
-                                </Box>
-                            </Flex>
+                                    <Text
+                                        fontWeight="bold"
+                                        color="green.500"
+                                        mb={4}
+                                    >
+                                        {t("submittedAt")}{" "}
+                                        {new Date(
+                                            studentAssignment.submission
+                                                .submittedAt,
+                                        ).toLocaleString()}
+                                    </Text>
+
+                                    <HStack gap={2}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => {
+                                                setIsEditing(true);
+                                            }}
+                                        >
+                                            {t("editButton")}
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            loading={isRemoving}
+                                            onClick={() => {
+                                                if (
+                                                    !window.confirm(
+                                                        t(
+                                                            "confirmRemoveMessage",
+                                                        ),
+                                                    )
+                                                ) {
+                                                    return;
+                                                }
+
+                                                setIsRemoving(true);
+
+                                                submissionApiClient
+                                                    .deleteSubmission(
+                                                        assignmentId,
+                                                    )
+                                                    .then(() => {
+                                                        toaster.create({
+                                                            title: t(
+                                                                "removeSuccessTitle",
+                                                            ),
+                                                            type: "success",
+                                                        });
+
+                                                        void fetchAssignment();
+                                                    })
+                                                    .catch(() => {
+                                                        toaster.create({
+                                                            title: t(
+                                                                "removeErrorTitle",
+                                                            ),
+                                                            description: t(
+                                                                "removeErrorMessage",
+                                                            ),
+                                                            type: "error",
+                                                        });
+                                                    })
+                                                    .finally(() => {
+                                                        setIsRemoving(false);
+                                                    });
+                                            }}
+                                        >
+                                            {t("removeButton")}
+                                        </Button>
+                                    </HStack>
+                                </>
+                            )
+                        ) : (
+                            <ManageAssignmentSubmissionForm
+                                assignmentId={assignmentId}
+                                onSuccess={() => {
+                                    void fetchAssignment();
+                                }}
+                            />
                         )}
                     </>
                 )}
