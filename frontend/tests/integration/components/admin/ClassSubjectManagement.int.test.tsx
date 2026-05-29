@@ -25,11 +25,13 @@ const mockAssignments: ClassSubjectAssignment[] = [
         id: 10,
         subject: { id: 101, code: "MTK1", name: "Matematika" },
         teacher: { id: 5, name: "Budi Santoso" },
+        class: { id: 1, name: "X IPA 1" },
     },
     {
         id: 11,
         subject: { id: 102, code: "FIS1", name: "Fisika" },
         teacher: null,
+        class: { id: 1, name: "X IPA 1" },
     },
 ];
 
