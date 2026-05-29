@@ -544,6 +544,24 @@
     "fetchErrorTitle": "Gagal memuat materi",
     "fetchErrorMessage": "Terjadi kesalahan saat memuat materi. Silakan coba lagi."
   },
+  "ManageAssignmentForm": {
+    "titleLabel": "Judul",
+    "descriptionLabel": "Deskripsi",
+    "dueAtLabel": "Batas waktu",
+    "visibleLabel": "Tampilkan ke siswa",
+    "attachmentsLabel": "Lampiran",
+    "noAttachments": "Tidak ada lampiran.",
+    "addFilesLabel": "Tambah file",
+    "renameLabel": "Ubah nama",
+    "deleteAttachmentLabel": "Hapus",
+    "submitCreate": "Buat",
+    "submitEdit": "Simpan",
+    "cancelButton": "Batal",
+    "createSuccessTitle": "Tugas berhasil dibuat",
+    "editSuccessTitle": "Tugas berhasil diperbarui",
+    "createErrorTitle": "Gagal membuat tugas",
+    "editErrorTitle": "Gagal memperbarui tugas"
+  },
   "SubjectDashboard": {
     "materials": "Materi",
     "assignments": "Tugas",

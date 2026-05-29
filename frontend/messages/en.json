@@ -547,6 +547,24 @@
     "fetchErrorTitle": "Failed to load material",
     "fetchErrorMessage": "An error occurred while loading the material. Please try again."
   },
+  "ManageAssignmentForm": {
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "dueAtLabel": "Due date",
+    "visibleLabel": "Show to students",
+    "attachmentsLabel": "Attachments",
+    "noAttachments": "No attachments.",
+    "addFilesLabel": "Add files",
+    "renameLabel": "Rename",
+    "deleteAttachmentLabel": "Delete",
+    "submitCreate": "Create",
+    "submitEdit": "Save",
+    "cancelButton": "Cancel",
+    "createSuccessTitle": "Assignment created",
+    "editSuccessTitle": "Assignment updated",
+    "createErrorTitle": "Failed to create assignment",
+    "editErrorTitle": "Failed to update assignment"
+  },
   "SubjectDashboard": {
     "materials": "Materials",
     "assignments": "Assignments",
