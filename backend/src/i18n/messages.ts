@@ -31,6 +31,9 @@ interface Localization {
 
     readonly assignment: {
         readonly invalidId: string;
+        readonly invalidTitle: string;
+        readonly invalidClassSubjectId: string;
+        readonly invalidDueAt: string;
     };
 
     readonly assignmentService: {
@@ -164,6 +167,9 @@ export const messages = {
         },
         assignment: {
             invalidId: "ID tugas harus berupa bilangan bulat positif.",
+            invalidTitle: "Judul tugas tidak valid.",
+            invalidClassSubjectId: "ID mata pelajaran kelas tidak valid.",
+            invalidDueAt: "Tanggal tenggat waktu tidak valid.",
         },
         assignmentService: {
             notFound: "Tugas tidak ditemukan.",
@@ -287,6 +293,9 @@ export const messages = {
         },
         assignment: {
             invalidId: "Assignment ID must be a positive integer.",
+            invalidTitle: "Assignment title is invalid.",
+            invalidClassSubjectId: "Class subject ID is invalid.",
+            invalidDueAt: "Due date is invalid.",
         },
         assignmentService: {
             notFound: "Assignment not found.",
