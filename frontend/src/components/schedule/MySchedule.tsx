@@ -47,7 +47,7 @@ export function MySchedule({ schedules }: MyScheduleClientViewProps) {
 
     return (
         <>
-            <PageHeader title={tMy("title")} />
+            <PageHeader title={tMy("title")} backButtonUrl="/dashboard" />
 
             <Box flex={1} p={8} overflowY="auto">
                 <Box mb={4}>
