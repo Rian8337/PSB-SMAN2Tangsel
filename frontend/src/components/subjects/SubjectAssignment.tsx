@@ -20,7 +20,7 @@ import {
     UserRole,
 } from "@psb/shared/types";
 import { FileText } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
@@ -60,6 +60,8 @@ export function SubjectAssignment({
 }: SubjectAssignmentProps) {
     const t = useTranslations("SubjectAssignment");
     const apiClient = useSubjectAssignmentApiClient();
+
+    const locale = useLocale();
     const router = useRouter();
 
     const [assignment, setAssignment] = useState<
@@ -191,16 +193,32 @@ export function SubjectAssignment({
                 <Text fontSize="sm" color="gray.500">
                     {t("createdAt")}{" "}
                     {assignment
-                        ? new Date(assignment.createdAt).toLocaleDateString()
+                        ? new Date(assignment.createdAt).toLocaleDateString(
+                              locale,
+                              {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              },
+                          )
                         : ""}
                 </Text>
 
                 <Text fontSize="sm" color="gray.500" mb={isStudent ? 0 : 4}>
                     {t("lastUpdatedAt")}{" "}
                     {assignment
-                        ? new Date(
-                              assignment.lastUpdatedAt,
-                          ).toLocaleDateString()
+                        ? new Date(assignment.lastUpdatedAt).toLocaleDateString(
+                              locale,
+                              {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              },
+                          )
                         : ""}
                 </Text>
 
