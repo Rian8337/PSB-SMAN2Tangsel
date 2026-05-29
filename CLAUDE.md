@@ -138,7 +138,7 @@ After changing localizations in the frontend, run `pnpm typegen` to regenerate t
 When implementing a new use case, use the following base steps (you can add more if needed):
 
 1. Design DTOs to be shared between the backend and frontend, add to `packages/shared` shared package.
-2. Build shared package (`pnpm build-shared`) to update shared package artifacts.
+2. Build shared package (`pnpm build-shared`) to update shared package artifacts. When you do this, VS Code's ESLint server may have outdated cache, so its warnings may be incorrect. You may restart its server after the build.
 3. Implement backend components (controllers, services, repositories, localizations, validators, types, and dependency injection).
 4. Build backend components (`pnpm --filter backend build`).
 5. Implement/modify backend unit tests for new endpoints in controllers and new behaviors in services. See existing tests for examples.
