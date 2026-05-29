@@ -612,7 +612,7 @@
         "placeholder": "Masukkan nama mata pelajaran"
       },
       "active": {
-        "label": "Aktifkan Mata Pelajaran Ini"
+        "label": "Aktif"
       }
     },
     "title": "Manajemen Mata Pelajaran",
