@@ -50,4 +50,92 @@ describe("SubjectMaterialAPIClient (unit)", () => {
             expect(options?.signal).toBe(controller.signal);
         });
     });
+
+    describe("createMaterial", () => {
+        it("should send a POST request to /materials and return the created material", async () => {
+            const formData = new FormData();
+            formData.append("title", "New Material");
+
+            const result = await client.createMaterial(formData);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/materials");
+            expect(urlStr).not.toMatch(/\/materials\/\d/);
+            expect(options?.method).toBe("POST");
+            expect(options?.body).toBe(formData);
+
+            expect(result).toEqual(mockMaterial);
+        });
+
+        it("should pass the AbortSignal when provided", async () => {
+            const controller = new AbortController();
+
+            await client.createMaterial(new FormData(), controller.signal);
+
+            const [, options] = fetchSpy.mock.calls[0];
+            expect(options?.signal).toBe(controller.signal);
+        });
+    });
+
+    describe("updateMaterial", () => {
+        beforeEach(() => {
+            fetchSpy.mockResolvedValue({ ok: true } as Response);
+        });
+
+        it("should send a PUT request to /materials/:id", async () => {
+            const formData = new FormData();
+            formData.append("title", "Updated");
+
+            await client.updateMaterial(7, formData);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/materials/7");
+            expect(options?.method).toBe("PUT");
+            expect(options?.body).toBe(formData);
+        });
+
+        it("should pass the AbortSignal when provided", async () => {
+            const controller = new AbortController();
+
+            await client.updateMaterial(7, new FormData(), controller.signal);
+
+            const [, options] = fetchSpy.mock.calls[0];
+            expect(options?.signal).toBe(controller.signal);
+        });
+    });
+
+    describe("deleteMaterial", () => {
+        beforeEach(() => {
+            fetchSpy.mockResolvedValue({ ok: true } as Response);
+        });
+
+        it("should send a DELETE request to /materials/:id", async () => {
+            await client.deleteMaterial(3);
+
+            expect(fetchSpy).toHaveBeenCalledOnce();
+
+            const [url, options] = fetchSpy.mock.calls[0];
+            const urlStr = (url as URL | string).toString();
+
+            expect(urlStr).toContain("/materials/3");
+            expect(options?.method).toBe("DELETE");
+        });
+
+        it("should pass the AbortSignal when provided", async () => {
+            const controller = new AbortController();
+
+            await client.deleteMaterial(3, controller.signal);
+
+            const [, options] = fetchSpy.mock.calls[0];
+            expect(options?.signal).toBe(controller.signal);
+        });
+    });
 });
