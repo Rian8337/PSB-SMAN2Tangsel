@@ -12,10 +12,17 @@ import { IFileRepository } from "./IFileRepository";
  */
 @Injectable(dependencyTokens.fileRepository)
 export class FileRepository implements IFileRepository {
+    private readonly storagePath: string;
+
     constructor(
         @inject(dependencyTokens.configService)
-        private readonly configService: IConfigService,
-    ) {}
+        configService: IConfigService,
+    ) {
+        this.storagePath = configService.getEnvironmentVariable(
+            EnvironmentVariableKey.storagePath,
+            true,
+        );
+    }
 
     async read(relativePath: string): Promise<Buffer> {
         return readFile(join(this.storagePath, relativePath));
@@ -51,12 +58,5 @@ export class FileRepository implements IFileRepository {
                 throw e;
             }
         }
-    }
-
-    private get storagePath() {
-        return this.configService.getEnvironmentVariable(
-            EnvironmentVariableKey.storagePath,
-            true,
-        );
     }
 }
