@@ -374,4 +374,21 @@ export class ClassSubjectRepository
             assignments: assignmentRows,
         };
     }
+
+    async getTeacherClassSubject(
+        classSubjectId: number,
+        teacherId: number,
+    ): Promise<{ id: number; classId: number } | null> {
+        return this.db
+            .select({ id: classSubjects.id, classId: classSubjects.classId })
+            .from(classSubjects)
+            .where(
+                and(
+                    eq(classSubjects.id, classSubjectId),
+                    eq(classSubjects.teacherId, teacherId),
+                ),
+            )
+            .limit(1)
+            .then((res) => res.at(0) ?? null);
+    }
 }
