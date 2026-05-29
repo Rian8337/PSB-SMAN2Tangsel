@@ -205,7 +205,15 @@ export function SubjectDashboard({
                         </Text>
 
                         {isTeacher && (
-                            <Button variant="outline" size="sm">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    router.push(
+                                        `/subjects/${classSubjectId.toString()}/assignments/create`,
+                                    );
+                                }}
+                            >
                                 {t("addAssignment")}
                             </Button>
                         )}
