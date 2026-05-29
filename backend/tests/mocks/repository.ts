@@ -188,6 +188,11 @@ export const mockAssignmentRepository: Mocked<IAssignmentRepository> = {
     getTeacherAssignment: vi.fn(),
     getStudentAttachment: vi.fn(),
     getTeacherAttachment: vi.fn(),
+    addAssignment: vi.fn(),
+    updateAssignment: vi.fn(),
+    deleteAssignment: vi.fn(),
+    getAssignmentAttachmentIds: vi.fn(),
+    getSubmissionAttachmentIds: vi.fn(),
 };
 
 /**
