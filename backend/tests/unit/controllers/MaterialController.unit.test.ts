@@ -34,17 +34,16 @@ describe("MaterialController (unit)", () => {
         attachments: [{ id: 1, name: "buku.pdf" }],
     };
 
-    const createMockRequest = createMockRequestFactory<
-        { id: string },
-        SubjectMaterial
-    >();
-
     beforeEach(() => {
         res = createMockResponse();
-        vi.clearAllMocks();
     });
 
     describe("getMaterial", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            SubjectMaterial
+        >();
+
         it("should return 401 if no session is present", async () => {
             const req = createMockRequest({ params: { id: "1" } });
 
@@ -155,14 +154,218 @@ describe("MaterialController (unit)", () => {
         });
     });
 
+    describe("createMaterial", () => {
+        const createMockRequest = createMockRequestFactory<
+            Record<string, never>,
+            SubjectMaterial,
+            Record<string, unknown>
+        >();
+
+        it("should return 401 if no session is present", async () => {
+            const req = createMockRequest({ body: {} });
+
+            await controller.createMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(mockMaterialService.addMaterial).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when classSubjectId is missing", async () => {
+            const req = createMockRequest({
+                body: { title: "Title" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.createMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 400 when title is empty", async () => {
+            const req = createMockRequest({
+                body: { classSubjectId: "1", title: "" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.createMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 201 with the created material on success", async () => {
+            const mockMaterial: SubjectMaterial = {
+                id: 5,
+                classSubjectId: 1,
+                subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
+                title: "New Material",
+                description: null,
+                visible: false,
+                createdAt: "2024-01-01T00:00:00.000Z",
+                lastUpdatedAt: "2024-01-01T00:00:00.000Z",
+                attachments: [],
+            };
+            mockMaterialService.addMaterial.mockResolvedValue(mockMaterial);
+
+            const req = createMockRequest({
+                body: {
+                    classSubjectId: "1",
+                    title: "New Material",
+                    visible: "false",
+                },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.createMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith(mockMaterial);
+        });
+    });
+
+    describe("updateMaterial", () => {
+        const createMockRequest = createMockRequestFactory<
+            { id: string },
+            unknown,
+            Record<string, unknown>
+        >();
+
+        it("should return 401 if no session is present", async () => {
+            const req = createMockRequest({ params: { id: "1" }, body: {} });
+
+            await controller.updateMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+        });
+
+        it("should return 400 for an invalid ID", async () => {
+            const req = createMockRequest({
+                params: { id: "abc" },
+                body: { title: "Title" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.updateMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 400 when title is missing", async () => {
+            const req = createMockRequest({
+                params: { id: "1" },
+                body: {},
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.updateMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 200 on success", async () => {
+            mockMaterialService.updateMaterial.mockResolvedValue(undefined);
+
+            const req = createMockRequest({
+                params: { id: "1" },
+                body: { title: "Updated Title", visible: "true" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.updateMaterial(req, res);
+
+            expect(mockMaterialService.updateMaterial).toHaveBeenCalledWith(
+                1,
+                2,
+                "Updated Title",
+                null,
+                true,
+                [],
+                [],
+                [],
+            );
+            expect(res.sendStatus).toHaveBeenCalledWith(200);
+        });
+    });
+
+    describe("deleteMaterial", () => {
+        const createMockRequest = createMockRequestFactory<{ id: string }>();
+
+        it("should return 401 if no session is present", async () => {
+            const req = createMockRequest({ params: { id: "1" } });
+
+            await controller.deleteMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+        });
+
+        it("should return 400 for an invalid ID", async () => {
+            const req = createMockRequest({
+                params: { id: "abc" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.deleteMaterial(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it("should return 204 on success", async () => {
+            mockMaterialService.deleteMaterial.mockResolvedValue(undefined);
+
+            const req = createMockRequest({
+                params: { id: "1" },
+                sessionData: {
+                    userId: 2,
+                    identifier: "2",
+                    role: UserRole.teacher,
+                },
+            });
+
+            await controller.deleteMaterial(req, res);
+
+            expect(mockMaterialService.deleteMaterial).toHaveBeenCalledWith(
+                1,
+                2,
+            );
+            expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+    });
+
     describe("downloadAttachment", () => {
-        const createDownloadRequest = createMockRequestFactory<{
+        const createMockRequest = createMockRequestFactory<{
             materialId: string;
             attachmentId: string;
         }>();
 
         it("should return 401 if no session is present", async () => {
-            const req = createDownloadRequest({
+            const req = createMockRequest({
                 params: { materialId: "1", attachmentId: "1" },
             });
 
@@ -179,7 +382,7 @@ describe("MaterialController (unit)", () => {
         ])(
             "should return 400 for invalid IDs: materialId=$materialId, attachmentId=$attachmentId",
             async ({ materialId, attachmentId }) => {
-                const req = createDownloadRequest({
+                const req = createMockRequest({
                     params: { materialId, attachmentId },
                     sessionData: {
                         userId: 3,
@@ -195,7 +398,7 @@ describe("MaterialController (unit)", () => {
         );
 
         it("should return 403 for an administrator session", async () => {
-            const req = createDownloadRequest({
+            const req = createMockRequest({
                 params: { materialId: "1", attachmentId: "1" },
                 sessionData: {
                     userId: 1,
@@ -225,7 +428,7 @@ describe("MaterialController (unit)", () => {
                 pipe: mockPipe,
             });
 
-            const req = createDownloadRequest({
+            const req = createMockRequest({
                 params: { materialId: "1", attachmentId: "1" },
                 sessionData: {
                     userId: 3,
@@ -281,7 +484,7 @@ describe("MaterialController (unit)", () => {
                 }),
             });
 
-            const req = createDownloadRequest({
+            const req = createMockRequest({
                 params: { materialId: "1", attachmentId: "1" },
                 sessionData: {
                     userId: 3,
