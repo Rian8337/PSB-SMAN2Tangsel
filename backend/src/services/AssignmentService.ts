@@ -8,7 +8,7 @@ import {
 } from "@psb/shared/types";
 import { inject } from "tsyringe";
 import { IAssignmentService } from "./IAssignmentService";
-import { IAttachmentService, TempFile } from "./IAttachmentService";
+import { IAttachmentService } from "./IAttachmentService";
 import { INotificationService } from "./INotificationService";
 
 /**
@@ -95,15 +95,15 @@ export class AssignmentService implements IAssignmentService {
         return attachment;
     }
 
-    async addAssignment(
-        classSubjectId: number,
-        teacherId: number,
-        title: string,
-        description: string | null,
-        dueAt: Date | null,
-        visible: boolean,
-        files: TempFile[],
-    ): Promise<TeacherSubjectAssignment> {
+    async addAssignment({
+        classSubjectId,
+        teacherId,
+        title,
+        description,
+        dueAt,
+        visible,
+        files,
+    }: Parameters<IAssignmentService["addAssignment"]>[0]): Promise<TeacherSubjectAssignment> {
         const classSubject =
             await this.classSubjectRepository.getTeacherClassSubject(
                 classSubjectId,
@@ -137,17 +137,17 @@ export class AssignmentService implements IAssignmentService {
         return assignment;
     }
 
-    async updateAssignment(
-        assignmentId: number,
-        teacherId: number,
-        title: string,
-        description: string | null,
-        dueAt: Date | null,
-        visible: boolean,
-        newFiles: TempFile[],
-        renamedAttachments: { id: number; newName: string }[],
-        deletedAttachmentIds: number[],
-    ): Promise<void> {
+    async updateAssignment({
+        assignmentId,
+        teacherId,
+        title,
+        description,
+        dueAt,
+        visible,
+        newFiles,
+        renamedAttachments,
+        deletedAttachmentIds,
+    }: Parameters<IAssignmentService["updateAssignment"]>[0]): Promise<void> {
         const existing = await this.assignmentRepository.getTeacherAssignment(
             assignmentId,
             teacherId,

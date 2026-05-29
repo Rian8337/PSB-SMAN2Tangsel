@@ -129,15 +129,15 @@ export class AssignmentController extends BaseController {
 
             const files = this.normalizeFiles(req.body.files);
 
-            const assignment = await this.assignmentService.addAssignment(
-                parsed.data.classSubjectId,
-                req.sessionData.userId,
-                parsed.data.title,
-                parsed.data.description ?? null,
-                parsed.data.dueAt,
-                parsed.data.visible,
+            const assignment = await this.assignmentService.addAssignment({
+                classSubjectId: parsed.data.classSubjectId,
+                teacherId: req.sessionData.userId,
+                title: parsed.data.title,
+                description: parsed.data.description ?? null,
+                dueAt: parsed.data.dueAt,
+                visible: parsed.data.visible,
                 files,
-            );
+            });
 
             res.status(201).json(assignment);
         } catch (e) {
@@ -179,17 +179,17 @@ export class AssignmentController extends BaseController {
 
             const files = this.normalizeFiles(req.body.files);
 
-            await this.assignmentService.updateAssignment(
-                parsedId.data,
-                req.sessionData.userId,
-                parsed.data.title,
-                parsed.data.description ?? null,
-                parsed.data.dueAt,
-                parsed.data.visible,
-                files,
-                parsed.data.renamedAttachments,
-                parsed.data.deletedAttachmentIds,
-            );
+            await this.assignmentService.updateAssignment({
+                assignmentId: parsedId.data,
+                teacherId: req.sessionData.userId,
+                title: parsed.data.title,
+                description: parsed.data.description ?? null,
+                dueAt: parsed.data.dueAt,
+                visible: parsed.data.visible,
+                newFiles: files,
+                renamedAttachments: parsed.data.renamedAttachments,
+                deletedAttachmentIds: parsed.data.deletedAttachmentIds,
+            });
 
             res.sendStatus(200);
         } catch (e) {
