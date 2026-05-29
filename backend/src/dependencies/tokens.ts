@@ -19,6 +19,7 @@ import {
 } from "@/repositories";
 import {
     IAssignmentService,
+    IAttachmentService,
     IAuthService,
     IClassService,
     IClassStudentService,
@@ -176,6 +177,13 @@ export const dependencyTokens = {
     assignmentService: Symbol.for(
         "assignmentService",
     ) as InjectionToken<IAssignmentService>,
+
+    /**
+     * Injection token for an {@link IAttachmentService}.
+     */
+    attachmentService: Symbol.for(
+        "attachmentService",
+    ) as InjectionToken<IAttachmentService>,
 
     /**
      * Injection token for an {@link IAuthService}.
