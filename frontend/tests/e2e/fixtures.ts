@@ -116,6 +116,7 @@ export const test = base.extend<{}, WorkerFixture>({
                     CORS_ORIGINS: `http://127.0.0.1:${frontendPort.toString()},http://localhost:${frontendPort.toString()}`,
                     DB_NAME: dbName,
                     IS_E2E_TEST: "true",
+                    STORAGE_PATH: "./tests/storage",
                 },
                 shell: true,
             });
