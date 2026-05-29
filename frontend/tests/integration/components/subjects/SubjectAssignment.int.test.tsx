@@ -8,10 +8,12 @@ import {
 } from "@psb/shared/types";
 import {
     mockNotificationApiClient,
+    mockRouter,
     mockSubjectAssignmentApiClient,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 const mockStudentAssignment: StudentSubjectAssignment = {
     id: 1,
@@ -247,6 +249,82 @@ describe("SubjectAssignment (integration)", () => {
             expect(
                 screen.queryByRole("button", { name: "submitButton" }),
             ).not.toBeInTheDocument();
+        });
+
+        it("should navigate to the edit page when the edit button is clicked", async () => {
+            const user = userEvent.setup();
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "editAssignment" }),
+                ).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "editAssignment" }),
+            );
+
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/subjects/10/assignments/1/edit",
+            );
+        });
+
+        it("should call deleteAssignment and redirect when the delete button is confirmed", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectAssignmentApiClient.deleteAssignment.mockResolvedValue(
+                undefined,
+            );
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "deleteAssignment" }),
+                ).toBeInTheDocument();
+            });
+
+            vi.spyOn(window, "confirm").mockReturnValue(true);
+
+            await user.click(
+                screen.getByRole("button", { name: "deleteAssignment" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectAssignmentApiClient.deleteAssignment,
+                ).toHaveBeenCalledWith(1);
+            });
+
+            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+        });
+
+        it("should call updateAssignment to toggle visibility when the visibility button is clicked", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectAssignmentApiClient.updateAssignment.mockResolvedValue(
+                undefined,
+            );
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "hideFromStudents" }),
+                ).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "hideFromStudents" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectAssignmentApiClient.updateAssignment,
+                ).toHaveBeenCalledWith(1, expect.any(FormData));
+            });
         });
     });
 
