@@ -335,4 +335,303 @@ describe("MaterialController (integration)", () => {
             });
         });
     });
+
+    describe("POST /materials", () => {
+        afterEach(async () => {
+            // Remove any attachment files created by the tests.
+            await rm(join(storagePath, "attachments"), {
+                recursive: true,
+                force: true,
+            });
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).post("/materials");
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", classSubjectId.toString())
+                .field("title", "New Material");
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 for an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", classSubjectId.toString())
+                .field("title", "New Material");
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 when classSubjectId is missing", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("title", "New Material");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 400 when title is empty", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", classSubjectId.toString())
+                .field("title", "");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 404 when the teacher is not assigned to the class subject", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", unassignedMaterialId.toString())
+                .field("title", "New Material");
+
+            expect(res.status).toBe(404);
+        });
+
+        it("should return 201 with a file attachment", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", classSubjectId.toString())
+                .field("title", "Integration Test Material")
+                .field("visible", "false")
+                .attach("files", Buffer.from("test file content"), {
+                    filename: "test.pdf",
+                    contentType: "application/pdf",
+                });
+
+            expect(res.status).toBe(201);
+
+            const body = res.body as SubjectMaterial;
+            expect(body.title).toBe("Integration Test Material");
+            expect(body.classSubjectId).toBe(classSubjectId);
+            expect(body.visible).toBe(false);
+            expect(body.attachments).toHaveLength(1);
+            expect(body.attachments[0].name).toBe("test.pdf");
+        });
+
+        it("should return 201 without any files", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .post("/materials")
+                .field("classSubjectId", classSubjectId.toString())
+                .field("title", "No Attachment Material");
+
+            expect(res.status).toBe(201);
+
+            const body = res.body as SubjectMaterial;
+            expect(body.title).toBe("No Attachment Material");
+            expect(body.attachments).toHaveLength(0);
+        });
+    });
+
+    describe("PUT /materials/:id", () => {
+        let editMaterialId: number;
+
+        beforeEach(async () => {
+            const m = await seeders.materials.seedOne({
+                classSubjectId,
+                title: "Editable Material",
+                description: null,
+                visible: false,
+            });
+            editMaterialId = m.id!;
+        });
+
+        afterEach(async () => {
+            // Remove any attachment files created by the tests.
+            await rm(join(storagePath, "attachments"), {
+                recursive: true,
+                force: true,
+            });
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).put(
+                `/materials/${editMaterialId.toString()}`,
+            );
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .put(`/materials/${editMaterialId.toString()}`)
+                .field("title", "Updated");
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 for an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent
+                .put(`/materials/${editMaterialId.toString()}`)
+                .field("title", "Updated");
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid ID", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .put("/materials/abc")
+                .field("title", "Updated");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 400 when title is missing", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .put(`/materials/${editMaterialId.toString()}`)
+                .field("visible", "true");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 404 when the teacher does not own the material", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .put(`/materials/${unassignedMaterialId.toString()}`)
+                .field("title", "Updated");
+
+            expect(res.status).toBe(404);
+        });
+
+        it("should return 200 and update the material", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent
+                .put(`/materials/${editMaterialId.toString()}`)
+                .field("title", "Updated Title")
+                .field("description", "New desc")
+                .field("visible", "true");
+
+            expect(res.status).toBe(200);
+
+            const verify = await agent.get(
+                `/materials/${editMaterialId.toString()}`,
+            );
+            const body = verify.body as SubjectMaterial;
+            expect(body.title).toBe("Updated Title");
+            expect(body.visible).toBe(true);
+        });
+    });
+
+    describe("DELETE /materials/:id", () => {
+        let deleteMaterialId: number;
+
+        beforeEach(async () => {
+            const m = await seeders.materials.seedOne({
+                classSubjectId,
+                title: "To Be Deleted",
+                description: null,
+                visible: false,
+            });
+            deleteMaterialId = m.id!;
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).delete(
+                `/materials/${deleteMaterialId.toString()}`,
+            );
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a student", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.delete(
+                `/materials/${deleteMaterialId.toString()}`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 for an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.delete(
+                `/materials/${deleteMaterialId.toString()}`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid ID", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.delete("/materials/abc");
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 404 when the teacher does not own the material", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.delete(
+                `/materials/${unassignedMaterialId.toString()}`,
+            );
+
+            expect(res.status).toBe(404);
+        });
+
+        it("should return 204 and remove the material", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.delete(
+                `/materials/${deleteMaterialId.toString()}`,
+            );
+
+            expect(res.status).toBe(204);
+
+            const verify = await agent.get(
+                `/materials/${deleteMaterialId.toString()}`,
+            );
+
+            expect(verify.status).toBe(404);
+        });
+    });
 });
