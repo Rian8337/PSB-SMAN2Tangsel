@@ -128,6 +128,9 @@ export const mockSubjectAssignmentSubmissionApiClient: Mocked<ISubjectAssignment
     {
         getSubmissions: vi.fn(),
         downloadSubmissions: vi.fn(),
+        createSubmission: vi.fn(),
+        updateSubmission: vi.fn(),
+        deleteSubmission: vi.fn(),
     };
 
 /**
