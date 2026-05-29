@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IAssignmentRepository,
+    IAttachmentRepository,
     IClassRepository,
     IClassStudentRepository,
     IClassSubjectRepository,
@@ -81,6 +82,7 @@ export const mockClassSubjectRepository: Mocked<IClassSubjectRepository> = {
     unassignSubject: vi.fn(),
     getStudentDashboard: vi.fn(),
     getTeacherDashboard: vi.fn(),
+    getTeacherClassSubject: vi.fn(),
 };
 
 /**
@@ -165,6 +167,9 @@ export const mockUserRepository: Mocked<IUserRepository> = {
  */
 export const mockFileRepository: Mocked<IFileRepository> = {
     read: vi.fn(),
+    saveFile: vi.fn(),
+    rename: vi.fn(),
+    deleteFile: vi.fn(),
 };
 
 /**
@@ -193,4 +198,18 @@ export const mockMaterialRepository: Mocked<IMaterialRepository> = {
     getTeacherMaterial: vi.fn(),
     getStudentAttachment: vi.fn(),
     getTeacherAttachment: vi.fn(),
+    addMaterial: vi.fn(),
+    updateMaterial: vi.fn(),
+    deleteMaterial: vi.fn(),
+    getMaterialAttachmentIds: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IAttachmentRepository}.
+ */
+export const mockAttachmentRepository: Mocked<IAttachmentRepository> = {
+    create: vi.fn(),
+    getByIds: vi.fn(),
+    updateNameAndPath: vi.fn(),
+    deleteByIds: vi.fn(),
 };

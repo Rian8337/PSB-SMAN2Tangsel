@@ -1,5 +1,6 @@
 import {
     IAssignmentService,
+    IAttachmentService,
     IAuthService,
     IClassService,
     IClassStudentService,
@@ -172,4 +173,16 @@ export const mockMaterialService: Mocked<IMaterialService> = {
     getTeacherMaterial: vi.fn(),
     getStudentAttachment: vi.fn(),
     getTeacherAttachment: vi.fn(),
+    addMaterial: vi.fn(),
+    updateMaterial: vi.fn(),
+    deleteMaterial: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IAttachmentService}.
+ */
+export const mockAttachmentService: Mocked<IAttachmentService> = {
+    saveFile: vi.fn(),
+    delete: vi.fn(),
+    updateRenameAttachments: vi.fn(),
 };
