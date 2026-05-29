@@ -98,14 +98,18 @@ test.describe("Manage Subject Material Flow", () => {
             timeout: 10000,
         });
 
-        await page.locator('input[name="title"]').fill("Materi Baru E2E");
+        // Use the retry pattern to handle pre-hydration clicks.
+        await expect(async () => {
+            await page.locator('input[name="title"]').clear();
+            await page.locator('input[name="title"]').fill("Materi Baru E2E");
 
-        await page.getByRole("button", { name: /buat|create/i }).click();
+            await page.getByRole("button", { name: /buat|create/i }).click();
 
-        await expect(page).toHaveURL(
-            new RegExp(`/subjects/${classSubjectId.toString()}$`),
-            { timeout: 15000 },
-        );
+            await expect(page).toHaveURL(
+                new RegExp(`/subjects/${classSubjectId.toString()}$`),
+                { timeout: 3000 },
+            );
+        }).toPass({ timeout: 15000 });
 
         await expect(page.getByText("Materi Baru E2E")).toBeVisible();
     });
