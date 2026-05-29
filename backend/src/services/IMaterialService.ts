@@ -1,7 +1,8 @@
 import { SubjectMaterial } from "@psb/shared/types";
+import { TempFile } from "./IAttachmentService";
 
 /**
- * A service that is responsible for handling operations related to material viewing.
+ * A service that is responsible for handling operations related to materials.
  */
 export interface IMaterialService {
     /**
@@ -65,4 +66,58 @@ export interface IMaterialService {
         attachmentId: number,
         teacherId: number,
     ): Promise<{ path: string; name: string }>;
+
+    /**
+     * Creates a new material in a class subject.
+     *
+     * @param classSubjectId The ID of the class subject.
+     * @param teacherId The ID of the teacher creating the material.
+     * @param title The title of the material.
+     * @param description The optional description.
+     * @param visible Whether the material is immediately visible to students.
+     * @param files Uploaded files to attach to the material.
+     * @returns The created material.
+     * @throws {NotFoundError} If the teacher is not assigned to the class subject.
+     */
+    addMaterial(
+        classSubjectId: number,
+        teacherId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        files: TempFile[],
+    ): Promise<SubjectMaterial>;
+
+    /**
+     * Updates an existing material.
+     *
+     * @param materialId The ID of the material to update.
+     * @param teacherId The ID of the requesting teacher.
+     * @param title The new title.
+     * @param description The new description.
+     * @param visible The new visibility.
+     * @param newFiles New files to upload and attach.
+     * @param renamedAttachments Existing attachments to rename.
+     * @param deletedAttachmentIds IDs of attachments to remove.
+     * @throws {NotFoundError} If the material does not exist or the teacher does not own it.
+     */
+    updateMaterial(
+        materialId: number,
+        teacherId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        newFiles: TempFile[],
+        renamedAttachments: { id: number; newName: string }[],
+        deletedAttachmentIds: number[],
+    ): Promise<void>;
+
+    /**
+     * Deletes a material and all its attachments.
+     *
+     * @param materialId The ID of the material to delete.
+     * @param teacherId The ID of the requesting teacher.
+     * @throws {NotFoundError} If the material does not exist or the teacher does not own it.
+     */
+    deleteMaterial(materialId: number, teacherId: number): Promise<void>;
 }
