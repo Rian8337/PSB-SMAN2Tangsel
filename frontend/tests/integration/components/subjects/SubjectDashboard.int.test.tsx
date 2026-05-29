@@ -4,10 +4,12 @@ import { SubjectDashboardApiProvider } from "@/providers/api/subject-dashboard-a
 import { SubjectDashboard as SubjectDashboardData, UserRole } from "@psb/shared/types";
 import {
     mockNotificationApiClient,
+    mockRouter,
     mockSubjectDashboardApiClient,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 const mockDashboard: SubjectDashboardData = {
     subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
@@ -110,6 +112,22 @@ describe("SubjectDashboard (integration)", () => {
 
             expect(screen.getByText("addMaterial")).toBeInTheDocument();
             expect(screen.getByText("addAssignment")).toBeInTheDocument();
+        });
+
+        it("should navigate to the create material page when the Add Material button is clicked", async () => {
+            const user = userEvent.setup();
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("addMaterial")).toBeInTheDocument();
+            });
+
+            await user.click(screen.getByRole("button", { name: "addMaterial" }));
+
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/subjects/1/materials/create",
+            );
         });
     });
 
