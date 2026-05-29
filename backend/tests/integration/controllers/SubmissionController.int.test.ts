@@ -1,5 +1,8 @@
 import { seededPrimaryData } from "@psb/shared/tests";
-import { AssignmentSubmissionRow } from "@psb/shared/types";
+import {
+    AssignmentSubmissionRow,
+    SubjectAssignmentSubmission,
+} from "@psb/shared/types";
 import { app } from "@test/setup/app";
 import {
     loginAdministrator,
@@ -317,6 +320,303 @@ describe("SubmissionController (integration)", () => {
 
             expect(res.status).toBe(200);
             expect(res.headers["content-type"]).toContain("application/zip");
+        });
+    });
+
+    describe("POST /assignments/:assignmentId/submissions", () => {
+        let freshAssignmentId: number;
+
+        beforeAll(async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SC-POST",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: cls.id!,
+                studentId: student.id,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "POST Test Assignment SC",
+                visible: true,
+            });
+
+            freshAssignmentId = assignment.id!;
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).post(
+                `/assignments/${freshAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.post(
+                `/assignments/${freshAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 403 for an administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent.post(
+                `/assignments/${freshAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid assignment ID", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.post("/assignments/abc/submissions");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 201 with the submission on success", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .post(`/assignments/${freshAssignmentId.toString()}/submissions`)
+                .attach("files", Buffer.from("content"), "file.txt");
+
+            expect(res.status).toBe(201);
+
+            const body = res.body as SubjectAssignmentSubmission;
+            expect(body.id).toBeTypeOf("number");
+            expect(body.attachments).toHaveLength(1);
+            expect(body.attachments[0].name).toBe("file.txt");
+        });
+
+        it("should return 409 when the student already has a submission", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .post(`/assignments/${freshAssignmentId.toString()}/submissions`)
+                .attach("files", Buffer.from("content"), "file2.txt");
+
+            expect(res.status).toBe(409);
+        });
+    });
+
+    describe("PUT /assignments/:assignmentId/submissions", () => {
+        let updateAssignmentId: number;
+
+        beforeAll(async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SC-PUT",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: cls.id!,
+                studentId: student.id,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "PUT Test Assignment SC",
+                visible: true,
+            });
+
+            updateAssignmentId = assignment.id!;
+
+            await seeders.assignmentSubmissions.seedOne({
+                assignmentId: updateAssignmentId,
+                studentId: student.id,
+            });
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).put(
+                `/assignments/${updateAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.put(
+                `/assignments/${updateAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid assignment ID", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.put("/assignments/abc/submissions");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 200 on success", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .put(`/assignments/${updateAssignmentId.toString()}/submissions`)
+                .field("deletedAttachmentIds", JSON.stringify([]))
+                .field("renamedAttachments", JSON.stringify([]))
+                .attach("files", Buffer.from("new content"), "new.txt");
+
+            expect(res.status).toBe(200);
+        });
+
+        it("should return 404 when the student has no submission", async () => {
+            const noSubClass = await seeders.classes.seedOne({
+                name: "NoSub SC",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: noSubClass.id!,
+                studentId: student.id,
+            });
+
+            const noSubClassSubject = await seeders.classSubjects.seedOne({
+                classId: noSubClass.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const noSubAssignment = await seeders.assignments.seedOne({
+                classSubjectId: noSubClassSubject.id!,
+                title: "No Sub Assignment SC",
+                visible: true,
+            });
+
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent
+                .put(
+                    `/assignments/${noSubAssignment.id!.toString()}/submissions`,
+                )
+                .field("deletedAttachmentIds", JSON.stringify([]))
+                .field("renamedAttachments", JSON.stringify([]));
+
+            expect(res.status).toBe(404);
+        });
+    });
+
+    describe("DELETE /assignments/:assignmentId/submissions", () => {
+        let deleteAssignmentId: number;
+
+        beforeAll(async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SC-DELETE",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: cls.id!,
+                studentId: student.id,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "DELETE Test Assignment SC",
+                visible: true,
+            });
+
+            deleteAssignmentId = assignment.id!;
+
+            await seeders.assignmentSubmissions.seedOne({
+                assignmentId: deleteAssignmentId,
+                studentId: student.id,
+            });
+        });
+
+        it("should return 401 without authentication", async () => {
+            const res = await request(app).delete(
+                `/assignments/${deleteAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(401);
+        });
+
+        it("should return 403 for a teacher", async () => {
+            const agent = request.agent(app);
+            await loginTeacher(agent);
+
+            const res = await agent.delete(
+                `/assignments/${deleteAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(403);
+        });
+
+        it("should return 400 for an invalid assignment ID", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.delete("/assignments/abc/submissions");
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 204 on success", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.delete(
+                `/assignments/${deleteAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(204);
+        });
+
+        it("should return 404 when the student has no submission", async () => {
+            const agent = request.agent(app);
+            await loginStudent(agent);
+
+            const res = await agent.delete(
+                `/assignments/${deleteAssignmentId.toString()}/submissions`,
+            );
+
+            expect(res.status).toBe(404);
         });
     });
 });
