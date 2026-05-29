@@ -7,10 +7,13 @@ import {
 } from "@psb/shared/types";
 import {
     mockNotificationApiClient,
+    mockRouter,
     mockSubjectMaterialApiClient,
+    mockToaster,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 const mockMaterial: SubjectMaterialData = {
     id: 1,
@@ -164,6 +167,111 @@ describe("SubjectMaterial (integration)", () => {
 
         await waitFor(() => {
             expect(mockSubjectMaterialApiClient.getMaterial).toHaveBeenCalled();
+        });
+    });
+
+    describe("teacher button actions", () => {
+        beforeEach(() => {
+            vi.spyOn(window, "confirm").mockReturnValue(true);
+        });
+
+        it("should navigate to the edit page when the Edit button is clicked", async () => {
+            const user = userEvent.setup();
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("editButton")).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "editButton" }),
+            );
+
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/subjects/10/materials/1/edit",
+            );
+        });
+
+        it("should call deleteMaterial and navigate back when Delete is confirmed", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectMaterialApiClient.deleteMaterial.mockResolvedValue(
+                undefined,
+            );
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("deleteButton")).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "deleteButton" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectMaterialApiClient.deleteMaterial,
+                ).toHaveBeenCalledWith(1);
+            });
+
+            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+        });
+
+        it("should call updateMaterial to toggle visibility and refetch", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectMaterialApiClient.updateMaterial.mockResolvedValue(
+                undefined,
+            );
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("hideFromStudents"),
+                ).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "hideFromStudents" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectMaterialApiClient.updateMaterial,
+                ).toHaveBeenCalledWith(1, expect.any(FormData));
+            });
+
+            expect(
+                mockSubjectMaterialApiClient.getMaterial,
+            ).toHaveBeenCalledTimes(2);
+        });
+
+        it("should show an error toast when delete fails", async () => {
+            const user = userEvent.setup();
+            mockSubjectMaterialApiClient.deleteMaterial.mockRejectedValue(
+                new Error("Network error"),
+            );
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("deleteButton")).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "deleteButton" }),
+            );
+
+            await waitFor(() => {
+                expect(mockToaster.create).toHaveBeenCalledWith(
+                    expect.objectContaining({ type: "error" }),
+                );
+            });
+
+            expect(mockRouter.push).not.toHaveBeenCalled();
         });
     });
 });
