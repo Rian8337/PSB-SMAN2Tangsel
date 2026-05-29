@@ -1,6 +1,7 @@
 import { SubjectAssignment } from "@/components/subjects/SubjectAssignment";
 import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
+import { SubjectAssignmentSubmissionApiProvider } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
     StudentSubjectAssignment,
     TeacherSubjectAssignment,
@@ -10,6 +11,7 @@ import {
     mockNotificationApiClient,
     mockRouter,
     mockSubjectAssignmentApiClient,
+    mockSubjectAssignmentSubmissionApiClient,
 } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -50,11 +52,15 @@ function render(role: UserRole) {
             <SubjectAssignmentApiProvider
                 client={mockSubjectAssignmentApiClient}
             >
-                <SubjectAssignment
-                    assignmentId={1}
-                    classSubjectId={10}
-                    role={role}
-                />
+                <SubjectAssignmentSubmissionApiProvider
+                    client={mockSubjectAssignmentSubmissionApiClient}
+                >
+                    <SubjectAssignment
+                        assignmentId={1}
+                        classSubjectId={10}
+                        role={role}
+                    />
+                </SubjectAssignmentSubmissionApiProvider>
             </SubjectAssignmentApiProvider>
         </NotificationApiProvider>,
     );
@@ -139,11 +145,11 @@ describe("SubjectAssignment (integration)", () => {
 
             await waitFor(() => {
                 expect(
-                    screen.getByLabelText("uploadLabel"),
+                    screen.getByLabelText("addFilesLabel"),
                 ).toBeInTheDocument();
 
                 expect(
-                    screen.getByRole("button", { name: "submitButton" }),
+                    screen.getByRole("button", { name: "submitCreate" }),
                 ).toBeInTheDocument();
             });
         });
@@ -190,6 +196,76 @@ describe("SubjectAssignment (integration)", () => {
             expect(
                 screen.queryByRole("button", { name: "deleteAssignment" }),
             ).not.toBeInTheDocument();
+        });
+
+        it("should show the edit form when edit button is clicked", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectAssignmentApiClient.getAssignment.mockResolvedValue({
+                ...mockStudentAssignment,
+                submission: {
+                    id: 5,
+                    submittedAt: "2026-02-20T10:00:00.000Z",
+                    attachments: [{ id: 10, name: "report.pdf" }],
+                },
+            });
+
+            render(UserRole.student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "editButton" }),
+                ).toBeInTheDocument();
+            });
+
+            await user.click(screen.getByRole("button", { name: "editButton" }));
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "submitEdit" }),
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should call deleteSubmission and refetch when remove is confirmed", async () => {
+            const user = userEvent.setup();
+
+            mockSubjectAssignmentApiClient.getAssignment.mockResolvedValue({
+                ...mockStudentAssignment,
+                submission: {
+                    id: 5,
+                    submittedAt: "2026-02-20T10:00:00.000Z",
+                    attachments: [{ id: 10, name: "report.pdf" }],
+                },
+            });
+
+            mockSubjectAssignmentSubmissionApiClient.deleteSubmission.mockResolvedValue(
+                undefined,
+            );
+
+            render(UserRole.student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "removeButton" }),
+                ).toBeInTheDocument();
+            });
+
+            vi.spyOn(window, "confirm").mockReturnValue(true);
+
+            await user.click(
+                screen.getByRole("button", { name: "removeButton" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectAssignmentSubmissionApiClient.deleteSubmission,
+                ).toHaveBeenCalledWith(1);
+            });
+
+            expect(
+                mockSubjectAssignmentApiClient.getAssignment,
+            ).toHaveBeenCalledTimes(2);
         });
     });
 
