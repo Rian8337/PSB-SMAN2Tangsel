@@ -26,3 +26,24 @@ export interface SubjectMaterial extends Omit<
     readonly lastUpdatedAt: string;
     readonly attachments: SubjectMaterialAttachment[];
 }
+
+/**
+ * Request body for creating a new material. Files are sent as multipart form data.
+ */
+export interface CreateMaterialRequest {
+    readonly classSubjectId: number;
+    readonly title: string;
+    readonly description: string | null;
+    readonly visible: boolean;
+}
+
+/**
+ * Request body for updating an existing material. New files are sent as multipart form data.
+ */
+export interface UpdateMaterialRequest {
+    readonly title: string;
+    readonly description: string | null;
+    readonly visible: boolean;
+    readonly deletedAttachmentIds: number[];
+    readonly renamedAttachments: SubjectMaterialAttachment[];
+}
