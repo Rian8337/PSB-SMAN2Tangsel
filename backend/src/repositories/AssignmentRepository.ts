@@ -189,6 +189,142 @@ export class AssignmentRepository
             .then((res) => res.at(0) ?? null);
     }
 
+    async addAssignment(
+        classSubjectId: number,
+        title: string,
+        description: string | null,
+        dueAt: Date | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<TeacherSubjectAssignment> {
+        let insertedId: number;
+
+        await this.db.transaction(async (tx) => {
+            const [result] = await tx
+                .insert(assignments)
+                .values({ classSubjectId, title, description, dueAt, visible });
+
+            insertedId = result.insertId;
+
+            if (attachmentIds.length > 0) {
+                await tx.insert(assignmentAttachments).values(
+                    attachmentIds.map((attachmentId) => ({
+                        assignmentId: insertedId,
+                        attachmentId,
+                    })),
+                );
+            }
+        });
+
+        return this.getAssignmentById(insertedId!);
+    }
+
+    async updateAssignment(
+        assignmentId: number,
+        title: string,
+        description: string | null,
+        dueAt: Date | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<void> {
+        await this.db.transaction(async (tx) => {
+            await tx
+                .update(assignments)
+                .set({
+                    title,
+                    description,
+                    dueAt,
+                    visible,
+                    lastUpdatedAt: new Date(),
+                })
+                .where(eq(assignments.id, assignmentId));
+
+            await tx
+                .delete(assignmentAttachments)
+                .where(eq(assignmentAttachments.assignmentId, assignmentId));
+
+            if (attachmentIds.length > 0) {
+                await tx.insert(assignmentAttachments).values(
+                    attachmentIds.map((attachmentId) => ({
+                        assignmentId,
+                        attachmentId,
+                    })),
+                );
+            }
+        });
+    }
+
+    async deleteAssignment(assignmentId: number): Promise<void> {
+        await this.db
+            .delete(assignments)
+            .where(eq(assignments.id, assignmentId));
+    }
+
+    async getAssignmentAttachmentIds(assignmentId: number): Promise<number[]> {
+        const rows = await this.db
+            .select({ attachmentId: assignmentAttachments.attachmentId })
+            .from(assignmentAttachments)
+            .where(eq(assignmentAttachments.assignmentId, assignmentId));
+
+        return rows.map((r) => r.attachmentId);
+    }
+
+    async getSubmissionAttachmentIds(assignmentId: number): Promise<number[]> {
+        const rows = await this.db
+            .select({
+                attachmentId: assignmentSubmissionAttachments.attachmentId,
+            })
+            .from(assignmentSubmissionAttachments)
+            .innerJoin(
+                assignmentSubmissions,
+                eq(
+                    assignmentSubmissionAttachments.submissionId,
+                    assignmentSubmissions.id,
+                ),
+            )
+            .where(eq(assignmentSubmissions.assignmentId, assignmentId));
+
+        return rows.map((r) => r.attachmentId);
+    }
+
+    private async getAssignmentById(
+        assignmentId: number,
+    ): Promise<TeacherSubjectAssignment> {
+        const row = await this.db
+            .select({
+                id: assignments.id,
+                classSubjectId: assignments.classSubjectId,
+                title: assignments.title,
+                description: assignments.description,
+                dueAt: assignments.dueAt,
+                visible: assignments.visible,
+                createdAt: assignments.createdAt,
+                lastUpdatedAt: assignments.lastUpdatedAt,
+                subject: {
+                    id: subjects.id,
+                    code: subjects.code,
+                    name: subjects.name,
+                },
+            })
+            .from(assignments)
+            .innerJoin(
+                classSubjects,
+                eq(assignments.classSubjectId, classSubjects.id),
+            )
+            .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+            .where(eq(assignments.id, assignmentId))
+            .limit(1)
+            .then((res) => res.at(0));
+
+        if (!row) {
+            throw new Error(
+                `Assignment ${assignmentId.toString()} not found after insert`,
+            );
+        }
+
+        return this.assembleTeacherAssignment(row);
+    }
+
     private async assembleStudentAssignment(
         row: {
             id: number;

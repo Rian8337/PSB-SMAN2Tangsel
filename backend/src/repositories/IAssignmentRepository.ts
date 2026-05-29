@@ -66,4 +66,66 @@ export interface IAssignmentRepository {
         attachmentId: number,
         teacherId: number,
     ): Promise<{ path: string; name: string } | null>;
+
+    /**
+     * Creates a new assignment and links it to the given attachments.
+     *
+     * @param classSubjectId The ID of the class subject the assignment belongs to.
+     * @param title The title of the assignment.
+     * @param description The optional description of the assignment.
+     * @param dueAt The optional due date of the assignment.
+     * @param visible Whether the assignment is visible to students.
+     * @param attachmentIds The IDs of the attachments to link.
+     * @returns The created assignment.
+     */
+    addAssignment(
+        classSubjectId: number,
+        title: string,
+        description: string | null,
+        dueAt: Date | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<TeacherSubjectAssignment>;
+
+    /**
+     * Updates the title, description, due date, visibility, and attachment links for an assignment.
+     *
+     * @param assignmentId The ID of the assignment to update.
+     * @param title The new title.
+     * @param description The new description.
+     * @param dueAt The new due date.
+     * @param visible The new visibility.
+     * @param attachmentIds The full list of attachment IDs after the update.
+     */
+    updateAssignment(
+        assignmentId: number,
+        title: string,
+        description: string | null,
+        dueAt: Date | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<void>;
+
+    /**
+     * Deletes an assignment by ID.
+     *
+     * @param assignmentId The ID of the assignment to delete.
+     */
+    deleteAssignment(assignmentId: number): Promise<void>;
+
+    /**
+     * Returns the attachment IDs linked directly to an assignment (not submissions).
+     *
+     * @param assignmentId The ID of the assignment.
+     * @returns An array of attachment IDs.
+     */
+    getAssignmentAttachmentIds(assignmentId: number): Promise<number[]>;
+
+    /**
+     * Returns the attachment IDs from all submissions for the given assignment.
+     *
+     * @param assignmentId The ID of the assignment.
+     * @returns An array of attachment IDs from all submissions.
+     */
+    getSubmissionAttachmentIds(assignmentId: number): Promise<number[]>;
 }
