@@ -129,6 +129,24 @@ describe("SubjectDashboard (integration)", () => {
                 "/subjects/1/materials/create",
             );
         });
+
+        it("should navigate to the create assignment page when the Add Assignment button is clicked", async () => {
+            const user = userEvent.setup();
+
+            render(UserRole.teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("addAssignment")).toBeInTheDocument();
+            });
+
+            await user.click(
+                screen.getByRole("button", { name: "addAssignment" }),
+            );
+
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/subjects/1/assignments/create",
+            );
+        });
     });
 
     it("should display an error toast if the API call fails", async () => {
