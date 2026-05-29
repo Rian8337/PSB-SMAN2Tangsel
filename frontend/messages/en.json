@@ -525,6 +525,28 @@
     "showToStudents": "Show to students",
     "hideFromStudents": "Hide from students"
   },
+  "ManageMaterialForm": {
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "visibleLabel": "Show to students",
+    "attachmentsLabel": "Attachments",
+    "noAttachments": "No attachments.",
+    "addFilesLabel": "Add files",
+    "renameLabel": "Rename",
+    "deleteAttachmentLabel": "Delete",
+    "submitCreate": "Create",
+    "submitEdit": "Save",
+    "cancelButton": "Cancel",
+    "createSuccessTitle": "Material created",
+    "editSuccessTitle": "Material updated",
+    "createErrorTitle": "Failed to create material",
+    "editErrorTitle": "Failed to update material",
+    "deleteSuccessTitle": "Material deleted",
+    "deleteErrorTitle": "Failed to delete material",
+    "confirmDeleteMessage": "Are you sure you want to delete this material? This action cannot be undone.",
+    "fetchErrorTitle": "Failed to load material",
+    "fetchErrorMessage": "An error occurred while loading the material. Please try again."
+  },
   "SubjectDashboard": {
     "materials": "Materials",
     "assignments": "Assignments",

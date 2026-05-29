@@ -522,6 +522,28 @@
     "showToStudents": "Tampilkan ke siswa",
     "hideFromStudents": "Sembunyikan dari siswa"
   },
+  "ManageMaterialForm": {
+    "titleLabel": "Judul",
+    "descriptionLabel": "Deskripsi",
+    "visibleLabel": "Tampilkan ke siswa",
+    "attachmentsLabel": "Lampiran",
+    "noAttachments": "Tidak ada lampiran.",
+    "addFilesLabel": "Tambah file",
+    "renameLabel": "Ubah nama",
+    "deleteAttachmentLabel": "Hapus",
+    "submitCreate": "Buat",
+    "submitEdit": "Simpan",
+    "cancelButton": "Batal",
+    "createSuccessTitle": "Materi berhasil dibuat",
+    "editSuccessTitle": "Materi berhasil diperbarui",
+    "createErrorTitle": "Gagal membuat materi",
+    "editErrorTitle": "Gagal memperbarui materi",
+    "deleteSuccessTitle": "Materi berhasil dihapus",
+    "deleteErrorTitle": "Gagal menghapus materi",
+    "confirmDeleteMessage": "Apakah Anda yakin ingin menghapus materi ini? Tindakan ini tidak dapat dibatalkan.",
+    "fetchErrorTitle": "Gagal memuat materi",
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat materi. Silakan coba lagi."
+  },
   "SubjectDashboard": {
     "materials": "Materi",
     "assignments": "Tugas",
