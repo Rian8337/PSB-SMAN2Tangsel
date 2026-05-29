@@ -1,7 +1,7 @@
 import { SubjectMaterial } from "@psb/shared/types";
 
 /**
- * Defines operations for accessing material data in the database.
+ * Defines operations for accessing and managing material data in the database.
  */
 export interface IMaterialRepository {
     /**
@@ -58,4 +58,54 @@ export interface IMaterialRepository {
         attachmentId: number,
         teacherId: number,
     ): Promise<{ path: string; name: string } | null>;
+
+    /**
+     * Creates a new material and links it to the given attachments.
+     *
+     * @param classSubjectId The ID of the class subject the material belongs to.
+     * @param title The title of the material.
+     * @param description The optional description of the material.
+     * @param visible Whether the material is visible to students.
+     * @param attachmentIds The IDs of the attachments to link.
+     * @returns The created material.
+     */
+    addMaterial(
+        classSubjectId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<SubjectMaterial>;
+
+    /**
+     * Updates the title, description, visibility, and attachment links for a material.
+     *
+     * @param materialId The ID of the material to update.
+     * @param title The new title.
+     * @param description The new description.
+     * @param visible The new visibility.
+     * @param attachmentIds The full list of attachment IDs that the material should be linked to after the update.
+     */
+    updateMaterial(
+        materialId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<void>;
+
+    /**
+     * Deletes a material by ID.
+     *
+     * @param materialId The ID of the material to delete.
+     */
+    deleteMaterial(materialId: number): Promise<void>;
+
+    /**
+     * Returns the attachment IDs linked to a material.
+     *
+     * @param materialId The ID of the material.
+     * @returns An array of attachment IDs.
+     */
+    getMaterialAttachmentIds(materialId: number): Promise<number[]>;
 }

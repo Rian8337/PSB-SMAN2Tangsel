@@ -184,6 +184,106 @@ export class MaterialRepository
             .then((res) => res.at(0) ?? null);
     }
 
+    async addMaterial(
+        classSubjectId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<SubjectMaterial> {
+        let insertedId: number;
+
+        await this.db.transaction(async (tx) => {
+            const [result] = await tx
+                .insert(materials)
+                .values({ classSubjectId, title, description, visible });
+
+            insertedId = result.insertId;
+
+            if (attachmentIds.length > 0) {
+                await tx.insert(materialAttachments).values(
+                    attachmentIds.map((attachmentId) => ({
+                        materialId: insertedId,
+                        attachmentId,
+                    })),
+                );
+            }
+        });
+
+        return this.getMaterialById(insertedId!);
+    }
+
+    async updateMaterial(
+        materialId: number,
+        title: string,
+        description: string | null,
+        visible: boolean,
+        attachmentIds: number[],
+    ): Promise<void> {
+        await this.db.transaction(async (tx) => {
+            await tx
+                .update(materials)
+                .set({ title, description, visible, lastUpdatedAt: new Date() })
+                .where(eq(materials.id, materialId));
+
+            await tx
+                .delete(materialAttachments)
+                .where(eq(materialAttachments.materialId, materialId));
+
+            if (attachmentIds.length > 0) {
+                await tx.insert(materialAttachments).values(
+                    attachmentIds.map((attachmentId) => ({
+                        materialId,
+                        attachmentId,
+                    })),
+                );
+            }
+        });
+    }
+
+    async deleteMaterial(materialId: number): Promise<void> {
+        await this.db.delete(materials).where(eq(materials.id, materialId));
+    }
+
+    async getMaterialAttachmentIds(materialId: number): Promise<number[]> {
+        const rows = await this.db
+            .select({ attachmentId: materialAttachments.attachmentId })
+            .from(materialAttachments)
+            .where(eq(materialAttachments.materialId, materialId));
+
+        return rows.map((r) => r.attachmentId);
+    }
+
+    private async getMaterialById(materialId: number): Promise<SubjectMaterial> {
+        const row = await this.db
+            .select({
+                id: materials.id,
+                classSubjectId: materials.classSubjectId,
+                title: materials.title,
+                description: materials.description,
+                visible: materials.visible,
+                createdAt: materials.createdAt,
+                lastUpdatedAt: materials.lastUpdatedAt,
+                subject: {
+                    id: subjects.id,
+                    code: subjects.code,
+                    name: subjects.name,
+                },
+            })
+            .from(materials)
+            .innerJoin(classSubjects, eq(materials.classSubjectId, classSubjects.id))
+            .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+            .where(eq(materials.id, materialId))
+            .limit(1)
+            .then((res) => res.at(0));
+
+        if (!row) {
+            throw new Error(`Material ${materialId.toString()} not found after insert`);
+        }
+
+        return this.assembleMaterial(row);
+    }
+
     private async assembleMaterial(row: {
         id: number;
         classSubjectId: number;
