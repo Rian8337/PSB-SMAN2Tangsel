@@ -39,6 +39,8 @@ interface Localization {
 
     readonly material: {
         readonly invalidId: string;
+        readonly invalidTitle: string;
+        readonly invalidClassSubjectId: string;
     };
 
     readonly materialService: {
@@ -168,6 +170,9 @@ export const messages = {
         },
         material: {
             invalidId: "ID materi harus berupa bilangan bulat positif.",
+            invalidTitle: "Judul materi tidak valid.",
+            invalidClassSubjectId:
+                "ID mata pelajaran kelas tidak valid.",
         },
         materialService: {
             notFound: "Materi tidak ditemukan.",
@@ -288,6 +293,8 @@ export const messages = {
         },
         material: {
             invalidId: "Material ID must be a positive integer.",
+            invalidTitle: "Material title is invalid.",
+            invalidClassSubjectId: "Class subject ID is invalid.",
         },
         materialService: {
             notFound: "Material not found.",
