@@ -19,7 +19,6 @@ import {
     CalendarDays,
     Plus,
     Search,
-    Trash2,
     Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -28,6 +27,8 @@ import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateClassModal } from "./CreateClassModal";
+import { TableDeleteButton } from "./TableDeleteButton";
+import { TableEditButton } from "./TableEditButton";
 import { APIError } from "@/api";
 
 export function ClassManagement() {
@@ -324,17 +325,10 @@ export function ClassManagement() {
                                             </Table.Cell>
 
                                             <Table.Cell textAlign="right">
-                                                <Button
-                                                    asChild
-                                                    variant="ghost"
-                                                    colorPalette="blue"
-                                                >
-                                                    <Link
-                                                        href={`/admin/classes/${c.id.toString()}`}
-                                                    >
-                                                        {t("actions.edit")}
-                                                    </Link>
-                                                </Button>
+                                                <TableEditButton
+                                                    href={`/admin/classes/${c.id.toString()}`}
+                                                    ariaLabel={`edit-${c.name}`}
+                                                />
 
                                                 <Button
                                                     asChild
@@ -378,20 +372,15 @@ export function ClassManagement() {
                                                     </Link>
                                                 </Button>
 
-                                                <Button
-                                                    aria-label={`delete-${c.name}`}
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    colorPalette="red"
+                                                <TableDeleteButton
+                                                    ariaLabel={`delete-${c.name}`}
                                                     onClick={() => {
                                                         handleDelete(
                                                             c.id,
                                                             c.name,
                                                         );
                                                     }}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </Button>
+                                                />
                                             </Table.Cell>
                                         </Table.Row>
                                     ))

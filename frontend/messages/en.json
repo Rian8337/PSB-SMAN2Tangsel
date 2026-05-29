@@ -12,10 +12,6 @@
       "active": "Active",
       "actions": "Actions"
     },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
-    },
     "emptyState": "No academic sessions found.",
     "fetchToast": {
       "errorTitle": "Failed to Fetch Academic Session",
@@ -142,10 +138,6 @@
       "active": "Active",
       "inactive": "Inactive"
     },
-    "actions": {
-      "edit": "Edit",
-      "view": "View"
-    },
     "emptyState": "No users found.",
     "deleteUser": {
       "confirmation": "Are you sure you want to delete user \"{name}\"? This action cannot be undone.",
@@ -251,9 +243,6 @@
     "columns": {
       "name": "Name",
       "actions": "Actions"
-    },
-    "actions": {
-      "edit": "Edit"
     }
   },
   "ClassStudentManagement": {
@@ -627,9 +616,6 @@
       "name": "Name",
       "active": "Active",
       "actions": "Actions"
-    },
-    "actions": {
-      "edit": "Edit"
     },
     "validation": {
       "invalidCode": "Invalid subject code. Must only contain uppercase letters, numbers, and hyphens."

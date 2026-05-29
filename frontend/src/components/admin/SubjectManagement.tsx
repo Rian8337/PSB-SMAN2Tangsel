@@ -1,7 +1,6 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import { Link } from "@/i18n/navigation";
 import { useSubjectApiClient } from "@/providers/api/subject-api-provider";
 import {
     Badge,
@@ -13,13 +12,15 @@ import {
     Table,
 } from "@chakra-ui/react";
 import { Subject } from "@psb/shared/types";
-import { Check, Plus, Search, Trash2 } from "lucide-react";
+import { Check, Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateSubjectModal } from "./CreateSubjectModal";
+import { TableDeleteButton } from "./TableDeleteButton";
+import { TableEditButton } from "./TableEditButton";
 
 export function SubjectManagement() {
     const t = useTranslations("SubjectManagement");
@@ -233,32 +234,20 @@ export function SubjectManagement() {
                                             </Table.Cell>
 
                                             <Table.Cell textAlign="right">
-                                                <Button
-                                                    asChild
-                                                    variant="ghost"
-                                                    colorPalette="blue"
-                                                >
-                                                    <Link
-                                                        href={`/admin/subjects/${subject.id.toString()}`}
-                                                    >
-                                                        {t("actions.edit")}
-                                                    </Link>
-                                                </Button>
+                                                <TableEditButton
+                                                    href={`/admin/subjects/${subject.id.toString()}`}
+                                                    ariaLabel={`edit-${subject.code}`}
+                                                />
 
-                                                <Button
-                                                    aria-label={`delete-${subject.code}`}
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    colorPalette="red"
+                                                <TableDeleteButton
+                                                    ariaLabel={`delete-${subject.code}`}
                                                     onClick={() => {
                                                         handleDelete(
                                                             subject.id,
                                                             subject.code,
                                                         );
                                                     }}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </Button>
+                                                />
                                             </Table.Cell>
                                         </Table.Row>
                                     ))

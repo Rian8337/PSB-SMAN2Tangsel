@@ -1,7 +1,6 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import { Link } from "@/i18n/navigation";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import {
     Badge,
@@ -17,13 +16,15 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
-import { Check, Plus, Search, Trash2 } from "lucide-react";
+import { Check, Plus, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateSessionModal } from "./CreateSessionModal";
+import { TableDeleteButton } from "./TableDeleteButton";
+import { TableEditButton } from "./TableEditButton";
 
 export function AcademicSessionManagement() {
     const locale = useLocale();
@@ -264,33 +265,21 @@ export function AcademicSessionManagement() {
                                             </Table.Cell>
 
                                             <Table.Cell textAlign="right">
-                                                <Button
-                                                    asChild
-                                                    variant="ghost"
-                                                    colorPalette="blue"
-                                                >
-                                                    <Link
-                                                        href={`/admin/academic-years/edit?session=${encodeURIComponent(session.session)}&semester=${session.semester.toString()}`}
-                                                    >
-                                                        {t("actions.edit")}
-                                                    </Link>
-                                                </Button>
+                                                <TableEditButton
+                                                    href={`/admin/academic-years/edit?session=${encodeURIComponent(session.session)}&semester=${session.semester.toString()}`}
+                                                    ariaLabel={`edit-${session.session}-semester-${session.semester.toString()}`}
+                                                />
 
                                                 {!session.active && (
-                                                    <Button
-                                                        aria-label={`delete-${session.session}-semester-${session.semester.toString()}`}
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        colorPalette="red"
+                                                    <TableDeleteButton
+                                                        ariaLabel={`delete-${session.session}-semester-${session.semester.toString()}`}
                                                         onClick={() => {
                                                             handleDelete(
                                                                 session.session,
                                                                 session.semester,
                                                             );
                                                         }}
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </Button>
+                                                    />
                                                 )}
                                             </Table.Cell>
                                         </Table.Row>

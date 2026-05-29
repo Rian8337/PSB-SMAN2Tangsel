@@ -1,7 +1,6 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import { Link } from "@/i18n/navigation";
 import { useUserApiClient } from "@/providers/api/user-api-provider";
 import {
     Badge,
@@ -13,13 +12,15 @@ import {
     Table,
 } from "@chakra-ui/react";
 import { UserListItem, UserRole } from "@psb/shared/types";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
 import { CreateUserModal } from "./CreateUserModal";
+import { TableDeleteButton } from "./TableDeleteButton";
+import { TableEditButton } from "./TableEditButton";
 
 export interface AccountManagementProps {
     readonly currentUserId: number;
@@ -259,33 +260,21 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                                             </Table.Cell>
 
                                             <Table.Cell textAlign="right">
-                                                <Button
-                                                    asChild
-                                                    variant="ghost"
-                                                    colorPalette="blue"
-                                                >
-                                                    <Link
-                                                        href={`/admin/users/${user.id.toString()}`}
-                                                    >
-                                                        {t("actions.edit")}
-                                                    </Link>
-                                                </Button>
+                                                <TableEditButton
+                                                    href={`/admin/users/${user.id.toString()}`}
+                                                    ariaLabel={`edit-${user.identifier}`}
+                                                />
 
                                                 {user.id !== currentUserId && (
-                                                    <Button
-                                                        aria-label={`delete-${user.identifier}`}
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        colorPalette="red"
+                                                    <TableDeleteButton
+                                                        ariaLabel={`delete-${user.identifier}`}
                                                         onClick={() => {
                                                             handleDelete(
                                                                 user.id,
                                                                 user.name,
                                                             );
                                                         }}
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </Button>
+                                                    />
                                                 )}
                                             </Table.Cell>
                                         </Table.Row>

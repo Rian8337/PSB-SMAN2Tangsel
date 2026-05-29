@@ -12,10 +12,6 @@
       "active": "Aktif",
       "actions": "Aksi"
     },
-    "actions": {
-      "edit": "Edit",
-      "delete": "Hapus"
-    },
     "emptyState": "Tidak ada tahun ajaran yang ditemukan.",
     "fetchToast": {
       "errorTitle": "Gagal Mengambil Tahun Ajaran",
@@ -142,9 +138,6 @@
       "active": "Aktif",
       "inactive": "Nonaktif"
     },
-    "actions": {
-      "edit": "Edit"
-    },
     "emptyState": "Tidak ada pengguna yang ditemukan.",
     "deleteUser": {
       "confirmation": "Apakah Anda yakin ingin menghapus pengguna \"{name}\"? Tindakan ini tidak dapat dibatalkan.",
@@ -247,9 +240,6 @@
     "columns": {
       "name": "Nama",
       "actions": "Aksi"
-    },
-    "actions": {
-      "edit": "Edit"
     }
   },
   "ClassStudentManagement": {
@@ -623,9 +613,6 @@
       "name": "Nama",
       "active": "Aktif",
       "actions": "Aksi"
-    },
-    "actions": {
-      "edit": "Edit"
     },
     "validation": {
       "invalidCode": "Kode hanya boleh berisi huruf kapital, angka, dan strip."
