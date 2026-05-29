@@ -1,5 +1,7 @@
 import { test as base } from "@playwright/test";
 import { execSync, spawn } from "child_process";
+import { rm } from "fs/promises";
+import { join } from "path";
 import { createServer } from "net";
 import { createConnection } from "mysql2/promise";
 import { createTestDatabaseManager } from "./utils/db";
@@ -275,6 +277,11 @@ export const test = base.extend<{}, WorkerFixture>({
 
             // Teardown
             killServers();
+
+            await rm(
+                join("..", "backend", "tests", "storage", "attachments"),
+                { recursive: true, force: true },
+            );
 
             await new Promise<void>((resolve, reject) => {
                 dbManager.db.$client.end((err) => {
