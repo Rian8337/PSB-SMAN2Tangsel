@@ -231,4 +231,238 @@ describe("SubmissionRepository (integration)", () => {
             expect(filteredResults[0].attachmentPath).toBe(attachment1.path);
         });
     });
+
+    describe("getByStudent", () => {
+        it("should return null when no submission exists for the student", async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SR-GBS",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "GetByStudent Empty SR",
+                visible: true,
+            });
+
+            const result = await repository.getByStudent(
+                assignment.id!,
+                student.id,
+            );
+
+            expect(result).toBeNull();
+        });
+
+        it("should return the submission with attachments when it exists", async () => {
+            const freshCls = await seeders.classes.seedOne({
+                name: "XI-IPA-SR-GBS2",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: freshCls.id!,
+                studentId: student.id,
+            });
+
+            const freshClassSubject = await seeders.classSubjects.seedOne({
+                classId: freshCls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const freshAssignment = await seeders.assignments.seedOne({
+                classSubjectId: freshClassSubject.id!,
+                title: "GBS2 SR",
+                visible: true,
+            });
+
+            const attachment = await seeders.attachments.seedOne({
+                name: "gbs_file.txt",
+                path: "gbs_sr_file.txt",
+            });
+
+            const submission = await seeders.assignmentSubmissions.seedOne({
+                assignmentId: freshAssignment.id!,
+                studentId: student.id,
+            });
+
+            await seeders.assignmentSubmissionAttachments.seedOne({
+                submissionId: submission.id!,
+                attachmentId: attachment.id!,
+            });
+
+            const result = await repository.getByStudent(
+                freshAssignment.id!,
+                student.id,
+            );
+
+            expect(result).not.toBeNull();
+            expect(result!.id).toBe(submission.id);
+            expect(result!.attachments.some((a) => a.name === "gbs_file.txt")).toBe(true);
+        });
+    });
+
+    describe("getAttachmentIds", () => {
+        it("should return an empty array for a submission with no attachments", async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SR-GAI",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "GetAttachmentIds SR",
+                visible: true,
+            });
+
+            const submission = await seeders.assignmentSubmissions.seedOne({
+                assignmentId: assignment.id!,
+                studentId: student.id,
+            });
+
+            const result = await repository.getAttachmentIds(submission.id!);
+
+            expect(result).toEqual([]);
+        });
+
+        it("should return the attachment IDs for a submission", async () => {
+            const attachment = await seeders.attachments.seedOne({
+                name: "gai_file.txt",
+                path: "gai_sr_file.txt",
+            });
+
+            const submission = await seeders.assignmentSubmissions.seedOne({
+                assignmentId,
+                studentId: student.id,
+            });
+
+            await seeders.assignmentSubmissionAttachments.seedOne({
+                submissionId: submission.id!,
+                attachmentId: attachment.id!,
+            });
+
+            const result = await repository.getAttachmentIds(submission.id!);
+
+            expect(result).toContain(attachment.id);
+        });
+    });
+
+    describe("add", () => {
+        it("should create a submission and return it with attachments", async () => {
+            const cls = await seeders.classes.seedOne({
+                name: "XI-IPA-SR-ADD",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: cls.id!,
+                studentId: student.id,
+            });
+
+            const classSubject = await seeders.classSubjects.seedOne({
+                classId: cls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const assignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubject.id!,
+                title: "Add Submission SR",
+                visible: true,
+            });
+
+            const attachment = await seeders.attachments.seedOne({
+                name: "add_file.txt",
+                path: "add_sr_file.txt",
+            });
+
+            const result = await repository.add(
+                assignment.id!,
+                student.id,
+                [attachment.id!],
+            );
+
+            expect(result.id).toBeTypeOf("number");
+            expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].id).toBe(attachment.id);
+            expect(result.attachments[0].name).toBe("add_file.txt");
+        });
+    });
+
+    describe("addAttachments", () => {
+        it("should link new attachments to an existing submission", async () => {
+            const submission = await seeders.assignmentSubmissions.seedOne({
+                assignmentId,
+                studentId: student.id,
+            });
+
+            const attachment = await seeders.attachments.seedOne({
+                name: "addatt_file.txt",
+                path: "addatt_sr_file.txt",
+            });
+
+            await repository.addAttachments(submission.id!, [attachment.id!]);
+
+            const ids = await repository.getAttachmentIds(submission.id!);
+
+            expect(ids).toContain(attachment.id);
+        });
+    });
+
+    describe("delete", () => {
+        it("should remove the submission from the database", async () => {
+            const delCls = await seeders.classes.seedOne({
+                name: "XI-IPA-SR-DEL",
+                session: session.session,
+                semester: session.semester,
+            });
+
+            await seeders.studentClasses.seedOne({
+                classId: delCls.id!,
+                studentId: student.id,
+            });
+
+            const delClassSubject = await seeders.classSubjects.seedOne({
+                classId: delCls.id!,
+                subjectId: subject.id,
+                teacherId: teacher.userId,
+            });
+
+            const delAssignment = await seeders.assignments.seedOne({
+                classSubjectId: delClassSubject.id!,
+                title: "Delete SR",
+                visible: true,
+            });
+
+            const submission = await seeders.assignmentSubmissions.seedOne({
+                assignmentId: delAssignment.id!,
+                studentId: student.id,
+            });
+
+            await repository.delete(submission.id!);
+
+            const result = await repository.getByStudent(
+                delAssignment.id!,
+                student.id,
+            );
+
+            expect(result).toBeNull();
+        });
+    });
 });
