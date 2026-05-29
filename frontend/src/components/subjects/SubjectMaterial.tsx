@@ -12,12 +12,27 @@ import {
     Spinner,
     Text,
 } from "@chakra-ui/react";
-import { SubjectMaterial as SubjectMaterialData, UserRole } from "@psb/shared/types";
+import {
+    SubjectMaterial as SubjectMaterialData,
+    UserRole,
+} from "@psb/shared/types";
 import { FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
+
+function buildVisibilityFormData(material: SubjectMaterialData): FormData {
+    const formData = new FormData();
+
+    formData.append("title", material.title);
+    formData.append("description", material.description ?? "");
+    formData.append("visible", (!material.visible).toString());
+    formData.append("deletedAttachmentIds", JSON.stringify([]));
+    formData.append("renamedAttachments", JSON.stringify([]));
+
+    return formData;
+}
 
 export interface SubjectMaterialProps {
     readonly materialId: number;
@@ -39,6 +54,9 @@ export function SubjectMaterial({
 
     const isTeacher = role === UserRole.teacher;
     const backButtonUrl = `/subjects/${classSubjectId.toString()}`;
+
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
 
     const fetchMaterial = useCallback(
         async (signal?: AbortSignal) => {
@@ -113,13 +131,22 @@ export function SubjectMaterial({
                     ) : (
                         <Flex direction="column" gap={2}>
                             {material?.attachments.map((attachment) => (
-                                <Flex key={attachment.id} align="center" gap={2}>
+                                <Flex
+                                    key={attachment.id}
+                                    align="center"
+                                    gap={2}
+                                >
                                     <FileText size={18} />
                                     <a
                                         href={`${backendBaseUrl}/materials/${materialId.toString()}/attachments/${attachment.id.toString()}`}
                                         download
                                     >
-                                        <Text color="blue.500" _hover={{ textDecoration: "underline" }}>
+                                        <Text
+                                            color="blue.500"
+                                            _hover={{
+                                                textDecoration: "underline",
+                                            }}
+                                        >
                                             {attachment.name}
                                         </Text>
                                     </a>
@@ -145,15 +172,85 @@ export function SubjectMaterial({
 
                 {isTeacher && (
                     <HStack gap={2}>
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                router.push(
+                                    `/subjects/${classSubjectId.toString()}/materials/${materialId.toString()}/edit`,
+                                );
+                            }}
+                        >
                             {t("editButton")}
                         </Button>
 
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            loading={isDeleting}
+                            onClick={() => {
+                                if (!window.confirm(t("deleteButton") + "?")) {
+                                    return;
+                                }
+
+                                setIsDeleting(true);
+
+                                apiClient
+                                    .deleteMaterial(materialId)
+                                    .then(() => {
+                                        toaster.create({
+                                            title: t("deleteButton"),
+                                            type: "success",
+                                        });
+
+                                        router.push(backButtonUrl);
+                                    })
+                                    .catch(() => {
+                                        toaster.create({
+                                            title: t("deleteButton"),
+                                            description: t("fetchErrorMessage"),
+                                            type: "error",
+                                        });
+                                    })
+                                    .finally(() => {
+                                        setIsDeleting(false);
+                                    });
+                            }}
+                        >
                             {t("deleteButton")}
                         </Button>
 
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            loading={isTogglingVisibility}
+                            onClick={() => {
+                                if (!material) {
+                                    return;
+                                }
+
+                                setIsTogglingVisibility(true);
+
+                                apiClient
+                                    .updateMaterial(
+                                        materialId,
+                                        buildVisibilityFormData(material),
+                                    )
+                                    .then(() => {
+                                        void fetchMaterial();
+                                    })
+                                    .catch(() => {
+                                        toaster.create({
+                                            title: t("fetchErrorTitle"),
+                                            description: t("fetchErrorMessage"),
+                                            type: "error",
+                                        });
+                                    })
+                                    .finally(() => {
+                                        setIsTogglingVisibility(false);
+                                    });
+                            }}
+                        >
                             {material?.visible
                                 ? t("hideFromStudents")
                                 : t("showToStudents")}
