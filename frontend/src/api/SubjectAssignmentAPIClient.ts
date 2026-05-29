@@ -1,4 +1,7 @@
-import { StudentSubjectAssignment, TeacherSubjectAssignment } from "@psb/shared/types";
+import {
+    StudentSubjectAssignment,
+    TeacherSubjectAssignment,
+} from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { ISubjectAssignmentAPIClient } from "./ISubjectAssignmentAPIClient";
 
@@ -20,5 +23,22 @@ export class SubjectAssignmentAPIClient
         return this.get(`/${assignmentId.toString()}`, { signal }).then((res) =>
             res.json(),
         );
+    }
+
+    createAssignment(data: FormData): Promise<TeacherSubjectAssignment> {
+        return this.post("/", { body: data }).then((res) => res.json());
+    }
+
+    async updateAssignment(
+        assignmentId: number,
+        data: FormData,
+    ): Promise<void> {
+        await this.put(`/${assignmentId.toString()}`, {
+            body: data,
+        });
+    }
+
+    async deleteAssignment(assignmentId: number): Promise<void> {
+        await this.delete(`/${assignmentId.toString()}`);
     }
 }

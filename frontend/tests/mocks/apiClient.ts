@@ -116,6 +116,9 @@ export const mockSubjectDashboardApiClient: Mocked<ISubjectDashboardAPIClient> =
 export const mockSubjectAssignmentApiClient: Mocked<ISubjectAssignmentAPIClient> =
     {
         getAssignment: vi.fn(),
+        createAssignment: vi.fn(),
+        updateAssignment: vi.fn(),
+        deleteAssignment: vi.fn(),
     };
 
 /**

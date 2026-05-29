@@ -14,12 +14,14 @@ import { IScheduleAPIClient } from "./IScheduleAPIClient";
 import { ISessionAPIClient } from "./ISessionAPIClient";
 import { ISubjectAPIClient } from "./ISubjectAPIClient";
 import { ISubjectDashboardAPIClient } from "./ISubjectDashboardAPIClient";
+import { ISubjectAssignmentAPIClient } from "./ISubjectAssignmentAPIClient";
 import { ISubjectMaterialAPIClient } from "./ISubjectMaterialAPIClient";
 import { IUserAPIClient } from "./IUserAPIClient";
 import { NotificationAPIClient } from "./NotificationAPIClient";
 import { ScheduleAPIClient } from "./ScheduleAPIClient";
 import { SessionAPIClient } from "./SessionAPIClient";
 import { SubjectAPIClient } from "./SubjectAPIClient";
+import { SubjectAssignmentAPIClient } from "./SubjectAssignmentAPIClient";
 import { SubjectDashboardAPIClient } from "./SubjectDashboardAPIClient";
 import { SubjectMaterialAPIClient } from "./SubjectMaterialAPIClient";
 import { UserAPIClient } from "./UserAPIClient";
@@ -139,6 +141,19 @@ export async function getServerSubjectDashboardApiClient(
     locale?: Locale,
 ): Promise<ISubjectDashboardAPIClient> {
     return initializeClient(SubjectDashboardAPIClient, locale);
+}
+
+/**
+ * Server-side factory to retrieve an {@link ISubjectAssignmentAPIClient}.
+ *
+ * @param locale Optional locale to initialize the client with. If not provided, it will be
+ * retrieved using {@link getLocale}.
+ * @returns An {@link ISubjectAssignmentAPIClient} initialized with the specified or retrieved locale.
+ */
+export async function getServerSubjectAssignmentApiClient(
+    locale?: Locale,
+): Promise<ISubjectAssignmentAPIClient> {
+    return initializeClient(SubjectAssignmentAPIClient, locale);
 }
 
 /**
