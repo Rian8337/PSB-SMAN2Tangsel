@@ -1,9 +1,9 @@
 import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
-import { Get } from "@/decorators/routes";
+import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IConfigService, IMaterialService } from "@/services";
+import { IConfigService, IMaterialService, TempFile } from "@/services";
 import {
     ApiRequest,
     ApiResponse,
@@ -12,12 +12,21 @@ import {
     NotFoundError,
 } from "@/types";
 import { EnvironmentVariableKey } from "@/types";
-import { coercedMaterialIdSchema } from "@/validators";
+import {
+    coercedMaterialIdSchema,
+    createMaterialBodySchema,
+    updateMaterialBodySchema,
+} from "@/validators";
 import { SubjectMaterial, UserRole } from "@psb/shared/types";
 import { createReadStream } from "fs";
 import { join } from "path";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+
+interface UploadedFile {
+    readonly path: string;
+    readonly originalFilename: string;
+}
 
 /**
  * Controller that handles material viewing endpoints for students and teachers.
@@ -178,5 +187,148 @@ export class MaterialController extends BaseController {
         } catch (e) {
             this.handleError(req, res, e);
         }
+    }
+
+    /**
+     * Creates a new material in a class subject. Accepts multipart form data.
+     */
+    @Post("/")
+    @Roles(UserRole.teacher)
+    async createMaterial(
+        req: ApiRequest<
+            Record<string, never>,
+            SubjectMaterial,
+            Record<string, unknown>
+        >,
+        res: ApiResponse<SubjectMaterial>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsed = createMaterialBodySchema.safeParse(req.body);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const files = this.normalizeFiles(req.body.files);
+
+            const material = await this.materialService.addMaterial(
+                parsed.data.classSubjectId,
+                req.sessionData.userId,
+                parsed.data.title,
+                parsed.data.description ?? null,
+                parsed.data.visible,
+                files,
+            );
+
+            res.status(201).json(material);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Updates an existing material. Accepts multipart form data.
+     */
+    @Put("/:id")
+    @Roles(UserRole.teacher)
+    async updateMaterial(
+        req: ApiRequest<{ id: string }, unknown, Record<string, unknown>>,
+        res: ApiResponse,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsedId = coercedMaterialIdSchema.safeParse(req.params.id);
+
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsed = updateMaterialBodySchema.safeParse(req.body);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const files = this.normalizeFiles(req.body.files);
+
+            await this.materialService.updateMaterial(
+                parsedId.data,
+                req.sessionData.userId,
+                parsed.data.title,
+                parsed.data.description ?? null,
+                parsed.data.visible,
+                files,
+                parsed.data.renamedAttachments,
+                parsed.data.deletedAttachmentIds,
+            );
+
+            res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Deletes a material and all its attachments.
+     */
+    @Delete("/:id")
+    @Roles(UserRole.teacher)
+    async deleteMaterial(req: ApiRequest<{ id: string }>, res: ApiResponse) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsedId = coercedMaterialIdSchema.safeParse(req.params.id);
+
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.materialService.deleteMaterial(
+                parsedId.data,
+                req.sessionData.userId,
+            );
+
+            res.sendStatus(204);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    private normalizeFiles(raw: unknown): TempFile[] {
+        if (!raw) {
+            return [];
+        }
+
+        const items = Array.isArray(raw) ? raw : [raw];
+
+        return items
+            .filter(
+                (f): f is UploadedFile =>
+                    typeof f === "object" &&
+                    f !== null &&
+                    "path" in f &&
+                    "originalFilename" in f,
+            )
+            .map((f) => ({
+                path: f.path,
+                originalFilename: f.originalFilename,
+            }));
     }
 }
