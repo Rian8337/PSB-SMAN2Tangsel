@@ -153,6 +153,9 @@ export const mockFileService: Mocked<IFileService> = {
 export const mockSubmissionService: Mocked<ISubmissionService> = {
     getSubmissions: vi.fn(),
     downloadSubmissions: vi.fn(),
+    addSubmission: vi.fn(),
+    updateSubmission: vi.fn(),
+    deleteSubmission: vi.fn(),
 };
 
 /**

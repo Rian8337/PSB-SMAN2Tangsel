@@ -178,6 +178,11 @@ export const mockFileRepository: Mocked<IFileRepository> = {
 export const mockSubmissionRepository: Mocked<ISubmissionRepository> = {
     getForAssignment: vi.fn(),
     getForAssignmentWithAttachments: vi.fn(),
+    getByStudent: vi.fn(),
+    getAttachmentIds: vi.fn(),
+    add: vi.fn(),
+    addAttachments: vi.fn(),
+    delete: vi.fn(),
 };
 
 /**
