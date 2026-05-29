@@ -1,7 +1,7 @@
 "use client";
 
 import { Field } from "@chakra-ui/react";
-import React, { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 
 export interface FormFieldProps extends PropsWithChildren {
     /**
