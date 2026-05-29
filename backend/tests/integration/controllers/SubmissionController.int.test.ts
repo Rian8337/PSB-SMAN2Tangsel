@@ -326,6 +326,13 @@ describe("SubmissionController (integration)", () => {
     describe("POST /assignments/:assignmentId/submissions", () => {
         let freshAssignmentId: number;
 
+        afterEach(async () => {
+            await rm(join(storagePath, "attachments"), {
+                recursive: true,
+                force: true,
+            });
+        });
+
         beforeAll(async () => {
             const cls = await seeders.classes.seedOne({
                 name: "XI-IPA-SC-POST",
@@ -422,6 +429,13 @@ describe("SubmissionController (integration)", () => {
 
     describe("PUT /assignments/:assignmentId/submissions", () => {
         let updateAssignmentId: number;
+
+        afterEach(async () => {
+            await rm(join(storagePath, "attachments"), {
+                recursive: true,
+                force: true,
+            });
+        });
 
         beforeAll(async () => {
             const cls = await seeders.classes.seedOne({
