@@ -15,7 +15,7 @@ export function TableEditButton({ href, ariaLabel }: Props) {
             asChild
             size="sm"
             variant="ghost"
-            colorPalette="blue"
+            colorPalette="orange"
             aria-label={ariaLabel}
         >
             <Link href={href}>
