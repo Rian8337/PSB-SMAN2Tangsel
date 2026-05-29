@@ -509,7 +509,25 @@
     "deleteAssignment": "Hapus",
     "studentSubmissions": "Pengumpulan siswa",
     "showToStudents": "Tampilkan ke siswa",
-    "hideFromStudents": "Sembunyikan dari siswa"
+    "hideFromStudents": "Sembunyikan dari siswa",
+    "removeSuccessTitle": "Pengumpulan dihapus",
+    "removeErrorTitle": "Gagal menghapus pengumpulan",
+    "removeErrorMessage": "Terjadi kesalahan saat menghapus pengumpulan. Silakan coba lagi.",
+    "confirmRemoveMessage": "Apakah Anda yakin ingin menghapus pengumpulan Anda? Tindakan ini tidak dapat dibatalkan."
+  },
+  "ManageAssignmentSubmissionForm": {
+    "attachmentsLabel": "Lampiran",
+    "noAttachments": "Tidak ada lampiran.",
+    "addFilesLabel": "Tambah berkas",
+    "renameLabel": "Ubah nama",
+    "deleteAttachmentLabel": "Hapus",
+    "submitCreate": "Kumpulkan",
+    "submitEdit": "Simpan",
+    "cancelButton": "Batal",
+    "createSuccessTitle": "Pengumpulan berhasil dikumpulkan",
+    "createErrorTitle": "Gagal mengumpulkan",
+    "editSuccessTitle": "Pengumpulan berhasil diperbarui",
+    "editErrorTitle": "Gagal memperbarui pengumpulan"
   },
   "SubjectMaterial": {
     "fetchErrorTitle": "Gagal Memuat Materi",

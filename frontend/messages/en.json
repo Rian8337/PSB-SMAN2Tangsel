@@ -512,7 +512,25 @@
     "deleteAssignment": "Delete",
     "studentSubmissions": "Student submissions",
     "showToStudents": "Show to students",
-    "hideFromStudents": "Hide from students"
+    "hideFromStudents": "Hide from students",
+    "removeSuccessTitle": "Submission removed",
+    "removeErrorTitle": "Failed to remove submission",
+    "removeErrorMessage": "An error occurred while removing the submission. Please try again.",
+    "confirmRemoveMessage": "Are you sure you want to remove your submission? This action cannot be undone."
+  },
+  "ManageAssignmentSubmissionForm": {
+    "attachmentsLabel": "Attachments",
+    "noAttachments": "No attachments.",
+    "addFilesLabel": "Add files",
+    "renameLabel": "Rename",
+    "deleteAttachmentLabel": "Delete",
+    "submitCreate": "Submit",
+    "submitEdit": "Save",
+    "cancelButton": "Cancel",
+    "createSuccessTitle": "Submission submitted",
+    "createErrorTitle": "Failed to submit",
+    "editSuccessTitle": "Submission updated",
+    "editErrorTitle": "Failed to update submission"
   },
   "SubjectMaterial": {
     "fetchErrorTitle": "Failed to Load Material",
