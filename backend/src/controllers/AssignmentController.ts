@@ -1,9 +1,9 @@
 import { Controller } from "@/decorators/controller";
 import { Roles } from "@/decorators/roles";
-import { Get } from "@/decorators/routes";
+import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IAssignmentService, IConfigService } from "@/services";
+import { IAssignmentService, IConfigService, TempFile } from "@/services";
 import {
     ApiRequest,
     ApiResponse,
@@ -12,7 +12,11 @@ import {
     NotFoundError,
 } from "@/types";
 import { EnvironmentVariableKey } from "@/types";
-import { coercedAssignmentIdSchema } from "@/validators";
+import {
+    coercedAssignmentIdSchema,
+    createAssignmentBodySchema,
+    updateAssignmentBodySchema,
+} from "@/validators";
 import {
     StudentSubjectAssignment,
     TeacherSubjectAssignment,
@@ -22,6 +26,11 @@ import { createReadStream } from "fs";
 import { join } from "path";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
+
+interface UploadedFile {
+    readonly path: string;
+    readonly originalFilename: string;
+}
 
 /**
  * Controller that handles assignment viewing endpoints for students and teachers.
@@ -87,6 +96,137 @@ export class AssignmentController extends BaseController {
             }
 
             res.json(assignment);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Creates a new assignment in a class subject. Accepts multipart form data.
+     */
+    @Post("/")
+    @Roles(UserRole.teacher)
+    async createAssignment(
+        req: ApiRequest<
+            Record<string, never>,
+            TeacherSubjectAssignment,
+            Record<string, unknown>
+        >,
+        res: ApiResponse<TeacherSubjectAssignment>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsed = createAssignmentBodySchema.safeParse(req.body);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const files = this.normalizeFiles(req.body.files);
+
+            const assignment = await this.assignmentService.addAssignment(
+                parsed.data.classSubjectId,
+                req.sessionData.userId,
+                parsed.data.title,
+                parsed.data.description ?? null,
+                parsed.data.dueAt,
+                parsed.data.visible,
+                files,
+            );
+
+            res.status(201).json(assignment);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Updates an existing assignment. Accepts multipart form data.
+     */
+    @Put("/:id")
+    @Roles(UserRole.teacher)
+    async updateAssignment(
+        req: ApiRequest<{ id: string }, unknown, Record<string, unknown>>,
+        res: ApiResponse,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsedId = coercedAssignmentIdSchema.safeParse(
+                req.params.id,
+            );
+
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const parsed = updateAssignmentBodySchema.safeParse(req.body);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const files = this.normalizeFiles(req.body.files);
+
+            await this.assignmentService.updateAssignment(
+                parsedId.data,
+                req.sessionData.userId,
+                parsed.data.title,
+                parsed.data.description ?? null,
+                parsed.data.dueAt,
+                parsed.data.visible,
+                files,
+                parsed.data.renamedAttachments,
+                parsed.data.deletedAttachmentIds,
+            );
+
+            res.sendStatus(200);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Deletes an assignment and all its attachments and submissions.
+     */
+    @Delete("/:id")
+    @Roles(UserRole.teacher)
+    async deleteAssignment(
+        req: ApiRequest<{ id: string }>,
+        res: ApiResponse,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsedId = coercedAssignmentIdSchema.safeParse(
+                req.params.id,
+            );
+
+            if (!parsedId.success) {
+                throw new BadRequestError(
+                    parsedId.error.issues[0].message as MessageKey,
+                );
+            }
+
+            await this.assignmentService.deleteAssignment(
+                parsedId.data,
+                req.sessionData.userId,
+            );
+
+            res.sendStatus(204);
         } catch (e) {
             this.handleError(req, res, e);
         }
@@ -187,5 +327,26 @@ export class AssignmentController extends BaseController {
         } catch (e) {
             this.handleError(req, res, e);
         }
+    }
+
+    private normalizeFiles(raw: unknown): TempFile[] {
+        if (!raw) {
+            return [];
+        }
+
+        const items = Array.isArray(raw) ? raw : [raw];
+
+        return items
+            .filter(
+                (f): f is UploadedFile =>
+                    typeof f === "object" &&
+                    f !== null &&
+                    "path" in f &&
+                    "originalFilename" in f,
+            )
+            .map((f) => ({
+                path: f.path,
+                originalFilename: f.originalFilename,
+            }));
     }
 }
