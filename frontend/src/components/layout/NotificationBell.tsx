@@ -11,11 +11,12 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { Bell, CheckCircle2, Circle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export function NotificationBell() {
     const t = useTranslations("NotificationBell");
     const router = useRouter();
+    const locale = useLocale();
     const { notifications, unreadCount, updateReadStatus } = useNotifications();
 
     return (
@@ -177,7 +178,7 @@ export function NotificationBell() {
                                         >
                                             {new Date(
                                                 n.createdAt,
-                                            ).toLocaleDateString(undefined, {
+                                            ).toLocaleDateString(locale, {
                                                 day: "numeric",
                                                 month: "short",
                                                 hour: "2-digit",
