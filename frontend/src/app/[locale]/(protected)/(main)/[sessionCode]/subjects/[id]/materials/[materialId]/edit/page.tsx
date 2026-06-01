@@ -3,7 +3,6 @@ import {
     getServerSubjectMaterialApiClient,
 } from "@/api/server";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
-import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
 import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
@@ -49,11 +48,9 @@ export default async function EditMaterialPage({
     }
 
     return (
-        <SubjectMaterialApiProvider>
-            <ManageMaterialForm
-                classSubjectId={classSubjectId}
-                material={material}
-            />
-        </SubjectMaterialApiProvider>
+        <ManageMaterialForm
+            classSubjectId={classSubjectId}
+            material={material}
+        />
     );
 }

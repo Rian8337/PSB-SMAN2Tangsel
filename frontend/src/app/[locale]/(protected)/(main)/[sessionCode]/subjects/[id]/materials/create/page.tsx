@@ -3,7 +3,6 @@ import {
     getServerSubjectDashboardApiClient,
 } from "@/api/server";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
-import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
 import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
@@ -40,12 +39,10 @@ export default async function CreateMaterialPage({
     }
 
     return (
-        <SubjectMaterialApiProvider>
-            <ManageMaterialForm
-                classSubjectId={classSubjectId}
-                subjectName={dashboard.subject.name}
-                className={dashboard.class.name}
-            />
-        </SubjectMaterialApiProvider>
+        <ManageMaterialForm
+            classSubjectId={classSubjectId}
+            subjectName={dashboard.subject.name}
+            className={dashboard.class.name}
+        />
     );
 }

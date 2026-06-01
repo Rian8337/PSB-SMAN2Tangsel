@@ -3,7 +3,6 @@ import {
     getServerSubjectAssignmentApiClient,
 } from "@/api/server";
 import { ManageAssignmentForm } from "@/components/subjects/ManageAssignmentForm";
-import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
 import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
@@ -48,11 +47,9 @@ export default async function EditAssignmentPage({
     }
 
     return (
-        <SubjectAssignmentApiProvider>
-            <ManageAssignmentForm
-                classSubjectId={classSubjectId}
-                assignment={assignment}
-            />
-        </SubjectAssignmentApiProvider>
+        <ManageAssignmentForm
+            classSubjectId={classSubjectId}
+            assignment={assignment}
+        />
     );
 }
