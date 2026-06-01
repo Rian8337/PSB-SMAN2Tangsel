@@ -1,7 +1,6 @@
 import { Page } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
-import { expect } from "../fixtures";
 
 /**
  * Logs in as the first seeded student and waits for the dashboard to load.
@@ -41,10 +40,11 @@ async function loginUser(page: Page, role: UserRole) {
     await page.fill('input[name="id"]', user.identifier);
     await page.fill('input[name="password"]', "password123");
 
-    await page.click('button[type="submit"]');
-
-    await expect(page).toHaveURL(
-        user.role === UserRole.administrator ? /.*\/admin/ : /.*\/dashboard/,
-        { timeout: 15000 },
-    );
+    await Promise.all([
+        page.waitForURL(
+            user.role === UserRole.administrator ? /.*\/admin/ : /.*\/dashboard/,
+            { waitUntil: "load", timeout: 15000 },
+        ),
+        page.click('button[type="submit"]'),
+    ]);
 }
