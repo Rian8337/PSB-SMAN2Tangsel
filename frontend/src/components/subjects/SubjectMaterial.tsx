@@ -2,6 +2,7 @@
 
 import { backendBaseUrl } from "@/api/backendBaseUrl";
 import { useRouter } from "@/i18n/navigation";
+import { useSessionCode } from "@/hooks";
 import { useSubjectMaterialApiClient } from "@/providers/api/subject-material-api-provider";
 import {
     Box,
@@ -45,6 +46,7 @@ export function SubjectMaterial({
     classSubjectId,
     role,
 }: SubjectMaterialProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("SubjectMaterial");
     const apiClient = useSubjectMaterialApiClient();
 
@@ -55,7 +57,7 @@ export function SubjectMaterial({
     const [isLoading, setIsLoading] = useState(true);
 
     const isTeacher = role === UserRole.teacher;
-    const backButtonUrl = `/subjects/${classSubjectId.toString()}`;
+    const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
@@ -197,7 +199,7 @@ export function SubjectMaterial({
                             size="sm"
                             onClick={() => {
                                 router.push(
-                                    `/subjects/${classSubjectId.toString()}/materials/${materialId.toString()}/edit`,
+                                    `/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${materialId.toString()}/edit`,
                                 );
                             }}
                         >

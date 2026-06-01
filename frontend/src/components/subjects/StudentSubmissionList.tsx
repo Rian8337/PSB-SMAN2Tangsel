@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useSessionCode } from "@/hooks";
 import { useSubjectAssignmentApiClient } from "@/providers/api/subject-assignment-api-provider";
 import { useSubjectAssignmentSubmissionApiClient } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
@@ -40,12 +41,13 @@ export function StudentSubmissionList({
     assignmentId,
     classSubjectId,
 }: StudentSubmissionListProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("StudentSubmissionList");
     const assignmentApiClient = useSubjectAssignmentApiClient();
     const submissionApiClient = useSubjectAssignmentSubmissionApiClient();
     const router = useRouter();
 
-    const backButtonUrl = `/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`;
+    const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`;
 
     const [assignment, setAssignment] =
         useState<TeacherSubjectAssignment | null>(null);

@@ -16,6 +16,7 @@ import {
 import { SubjectMaterial } from "@psb/shared/types";
 import { FileText, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useSessionCode } from "@/hooks";
 import { useRef, useState } from "react";
 import { FormField } from "../ui/FormField";
 import { PageForm } from "../ui/PageForm";
@@ -41,6 +42,7 @@ export function ManageMaterialForm({
     subjectName,
     className,
 }: ManageMaterialFormProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("ManageMaterialForm");
     const apiClient = useSubjectMaterialApiClient();
     const router = useRouter();
@@ -48,8 +50,8 @@ export function ManageMaterialForm({
     const isEditMode = material !== undefined;
 
     const backUrl = isEditMode
-        ? `/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`
-        : `/subjects/${classSubjectId.toString()}`;
+        ? `/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`
+        : `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [title, setTitle] = useState(material?.title ?? "");
     const [description, setDescription] = useState(material?.description ?? "");

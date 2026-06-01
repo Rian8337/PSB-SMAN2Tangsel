@@ -1,6 +1,6 @@
 "use client";
 
-import { useDebounce } from "@/hooks";
+import { useDebounce, useSessionCode } from "@/hooks";
 import { useSubjectApiClient } from "@/providers/api/subject-api-provider";
 import { Box, Flex, Input, Spinner, Table } from "@chakra-ui/react";
 import { Search } from "lucide-react";
@@ -10,9 +10,15 @@ import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
-import { ClassSubjectAssignment } from "@psb/shared/types";
+import { ClassSubjectAssignment, ValidSemester, ValidSession } from "@psb/shared/types";
 
-export function MySubjects() {
+interface MySubjectsProps {
+    readonly session?: ValidSession;
+    readonly semester?: ValidSemester;
+}
+
+export function MySubjects({ session, semester }: MySubjectsProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("Subjects");
     const subjectApiClient = useSubjectApiClient();
     const router = useRouter();
@@ -34,6 +40,8 @@ export function MySubjects() {
                     query,
                     limit,
                     (page - 1) * limit,
+                    session,
+                    semester,
                     signal,
                 );
 
@@ -54,7 +62,7 @@ export function MySubjects() {
                 }
             }
         },
-        [subjectApiClient, t],
+        [subjectApiClient, t, session, semester],
     );
 
     useEffect(() => {
@@ -154,7 +162,7 @@ export function MySubjects() {
                                             _hover={{ bg: "gray.50" }}
                                             onClick={() => {
                                                 router.push(
-                                                    `/subjects/${item.id.toString()}`,
+                                                    `/${sessionCode}/subjects/${item.id.toString()}`,
                                                 );
                                             }}
                                         >

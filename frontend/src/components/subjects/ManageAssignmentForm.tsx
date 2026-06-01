@@ -16,6 +16,7 @@ import {
 import { TeacherSubjectAssignment } from "@psb/shared/types";
 import { FileText, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useSessionCode } from "@/hooks";
 import { useRef, useState } from "react";
 import { FormField } from "../ui/FormField";
 import { PageForm } from "../ui/PageForm";
@@ -41,6 +42,7 @@ export function ManageAssignmentForm({
     subjectName,
     className,
 }: ManageAssignmentFormProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("ManageAssignmentForm");
     const apiClient = useSubjectAssignmentApiClient();
     const router = useRouter();
@@ -48,8 +50,8 @@ export function ManageAssignmentForm({
     const isEditMode = assignment !== undefined;
 
     const backUrl = isEditMode
-        ? `/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`
-        : `/subjects/${classSubjectId.toString()}`;
+        ? `/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`
+        : `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [title, setTitle] = useState(assignment?.title ?? "");
 

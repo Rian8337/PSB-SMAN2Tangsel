@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useSessionCode } from "@/hooks";
 import { useSubjectDashboardApiClient } from "@/providers/api/subject-dashboard-api-provider";
 import {
     Box,
@@ -31,6 +32,7 @@ export function SubjectDashboard({
     classSubjectId,
     role,
 }: SubjectDashboardProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("SubjectDashboard");
     const apiClient = useSubjectDashboardApiClient();
     const router = useRouter();
@@ -87,7 +89,7 @@ export function SubjectDashboard({
     if (isLoading) {
         return (
             <>
-                <PageHeader title="" backButtonUrl="/subjects" />
+                <PageHeader title="" backButtonUrl={`/${sessionCode}/dashboard`} />
 
                 <Flex justify="center" align="center" h="200px">
                     <Spinner size="xl" />
@@ -106,7 +108,7 @@ export function SubjectDashboard({
                             : dashboard.subject.name
                         : ""
                 }
-                backButtonUrl="/subjects"
+                backButtonUrl={`/${sessionCode}/dashboard`}
                 rightElement={
                     dashboard && (
                         <Text
@@ -143,7 +145,7 @@ export function SubjectDashboard({
                                 size="sm"
                                 onClick={() => {
                                     router.push(
-                                        `/subjects/${classSubjectId.toString()}/materials/create`,
+                                        `/${sessionCode}/subjects/${classSubjectId.toString()}/materials/create`,
                                     );
                                 }}
                             >
@@ -165,7 +167,7 @@ export function SubjectDashboard({
                                     >
                                         <Box flex={1} pr={4}>
                                             <Link
-                                                href={`/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`}
+                                                href={`/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`}
                                             >
                                                 <Text
                                                     color="blue.500"
@@ -230,7 +232,7 @@ export function SubjectDashboard({
                                 size="sm"
                                 onClick={() => {
                                     router.push(
-                                        `/subjects/${classSubjectId.toString()}/assignments/create`,
+                                        `/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/create`,
                                     );
                                 }}
                             >
@@ -252,7 +254,7 @@ export function SubjectDashboard({
                                     >
                                         <Box flex={1} pr={4}>
                                             <Link
-                                                href={`/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`}
+                                                href={`/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`}
                                             >
                                                 <Text
                                                     color="blue.500"

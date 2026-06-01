@@ -2,6 +2,7 @@
 
 import { backendBaseUrl } from "@/api/backendBaseUrl";
 import { useRouter } from "@/i18n/navigation";
+import { useSessionCode } from "@/hooks";
 import { useSubjectAssignmentApiClient } from "@/providers/api/subject-assignment-api-provider";
 import { useSubjectAssignmentSubmissionApiClient } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
@@ -59,6 +60,7 @@ export function SubjectAssignment({
     classSubjectId,
     role,
 }: SubjectAssignmentProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("SubjectAssignment");
     const apiClient = useSubjectAssignmentApiClient();
     const submissionApiClient = useSubjectAssignmentSubmissionApiClient();
@@ -73,7 +75,7 @@ export function SubjectAssignment({
     const [isLoading, setIsLoading] = useState(true);
 
     const isStudent = role === UserRole.student;
-    const backButtonUrl = `/subjects/${classSubjectId.toString()}`;
+    const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
@@ -361,7 +363,7 @@ export function SubjectAssignment({
                             size="sm"
                             onClick={() => {
                                 router.push(
-                                    `/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/edit`,
+                                    `/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/edit`,
                                 );
                             }}
                         >
@@ -411,7 +413,7 @@ export function SubjectAssignment({
                             size="sm"
                             onClick={() => {
                                 router.push(
-                                    `/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/submissions`,
+                                    `/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}/submissions`,
                                 );
                             }}
                         >
