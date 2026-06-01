@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 
 test.describe("Manage Assignment Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const teacher = seededPrimaryData.users.find(
         (u) => u.role === UserRole.teacher,
@@ -69,11 +71,15 @@ test.describe("Manage Assignment Flow", () => {
     }) => {
         await loginTeacher(page);
 
-        await page.goto(`/id/subjects/${classSubjectId.toString()}`);
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(async () => {
             await page
@@ -90,13 +96,15 @@ test.describe("Manage Assignment Flow", () => {
     test("Teacher should be able to create an assignment", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/create`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/create`,
+            );
 
-        await expect(page.locator('input[name="title"]')).toBeVisible({
-            timeout: 10000,
-        });
+            await expect(page.locator('input[name="title"]')).toBeVisible({
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
 
         // Use the retry pattern to handle pre-hydration clicks.
         await expect(async () => {
@@ -117,13 +125,17 @@ test.describe("Manage Assignment Flow", () => {
     test("Teacher should be able to edit an assignment", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${editAssignmentId.toString()}/edit`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${editAssignmentId.toString()}/edit`,
+            );
+
+            await expect(
+                page.locator('input[name="title"]'),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         const titleInput = page.locator('input[name="title"]');
-
-        await expect(titleInput).toBeVisible({ timeout: 10000 });
 
         await expect(titleInput).toHaveValue("Tugas untuk Diedit", {
             timeout: 10000,
@@ -135,7 +147,7 @@ test.describe("Manage Assignment Flow", () => {
         await page.getByRole("button", { name: /simpan|save/i }).click();
 
         await expect(page).toHaveURL(
-            new RegExp(`/subjects/${classSubjectId.toString()}$`),
+            new RegExp(`/assignments/${editAssignmentId.toString()}$`),
             { timeout: 10000 },
         );
 
@@ -147,13 +159,15 @@ test.describe("Manage Assignment Flow", () => {
     }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${editAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${editAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("button", { name: /tampilkan ke siswa/i }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("button", { name: /tampilkan ke siswa/i }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await page
             .getByRole("button", { name: /tampilkan ke siswa/i })
@@ -167,13 +181,15 @@ test.describe("Manage Assignment Flow", () => {
     test("Teacher should be able to delete an assignment", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${deleteAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${deleteAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: "Tugas untuk Dihapus" }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("heading", { name: "Tugas untuk Dihapus" }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         page.once("dialog", (dialog) => dialog.accept());
 
@@ -192,12 +208,14 @@ test.describe("Manage Assignment Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/create`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/create`,
+            );
 
-        await expect(page.locator('input[name="title"]')).toHaveCount(0, {
-            timeout: 10000,
-        });
+            await expect(page.locator('input[name="title"]')).toHaveCount(0, {
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
     });
 });

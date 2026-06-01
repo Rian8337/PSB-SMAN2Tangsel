@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 
 test.describe("View Subject Assignment Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
     const seededAttachment = seededPrimaryData.attachments[0];
 
     const student = seededPrimaryData.users.find(
@@ -75,13 +77,15 @@ test.describe("View Subject Assignment Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${visibleAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${visibleAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible();
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByRole("heading", { name: "Visible Assignment" }),
@@ -108,13 +112,16 @@ test.describe("View Subject Assignment Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${hiddenAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${hiddenAssignmentId.toString()}`,
+            );
 
-        await expect(page).toHaveURL(
-            new RegExp(`/subjects/${classSubjectId.toString()}$`),
-        );
+            await expect(page).toHaveURL(
+                new RegExp(`/subjects/${classSubjectId.toString()}$`),
+                { timeout: 3000 },
+            );
+        }).toPass({ timeout: 15000 });
     });
 
     test("Teacher should see hidden assignment content and management buttons", async ({
@@ -122,13 +129,15 @@ test.describe("View Subject Assignment Flow", () => {
     }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${hiddenAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${hiddenAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible();
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByRole("heading", { name: "Hidden Assignment" }),
@@ -146,11 +155,20 @@ test.describe("View Subject Assignment Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${visibleAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${visibleAssignmentId.toString()}`,
+            );
 
-        await expect(page.getByText(seededAttachment.name)).toBeVisible();
+            await page.waitForURL(
+                new RegExp(`/assignments/${visibleAssignmentId.toString()}`),
+                { timeout: 3000 },
+            );
+
+            await expect(page.getByText(seededAttachment.name)).toBeVisible({
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
 
         const attachmentLink = page.getByRole("link", {
             name: seededAttachment.name,

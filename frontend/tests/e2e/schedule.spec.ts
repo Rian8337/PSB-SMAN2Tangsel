@@ -1,16 +1,18 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ScheduleDay } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent } from "./utils/login";
 
 test.describe("Student Dashboard Schedule", () => {
     const student = seededPrimaryData.students[0];
     const subject = seededPrimaryData.subjects[0];
+    const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
 
     test.beforeAll(async ({ workerSetup }) => {
         const { seeders } = workerSetup.dbManager;
         const teacher = seededPrimaryData.teachers[0];
-        const session = seededPrimaryData.sessions[0];
 
         const clazz = await seeders.classes.seedOne({
             id: 1,
@@ -47,12 +49,17 @@ test.describe("Student Dashboard Schedule", () => {
     test.beforeEach(async ({ page }) => {
         await loginStudent(page);
 
-        await page
-            .locator('a[href="/schedule"]')
-            .filter({ hasText: /jadwal/i })
-            .click();
+        await expect(async () => {
+            await page.goto(`/id/${sessionCode}/schedule`);
 
-        await page.waitForURL(/schedule/);
+            await expect(
+                page.getByRole("button", { name: "Unduh Jadwal" }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
+
+        // Drain any in-flight navigations from the schedule component's
+        // fetch-on-mount cycle so the test body starts with a stable page.
+        await page.waitForLoadState("networkidle");
     });
 
     test("should log in as a student and display the scheduled class", async ({

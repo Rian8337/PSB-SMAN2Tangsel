@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
+import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
-import { UserRole } from "@psb/shared/types";
 
 test.describe("My Subjects Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const student = seededPrimaryData.users.find(
         (u) => u.role === UserRole.student,
@@ -92,7 +94,14 @@ test.describe("My Subjects Flow", () => {
 
     test("User should be able to search subjects", async ({ page }) => {
         await loginStudent(page);
-        await page.goto("/id/subjects");
+
+        await expect(async () => {
+            await page.goto(`/id/${sessionCode}/subjects`);
+
+            await expect(
+                page.getByPlaceholder("Cari mata pelajaran..."),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         const searchInput = page.getByPlaceholder("Cari mata pelajaran...");
         await searchInput.fill(subject.code);

@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 
 test.describe("Manage Assignment Submission Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const student = seededPrimaryData.users.find(
         (u) => u.role === UserRole.student,
@@ -80,17 +82,26 @@ test.describe("Manage Assignment Submission Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`,
-        );
+        // First navigation to this route may lose a race against Next.js dev-server
+        // bundle compilation, causing the component to redirect before load fires.
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: "Tugas untuk Pengumpulan" }),
-        ).toBeVisible({ timeout: 10000 });
+            await page.waitForURL(
+                new RegExp(`/assignments/${assignmentId.toString()}`),
+                { timeout: 3000 },
+            );
+
+            await expect(
+                page.getByRole("heading", { name: "Tugas untuk Pengumpulan" }),
+            ).toBeVisible({ timeout: 5000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByLabel(/tambah berkas/i),
-        ).toBeVisible({ timeout: 5000 });
+        ).toBeVisible({ timeout: 10000 });
 
         await expect(
             page.getByRole("button", { name: /kumpulkan/i }),
@@ -100,13 +111,15 @@ test.describe("Manage Assignment Submission Flow", () => {
     test("Student can submit a file to an assignment", async ({ page }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${submitAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${submitAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByLabel(/tambah berkas/i),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByLabel(/tambah berkas/i),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await page
             .getByLabel(/tambah berkas/i)
@@ -132,14 +145,16 @@ test.describe("Manage Assignment Submission Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${submitAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${submitAssignmentId.toString()}`,
+            );
 
-        // After reloading, the submission section should show edit/remove buttons.
-        await expect(
-            page.getByRole("button", { name: /edit/i }),
-        ).toBeVisible({ timeout: 10000 });
+            // After reloading, the submission section should show edit/remove buttons.
+            await expect(
+                page.getByRole("button", { name: /edit/i }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         // The submit button should not be present (form is not shown).
         await expect(
@@ -150,13 +165,20 @@ test.describe("Manage Assignment Submission Flow", () => {
     test("Student can remove their submission", async ({ page }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${removeAssignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${removeAssignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("button", { name: /hapus/i }),
-        ).toBeVisible({ timeout: 10000 });
+            await page.waitForURL(
+                new RegExp(`/assignments/${removeAssignmentId.toString()}`),
+                { timeout: 3000 },
+            );
+
+            await expect(
+                page.getByRole("button", { name: /hapus/i }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         page.once("dialog", (dialog) => dialog.accept());
 
@@ -171,13 +193,15 @@ test.describe("Manage Assignment Submission Flow", () => {
     test("Teacher cannot see the submission form", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: "Tugas untuk Pengumpulan" }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("heading", { name: "Tugas untuk Pengumpulan" }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByLabel(/tambah berkas/i),

@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 
 test.describe("View Subject Material Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
     const seededAttachment = seededPrimaryData.attachments[0];
 
     const student = seededPrimaryData.users.find(
@@ -69,13 +71,15 @@ test.describe("View Subject Material Flow", () => {
     test("Student should see visible material content", async ({ page }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${visibleMaterialId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${visibleMaterialId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible();
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByRole("heading", { name: "Visible Material" }),
@@ -95,26 +99,32 @@ test.describe("View Subject Material Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${hiddenMaterialId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${hiddenMaterialId.toString()}`,
+            );
 
-        await expect(page).toHaveURL(
-            new RegExp(`/subjects/${classSubjectId.toString()}$`),
-        );
+            await expect(page).toHaveURL(
+                new RegExp(`/subjects/${classSubjectId.toString()}$`),
+                { timeout: 3000 },
+            );
+        }).toPass({ timeout: 15000 });
     });
 
     test("Teacher should see hidden material content and action buttons", async ({
         page,
     }) => {
         await loginTeacher(page);
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${hiddenMaterialId.toString()}`,
-        );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible();
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${hiddenMaterialId.toString()}`,
+            );
+
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await expect(
             page.getByRole("heading", { name: "Hidden Material" }),
@@ -132,11 +142,15 @@ test.describe("View Subject Material Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${visibleMaterialId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${visibleMaterialId.toString()}`,
+            );
 
-        await expect(page.getByText(seededAttachment.name)).toBeVisible();
+            await expect(
+                page.getByText(seededAttachment.name),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         const attachmentLink = page.getByRole("link", {
             name: seededAttachment.name,

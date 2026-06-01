@@ -58,7 +58,14 @@ test.describe("View Subject Flow", () => {
         page,
     }) => {
         await loginStudent(page);
-        await page.goto("/id/subjects");
+
+        await expect(async () => {
+            await page.goto("/id/subjects");
+
+            await expect(
+                page.getByRole("row", { name: subject.code }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         const row = page.getByRole("row", { name: subject.code });
         await row.click();
@@ -94,7 +101,14 @@ test.describe("View Subject Flow", () => {
         page,
     }) => {
         await loginTeacher(page);
-        await page.goto("/id/subjects");
+
+        await expect(async () => {
+            await page.goto("/id/subjects");
+
+            await expect(
+                page.getByRole("row", { name: "XI-IPA-1" }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         const row = page.getByRole("row", { name: "XI-IPA-1" });
         await row.click();

@@ -4,7 +4,14 @@ import { loginStudent } from "./utils/login";
 test.describe("Account Settings", () => {
     test.beforeEach(async ({ page }) => {
         await loginStudent(page);
-        await page.goto("/settings", { waitUntil: "domcontentloaded" });
+
+        await expect(async () => {
+            await page.goto("/settings", { waitUntil: "domcontentloaded" });
+
+            await expect(
+                page.getByPlaceholder(/saat ini|current/i),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
     });
 
     test("should prevent submission if fields are empty", async ({ page }) => {

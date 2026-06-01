@@ -24,24 +24,40 @@ test.describe("Middleware Role-Based Access Control (RBAC)", () => {
         });
 
         test("should allow access to /dashboard", async ({ page }) => {
-            await page.goto("/dashboard");
+            await expect(async () => {
+                await page.goto("/dashboard");
 
-            await expect(page).toHaveURL(/\/dashboard/);
-            await expect(page.locator("h1, h2").first()).toBeVisible();
+                await expect(page).toHaveURL(/\/\d{5}\/dashboard/, {
+                    timeout: 3000,
+                });
+                await expect(page.locator("h1, h2").first()).toBeVisible({
+                    timeout: 3000,
+                });
+            }).toPass({ timeout: 15000 });
         });
 
         test("should block access to /admin and redirect back to /dashboard", async ({
             page,
         }) => {
-            await page.goto("/admin/settings");
-            await expect(page).toHaveURL(/\/dashboard/);
+            await expect(async () => {
+                await page.goto("/admin/settings");
+
+                await expect(page).toHaveURL(/\/dashboard/, {
+                    timeout: 3000,
+                });
+            }).toPass({ timeout: 15000 });
         });
 
         test("should redirect away from /login if already logged in", async ({
             page,
         }) => {
-            await page.goto("/login");
-            await expect(page).toHaveURL(/\/dashboard/);
+            await expect(async () => {
+                await page.goto("/login");
+
+                await expect(page).toHaveURL(/\/\d{5}\/dashboard/, {
+                    timeout: 3000,
+                });
+            }).toPass({ timeout: 15000 });
         });
     });
 
@@ -51,22 +67,31 @@ test.describe("Middleware Role-Based Access Control (RBAC)", () => {
         });
 
         test("should allow access to /admin", async ({ page }) => {
-            await page.goto("/admin");
-            await expect(page).toHaveURL(/\/admin/);
+            await expect(async () => {
+                await page.goto("/admin");
+
+                await expect(page).toHaveURL(/\/admin/, { timeout: 3000 });
+            }).toPass({ timeout: 15000 });
         });
 
         test("should block access to /dashboard and redirect back to /admin", async ({
             page,
         }) => {
-            await page.goto("/dashboard/classes");
-            await expect(page).toHaveURL(/\/admin/);
+            await expect(async () => {
+                await page.goto("/dashboard/classes");
+
+                await expect(page).toHaveURL(/\/admin/, { timeout: 3000 });
+            }).toPass({ timeout: 15000 });
         });
 
         test("should redirect away from /login to /admin if already logged in", async ({
             page,
         }) => {
-            await page.goto("/login");
-            await expect(page).toHaveURL(/\/admin/);
+            await expect(async () => {
+                await page.goto("/login");
+
+                await expect(page).toHaveURL(/\/admin/, { timeout: 3000 });
+            }).toPass({ timeout: 15000 });
         });
     });
 });

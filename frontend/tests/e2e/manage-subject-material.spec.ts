@@ -1,11 +1,13 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 
 test.describe("Manage Subject Material Flow", () => {
     const subject = seededPrimaryData.subjects[0];
     const session = seededPrimaryData.sessions[0];
+    const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const teacher = seededPrimaryData.users.find(
         (u) => u.role === UserRole.teacher,
@@ -68,11 +70,15 @@ test.describe("Manage Subject Material Flow", () => {
     }) => {
         await loginTeacher(page);
 
-        await page.goto(`/id/subjects/${classSubjectId.toString()}`);
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: subject.name }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("heading", { name: subject.name }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         // Use the retry pattern to handle pre-hydration clicks.
         await expect(async () => {
@@ -90,13 +96,15 @@ test.describe("Manage Subject Material Flow", () => {
     test("Teacher should be able to create a material", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/create`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/create`,
+            );
 
-        await expect(page.locator('input[name="title"]')).toBeVisible({
-            timeout: 10000,
-        });
+            await expect(page.locator('input[name="title"]')).toBeVisible({
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
 
         // Use the retry pattern to handle pre-hydration clicks.
         await expect(async () => {
@@ -117,13 +125,17 @@ test.describe("Manage Subject Material Flow", () => {
     test("Teacher should be able to edit a material", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${editMaterialId.toString()}/edit`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${editMaterialId.toString()}/edit`,
+            );
+
+            await expect(page.locator('input[name="title"]')).toBeVisible({
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
 
         const titleInput = page.locator('input[name="title"]');
-
-        await expect(titleInput).toBeVisible({ timeout: 10000 });
 
         await expect(titleInput).toHaveValue("Materi untuk Diedit", {
             timeout: 10000,
@@ -135,7 +147,7 @@ test.describe("Manage Subject Material Flow", () => {
         await page.getByRole("button", { name: /simpan|save/i }).click();
 
         await expect(page).toHaveURL(
-            new RegExp(`/subjects/${classSubjectId.toString()}$`),
+            new RegExp(`/materials/${editMaterialId.toString()}$`),
             { timeout: 10000 },
         );
 
@@ -147,13 +159,17 @@ test.describe("Manage Subject Material Flow", () => {
     }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${editMaterialId.toString()}`,
-        );
+        // First navigation to this route may lose a race against Next.js dev-server
+        // bundle compilation, causing the component to redirect before load fires.
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${editMaterialId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("button", { name: /tampilkan ke siswa/i }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("button", { name: /tampilkan ke siswa/i }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         await page.getByRole("button", { name: /tampilkan ke siswa/i }).click();
 
@@ -165,13 +181,15 @@ test.describe("Manage Subject Material Flow", () => {
     test("Teacher should be able to delete a material", async ({ page }) => {
         await loginTeacher(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/${deleteMaterialId.toString()}`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${deleteMaterialId.toString()}`,
+            );
 
-        await expect(
-            page.getByRole("heading", { name: "Materi untuk Dihapus" }),
-        ).toBeVisible({ timeout: 10000 });
+            await expect(
+                page.getByRole("heading", { name: "Materi untuk Dihapus" }),
+            ).toBeVisible({ timeout: 3000 });
+        }).toPass({ timeout: 15000 });
 
         page.once("dialog", (dialog) => dialog.accept());
 
@@ -190,13 +208,18 @@ test.describe("Manage Subject Material Flow", () => {
     }) => {
         await loginStudent(page);
 
-        await page.goto(
-            `/id/subjects/${classSubjectId.toString()}/materials/create`,
-        );
+        await expect(async () => {
+            await page.goto(
+                `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/create`,
+            );
 
-        // notFound() renders a 404 at the same URL. Verify that the form is not present.
-        await expect(page.locator('input[name="title"]')).toHaveCount(0, {
-            timeout: 10000,
-        });
+            await page.waitForLoadState("networkidle");
+
+            // The student is either shown a 404 or redirected away.
+            // Either way, the create form must not be present.
+            await expect(page.locator('input[name="title"]')).toHaveCount(0, {
+                timeout: 3000,
+            });
+        }).toPass({ timeout: 15000 });
     });
 });
