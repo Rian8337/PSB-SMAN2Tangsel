@@ -37,7 +37,9 @@ export function SessionSwitcher() {
     );
 
     useEffect(() => {
-        if (isAdmin) return;
+        if (isAdmin) {
+            return;
+        }
 
         const controller = new AbortController();
 
@@ -54,7 +56,9 @@ export function SessionSwitcher() {
     }, [isAdmin, authApiClient]);
 
     useEffect(() => {
-        if (!isAdmin) return;
+        if (!isAdmin) {
+            return;
+        }
 
         const controller = new AbortController();
 
@@ -94,6 +98,7 @@ export function SessionSwitcher() {
         semester: ValidSemester;
     }) => {
         const code = encodeSessionCode(s.session, s.semester);
+
         if (isAdmin) {
             adminSession.setSelectedSession(s as AcademicSessionDTO);
         } else if (code !== currentSessionCode) {
@@ -135,7 +140,7 @@ export function SessionSwitcher() {
                                     handleSelect(s);
                                 }}
                             >
-                                {s.session} – {t("semester")}{" "}
+                                {s.session} - {t("semester")}{" "}
                                 {s.semester.toString()}
                             </Menu.Item>
                         );
