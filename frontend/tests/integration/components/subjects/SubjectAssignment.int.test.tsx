@@ -343,7 +343,7 @@ describe("SubjectAssignment (integration)", () => {
             );
 
             expect(mockRouter.push).toHaveBeenCalledWith(
-                "/subjects/10/assignments/1/edit",
+                "/24252/subjects/10/assignments/1/edit",
             );
         });
 
@@ -374,7 +374,7 @@ describe("SubjectAssignment (integration)", () => {
                 ).toHaveBeenCalledWith(1);
             });
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10");
         });
 
         it("should call updateAssignment to toggle visibility when the visibility button is clicked", async () => {

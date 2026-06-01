@@ -61,7 +61,7 @@ describe("SubjectAPIClient (unit)", () => {
         it("should append all provided query parameters and pass the AbortSignal", async () => {
             const controller = new AbortController();
 
-            await client.getMySubjects(" Science ", 15, 30, controller.signal);
+            await client.getMySubjects(" Science ", 15, 30, undefined, undefined, controller.signal);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 

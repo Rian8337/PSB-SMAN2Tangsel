@@ -59,6 +59,8 @@ describe("MySubjects (integration)", () => {
             "",
             10,
             0,
+            undefined,
+            undefined,
             expect.any(AbortSignal),
         );
 
@@ -95,6 +97,8 @@ describe("MySubjects (integration)", () => {
                 "Math",
                 10,
                 0,
+                undefined,
+                undefined,
                 expect.any(AbortSignal),
             );
         });

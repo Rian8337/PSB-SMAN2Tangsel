@@ -95,7 +95,7 @@ describe("ManageAssignmentForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10");
             expect(mockRouter.refresh).toHaveBeenCalledOnce();
         });
 
@@ -179,7 +179,7 @@ describe("ManageAssignmentForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10/assignments/5");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10/assignments/5");
         });
 
         it("should mark an attachment as deleted when its delete button is clicked", async () => {

@@ -189,7 +189,7 @@ describe("SubjectMaterial (integration)", () => {
             );
 
             expect(mockRouter.push).toHaveBeenCalledWith(
-                "/subjects/10/materials/1/edit",
+                "/24252/subjects/10/materials/1/edit",
             );
         });
 
@@ -216,7 +216,7 @@ describe("SubjectMaterial (integration)", () => {
                 ).toHaveBeenCalledWith(1);
             });
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10");
         });
 
         it("should call updateMaterial to toggle visibility and refetch", async () => {

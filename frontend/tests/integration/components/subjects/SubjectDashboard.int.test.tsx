@@ -126,7 +126,7 @@ describe("SubjectDashboard (integration)", () => {
             await user.click(screen.getByRole("button", { name: "addMaterial" }));
 
             expect(mockRouter.push).toHaveBeenCalledWith(
-                "/subjects/1/materials/create",
+                "/24252/subjects/1/materials/create",
             );
         });
 
@@ -144,7 +144,7 @@ describe("SubjectDashboard (integration)", () => {
             );
 
             expect(mockRouter.push).toHaveBeenCalledWith(
-                "/subjects/1/assignments/create",
+                "/24252/subjects/1/assignments/create",
             );
         });
     });

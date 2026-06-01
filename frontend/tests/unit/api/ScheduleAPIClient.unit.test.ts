@@ -37,7 +37,7 @@ describe("ScheduleAPIClient (unit)", () => {
                 json: () => Promise.resolve(mockScheduleData),
             } as Response);
 
-            const result = await client.getSchedule(controller.signal);
+            const result = await client.getSchedule(undefined, undefined, controller.signal);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 

@@ -90,7 +90,7 @@ describe("ManageMaterialForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10");
             expect(mockRouter.refresh).toHaveBeenCalledOnce();
         });
 
@@ -174,7 +174,7 @@ describe("ManageMaterialForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10/materials/5");
+            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10/materials/5");
         });
 
         it("should mark an attachment as deleted when its delete button is clicked", async () => {
