@@ -42,7 +42,10 @@ export function ManageMaterialForm({
     const router = useRouter();
 
     const isEditMode = material !== undefined;
-    const backUrl = `/subjects/${classSubjectId.toString()}`;
+
+    const backUrl = isEditMode
+        ? `/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`
+        : `/subjects/${classSubjectId.toString()}`;
 
     const [title, setTitle] = useState(material?.title ?? "");
     const [description, setDescription] = useState(material?.description ?? "");

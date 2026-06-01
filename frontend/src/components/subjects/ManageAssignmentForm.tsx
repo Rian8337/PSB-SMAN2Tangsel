@@ -42,7 +42,10 @@ export function ManageAssignmentForm({
     const router = useRouter();
 
     const isEditMode = assignment !== undefined;
-    const backUrl = `/subjects/${classSubjectId.toString()}`;
+
+    const backUrl = isEditMode
+        ? `/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`
+        : `/subjects/${classSubjectId.toString()}`;
 
     const [title, setTitle] = useState(assignment?.title ?? "");
 
