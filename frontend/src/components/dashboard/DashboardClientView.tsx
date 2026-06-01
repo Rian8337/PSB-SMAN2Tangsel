@@ -10,10 +10,16 @@ import { UserRole } from "@psb/shared/types";
 interface DashboardClientViewProps {
     readonly name: string;
     readonly role: UserRole;
+    readonly activeSessionCode: string | null;
 }
 
-export function DashboardClientView({ name, role }: DashboardClientViewProps) {
+export function DashboardClientView({
+    name,
+    role,
+    activeSessionCode,
+}: DashboardClientViewProps) {
     const t = useTranslations("Dashboard");
+    const sessionBase = activeSessionCode ? `/${activeSessionCode}` : "";
 
     const actions = [
         {
@@ -45,7 +51,7 @@ export function DashboardClientView({ name, role }: DashboardClientViewProps) {
                     {actions.map((action, index) => (
                         <Link
                             key={index}
-                            href={action.href}
+                            href={sessionBase + action.href}
                             style={{ display: "block", textDecoration: "none" }}
                         >
                             <Card.Root
