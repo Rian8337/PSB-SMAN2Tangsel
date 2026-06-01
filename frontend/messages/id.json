@@ -541,6 +541,7 @@
     "hideFromStudents": "Sembunyikan dari siswa"
   },
   "ManageMaterialForm": {
+    "createPageTitle": "Materi Baru - {subjectName} - {className}",
     "titleLabel": "Judul",
     "descriptionLabel": "Deskripsi",
     "visibleLabel": "Tampilkan ke siswa",
@@ -563,6 +564,7 @@
     "fetchErrorMessage": "Terjadi kesalahan saat memuat materi. Silakan coba lagi."
   },
   "ManageAssignmentForm": {
+    "createPageTitle": "Tugas Baru - {subjectName} - {className}",
     "titleLabel": "Judul",
     "descriptionLabel": "Deskripsi",
     "dueAtLabel": "Batas waktu",

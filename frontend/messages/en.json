@@ -544,6 +544,7 @@
     "hideFromStudents": "Hide from students"
   },
   "ManageMaterialForm": {
+    "createPageTitle": "New Material - {subjectName} - {className}",
     "titleLabel": "Title",
     "descriptionLabel": "Description",
     "visibleLabel": "Show to students",
@@ -566,6 +567,7 @@
     "fetchErrorMessage": "An error occurred while loading the material. Please try again."
   },
   "ManageAssignmentForm": {
+    "createPageTitle": "New Assignment - {subjectName} - {className}",
     "titleLabel": "Title",
     "descriptionLabel": "Description",
     "dueAtLabel": "Due date",

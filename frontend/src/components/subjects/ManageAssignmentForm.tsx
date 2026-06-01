@@ -25,6 +25,8 @@ import { toaster } from "../ui/toaster";
 export interface ManageAssignmentFormProps {
     readonly classSubjectId: number;
     readonly assignment?: TeacherSubjectAssignment;
+    readonly subjectName?: string;
+    readonly className?: string;
 }
 
 interface ExistingAttachmentState {
@@ -36,6 +38,8 @@ interface ExistingAttachmentState {
 export function ManageAssignmentForm({
     classSubjectId,
     assignment,
+    subjectName,
+    className,
 }: ManageAssignmentFormProps) {
     const t = useTranslations("ManageAssignmentForm");
     const apiClient = useSubjectAssignmentApiClient();
@@ -156,7 +160,14 @@ export function ManageAssignmentForm({
 
     return (
         <PageForm
-            title={assignment?.subject.name ?? ""}
+            title={
+                isEditMode
+                    ? assignment.subject.name
+                    : t("createPageTitle", {
+                          subjectName: subjectName ?? "",
+                          className: className ?? "",
+                      })
+            }
             backButtonUrl={backUrl}
             onSubmit={handleSubmit}
             error={error}

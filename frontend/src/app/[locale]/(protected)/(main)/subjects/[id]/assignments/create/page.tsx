@@ -1,4 +1,7 @@
-import { getServerAuthApiClient } from "@/api/server";
+import {
+    getServerAuthApiClient,
+    getServerSubjectDashboardApiClient,
+} from "@/api/server";
 import { ManageAssignmentForm } from "@/components/subjects/ManageAssignmentForm";
 import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
 import { UserRole } from "@psb/shared/types";
@@ -23,9 +26,22 @@ export default async function CreateAssignmentPage({
         notFound();
     }
 
+    const dashboardApiClient = await getServerSubjectDashboardApiClient();
+    const dashboard = await dashboardApiClient
+        .getDashboard(classSubjectId)
+        .catch(() => null);
+
+    if (!dashboard) {
+        notFound();
+    }
+
     return (
         <SubjectAssignmentApiProvider>
-            <ManageAssignmentForm classSubjectId={classSubjectId} />
+            <ManageAssignmentForm
+                classSubjectId={classSubjectId}
+                subjectName={dashboard.subject.name}
+                className={dashboard.class.name}
+            />
         </SubjectAssignmentApiProvider>
     );
 }

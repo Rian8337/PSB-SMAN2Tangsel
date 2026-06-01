@@ -1,4 +1,7 @@
-import { getServerAuthApiClient } from "@/api/server";
+import {
+    getServerAuthApiClient,
+    getServerSubjectDashboardApiClient,
+} from "@/api/server";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
 import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
 import { UserRole } from "@psb/shared/types";
@@ -23,9 +26,22 @@ export default async function CreateMaterialPage({
         notFound();
     }
 
+    const dashboardApiClient = await getServerSubjectDashboardApiClient();
+    const dashboard = await dashboardApiClient
+        .getDashboard(classSubjectId)
+        .catch(() => null);
+
+    if (!dashboard) {
+        notFound();
+    }
+
     return (
         <SubjectMaterialApiProvider>
-            <ManageMaterialForm classSubjectId={classSubjectId} />
+            <ManageMaterialForm
+                classSubjectId={classSubjectId}
+                subjectName={dashboard.subject.name}
+                className={dashboard.class.name}
+            />
         </SubjectMaterialApiProvider>
     );
 }

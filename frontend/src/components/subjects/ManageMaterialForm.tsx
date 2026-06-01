@@ -25,6 +25,8 @@ import { toaster } from "../ui/toaster";
 export interface ManageMaterialFormProps {
     readonly classSubjectId: number;
     readonly material?: SubjectMaterial;
+    readonly subjectName?: string;
+    readonly className?: string;
 }
 
 interface ExistingAttachmentState {
@@ -36,6 +38,8 @@ interface ExistingAttachmentState {
 export function ManageMaterialForm({
     classSubjectId,
     material,
+    subjectName,
+    className,
 }: ManageMaterialFormProps) {
     const t = useTranslations("ManageMaterialForm");
     const apiClient = useSubjectMaterialApiClient();
@@ -145,7 +149,14 @@ export function ManageMaterialForm({
 
     return (
         <PageForm
-            title={material?.subject.name ?? ""}
+            title={
+                isEditMode
+                    ? material.subject.name
+                    : t("createPageTitle", {
+                          subjectName: subjectName ?? "",
+                          className: className ?? "",
+                      })
+            }
             backButtonUrl={backUrl}
             onSubmit={handleSubmit}
             error={error}
