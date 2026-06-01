@@ -4,6 +4,7 @@ export * from "./materials";
 export * from "./notifications";
 export * from "./request";
 export * from "./schedule";
+export * from "./sessions";
 export * from "./subjects";
 export * from "./submissions";
 export * from "./users";
