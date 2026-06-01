@@ -278,10 +278,10 @@ export const test = base.extend<{}, WorkerFixture>({
             // Teardown
             killServers();
 
-            await rm(
-                join("..", "backend", "tests", "storage", "attachments"),
-                { recursive: true, force: true },
-            );
+            await rm(join("..", "backend", "tests", "storage", "attachments"), {
+                recursive: true,
+                force: true,
+            });
 
             await new Promise<void>((resolve, reject) => {
                 dbManager.db.$client.end((err) => {
@@ -319,7 +319,12 @@ export const test = base.extend<{}, WorkerFixture>({
         });
 
         await use(context);
-        await context.close();
+
+        // Firefox can throw a protocol error about session-restore state when
+        // closing a context after dialog interactions. The close still succeeds.
+        await context.close().catch(() => {
+            /* empty */
+        });
     },
 
     request: async ({ playwright, contextOptions, workerSetup }, use) => {
