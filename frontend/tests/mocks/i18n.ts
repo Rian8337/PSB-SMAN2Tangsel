@@ -18,7 +18,7 @@ export const mockRouter: Mocked<ReturnType<typeof navigation.useRouter>> = {
  * Partial mock implementation of navigations that are locale-aware.
  */
 export const mockNavigation = {
-    usePathname: vi.fn(() => "/"),
+    usePathname: vi.fn(() => "/24252/dashboard"),
     useRouter: vi.fn(() => mockRouter),
 } satisfies Mocked<Partial<typeof navigation>>;
 
