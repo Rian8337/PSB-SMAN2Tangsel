@@ -174,7 +174,7 @@ describe("ManageMaterialForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10");
+            expect(mockRouter.push).toHaveBeenCalledWith("/subjects/10/materials/5");
         });
 
         it("should mark an attachment as deleted when its delete button is clicked", async () => {
