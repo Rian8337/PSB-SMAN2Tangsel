@@ -8,7 +8,7 @@ describe("SubjectDashboardAPIClient (unit)", () => {
 
     const mockDashboard: SubjectDashboard = {
         subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
-        class: { id: 1, name: "X-IPA-1" },
+        class: { id: 1, name: "X-IPA-1", session: "2024/2025", semester: 1 },
         materials: [
             { id: 1, title: "Material 1", description: null, visible: true },
         ],

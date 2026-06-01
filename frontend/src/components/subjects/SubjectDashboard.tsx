@@ -107,6 +107,20 @@ export function SubjectDashboard({
                         : ""
                 }
                 backButtonUrl="/subjects"
+                rightElement={
+                    dashboard && (
+                        <Text
+                            color="gray.500"
+                            fontWeight="medium"
+                            display={{ base: "none", md: "block" }}
+                        >
+                            {t("sessionLabel", {
+                                session: dashboard.class.session,
+                                semester: dashboard.class.semester.toString(),
+                            })}
+                        </Text>
+                    )
+                }
             />
 
             <Grid

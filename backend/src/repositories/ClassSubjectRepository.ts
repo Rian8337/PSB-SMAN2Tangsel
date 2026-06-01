@@ -253,6 +253,8 @@ export class ClassSubjectRepository
                 class: {
                     id: classes.id,
                     name: classes.name,
+                    session: classes.session,
+                    semester: classes.semester,
                 },
             })
             .from(classSubjects)
@@ -327,6 +329,8 @@ export class ClassSubjectRepository
                 class: {
                     id: classes.id,
                     name: classes.name,
+                    session: classes.session,
+                    semester: classes.semester,
                 },
             })
             .from(classSubjects)

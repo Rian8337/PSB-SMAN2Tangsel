@@ -11,7 +11,7 @@ export type SubjectDashboardSubject = Pick<Subject, "id" | "code" | "name">;
 /**
  * A class entry as shown in the subject dashboard.
  */
-export type SubjectDashboardClass = Pick<Class, "id" | "name">;
+export type SubjectDashboardClass = Pick<Class, "id" | "name" | "session" | "semester">;
 
 /**
  * A material entry as shown in the subject dashboard.

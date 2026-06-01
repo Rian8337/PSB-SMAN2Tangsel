@@ -586,6 +586,7 @@
     "editErrorTitle": "Failed to update assignment"
   },
   "SubjectDashboard": {
+    "sessionLabel": "Academic Year: {session} {semester}",
     "materials": "Materials",
     "assignments": "Assignments",
     "addMaterial": "Add",
