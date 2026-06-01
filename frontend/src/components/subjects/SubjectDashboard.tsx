@@ -99,7 +99,13 @@ export function SubjectDashboard({
     return (
         <>
             <PageHeader
-                title={dashboard?.subject.name ?? ""}
+                title={
+                    dashboard
+                        ? isTeacher
+                            ? `${dashboard.subject.name} - ${dashboard.class.name}`
+                            : dashboard.subject.name
+                        : ""
+                }
                 backButtonUrl="/subjects"
             />
 
