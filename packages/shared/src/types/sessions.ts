@@ -25,3 +25,8 @@ export interface AcademicSessionDTO {
     readonly startTime: number;
     readonly endTime: number;
 }
+
+/**
+ * A session/semester pair representing one of the sessions a user has data in.
+ */
+export type UserSessionDTO = Pick<AcademicSessionDTO, "session" | "semester">;
