@@ -32,6 +32,7 @@ export interface BaseShellProps extends PropsWithChildren {
     readonly userName: string;
     readonly userAvatar?: string;
     readonly settingsHref: string;
+    readonly sidebarExtra?: React.ReactNode;
 }
 
 function SidebarContent({
@@ -96,6 +97,10 @@ function SidebarContent({
                         height={50}
                     />
                 </Box>
+
+                {props.sidebarExtra && (
+                    <Box px={2}>{props.sidebarExtra}</Box>
+                )}
 
                 {props.navItems.map((item) => {
                     const active = isActive(item.href, item.exact ?? false);

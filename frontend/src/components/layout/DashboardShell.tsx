@@ -4,6 +4,7 @@ import { BookOpen, Calendar, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PropsWithChildren } from "react";
 import { BaseShell, NavItem } from "./BaseShell";
+import { SessionSwitcher } from "./SessionSwitcher";
 
 export function DashboardShell({ children }: PropsWithChildren) {
     const t = useTranslations("DashboardShell");
@@ -21,6 +22,7 @@ export function DashboardShell({ children }: PropsWithChildren) {
             userName="Reza"
             userAvatar="/pas-foto.jpg"
             settingsHref="/settings"
+            sidebarExtra={<SessionSwitcher />}
         >
             {children}
         </BaseShell>
