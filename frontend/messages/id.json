@@ -610,6 +610,10 @@
     "academicYear": "Tahun Ajaran",
     "subjectManagement": "Mata Pelajaran"
   },
+  "SessionSwitcher": {
+    "label": "Tahun ajaran",
+    "semester": "Semester"
+  },
   "DashboardShell": {
     "mobileTitle": "Dasbor | PSB SMAN 2 Tangerang Selatan",
     "home": "Beranda",

@@ -613,6 +613,10 @@
     "academicYear": "Academic Year",
     "subjectManagement": "Subject Management"
   },
+  "SessionSwitcher": {
+    "label": "Academic session",
+    "semester": "Semester"
+  },
   "DashboardShell": {
     "mobileTitle": "Dashboard | PSB SMAN 2 Tangerang Selatan",
     "home": "Home",
