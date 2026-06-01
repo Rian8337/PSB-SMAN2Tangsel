@@ -1,18 +1,20 @@
 "use client";
 
+import { useSessionCode } from "@/hooks";
 import { useScheduleApiClient } from "@/providers/api/schedule-api-provider";
 import { Box, Button } from "@chakra-ui/react";
 import { ScheduleDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../layout/PageHeader";
-import { ScheduleGrid } from "./ScheduleGrid";
 import { toaster } from "../ui/toaster";
+import { ScheduleGrid } from "./ScheduleGrid";
 
 interface MyScheduleClientViewProps {
     schedules: ScheduleDTO[];
 }
 
 export function MySchedule({ schedules }: MyScheduleClientViewProps) {
+    const sessionCode = useSessionCode();
     const t = useTranslations("Dashboard");
     const tMy = useTranslations("MySchedule");
     const scheduleApiClient = useScheduleApiClient();
@@ -47,7 +49,10 @@ export function MySchedule({ schedules }: MyScheduleClientViewProps) {
 
     return (
         <>
-            <PageHeader title={tMy("title")} backButtonUrl="/dashboard" />
+            <PageHeader
+                title={tMy("title")}
+                backButtonUrl={`/${sessionCode}/dashboard`}
+            />
 
             <Box flex={1} p={8} overflowY="auto">
                 <Box mb={4}>

@@ -1,9 +1,5 @@
-import {
-    getServerAuthApiClient,
-    getServerScheduleApiClient,
-} from "@/api/server";
-import { MySchedule } from "@/components/schedule/MySchedule";
-import { MySubjects } from "@/components/subjects/MySubjects";
+import { getServerAuthApiClient } from "@/api/server";
+import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
 import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
@@ -25,15 +21,11 @@ export default async function SessionDashboardPage({
         notFound();
     }
 
-    const scheduleApiClient = await getServerScheduleApiClient();
-    const schedules = await scheduleApiClient
-        .getSchedule(decoded.session, decoded.semester)
-        .catch(() => []);
-
     return (
-        <>
-            <MySubjects session={decoded.session} semester={decoded.semester} />
-            <MySchedule schedules={schedules} showHeader={false} />
-        </>
+        <DashboardClientView
+            name={user.name.split(" ")[0]}
+            role={user.role}
+            activeSessionCode={sessionCode}
+        />
     );
 }

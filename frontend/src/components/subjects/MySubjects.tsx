@@ -1,16 +1,20 @@
 "use client";
 
 import { useDebounce, useSessionCode } from "@/hooks";
+import { useRouter } from "@/i18n/navigation";
 import { useSubjectApiClient } from "@/providers/api/subject-api-provider";
 import { Box, Flex, Input, Spinner, Table } from "@chakra-ui/react";
+import {
+    ClassSubjectAssignment,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
-import { ClassSubjectAssignment, ValidSemester, ValidSession } from "@psb/shared/types";
 
 interface MySubjectsProps {
     readonly session?: ValidSession;
@@ -81,7 +85,10 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
 
     return (
         <>
-            <PageHeader title={t("title")} backButtonUrl="/dashboard" />
+            <PageHeader
+                title={t("title")}
+                backButtonUrl={`/${sessionCode}/dashboard`}
+            />
 
             <Box
                 p={{ base: 4, md: 8 }}
