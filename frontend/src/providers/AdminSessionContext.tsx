@@ -1,8 +1,10 @@
 "use client";
 
 import { APIError } from "@/api";
+import { toaster } from "@/components/ui/toaster";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import { AcademicSessionDTO } from "@psb/shared/types";
+import { useTranslations } from "next-intl";
 import { createContext, use, useEffect, useState } from "react";
 
 interface AdminSessionContextValue {
@@ -20,6 +22,7 @@ export function AdminSessionProvider({
 }: {
     children: React.ReactNode;
 }) {
+    const t = useTranslations("AdminSessionProvider");
     const sessionApiClient = useSessionApiClient();
 
     const [selectedSession, setSelectedSession] =
@@ -40,10 +43,16 @@ export function AdminSessionProvider({
                     return;
                 }
 
-                // 404 means no active session, so we leave selectedSession as null.
-                if (!(e instanceof APIError && e.code === 404)) {
-                    throw e;
+                // 404 means no active session; leave selectedSession as null silently.
+                if (e instanceof APIError && e.code === 404) {
+                    return;
                 }
+
+                toaster.create({
+                    title: t("fetchSessionToast.errorTitle"),
+                    description: t("fetchSessionToast.errorMessage"),
+                    type: "error",
+                });
             })
             .finally(() => {
                 setIsLoadingSession(false);
@@ -52,7 +61,7 @@ export function AdminSessionProvider({
         return () => {
             controller.abort();
         };
-    }, [sessionApiClient]);
+    }, [sessionApiClient, t]);
 
     return (
         <AdminSessionContext

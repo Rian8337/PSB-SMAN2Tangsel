@@ -1,4 +1,10 @@
 {
+  "AdminSessionProvider": {
+    "fetchSessionToast": {
+      "errorTitle": "Gagal Mengambil Tahun Ajaran",
+      "errorMessage": "Terjadi kesalahan saat mengambil tahun ajaran aktif. Silakan coba lagi."
+    }
+  },
   "AcademicSession": {
     "title": "Tahun Ajaran",
     "description": "Konfigurasi semester dan tahun ajaran aktif.",

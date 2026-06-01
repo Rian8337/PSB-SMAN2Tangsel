@@ -1,4 +1,10 @@
 {
+  "AdminSessionProvider": {
+    "fetchSessionToast": {
+      "errorTitle": "Failed to Fetch Academic Session",
+      "errorMessage": "An error occurred while fetching the active academic session. Please try again."
+    }
+  },
   "AcademicSession": {
     "title": "Academic Session Management",
     "description": "Configure semesters, terms, and active school years.",
