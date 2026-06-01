@@ -17,12 +17,14 @@ import { Mocked } from "vitest";
 
 /**
  * Mock implementation of {@link IAuthAPIClient}.
+ *
+ * By default, `getMySessions` returns an empty array, indicating that the user has no sessions.
  */
 export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
     login: vi.fn(),
     logout: vi.fn(),
     getMe: vi.fn(),
-    getMySessions: vi.fn(),
+    getMySessions: vi.fn(() => Promise.resolve([])),
 };
 
 /**
@@ -86,7 +88,7 @@ export const mockSessionApiClient: Mocked<ISessionAPIClient> = {
     getActive: vi.fn(),
     getSession: vi.fn(),
     createSession: vi.fn(),
-    listSessions: vi.fn(),
+    listSessions: vi.fn(() => Promise.resolve([])),
     updateSession: vi.fn(),
     deleteSession: vi.fn(),
 };
