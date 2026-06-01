@@ -1,11 +1,18 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
-import { useAuthApiClient } from "@/providers/api/auth-api-provider";
 import { useSessionCode } from "@/hooks";
+import { useRouter } from "@/i18n/navigation";
+import { useAdminSession } from "@/providers/AdminSessionContext";
+import { useAuthApiClient } from "@/providers/api/auth-api-provider";
+import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import { encodeSessionCode } from "@/utils/sessionCode";
-import { UserSessionDTO } from "@psb/shared/types";
 import { Button, Menu } from "@chakra-ui/react";
+import {
+    AcademicSessionDTO,
+    UserSessionDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -17,19 +24,26 @@ function abbreviateSession(session: string, semester: number): string {
 export function SessionSwitcher() {
     const t = useTranslations("SessionSwitcher");
     const authApiClient = useAuthApiClient();
+    const sessionApiClient = useSessionApiClient();
     const router = useRouter();
     const currentSessionCode = useSessionCode();
+    const adminSession = useAdminSession();
 
-    const [sessions, setSessions] = useState<UserSessionDTO[]>([]);
+    const isAdmin = adminSession !== null;
+
+    const [userSessions, setUserSessions] = useState<UserSessionDTO[]>([]);
+    const [adminSessions, setAdminSessions] = useState<AcademicSessionDTO[]>(
+        [],
+    );
 
     useEffect(() => {
+        if (isAdmin) return;
+
         const controller = new AbortController();
 
         authApiClient
             .getMySessions(controller.signal)
-            .then((data) => {
-                setSessions(data);
-            })
+            .then(setUserSessions)
             .catch(() => {
                 // Non-critical, so we silently ignore errors.
             });
@@ -37,15 +51,55 @@ export function SessionSwitcher() {
         return () => {
             controller.abort();
         };
-    }, [authApiClient]);
+    }, [isAdmin, authApiClient]);
+
+    useEffect(() => {
+        if (!isAdmin) return;
+
+        const controller = new AbortController();
+
+        sessionApiClient
+            .listSessions(undefined, undefined, undefined, controller.signal)
+            .then(setAdminSessions)
+            .catch(() => {
+                // Non-critical, so we silently ignore errors.
+            });
+
+        return () => {
+            controller.abort();
+        };
+    }, [isAdmin, sessionApiClient]);
+
+    const sessions: UserSessionDTO[] = isAdmin ? adminSessions : userSessions;
+
+    const currentCode = isAdmin
+        ? adminSession.selectedSession
+            ? encodeSessionCode(
+                  adminSession.selectedSession.session,
+                  adminSession.selectedSession.semester,
+              )
+            : null
+        : currentSessionCode;
 
     if (sessions.length === 0) {
         return null;
     }
 
     const current = sessions.find(
-        (s) => encodeSessionCode(s.session, s.semester) === currentSessionCode,
+        (s) => encodeSessionCode(s.session, s.semester) === currentCode,
     );
+
+    const handleSelect = (s: {
+        session: ValidSession;
+        semester: ValidSemester;
+    }) => {
+        const code = encodeSessionCode(s.session, s.semester);
+        if (isAdmin) {
+            adminSession.setSelectedSession(s as AcademicSessionDTO);
+        } else if (code !== currentSessionCode) {
+            router.push(`/${code}/dashboard`);
+        }
+    };
 
     return (
         <Menu.Root
@@ -61,7 +115,7 @@ export function SessionSwitcher() {
                 >
                     {current
                         ? abbreviateSession(current.session, current.semester)
-                        : currentSessionCode}
+                        : (currentCode ?? "...")}
                 </Button>
             </Menu.Trigger>
 
@@ -74,15 +128,11 @@ export function SessionSwitcher() {
                                 key={code}
                                 value={code}
                                 fontWeight={
-                                    code === currentSessionCode
-                                        ? "bold"
-                                        : "normal"
+                                    code === currentCode ? "bold" : "normal"
                                 }
                                 cursor="pointer"
                                 onClick={() => {
-                                    if (code !== currentSessionCode) {
-                                        router.push(`/${code}/dashboard`);
-                                    }
+                                    handleSelect(s);
                                 }}
                             >
                                 {s.session} – {t("semester")}{" "}

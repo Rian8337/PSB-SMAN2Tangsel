@@ -2,8 +2,8 @@
 
 import { useDebounce } from "@/hooks";
 import { Link } from "@/i18n/navigation";
+import { useAdminSession } from "@/providers/AdminSessionContext";
 import { useClassApiClient } from "@/providers/api/class-api-provider";
-import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import {
     Box,
     Button,
@@ -13,14 +13,8 @@ import {
     Table,
     Text,
 } from "@chakra-ui/react";
-import { AcademicSessionDTO, Class } from "@psb/shared/types";
-import {
-    BookOpen,
-    CalendarDays,
-    Plus,
-    Search,
-    Users,
-} from "lucide-react";
+import { Class } from "@psb/shared/types";
+import { BookOpen, CalendarDays, Plus, Search, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
@@ -29,19 +23,14 @@ import { toaster } from "../ui/toaster";
 import { CreateClassModal } from "./CreateClassModal";
 import { TableDeleteButton } from "./TableDeleteButton";
 import { TableEditButton } from "./TableEditButton";
-import { APIError } from "@/api";
 
 export function ClassManagement() {
     const t = useTranslations("ClassManagement");
     const classApiClient = useClassApiClient();
-    const sessionApiClient = useSessionApiClient();
-
-    const [activeSession, setActiveSession] =
-        useState<AcademicSessionDTO | null>(null);
+    const { selectedSession: activeSession, isLoadingSession } =
+        useAdminSession()!;
 
     const [classes, setClasses] = useState<Class[]>([]);
-
-    const [isLoadingSession, setIsLoadingSession] = useState(true);
     const [isLoadingClasses, setIsLoadingClasses] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -51,43 +40,6 @@ export function ClassManagement() {
     const limit = 10;
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-    useEffect(() => {
-        const fetchActiveSession = async (signal?: AbortSignal) => {
-            setIsLoadingSession(true);
-
-            try {
-                const session = await sessionApiClient.getActive(signal);
-                setActiveSession(session);
-            } catch (e) {
-                if (e instanceof Error && e.name === "AbortError") {
-                    return;
-                }
-
-                if (e instanceof APIError && e.code === 404) {
-                    return;
-                }
-
-                toaster.create({
-                    title: t("fetchSessionToast.errorTitle"),
-                    description: t("fetchSessionToast.errorMessage"),
-                    type: "error",
-                });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoadingSession(false);
-                }
-            }
-        };
-
-        const controller = new AbortController();
-
-        void fetchActiveSession(controller.signal);
-
-        return () => {
-            controller.abort();
-        };
-    }, [sessionApiClient, t]);
 
     const fetchClasses = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
