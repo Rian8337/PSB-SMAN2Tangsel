@@ -3,8 +3,8 @@ import { Roles } from "@/decorators/roles";
 import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IUserService } from "@/services";
-import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
+import { IClassSubjectService, IUserService } from "@/services";
+import { ApiRequest, ApiResponse, BadRequestError, ForbiddenError } from "@/types";
 import {
     coercedUserIdSchema,
     createUserSchema,
@@ -13,7 +13,7 @@ import {
     validPasswordSchema,
     validRoleSchema,
 } from "@/validators";
-import { UserListItem, UserRole } from "@psb/shared/types";
+import { UserListItem, UserRole, UserSessionDTO } from "@psb/shared/types";
 import { inject } from "tsyringe";
 import z from "zod";
 import { BaseController } from "./BaseController";
@@ -33,8 +33,50 @@ export class UserController extends BaseController {
     constructor(
         @inject(dependencyTokens.userService)
         private readonly userService: IUserService,
+        @inject(dependencyTokens.classSubjectService)
+        private readonly classSubjectService: IClassSubjectService,
     ) {
         super();
+    }
+
+    /**
+     * Returns the distinct academic sessions and semesters the authenticated user has data in.
+     */
+    @Get("/me/sessions")
+    @Roles(UserRole.student, UserRole.teacher)
+    async getMySessions(
+        req: ApiRequest<unknown, UserSessionDTO[]>,
+        res: ApiResponse<UserSessionDTO[]>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const { sessionData } = req;
+            let sessions: UserSessionDTO[] = [];
+
+            switch (sessionData.role) {
+                case UserRole.student:
+                    sessions = await this.classSubjectService.getStudentSessions(
+                        sessionData.userId,
+                    );
+                    break;
+
+                case UserRole.teacher:
+                    sessions = await this.classSubjectService.getTeacherSessions(
+                        sessionData.userId,
+                    );
+                    break;
+
+                default:
+                    throw new ForbiddenError();
+            }
+
+            res.json(sessions);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
     }
 
     /**

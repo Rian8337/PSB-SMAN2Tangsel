@@ -3,7 +3,11 @@ import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IScheduleService, ISessionService } from "@/services";
+import {
+    IClassSubjectService,
+    IScheduleService,
+    ISessionService,
+} from "@/services";
 import {
     ApiRequest,
     ApiResponse,
@@ -14,6 +18,8 @@ import {
 import {
     coercedScheduleIdSchema,
     createScheduleSchema,
+    optionalSemesterField,
+    optionalSessionField,
     updateScheduleSchema,
 } from "@/validators";
 import {
@@ -21,8 +27,11 @@ import {
     ScheduleDTO,
     SessionData,
     UserRole,
+    ValidSemester,
+    ValidSession,
 } from "@psb/shared/types";
 import { inject } from "tsyringe";
+import z from "zod";
 import { BaseController } from "./BaseController";
 
 /**
@@ -35,6 +44,8 @@ export class ScheduleController extends BaseController {
         private readonly scheduleService: IScheduleService,
         @inject(dependencyTokens.sessionService)
         private readonly sessionService: ISessionService,
+        @inject(dependencyTokens.classSubjectService)
+        private readonly classSubjectService: IClassSubjectService,
     ) {
         super();
     }
@@ -45,11 +56,35 @@ export class ScheduleController extends BaseController {
     @Get("/")
     @Roles(UserRole.student, UserRole.teacher)
     async getMySchedule(
-        req: ApiRequest<unknown, ScheduleDTO[]>,
+        req: ApiRequest<
+            unknown,
+            ScheduleDTO[],
+            unknown,
+            Partial<{ session: string; semester: string }>
+        >,
         res: ApiResponse<ScheduleDTO[]>,
     ) {
         try {
-            const schedule = await this.getSchedule(req.sessionData);
+            const parsed = z
+                .object({
+                    session: optionalSessionField,
+                    semester: optionalSemesterField,
+                })
+                .safeParse(req.query);
+
+            if (!parsed.success) {
+                throw new BadRequestError(
+                    parsed.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const { session, semester } = parsed.data;
+
+            const schedule = await this.getSchedule(
+                req.sessionData,
+                session,
+                semester,
+            );
 
             res.json(schedule);
         } catch (e) {
@@ -226,16 +261,36 @@ export class ScheduleController extends BaseController {
         }
     }
 
-    private getSchedule(sessionData?: SessionData) {
+    private async getSchedule(
+        sessionData: SessionData | undefined,
+        session?: ValidSession,
+        semester?: ValidSemester,
+    ): Promise<ScheduleDTO[]> {
         switch (sessionData?.role) {
-            case UserRole.student:
-                return typeof sessionData.classId === "number"
-                    ? this.scheduleService.getClassSchedule(sessionData.classId)
-                    : Promise.resolve([]);
+            case UserRole.student: {
+                let classId: number | undefined;
+
+                if (session && semester) {
+                    classId =
+                        (await this.classSubjectService.getStudentClassIdForSession(
+                            sessionData.userId,
+                            session,
+                            semester,
+                        )) ?? undefined;
+                } else if (typeof sessionData.classId === "number") {
+                    classId = sessionData.classId;
+                }
+
+                return classId !== undefined
+                    ? this.scheduleService.getClassSchedule(classId)
+                    : [];
+            }
 
             case UserRole.teacher:
                 return this.scheduleService.getTeacherSchedule(
                     sessionData.userId,
+                    session,
+                    semester,
                 );
 
             default:

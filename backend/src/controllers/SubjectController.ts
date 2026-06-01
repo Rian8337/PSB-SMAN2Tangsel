@@ -14,7 +14,12 @@ import {
     BadRequestError,
     ForbiddenError,
 } from "@/types";
-import { coercedSubjectIdSchema, listQuerySchema } from "@/validators";
+import {
+    coercedSubjectIdSchema,
+    listQuerySchema,
+    optionalSemesterField,
+    optionalSessionField,
+} from "@/validators";
 import { ClassSubjectAssignment, Subject, UserRole } from "@psb/shared/types";
 import { insertSubjectSchema } from "@psb/shared/validator";
 import { inject } from "tsyringe";
@@ -46,7 +51,13 @@ export class SubjectController extends BaseController {
             unknown,
             ClassSubjectAssignment[],
             unknown,
-            Partial<{ query: string; limit: string; offset: string }>
+            Partial<{
+                query: string;
+                limit: string;
+                offset: string;
+                session: string;
+                semester: string;
+            }>
         >,
         res: ApiResponse<ClassSubjectAssignment[]>,
     ) {
@@ -55,7 +66,12 @@ export class SubjectController extends BaseController {
         }
 
         try {
-            const parsedQuery = listQuerySchema.safeParse(req.query);
+            const parsedQuery = listQuerySchema
+                .extend({
+                    session: optionalSessionField,
+                    semester: optionalSemesterField,
+                })
+                .safeParse(req.query);
 
             if (!parsedQuery.success) {
                 throw new BadRequestError(
@@ -63,39 +79,61 @@ export class SubjectController extends BaseController {
                 );
             }
 
-            const { query, limit, offset } = parsedQuery.data;
+            const { query, limit, offset, session, semester } =
+                parsedQuery.data;
+
             const { sessionData } = req;
             let subjects: ClassSubjectAssignment[] = [];
 
             switch (sessionData.role) {
-                case UserRole.student:
-                    if (typeof sessionData.classId === "number") {
+                case UserRole.student: {
+                    let classId: number | undefined;
+
+                    if (session && semester) {
+                        classId =
+                            (await this.classSubjectService.getStudentClassIdForSession(
+                                sessionData.userId,
+                                session,
+                                semester,
+                            )) ?? undefined;
+                    } else if (typeof sessionData.classId === "number") {
+                        classId = sessionData.classId;
+                    }
+
+                    if (classId !== undefined) {
                         subjects =
                             await this.classSubjectService.listAssignedSubjects(
-                                sessionData.classId,
+                                classId,
                                 query,
                                 limit,
                                 offset,
                             );
                     }
                     break;
+                }
 
-                case UserRole.teacher:
-                    {
-                        const activeSession =
-                            await this.sessionService.getActive();
+                case UserRole.teacher: {
+                    let targetSession = session;
+                    let targetSemester = semester;
 
-                        subjects =
-                            await this.classSubjectService.listAssignedSubjectsForTeacher(
-                                sessionData.userId,
-                                activeSession.session,
-                                activeSession.semester,
-                                query,
-                                limit,
-                                offset,
-                            );
+                    if (!targetSession || !targetSemester) {
+                        const active = await this.sessionService.getActive();
+
+                        targetSession ??= active.session;
+                        targetSemester ??= active.semester;
                     }
+
+                    subjects =
+                        await this.classSubjectService.listAssignedSubjectsForTeacher(
+                            sessionData.userId,
+                            targetSession,
+                            targetSemester,
+                            query,
+                            limit,
+                            offset,
+                        );
                     break;
+                }
 
                 default:
                     throw new ForbiddenError();
