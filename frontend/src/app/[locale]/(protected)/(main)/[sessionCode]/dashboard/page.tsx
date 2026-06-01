@@ -1,8 +1,9 @@
-import { getServerAuthApiClient, getServerScheduleApiClient } from "@/api/server";
+import {
+    getServerAuthApiClient,
+    getServerScheduleApiClient,
+} from "@/api/server";
 import { MySchedule } from "@/components/schedule/MySchedule";
 import { MySubjects } from "@/components/subjects/MySubjects";
-import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
-import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
 import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
@@ -31,16 +32,8 @@ export default async function SessionDashboardPage({
 
     return (
         <>
-            <SubjectApiProvider>
-                <MySubjects
-                    session={decoded.session}
-                    semester={decoded.semester}
-                />
-            </SubjectApiProvider>
-
-            <ScheduleApiProvider>
-                <MySchedule schedules={schedules} showHeader={false} />
-            </ScheduleApiProvider>
+            <MySubjects session={decoded.session} semester={decoded.semester} />
+            <MySchedule schedules={schedules} showHeader={false} />
         </>
     );
 }
