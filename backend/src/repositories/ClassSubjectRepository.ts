@@ -15,6 +15,7 @@ import {
     DrizzleDb,
     Subject,
     SubjectDashboard,
+    UserSessionDTO,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -394,5 +395,49 @@ export class ClassSubjectRepository
             )
             .limit(1)
             .then((res) => res.at(0) ?? null);
+    }
+
+    async getStudentClassIdForSession(
+        studentId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<number | null> {
+        return this.db
+            .select({ classId: studentClasses.classId })
+            .from(studentClasses)
+            .innerJoin(classes, eq(studentClasses.classId, classes.id))
+            .where(
+                and(
+                    eq(studentClasses.studentId, studentId),
+                    eq(classes.session, session),
+                    eq(classes.semester, semester),
+                ),
+            )
+            .limit(1)
+            .then((res) => res.at(0)?.classId ?? null);
+    }
+
+    async getStudentSessions(studentId: number): Promise<UserSessionDTO[]> {
+        return this.db
+            .selectDistinct({
+                session: classes.session,
+                semester: classes.semester,
+            })
+            .from(studentClasses)
+            .innerJoin(classes, eq(studentClasses.classId, classes.id))
+            .where(eq(studentClasses.studentId, studentId))
+            .orderBy(asc(classes.session), asc(classes.semester));
+    }
+
+    async getTeacherSessions(teacherId: number): Promise<UserSessionDTO[]> {
+        return this.db
+            .selectDistinct({
+                session: classes.session,
+                semester: classes.semester,
+            })
+            .from(classSubjects)
+            .innerJoin(classes, eq(classSubjects.classId, classes.id))
+            .where(eq(classSubjects.teacherId, teacherId))
+            .orderBy(asc(classes.session), asc(classes.semester));
     }
 }

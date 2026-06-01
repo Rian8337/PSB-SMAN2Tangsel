@@ -2,6 +2,7 @@ import {
     ClassSubjectAssignment,
     Subject,
     SubjectDashboard,
+    UserSessionDTO,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -143,4 +144,34 @@ export interface IClassSubjectRepository {
         classSubjectId: number,
         teacherId: number,
     ): Promise<{ id: number; classId: number } | null>;
+
+    /**
+     * Resolves the class ID for a student in a given academic session and semester.
+     *
+     * @param studentId The unique identifier of the student.
+     * @param session The academic session.
+     * @param semester The semester.
+     * @returns The class ID, or `null` if the student is not enrolled in any class for that session.
+     */
+    getStudentClassIdForSession(
+        studentId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<number | null>;
+
+    /**
+     * Returns the distinct academic sessions and semesters in which a student is enrolled in a class.
+     *
+     * @param studentId The unique identifier of the student.
+     * @returns A list of session/semester pairs, sorted newest first.
+     */
+    getStudentSessions(studentId: number): Promise<UserSessionDTO[]>;
+
+    /**
+     * Returns the distinct academic sessions and semesters in which a teacher is assigned to a class subject.
+     *
+     * @param teacherId The unique identifier of the teacher.
+     * @returns A list of session/semester pairs, sorted newest first.
+     */
+    getTeacherSessions(teacherId: number): Promise<UserSessionDTO[]>;
 }
