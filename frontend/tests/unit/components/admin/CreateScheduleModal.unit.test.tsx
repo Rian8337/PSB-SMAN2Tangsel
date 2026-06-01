@@ -3,7 +3,7 @@ import {
     CreateScheduleModal,
     CreateScheduleModalProps,
 } from "@/components/admin/CreateScheduleModal";
-import { Class, ScheduleDay } from "@psb/shared/types";
+import { Class, ClassSubjectAssignment, ScheduleDay } from "@psb/shared/types";
 import {
     mockClassSubjectApiClient,
     mockScheduleApiClient,
@@ -36,6 +36,13 @@ function render(props: Partial<CreateScheduleModalProps> = {}) {
 }
 
 describe("CreateScheduleModal (unit)", () => {
+    const mockClassSubjectAssignment: ClassSubjectAssignment = {
+        id: 1,
+        teacher: { id: 1, name: "Teacher" },
+        subject: { id: 1, code: "MA1", name: "Math" },
+        class: { id: 1, name: "Class 1" },
+    };
+
     it("renders the modal with all form fields and defaults when open", () => {
         render();
 
@@ -81,11 +88,7 @@ describe("CreateScheduleModal (unit)", () => {
         render();
 
         mockClassSubjectApiClient.listAssignedSubjects.mockResolvedValueOnce([
-            {
-                id: 1,
-                teacher: { id: 1, name: "Teacher" },
-                subject: { id: 1, code: "MA1", name: "Math" },
-            },
+            mockClassSubjectAssignment,
         ]);
 
         const subjectInput = screen.getByPlaceholderText(
@@ -118,11 +121,7 @@ describe("CreateScheduleModal (unit)", () => {
         render();
 
         mockClassSubjectApiClient.listAssignedSubjects.mockResolvedValueOnce([
-            {
-                id: 1,
-                teacher: { id: 1, name: "Teacher" },
-                subject: { id: 1, code: "MA1", name: "Math" },
-            },
+            mockClassSubjectAssignment,
         ]);
 
         const subjectInput = screen.getByPlaceholderText(
@@ -179,11 +178,7 @@ describe("CreateScheduleModal (unit)", () => {
         );
 
         mockClassSubjectApiClient.listAssignedSubjects.mockResolvedValueOnce([
-            {
-                id: 1,
-                teacher: { id: 1, name: "Teacher" },
-                subject: { id: 1, code: "MA1", name: "Math" },
-            },
+            mockClassSubjectAssignment,
         ]);
 
         render();
