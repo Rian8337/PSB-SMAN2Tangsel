@@ -87,7 +87,7 @@ describe("BaseShell (unit)", () => {
 
         await waitFor(() => {
             expect(mockRouter.replace).toHaveBeenCalledWith(
-                { pathname: "/" },
+                { pathname: "/24252/dashboard" },
                 { locale: "id" },
             );
         });
