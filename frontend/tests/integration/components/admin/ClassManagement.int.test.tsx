@@ -1,12 +1,9 @@
 import { APIError } from "@/api";
-import { ClassManagement } from "@/components/admin/ClassManagement"; // Adjust path if necessary
-import { ClassApiProvider } from "@/providers/api/class-api-provider";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SessionApiProvider } from "@/providers/api/session-api-provider";
+import { ClassManagement } from "@/components/admin/ClassManagement";
+import { AdminSessionProvider } from "@/providers/AdminSessionContext";
 import { AcademicSessionDTO, Class } from "@psb/shared/types";
 import {
     mockClassApiClient,
-    mockNotificationApiClient,
     mockSessionApiClient,
     mockToaster,
 } from "@test/mocks";
@@ -40,13 +37,9 @@ const mockClasses: Class[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SessionApiProvider client={mockSessionApiClient}>
-                <ClassApiProvider client={mockClassApiClient}>
-                    <ClassManagement />
-                </ClassApiProvider>
-            </SessionApiProvider>
-        </NotificationApiProvider>,
+        <AdminSessionProvider>
+            <ClassManagement />
+        </AdminSessionProvider>,
     );
 }
 
