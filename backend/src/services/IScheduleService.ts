@@ -1,4 +1,4 @@
-import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDay, ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
 
 export interface CreateScheduleOptions {
     readonly classSubjectId: number;
@@ -35,12 +35,19 @@ export interface IScheduleService {
     getClassSchedule(classId: number): Promise<ScheduleDTO[]>;
 
     /**
-     * Fetches the weekly schedule of a teacher.
+     * Fetches the weekly schedule of a teacher, optionally scoped to a specific session.
+     * If session and semester are omitted, the active session is used.
      *
      * @param teacherId The user ID of the teacher.
+     * @param session The academic session to filter by.
+     * @param semester The semester to filter by.
      * @returns The weekly schedule of the teacher.
      */
-    getTeacherSchedule(teacherId: number): Promise<ScheduleDTO[]>;
+    getTeacherSchedule(
+        teacherId: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
+    ): Promise<ScheduleDTO[]>;
 
     /**
      * Generates an iCalendar file for a weekly schedule.

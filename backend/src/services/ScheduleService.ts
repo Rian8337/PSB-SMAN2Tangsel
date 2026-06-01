@@ -1,4 +1,4 @@
-import { ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
 import {
     CreateScheduleOptions,
     IScheduleService,
@@ -35,8 +35,14 @@ export class ScheduleService implements IScheduleService {
         return this.scheduleRepository.findByClassId(classId);
     }
 
-    getTeacherSchedule(teacherId: number): Promise<ScheduleDTO[]> {
-        return this.scheduleRepository.findByTeacherId(teacherId);
+    getTeacherSchedule(
+        teacherId: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
+    ): Promise<ScheduleDTO[]> {
+        return session && semester
+            ? this.scheduleRepository.findByTeacherId(teacherId, session, semester)
+            : this.scheduleRepository.findByTeacherId(teacherId);
     }
 
     generateIcsFile(
