@@ -1,4 +1,4 @@
-import { LoginResponseBody, SuccessfulLoginResponse } from "@psb/shared/types";
+import { LoginResponseBody, SuccessfulLoginResponse, UserSessionDTO } from "@psb/shared/types";
 
 /**
  * Provides operations for authentication-related API calls.
@@ -33,4 +33,11 @@ export interface IAuthAPIClient {
      * @returns A promise that resolves with the identity of the currently authenticated user, or `null` if the user is not authenticated.
      */
     getMe(signal?: AbortSignal): Promise<SuccessfulLoginResponse | null>;
+
+    /**
+     * Returns the distinct academic sessions and semesters the authenticated user has data in.
+     *
+     * @param signal An optional {@link AbortSignal} to cancel the request.
+     */
+    getMySessions(signal?: AbortSignal): Promise<UserSessionDTO[]>;
 }

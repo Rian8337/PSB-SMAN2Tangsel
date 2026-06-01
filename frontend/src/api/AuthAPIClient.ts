@@ -2,9 +2,11 @@ import {
     isSuccessfulLogin,
     LoginResponseBody,
     SuccessfulLoginResponse,
+    UserSessionDTO,
 } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { IAuthAPIClient } from "./IAuthAPIClient";
+import { getBackendBaseUrl } from "./backendBaseUrl";
 
 /**
  * Provides operations for authentication-related API calls.
@@ -34,5 +36,11 @@ export class AuthAPIClient extends APIClient implements IAuthAPIClient {
         return this.get("/me", { signal })
             .then((res) => res.json() as Promise<LoginResponseBody>)
             .then((res) => (isSuccessfulLogin(res) ? res : null));
+    }
+
+    getMySessions(signal?: AbortSignal): Promise<UserSessionDTO[]> {
+        return this.get(`${getBackendBaseUrl()}/users/me/sessions`, { signal }).then(
+            (res) => res.json(),
+        );
     }
 }

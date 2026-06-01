@@ -22,6 +22,7 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
     login: vi.fn(),
     logout: vi.fn(),
     getMe: vi.fn(),
+    getMySessions: vi.fn(),
 };
 
 /**

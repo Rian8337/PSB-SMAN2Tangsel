@@ -1,4 +1,4 @@
-import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject, ValidSemester, ValidSession } from "@psb/shared/types";
 
 /**
  * Provides operations for subject-related API calls.
@@ -19,6 +19,8 @@ export interface ISubjectAPIClient {
      * @param query The search query to filter subjects by name or code.
      * @param limit The maximum number of subjects to return. Defaults to 5.
      * @param offset The number of subjects to skip before starting to collect the result set. Defaults to 0.
+     * @param session The academic session to filter subjects by. Defaults to the active session.
+     * @param semester The semester to filter subjects by. Defaults to the active semester.
      * @param signal An optional {@link AbortSignal} that can be used to cancel the request to list subjects.
      * @returns A list of subjects matching the search query.
      */
@@ -26,6 +28,8 @@ export interface ISubjectAPIClient {
         query?: string,
         limit?: number,
         offset?: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
         signal?: AbortSignal,
     ): Promise<ClassSubjectAssignment[]>;
 

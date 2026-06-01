@@ -1,4 +1,4 @@
-import { ClassSubjectAssignment, Subject } from "@psb/shared/types";
+import { ClassSubjectAssignment, Subject, ValidSemester, ValidSession } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { ISubjectAPIClient } from "./ISubjectAPIClient";
 
@@ -20,6 +20,8 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
         query?: string,
         limit?: number,
         offset?: number,
+        session?: ValidSession,
+        semester?: ValidSemester,
         signal?: AbortSignal,
     ): Promise<ClassSubjectAssignment[]> {
         const url = new URL(this.baseURL + "/me");
@@ -34,6 +36,14 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
 
         if (offset !== undefined) {
             url.searchParams.append("offset", offset.toString());
+        }
+
+        if (session !== undefined) {
+            url.searchParams.append("session", session);
+        }
+
+        if (semester !== undefined) {
+            url.searchParams.append("semester", semester.toString());
         }
 
         return this.get(url, { signal }).then((res) => res.json());

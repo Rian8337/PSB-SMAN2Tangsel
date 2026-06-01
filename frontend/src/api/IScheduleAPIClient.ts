@@ -1,4 +1,4 @@
-import { ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
 
 export interface CreateScheduleOptions {
     readonly classSubjectId: number;
@@ -30,10 +30,16 @@ export interface IScheduleAPIClient {
     /**
      * Fetches the weekly schedule of the authenticated user.
      *
+     * @param session The academic session to filter by. Defaults to the active session.
+     * @param semester The semester to filter by. Defaults to the active semester.
      * @param signal An optional {@link AbortSignal} that can be used to cancel the request to fetch the weekly schedule.
      * @returns The weekly schedule of the user.
      */
-    getSchedule(signal?: AbortSignal): Promise<ScheduleDTO[]>;
+    getSchedule(
+        session?: ValidSession,
+        semester?: ValidSemester,
+        signal?: AbortSignal,
+    ): Promise<ScheduleDTO[]>;
 
     /**
      * Downloads the weekly schedule of the authenticated user as an iCalendar file (`.ics`).

@@ -1,4 +1,4 @@
-import { ScheduleDTO } from "@psb/shared/types";
+import { ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import {
     CreateScheduleOptions,
@@ -20,8 +20,22 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         );
     }
 
-    getSchedule(signal?: AbortSignal): Promise<ScheduleDTO[]> {
-        return this.get("/", { signal }).then((res) => res.json());
+    getSchedule(
+        session?: ValidSession,
+        semester?: ValidSemester,
+        signal?: AbortSignal,
+    ): Promise<ScheduleDTO[]> {
+        const url = new URL(this.baseURL + "/");
+
+        if (session !== undefined) {
+            url.searchParams.append("session", session);
+        }
+
+        if (semester !== undefined) {
+            url.searchParams.append("semester", semester.toString());
+        }
+
+        return this.get(url, { signal }).then((res) => res.json());
     }
 
     async download(
