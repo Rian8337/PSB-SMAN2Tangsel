@@ -3,6 +3,7 @@
 import { Heading, HStack, IconButton } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import { NotificationBell } from "./NotificationBell";
+import { SessionSwitcher } from "./SessionSwitcher";
 import { useRouter } from "@/i18n/navigation";
 
 interface PageHeaderProps {
@@ -50,6 +51,8 @@ export function PageHeader({
 
             <HStack spaceX={4}>
                 {rightElement}
+
+                <SessionSwitcher />
                 <NotificationBell />
             </HStack>
         </HStack>

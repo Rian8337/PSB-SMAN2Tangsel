@@ -1,13 +1,18 @@
 "use client";
 
-import { useSessionCode } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
 import { useAuthApiClient } from "@/providers/api/auth-api-provider";
+import { useSessionCode } from "@/hooks";
 import { encodeSessionCode } from "@/utils/sessionCode";
-import { NativeSelect } from "@chakra-ui/react";
 import { UserSessionDTO } from "@psb/shared/types";
+import { Button, Menu } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+
+function abbreviateSession(session: string, semester: number): string {
+    const [start, end] = session.split("/");
+    return `${start.slice(-2)}/${end.slice(-2)} · S${semester.toString()}`;
+}
 
 export function SessionSwitcher() {
     const t = useTranslations("SessionSwitcher");
@@ -38,34 +43,55 @@ export function SessionSwitcher() {
         return null;
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const code = e.target.value;
-
-        if (code && code !== currentSessionCode) {
-            router.push(`/${code}/dashboard`);
-        }
-    };
+    const current = sessions.find(
+        (s) => encodeSessionCode(s.session, s.semester) === currentSessionCode,
+    );
 
     return (
-        <NativeSelect.Root size="sm" bg="white" borderRadius="md">
-            <NativeSelect.Field
-                value={currentSessionCode}
-                onChange={handleChange}
-                aria-label={t("label")}
-                cursor="pointer"
-            >
-                {sessions.map((s) => {
-                    const code = encodeSessionCode(s.session, s.semester);
+        <Menu.Root
+            positioning={{ placement: "bottom-end", offset: { mainAxis: 4 } }}
+        >
+            <Menu.Trigger asChild>
+                <Button
+                    size="xs"
+                    variant="outline"
+                    bg="white"
+                    _hover={{ bg: "blackAlpha.100" }}
+                    aria-label={t("label")}
+                >
+                    {current
+                        ? abbreviateSession(current.session, current.semester)
+                        : currentSessionCode}
+                </Button>
+            </Menu.Trigger>
 
-                    return (
-                        <option key={code} value={code}>
-                            {s.session} - {t("semester")}{" "}
-                            {s.semester.toString()}
-                        </option>
-                    );
-                })}
-            </NativeSelect.Field>
-            <NativeSelect.Indicator />
-        </NativeSelect.Root>
+            <Menu.Positioner zIndex={1500}>
+                <Menu.Content minW="180px">
+                    {sessions.map((s) => {
+                        const code = encodeSessionCode(s.session, s.semester);
+                        return (
+                            <Menu.Item
+                                key={code}
+                                value={code}
+                                fontWeight={
+                                    code === currentSessionCode
+                                        ? "bold"
+                                        : "normal"
+                                }
+                                cursor="pointer"
+                                onClick={() => {
+                                    if (code !== currentSessionCode) {
+                                        router.push(`/${code}/dashboard`);
+                                    }
+                                }}
+                            >
+                                {s.session} – {t("semester")}{" "}
+                                {s.semester.toString()}
+                            </Menu.Item>
+                        );
+                    })}
+                </Menu.Content>
+            </Menu.Positioner>
+        </Menu.Root>
     );
 }
