@@ -2,51 +2,38 @@ import {
     getServerAuthApiClient,
     getServerSessionApiClient,
 } from "@/api/server";
-import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
+import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { encodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
-import { getTranslations } from "next-intl/server";
-import { unauthorized } from "next/navigation";
+import { notFound } from "next/navigation";
 
-export async function generateMetadata({
+export default async function DashboardRedirectPage({
     params,
 }: {
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
 
-    const t = await getTranslations({
-        locale: hasLocale(routing.locales, locale)
-            ? locale
-            : routing.defaultLocale,
-        namespace: "Dashboard",
-    });
-
-    return { title: t("title") };
-}
-
-export default async function DashboardPage() {
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
     if (!user || user.role === UserRole.administrator) {
-        unauthorized();
+        notFound();
     }
 
     const sessionApiClient = await getServerSessionApiClient();
     const active = await sessionApiClient.getActive().catch(() => null);
 
-    const activeCode = active
-        ? encodeSessionCode(active.session, active.semester)
-        : null;
+    if (!active) {
+        notFound();
+    }
 
-    return (
-        <DashboardClientView
-            name={user.name.split(" ")[0]}
-            role={user.role}
-            activeSessionCode={activeCode}
-        />
-    );
+    redirect({
+        href: `/${encodeSessionCode(active.session, active.semester)}/dashboard`,
+        locale: hasLocale(routing.locales, locale)
+            ? locale
+            : routing.defaultLocale,
+    });
 }
