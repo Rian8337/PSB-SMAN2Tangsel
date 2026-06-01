@@ -1,21 +1,34 @@
 import {
     getServerAuthApiClient,
-    getServerSubjectDashboardApiClient,
+    getServerSubjectMaterialApiClient,
 } from "@/api/server";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
 import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
+import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 
-export default async function CreateMaterialPage({
+export default async function EditMaterialPage({
     params,
 }: {
-    params: Promise<{ id: string }>;
+    params: Promise<{ sessionCode: string; id: string; materialId: string }>;
 }) {
-    const { id } = await params;
-    const classSubjectId = parseInt(id, 10);
+    const { sessionCode, id, materialId: materialIdParam } = await params;
+    const decoded = decodeSessionCode(sessionCode);
 
-    if (isNaN(classSubjectId) || classSubjectId <= 0) {
+    if (!decoded) {
+        notFound();
+    }
+
+    const classSubjectId = parseInt(id, 10);
+    const materialId = parseInt(materialIdParam, 10);
+
+    if (
+        isNaN(classSubjectId) ||
+        classSubjectId <= 0 ||
+        isNaN(materialId) ||
+        materialId <= 0
+    ) {
         notFound();
     }
 
@@ -26,12 +39,12 @@ export default async function CreateMaterialPage({
         notFound();
     }
 
-    const dashboardApiClient = await getServerSubjectDashboardApiClient();
-    const dashboard = await dashboardApiClient
-        .getDashboard(classSubjectId)
+    const materialApiClient = await getServerSubjectMaterialApiClient();
+    const material = await materialApiClient
+        .getMaterial(materialId)
         .catch(() => null);
 
-    if (!dashboard) {
+    if (!material) {
         notFound();
     }
 
@@ -39,8 +52,7 @@ export default async function CreateMaterialPage({
         <SubjectMaterialApiProvider>
             <ManageMaterialForm
                 classSubjectId={classSubjectId}
-                subjectName={dashboard.subject.name}
-                className={dashboard.class.name}
+                material={material}
             />
         </SubjectMaterialApiProvider>
     );

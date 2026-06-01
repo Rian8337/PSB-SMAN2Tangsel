@@ -1,6 +1,7 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { SubjectDashboard } from "@/components/subjects/SubjectDashboard";
 import { routing } from "@/i18n/routing";
+import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -9,7 +10,7 @@ import { notFound } from "next/navigation";
 export async function generateMetadata({
     params,
 }: {
-    params: Promise<{ locale: string; id: string }>;
+    params: Promise<{ locale: string; sessionCode: string; id: string }>;
 }) {
     const { locale } = await params;
 
@@ -26,9 +27,15 @@ export async function generateMetadata({
 export default async function SubjectDashboardPage({
     params,
 }: {
-    params: Promise<{ id: string }>;
+    params: Promise<{ sessionCode: string; id: string }>;
 }) {
-    const { id } = await params;
+    const { sessionCode, id } = await params;
+    const decoded = decodeSessionCode(sessionCode);
+
+    if (!decoded) {
+        notFound();
+    }
+
     const classSubjectId = parseInt(id, 10);
 
     if (isNaN(classSubjectId) || classSubjectId <= 0) {

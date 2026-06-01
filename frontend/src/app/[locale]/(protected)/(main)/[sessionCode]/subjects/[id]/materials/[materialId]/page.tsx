@@ -1,14 +1,20 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { SubjectMaterial } from "@/components/subjects/SubjectMaterial";
+import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 
 export default async function SubjectMaterialPage({
     params,
 }: {
-    params: Promise<{ id: string; materialId: string }>;
+    params: Promise<{ sessionCode: string; id: string; materialId: string }>;
 }) {
-    const { id, materialId: materialIdParam } = await params;
+    const { sessionCode, id, materialId: materialIdParam } = await params;
+    const decoded = decodeSessionCode(sessionCode);
+
+    if (!decoded) {
+        notFound();
+    }
 
     const classSubjectId = parseInt(id, 10);
     const materialId = parseInt(materialIdParam, 10);

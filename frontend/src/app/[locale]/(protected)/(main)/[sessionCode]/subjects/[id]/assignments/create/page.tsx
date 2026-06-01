@@ -1,28 +1,28 @@
 import {
     getServerAuthApiClient,
-    getServerSubjectAssignmentApiClient,
+    getServerSubjectDashboardApiClient,
 } from "@/api/server";
 import { ManageAssignmentForm } from "@/components/subjects/ManageAssignmentForm";
 import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
+import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 
-export default async function EditAssignmentPage({
+export default async function CreateAssignmentPage({
     params,
 }: {
-    params: Promise<{ id: string; assignmentId: string }>;
+    params: Promise<{ sessionCode: string; id: string }>;
 }) {
-    const { id, assignmentId: assignmentIdParam } = await params;
+    const { sessionCode, id } = await params;
+    const decoded = decodeSessionCode(sessionCode);
+
+    if (!decoded) {
+        notFound();
+    }
 
     const classSubjectId = parseInt(id, 10);
-    const assignmentId = parseInt(assignmentIdParam, 10);
 
-    if (
-        isNaN(classSubjectId) ||
-        classSubjectId <= 0 ||
-        isNaN(assignmentId) ||
-        assignmentId <= 0
-    ) {
+    if (isNaN(classSubjectId) || classSubjectId <= 0) {
         notFound();
     }
 
@@ -33,14 +33,12 @@ export default async function EditAssignmentPage({
         notFound();
     }
 
-    const assignmentApiClient = await getServerSubjectAssignmentApiClient();
-
-    const assignment = await assignmentApiClient
-        .getAssignment(assignmentId)
-        .then((a) => ("visible" in a ? a : null))
+    const dashboardApiClient = await getServerSubjectDashboardApiClient();
+    const dashboard = await dashboardApiClient
+        .getDashboard(classSubjectId)
         .catch(() => null);
 
-    if (!assignment) {
+    if (!dashboard) {
         notFound();
     }
 
@@ -48,7 +46,8 @@ export default async function EditAssignmentPage({
         <SubjectAssignmentApiProvider>
             <ManageAssignmentForm
                 classSubjectId={classSubjectId}
-                assignment={assignment}
+                subjectName={dashboard.subject.name}
+                className={dashboard.class.name}
             />
         </SubjectAssignmentApiProvider>
     );

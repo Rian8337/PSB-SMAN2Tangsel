@@ -1,6 +1,10 @@
-import { getServerAuthApiClient } from "@/api/server";
+import {
+    getServerAuthApiClient,
+    getServerSessionApiClient,
+} from "@/api/server";
 import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
 import { routing } from "@/i18n/routing";
+import { encodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -12,6 +16,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
+
     const t = await getTranslations({
         locale: hasLocale(routing.locales, locale)
             ? locale
@@ -30,7 +35,18 @@ export default async function DashboardPage() {
         unauthorized();
     }
 
+    const sessionApiClient = await getServerSessionApiClient();
+    const active = await sessionApiClient.getActive().catch(() => null);
+
+    const activeCode = active
+        ? encodeSessionCode(active.session, active.semester)
+        : null;
+
     return (
-        <DashboardClientView name={user.name.split(" ")[0]} role={user.role} />
+        <DashboardClientView
+            name={user.name.split(" ")[0]}
+            role={user.role}
+            activeSessionCode={activeCode}
+        />
     );
 }

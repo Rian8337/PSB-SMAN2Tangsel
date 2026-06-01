@@ -1,14 +1,20 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { SubjectAssignment } from "@/components/subjects/SubjectAssignment";
+import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 
 export default async function SubjectAssignmentPage({
     params,
 }: {
-    params: Promise<{ id: string; assignmentId: string }>;
+    params: Promise<{ sessionCode: string; id: string; assignmentId: string }>;
 }) {
-    const { id, assignmentId: assignmentIdParam } = await params;
+    const { sessionCode, id, assignmentId: assignmentIdParam } = await params;
+    const decoded = decodeSessionCode(sessionCode);
+
+    if (!decoded) {
+        notFound();
+    }
 
     const classSubjectId = parseInt(id, 10);
     const assignmentId = parseInt(assignmentIdParam, 10);
