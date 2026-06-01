@@ -33,19 +33,9 @@ describe("SubjectController (unit)", () => {
         const mockSubjects: ClassSubjectAssignment[] = [
             {
                 id: 1,
-                class: {
-                    id: 10,
-                    name: "X IPA 1",
-                },
-                subject: {
-                    id: 1,
-                    code: "MA101",
-                    name: "Matematika",
-                },
-                teacher: {
-                    id: 2,
-                    name: "Bu Siti",
-                },
+                class: { id: 10, name: "X IPA 1" },
+                subject: { id: 1, code: "MA101", name: "Matematika" },
+                teacher: { id: 2, name: "Bu Siti" },
             },
         ];
 
@@ -53,34 +43,152 @@ describe("SubjectController (unit)", () => {
             unknown,
             ClassSubjectAssignment[],
             unknown,
-            Partial<{ query: string; limit: string; offset: string }>
+            Partial<{
+                query: string;
+                limit: string;
+                offset: string;
+                session: string;
+                semester: string;
+            }>
         >();
 
-        let req: ReturnType<typeof createMockRequest>;
+        describe("as a student", () => {
+            let req: ReturnType<typeof createMockRequest>;
 
-        beforeEach(() => {
-            req = createMockRequest({
-                sessionData: {
-                    userId: 1,
-                    identifier: "1",
-                    role: UserRole.student,
-                    classId: 10,
-                },
+            beforeEach(() => {
+                req = createMockRequest({
+                    sessionData: {
+                        userId: 1,
+                        identifier: "1",
+                        role: UserRole.student,
+                        classId: 10,
+                    },
+                });
+            });
+
+            it("should return subjects using classId from session data", async () => {
+                mockClassSubjectService.listAssignedSubjects.mockResolvedValueOnce(
+                    mockSubjects,
+                );
+
+                await controller.getMySubjects(req, res);
+
+                expect(
+                    mockClassSubjectService.listAssignedSubjects,
+                ).toHaveBeenCalledWith(10, undefined, undefined, undefined);
+
+                expect(res.json).toHaveBeenCalledWith(mockSubjects);
+            });
+
+            it("should resolve classId from session when session and semester are provided", async () => {
+                req.query = { session: "2023/2024", semester: "2" };
+
+                mockClassSubjectService.getStudentClassIdForSession.mockResolvedValueOnce(
+                    77,
+                );
+
+                mockClassSubjectService.listAssignedSubjects.mockResolvedValueOnce(
+                    mockSubjects,
+                );
+
+                await controller.getMySubjects(req, res);
+
+                expect(
+                    mockClassSubjectService.getStudentClassIdForSession,
+                ).toHaveBeenCalledWith(1, "2023/2024", 2);
+
+                expect(
+                    mockClassSubjectService.listAssignedSubjects,
+                ).toHaveBeenCalledWith(77, undefined, undefined, undefined);
+
+                expect(res.json).toHaveBeenCalledWith(mockSubjects);
+            });
+
+            it("should return empty list when student is not enrolled in the given session", async () => {
+                req.query = { session: "2020/2021", semester: "1" };
+
+                mockClassSubjectService.getStudentClassIdForSession.mockResolvedValueOnce(
+                    null,
+                );
+
+                await controller.getMySubjects(req, res);
+
+                expect(
+                    mockClassSubjectService.listAssignedSubjects,
+                ).not.toHaveBeenCalled();
+
+                expect(res.json).toHaveBeenCalledWith([]);
             });
         });
 
-        it("should return subjects for authenticated user", async () => {
-            mockClassSubjectService.listAssignedSubjects.mockResolvedValueOnce(
-                mockSubjects,
-            );
+        describe("as a teacher", () => {
+            let req: ReturnType<typeof createMockRequest>;
 
-            await controller.getMySubjects(req, res);
+            beforeEach(() => {
+                req = createMockRequest({
+                    sessionData: {
+                        userId: 2,
+                        identifier: "2",
+                        role: UserRole.teacher,
+                    },
+                });
+            });
 
-            expect(
-                mockClassSubjectService.listAssignedSubjects,
-            ).toHaveBeenCalledWith(10, undefined, undefined, undefined);
+            it("should fall back to active session when no session params provided", async () => {
+                mockSessionService.getActive.mockResolvedValueOnce({
+                    active: true,
+                    session: "2024/2025",
+                    semester: 2,
+                    startTime: new Date(),
+                    endTime: new Date(),
+                });
 
-            expect(res.json).toHaveBeenCalledWith(mockSubjects);
+                mockClassSubjectService.listAssignedSubjectsForTeacher.mockResolvedValueOnce(
+                    mockSubjects,
+                );
+
+                await controller.getMySubjects(req, res);
+
+                expect(mockSessionService.getActive).toHaveBeenCalled();
+
+                expect(
+                    mockClassSubjectService.listAssignedSubjectsForTeacher,
+                ).toHaveBeenCalledWith(
+                    2,
+                    "2024/2025",
+                    2,
+                    undefined,
+                    undefined,
+                    undefined,
+                );
+
+                expect(res.json).toHaveBeenCalledWith(mockSubjects);
+            });
+
+            it("should use provided session and semester without calling getActive", async () => {
+                req.query = { session: "2023/2024", semester: "1" };
+
+                mockClassSubjectService.listAssignedSubjectsForTeacher.mockResolvedValueOnce(
+                    mockSubjects,
+                );
+
+                await controller.getMySubjects(req, res);
+
+                expect(mockSessionService.getActive).not.toHaveBeenCalled();
+
+                expect(
+                    mockClassSubjectService.listAssignedSubjectsForTeacher,
+                ).toHaveBeenCalledWith(
+                    2,
+                    "2023/2024",
+                    1,
+                    undefined,
+                    undefined,
+                    undefined,
+                );
+
+                expect(res.json).toHaveBeenCalledWith(mockSubjects);
+            });
         });
 
         it.each<[string, MessageKey]>([
@@ -91,6 +199,15 @@ describe("SubjectController (unit)", () => {
         ])(
             "should return 400 for invalid limit: %s",
             async (limit, errorKey) => {
+                const req = createMockRequest({
+                    sessionData: {
+                        userId: 1,
+                        identifier: "1",
+                        role: UserRole.student,
+                        classId: 10,
+                    },
+                });
+
                 req.query.limit = limit;
 
                 await controller.getMySubjects(req, res);
@@ -106,12 +223,52 @@ describe("SubjectController (unit)", () => {
         ])(
             "should return 400 for invalid offset: %s",
             async (offset, errorKey) => {
+                const req = createMockRequest({
+                    sessionData: {
+                        userId: 1,
+                        identifier: "1",
+                        role: UserRole.student,
+                        classId: 10,
+                    },
+                });
+
                 req.query.offset = offset;
 
                 await controller.getMySubjects(req, res);
 
                 expect(res.status).toHaveBeenCalledWith(400);
                 expect(res.json).toHaveBeenCalledWith({ error: errorKey });
+            },
+        );
+
+        it.each<[string, string, MessageKey]>([
+            [
+                "invalid-format",
+                "1",
+                "Session must be in the format YYYY/YYYY" as MessageKey,
+            ],
+            [
+                "2024/2025",
+                "3",
+                "Invalid enum value. Expected 1 | 2" as MessageKey,
+            ],
+        ])(
+            "should return 400 for invalid session params: session=%s semester=%s",
+            async (session, semester) => {
+                const req = createMockRequest({
+                    sessionData: {
+                        userId: 1,
+                        identifier: "1",
+                        role: UserRole.student,
+                        classId: 10,
+                    },
+                });
+
+                req.query = { session, semester };
+
+                await controller.getMySubjects(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
             },
         );
     });

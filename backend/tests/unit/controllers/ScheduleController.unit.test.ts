@@ -3,6 +3,7 @@ import { ScheduleDay, ScheduleDTO, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
+    mockClassSubjectService,
     mockScheduleService,
     mockSessionService,
 } from "@test/mocks";
@@ -11,6 +12,7 @@ describe("ScheduleController (unit)", () => {
     const controller = new ScheduleController(
         mockScheduleService,
         mockSessionService,
+        mockClassSubjectService,
     );
 
     let res: ReturnType<typeof createMockResponse>;
@@ -108,10 +110,100 @@ describe("ScheduleController (unit)", () => {
 
             expect(mockScheduleService.getTeacherSchedule).toHaveBeenCalledWith(
                 1,
+                undefined,
+                undefined,
             );
 
             expect(res.json).toHaveBeenCalledWith([]);
         });
+
+        it("should pass session and semester to teacher schedule when provided", async () => {
+            mockScheduleService.getTeacherSchedule.mockResolvedValue([]);
+
+            req.sessionData = {
+                role: UserRole.teacher,
+                identifier: "1",
+                userId: 2,
+            };
+
+            req.query = { session: "2024/2025", semester: "1" };
+
+            await controller.getMySchedule(req, res);
+
+            expect(mockScheduleService.getTeacherSchedule).toHaveBeenCalledWith(
+                2,
+                "2024/2025",
+                1,
+            );
+        });
+
+        it("should resolve student classId from session when session and semester are provided", async () => {
+            mockClassSubjectService.getStudentClassIdForSession.mockResolvedValueOnce(
+                99,
+            );
+
+            mockScheduleService.getClassSchedule.mockResolvedValue([]);
+
+            req.sessionData = {
+                role: UserRole.student,
+                identifier: "1234567890",
+                userId: 5,
+                classId: 1,
+            };
+
+            req.query = { session: "2023/2024", semester: "2" };
+
+            await controller.getMySchedule(req, res);
+
+            expect(
+                mockClassSubjectService.getStudentClassIdForSession,
+            ).toHaveBeenCalledWith(5, "2023/2024", 2);
+
+            expect(mockScheduleService.getClassSchedule).toHaveBeenCalledWith(
+                99,
+            );
+        });
+
+        it("should return empty schedule for student when not enrolled in session", async () => {
+            mockClassSubjectService.getStudentClassIdForSession.mockResolvedValueOnce(
+                null,
+            );
+
+            req.sessionData = {
+                role: UserRole.student,
+                identifier: "1234567890",
+                userId: 5,
+                classId: 1,
+            };
+
+            req.query = { session: "2020/2021", semester: "1" };
+
+            await controller.getMySchedule(req, res);
+
+            expect(mockScheduleService.getClassSchedule).not.toHaveBeenCalled();
+            expect(res.json).toHaveBeenCalledWith([]);
+        });
+
+        it.each<[string, string]>([
+            ["invalid-session", "1"],
+            ["2024/2025", "3"],
+            ["2024/2025", "abc"],
+        ])(
+            "should return 400 for invalid session/semester: session=%s semester=%s",
+            async (session, semester) => {
+                req.sessionData = {
+                    role: UserRole.teacher,
+                    identifier: "1",
+                    userId: 1,
+                };
+
+                req.query = { session, semester };
+
+                await controller.getMySchedule(req, res);
+
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
     });
 
     describe("downloadSchedule", () => {
