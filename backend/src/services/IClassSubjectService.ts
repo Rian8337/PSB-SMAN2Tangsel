@@ -2,6 +2,7 @@ import {
     ClassSubjectAssignment,
     Subject,
     SubjectDashboard,
+    UserSessionDTO,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -121,4 +122,32 @@ export interface IClassSubjectService {
         classSubjectId: number,
         teacherId: number,
     ): Promise<SubjectDashboard>;
+
+    /**
+     * Resolves the class ID for a student in a given academic session and semester.
+     *
+     * @param studentId The unique identifier of the student.
+     * @param session The academic session.
+     * @param semester The semester.
+     * @returns The class ID, or `null` if the student is not enrolled in any class for that session.
+     */
+    getStudentClassIdForSession(
+        studentId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<number | null>;
+
+    /**
+     * Returns the distinct sessions a student is enrolled in, sorted newest first.
+     *
+     * @param studentId The unique identifier of the student.
+     */
+    getStudentSessions(studentId: number): Promise<UserSessionDTO[]>;
+
+    /**
+     * Returns the distinct sessions a teacher is assigned to, sorted newest first.
+     *
+     * @param teacherId The unique identifier of the teacher.
+     */
+    getTeacherSessions(teacherId: number): Promise<UserSessionDTO[]>;
 }

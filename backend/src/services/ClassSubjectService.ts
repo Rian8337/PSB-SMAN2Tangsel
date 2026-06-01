@@ -10,6 +10,7 @@ import {
     ClassSubjectAssignment,
     Subject,
     SubjectDashboard,
+    UserSessionDTO,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -163,5 +164,25 @@ export class ClassSubjectService implements IClassSubjectService {
         }
 
         return dashboard;
+    }
+
+    getStudentClassIdForSession(
+        studentId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+    ): Promise<number | null> {
+        return this.classSubjectRepository.getStudentClassIdForSession(
+            studentId,
+            session,
+            semester,
+        );
+    }
+
+    getStudentSessions(studentId: number): Promise<UserSessionDTO[]> {
+        return this.classSubjectRepository.getStudentSessions(studentId);
+    }
+
+    getTeacherSessions(teacherId: number): Promise<UserSessionDTO[]> {
+        return this.classSubjectRepository.getTeacherSessions(teacherId);
     }
 }
