@@ -1,12 +1,9 @@
 import { SubjectDashboard } from "@/components/subjects/SubjectDashboard";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectDashboardApiProvider } from "@/providers/api/subject-dashboard-api-provider";
-import { SubjectDashboard as SubjectDashboardData, UserRole } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
-    mockRouter,
-    mockSubjectDashboardApiClient,
-} from "@test/mocks";
+    SubjectDashboard as SubjectDashboardData,
+    UserRole,
+} from "@psb/shared/types";
+import { mockRouter, mockSubjectDashboardApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -15,7 +12,12 @@ const mockDashboard: SubjectDashboardData = {
     subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
     class: { id: 1, name: "X-IPA-1", session: "2024/2025", semester: 1 },
     materials: [
-        { id: 1, title: "Introduction to Calculus", description: "Week 1", visible: true },
+        {
+            id: 1,
+            title: "Introduction to Calculus",
+            description: "Week 1",
+            visible: true,
+        },
         { id: 2, title: "Hidden Material", description: null, visible: false },
     ],
     assignments: [
@@ -26,11 +28,7 @@ const mockDashboard: SubjectDashboardData = {
 
 function render(role: UserRole) {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectDashboardApiProvider client={mockSubjectDashboardApiClient}>
-                <SubjectDashboard classSubjectId={1} role={role} />
-            </SubjectDashboardApiProvider>
-        </NotificationApiProvider>,
+        <SubjectDashboard classSubjectId={1} role={role} />,
     );
 }
 
@@ -44,9 +42,10 @@ describe("SubjectDashboard (integration)", () => {
     it("should call getDashboard with the correct classSubjectId on mount", () => {
         render(UserRole.student);
 
-        expect(
-            mockSubjectDashboardApiClient.getDashboard,
-        ).toHaveBeenCalledWith(1, expect.any(AbortSignal));
+        expect(mockSubjectDashboardApiClient.getDashboard).toHaveBeenCalledWith(
+            1,
+            expect.any(AbortSignal),
+        );
     });
 
     it("should display the subject name as the page title after loading", async () => {
@@ -67,9 +66,7 @@ describe("SubjectDashboard (integration)", () => {
                 expect(
                     screen.getByText("Introduction to Calculus"),
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByText("Hidden Material"),
-                ).toBeInTheDocument();
+                expect(screen.getByText("Hidden Material")).toBeInTheDocument();
             });
         });
 
@@ -95,9 +92,7 @@ describe("SubjectDashboard (integration)", () => {
                 expect(
                     screen.getByText("Introduction to Calculus"),
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByText("Hidden Material"),
-                ).toBeInTheDocument();
+                expect(screen.getByText("Hidden Material")).toBeInTheDocument();
             });
         });
 
@@ -123,7 +118,9 @@ describe("SubjectDashboard (integration)", () => {
                 expect(screen.getByText("addMaterial")).toBeInTheDocument();
             });
 
-            await user.click(screen.getByRole("button", { name: "addMaterial" }));
+            await user.click(
+                screen.getByRole("button", { name: "addMaterial" }),
+            );
 
             expect(mockRouter.push).toHaveBeenCalledWith(
                 "/24252/subjects/1/materials/create",

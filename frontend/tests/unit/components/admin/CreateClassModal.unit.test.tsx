@@ -3,7 +3,6 @@ import {
     CreateClassModal,
     CreateClassModalProps,
 } from "@/components/admin/CreateClassModal";
-import { ClassApiProvider } from "@/providers/api/class-api-provider";
 import { AcademicSessionDTO } from "@psb/shared/types";
 import { mockClassApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -23,14 +22,12 @@ function render(props: Partial<CreateClassModalProps> = {}) {
     const onSuccess = props.onSuccess ?? vi.fn();
 
     const result = renderWithChakraProvider(
-        <ClassApiProvider client={mockClassApiClient}>
-            <CreateClassModal
-                isOpen={props.isOpen ?? true}
-                activeSession={props.activeSession ?? mockActiveSession}
-                onClose={onClose}
-                onSuccess={onSuccess}
-            />
-        </ClassApiProvider>,
+        <CreateClassModal
+            isOpen={props.isOpen ?? true}
+            activeSession={props.activeSession ?? mockActiveSession}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 
     return { ...result, onClose, onSuccess };

@@ -1,14 +1,10 @@
 import { SubjectAssignment } from "@/components/subjects/SubjectAssignment";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
-import { SubjectAssignmentSubmissionApiProvider } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
     StudentSubjectAssignment,
     TeacherSubjectAssignment,
     UserRole,
 } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
     mockRouter,
     mockSubjectAssignmentApiClient,
     mockSubjectAssignmentSubmissionApiClient,
@@ -48,21 +44,7 @@ const mockTeacherAssignment: TeacherSubjectAssignment = {
 
 function render(role: UserRole) {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectAssignmentApiProvider
-                client={mockSubjectAssignmentApiClient}
-            >
-                <SubjectAssignmentSubmissionApiProvider
-                    client={mockSubjectAssignmentSubmissionApiClient}
-                >
-                    <SubjectAssignment
-                        assignmentId={1}
-                        classSubjectId={10}
-                        role={role}
-                    />
-                </SubjectAssignmentSubmissionApiProvider>
-            </SubjectAssignmentApiProvider>
-        </NotificationApiProvider>,
+        <SubjectAssignment assignmentId={1} classSubjectId={10} role={role} />,
     );
 }
 
@@ -218,7 +200,9 @@ describe("SubjectAssignment (integration)", () => {
                 ).toBeInTheDocument();
             });
 
-            await user.click(screen.getByRole("button", { name: "editButton" }));
+            await user.click(
+                screen.getByRole("button", { name: "editButton" }),
+            );
 
             await waitFor(() => {
                 expect(

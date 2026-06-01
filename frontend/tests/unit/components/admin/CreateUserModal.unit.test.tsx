@@ -3,7 +3,6 @@ import {
     CreateUserModal,
     CreateUserModalProps,
 } from "@/components/admin/CreateUserModal";
-import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { UserRole } from "@psb/shared/types";
 import { mockToaster, mockUserApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -15,13 +14,11 @@ function renderModal(props: Partial<CreateUserModalProps> = {}) {
     const onSuccess = props.onSuccess ?? vi.fn();
 
     renderWithChakraProvider(
-        <UserApiProvider client={mockUserApiClient}>
-            <CreateUserModal
-                isOpen={props.isOpen ?? true}
-                onClose={onClose}
-                onSuccess={onSuccess}
-            />
-        </UserApiProvider>,
+        <CreateUserModal
+            isOpen={props.isOpen ?? true}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 
     return { onClose, onSuccess };

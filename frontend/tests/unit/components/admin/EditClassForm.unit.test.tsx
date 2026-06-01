@@ -1,14 +1,7 @@
 import { APIError } from "@/api";
 import { EditClassForm } from "@/components/admin/EditClassForm";
-import { ClassApiProvider } from "@/providers/api/class-api-provider";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { Class } from "@psb/shared/types";
-import {
-    mockClassApiClient,
-    mockNotificationApiClient,
-    mockRouter,
-    mockToaster,
-} from "@test/mocks";
+import { mockClassApiClient, mockRouter, mockToaster } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -21,13 +14,7 @@ const mockClass: Class = {
 };
 
 function render() {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <ClassApiProvider client={mockClassApiClient}>
-                <EditClassForm clazz={mockClass} />
-            </ClassApiProvider>
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<EditClassForm clazz={mockClass} />);
 }
 
 describe("EditClassForm (unit)", () => {

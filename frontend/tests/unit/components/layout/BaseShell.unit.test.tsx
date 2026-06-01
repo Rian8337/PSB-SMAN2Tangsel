@@ -3,7 +3,6 @@ import {
     BaseShellProps,
     NavItem,
 } from "@/components/layout/BaseShell";
-import { AuthApiProvider } from "@/providers/api/auth-api-provider";
 import {
     mockAuthApiClient,
     mockNavigation,
@@ -22,19 +21,15 @@ const navItems: NavItem[] = [
 
 function renderPage(props: Partial<BaseShellProps> = {}) {
     return renderWithChakraProvider(
-        <AuthApiProvider client={mockAuthApiClient}>
-            <BaseShell
-                navItems={props.navItems ?? navItems}
-                mobileTitle={props.mobileTitle ?? "Mobile App Title"}
-                settingsHref={props.settingsHref ?? "/settings"}
-                userName={props.userName ?? "John Doe"}
-                userAvatar={
-                    props.userAvatar ?? "https://example.com/avatar.jpg"
-                }
-            >
-                <div>Page Content</div>
-            </BaseShell>
-        </AuthApiProvider>,
+        <BaseShell
+            navItems={props.navItems ?? navItems}
+            mobileTitle={props.mobileTitle ?? "Mobile App Title"}
+            settingsHref={props.settingsHref ?? "/settings"}
+            userName={props.userName ?? "John Doe"}
+            userAvatar={props.userAvatar ?? "https://example.com/avatar.jpg"}
+        >
+            <div>Page Content</div>
+        </BaseShell>,
     );
 }
 

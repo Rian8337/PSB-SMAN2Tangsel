@@ -1,10 +1,7 @@
 import { APIError } from "@/api";
 import { ManageAssignmentForm } from "@/components/subjects/ManageAssignmentForm";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
 import { TeacherSubjectAssignment } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
     mockRouter,
     mockSubjectAssignmentApiClient,
     mockToaster,
@@ -28,28 +25,16 @@ const mockAssignment: TeacherSubjectAssignment = {
 
 function renderCreate() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectAssignmentApiProvider
-                client={mockSubjectAssignmentApiClient}
-            >
-                <ManageAssignmentForm classSubjectId={10} />
-            </SubjectAssignmentApiProvider>
-        </NotificationApiProvider>,
+        <ManageAssignmentForm classSubjectId={10} />,
     );
 }
 
 function renderEdit() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectAssignmentApiProvider
-                client={mockSubjectAssignmentApiClient}
-            >
-                <ManageAssignmentForm
-                    classSubjectId={10}
-                    assignment={mockAssignment}
-                />
-            </SubjectAssignmentApiProvider>
-        </NotificationApiProvider>,
+        <ManageAssignmentForm
+            classSubjectId={10}
+            assignment={mockAssignment}
+        />,
     );
 }
 
@@ -179,7 +164,9 @@ describe("ManageAssignmentForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10/assignments/5");
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/24252/subjects/10/assignments/5",
+            );
         });
 
         it("should mark an attachment as deleted when its delete button is clicked", async () => {

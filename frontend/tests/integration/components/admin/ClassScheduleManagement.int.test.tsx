@@ -1,15 +1,6 @@
 import { ClassScheduleManagement } from "@/components/admin/ClassScheduleManagement";
-import { ClassApiProvider } from "@/providers/api/class-api-provider";
-import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
 import { Class, ScheduleDay, ScheduleDTO } from "@psb/shared/types";
-import {
-    mockClassApiClient,
-    mockClassSubjectApiClient,
-    mockNotificationApiClient,
-    mockScheduleApiClient,
-} from "@test/mocks";
+import { mockClassApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -37,15 +28,7 @@ const mockSchedules: ScheduleDTO[] = [
 
 function render() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <ScheduleApiProvider client={mockScheduleApiClient}>
-                <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
-                    <ClassApiProvider client={mockClassApiClient}>
-                        <ClassScheduleManagement clazz={mockClass} />
-                    </ClassApiProvider>
-                </ClassSubjectApiProvider>
-            </ScheduleApiProvider>
-        </NotificationApiProvider>,
+        <ClassScheduleManagement clazz={mockClass} />,
     );
 }
 

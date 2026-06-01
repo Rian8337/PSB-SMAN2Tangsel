@@ -1,8 +1,6 @@
 import { MySchedule } from "@/components/schedule/MySchedule";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
 import { ScheduleDTO, ScheduleDay } from "@psb/shared/types";
-import { mockNotificationApiClient, mockScheduleApiClient } from "@test/mocks";
+import { mockScheduleApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -22,13 +20,7 @@ const mockSchedules: ScheduleDTO[] = [
 ];
 
 function render(schedules: ScheduleDTO[] = mockSchedules) {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <ScheduleApiProvider client={mockScheduleApiClient}>
-                <MySchedule schedules={schedules} />
-            </ScheduleApiProvider>
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<MySchedule schedules={schedules} />);
 }
 
 describe("MySchedule (integration)", () => {

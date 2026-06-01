@@ -1,5 +1,4 @@
 import { ManageAssignmentSubmissionForm } from "@/components/subjects/ManageAssignmentSubmissionForm";
-import { SubjectAssignmentSubmissionApiProvider } from "@/providers/api/subject-assignment-submission-api-provider";
 import { SubjectAssignmentSubmission } from "@psb/shared/types";
 import {
     mockSubjectAssignmentSubmissionApiClient,
@@ -17,30 +16,22 @@ const mockSubmission: SubjectAssignmentSubmission = {
 
 function renderCreate(onSuccess = vi.fn(), onCancel = vi.fn()) {
     return renderWithChakraProvider(
-        <SubjectAssignmentSubmissionApiProvider
-            client={mockSubjectAssignmentSubmissionApiClient}
-        >
-            <ManageAssignmentSubmissionForm
-                assignmentId={1}
-                onSuccess={onSuccess}
-                onCancel={onCancel}
-            />
-        </SubjectAssignmentSubmissionApiProvider>,
+        <ManageAssignmentSubmissionForm
+            assignmentId={1}
+            onSuccess={onSuccess}
+            onCancel={onCancel}
+        />,
     );
 }
 
 function renderEdit(onSuccess = vi.fn(), onCancel = vi.fn()) {
     return renderWithChakraProvider(
-        <SubjectAssignmentSubmissionApiProvider
-            client={mockSubjectAssignmentSubmissionApiClient}
-        >
-            <ManageAssignmentSubmissionForm
-                assignmentId={1}
-                submission={mockSubmission}
-                onSuccess={onSuccess}
-                onCancel={onCancel}
-            />
-        </SubjectAssignmentSubmissionApiProvider>,
+        <ManageAssignmentSubmissionForm
+            assignmentId={1}
+            submission={mockSubmission}
+            onSuccess={onSuccess}
+            onCancel={onCancel}
+        />,
     );
 }
 
@@ -49,9 +40,7 @@ describe("ManageAssignmentSubmissionForm (integration)", () => {
         it("should show the file input and submit button", () => {
             renderCreate();
 
-            expect(
-                screen.getByLabelText("addFilesLabel"),
-            ).toBeInTheDocument();
+            expect(screen.getByLabelText("addFilesLabel")).toBeInTheDocument();
 
             expect(
                 screen.getByRole("button", { name: "submitCreate" }),

@@ -1,5 +1,4 @@
 import LoginPage from "@/app/[locale]/(public)/login/page";
-import { AuthApiProvider } from "@/providers/api/auth-api-provider";
 import { UserRole } from "@psb/shared/types";
 import { mockAuthApiClient, mockRouter } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -7,11 +6,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 function renderPage() {
-    return renderWithChakraProvider(
-        <AuthApiProvider client={mockAuthApiClient}>
-            <LoginPage />
-        </AuthApiProvider>,
-    );
+    return renderWithChakraProvider(<LoginPage />);
 }
 
 describe("LoginPage", () => {

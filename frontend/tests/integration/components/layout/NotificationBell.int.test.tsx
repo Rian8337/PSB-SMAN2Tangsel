@@ -1,5 +1,4 @@
 import { NotificationBell } from "@/components/layout/NotificationBell"; // Adjust path
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { NotificationDTO } from "@psb/shared/types";
 import { mockNotificationApiClient, mockRouter } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -26,11 +25,7 @@ const mockNotifications: NotificationDTO[] = [
 ];
 
 function render() {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <NotificationBell />
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<NotificationBell />);
 }
 
 describe("NotificationBell (integration)", () => {

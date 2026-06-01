@@ -1,12 +1,9 @@
 import { SubjectMaterial } from "@/components/subjects/SubjectMaterial";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
 import {
     SubjectMaterial as SubjectMaterialData,
     UserRole,
 } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
     mockRouter,
     mockSubjectMaterialApiClient,
     mockToaster,
@@ -32,15 +29,7 @@ const mockMaterial: SubjectMaterialData = {
 
 function render(role: UserRole) {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectMaterialApiProvider client={mockSubjectMaterialApiClient}>
-                <SubjectMaterial
-                    materialId={1}
-                    classSubjectId={10}
-                    role={role}
-                />
-            </SubjectMaterialApiProvider>
-        </NotificationApiProvider>,
+        <SubjectMaterial materialId={1} classSubjectId={10} role={role} />,
     );
 }
 

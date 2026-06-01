@@ -3,7 +3,6 @@ import {
     CreateSubjectModal,
     CreateSubjectModalProps,
 } from "@/components/admin/CreateSubjectModal";
-import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
 import { mockSubjectApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -14,14 +13,11 @@ function render(props: Partial<CreateSubjectModalProps> = {}) {
     const onSuccess = props.onSuccess ?? vi.fn();
 
     const result = renderWithChakraProvider(
-        <SubjectApiProvider client={mockSubjectApiClient}>
-            <CreateSubjectModal
-                isOpen={props.isOpen ?? true}
-                onClose={onClose}
-                onSuccess={onSuccess}
-            />
-            ,
-        </SubjectApiProvider>,
+        <CreateSubjectModal
+            isOpen={props.isOpen ?? true}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 
     return { ...result, onClose, onSuccess };

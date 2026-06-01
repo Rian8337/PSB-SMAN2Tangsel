@@ -1,10 +1,7 @@
 import { APIError } from "@/api";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectMaterialApiProvider } from "@/providers/api/subject-material-api-provider";
 import { SubjectMaterial as SubjectMaterialData } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
     mockRouter,
     mockSubjectMaterialApiClient,
     mockToaster,
@@ -26,25 +23,12 @@ const mockMaterial: SubjectMaterialData = {
 };
 
 function renderCreate() {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectMaterialApiProvider client={mockSubjectMaterialApiClient}>
-                <ManageMaterialForm classSubjectId={10} />
-            </SubjectMaterialApiProvider>
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<ManageMaterialForm classSubjectId={10} />);
 }
 
 function renderEdit() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectMaterialApiProvider client={mockSubjectMaterialApiClient}>
-                <ManageMaterialForm
-                    classSubjectId={10}
-                    material={mockMaterial}
-                />
-            </SubjectMaterialApiProvider>
-        </NotificationApiProvider>,
+        <ManageMaterialForm classSubjectId={10} material={mockMaterial} />,
     );
 }
 
@@ -174,7 +158,9 @@ describe("ManageMaterialForm (integration)", () => {
                 }),
             );
 
-            expect(mockRouter.push).toHaveBeenCalledWith("/24252/subjects/10/materials/5");
+            expect(mockRouter.push).toHaveBeenCalledWith(
+                "/24252/subjects/10/materials/5",
+            );
         });
 
         it("should mark an attachment as deleted when its delete button is clicked", async () => {

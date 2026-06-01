@@ -3,7 +3,6 @@ import {
     EditScheduleModal,
     EditScheduleModalProps,
 } from "@/components/admin/EditScheduleModal";
-import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
 import { ScheduleDay, ScheduleDTO } from "@psb/shared/types";
 import { mockScheduleApiClient, mockToaster } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -32,14 +31,12 @@ const mockSchedule: ScheduleDTO = {
 
 function render(props: Partial<EditScheduleModalProps> = {}) {
     return renderWithChakraProvider(
-        <ScheduleApiProvider client={mockScheduleApiClient}>
-            <EditScheduleModal
-                scheduleId={props.scheduleId ?? mockSchedule.id}
-                isOpen={props.isOpen ?? true}
-                onClose={onClose}
-                onSuccess={onSuccess}
-            />
-        </ScheduleApiProvider>,
+        <EditScheduleModal
+            scheduleId={props.scheduleId ?? mockSchedule.id}
+            isOpen={props.isOpen ?? true}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 }
 

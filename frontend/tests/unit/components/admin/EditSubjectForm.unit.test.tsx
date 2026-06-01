@@ -1,14 +1,7 @@
 import { APIError } from "@/api";
 import { EditSubjectForm } from "@/components/admin/EditSubjectForm";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
 import { Subject } from "@psb/shared/types";
-import {
-    mockNotificationApiClient,
-    mockRouter,
-    mockSubjectApiClient,
-    mockToaster,
-} from "@test/mocks";
+import { mockRouter, mockSubjectApiClient, mockToaster } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -21,13 +14,7 @@ const mockSubject: Subject = {
 };
 
 function render() {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectApiProvider client={mockSubjectApiClient}>
-                <EditSubjectForm subject={mockSubject} />
-            </SubjectApiProvider>
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<EditSubjectForm subject={mockSubject} />);
 }
 
 describe("EditSubjectForm (unit)", () => {

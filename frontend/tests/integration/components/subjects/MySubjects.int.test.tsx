@@ -1,8 +1,6 @@
 import { MySubjects } from "@/components/subjects/MySubjects";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectApiProvider } from "@/providers/api/subject-api-provider";
 import { ClassSubjectAssignment } from "@psb/shared/types";
-import { mockNotificationApiClient, mockSubjectApiClient } from "@test/mocks";
+import { mockSubjectApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -40,18 +38,14 @@ const mockAssignedSubjects: ClassSubjectAssignment[] = [
 ];
 
 function render() {
-    return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectApiProvider client={mockSubjectApiClient}>
-                <MySubjects />
-            </SubjectApiProvider>
-        </NotificationApiProvider>,
-    );
+    return renderWithChakraProvider(<MySubjects />);
 }
 
 describe("MySubjects (integration)", () => {
     it("should fetch and display registered subjects on mount", async () => {
-        mockSubjectApiClient.getMySubjects.mockResolvedValue(mockAssignedSubjects);
+        mockSubjectApiClient.getMySubjects.mockResolvedValue(
+            mockAssignedSubjects,
+        );
 
         render();
 

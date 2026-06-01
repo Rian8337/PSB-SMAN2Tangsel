@@ -1,13 +1,9 @@
 import { StudentSubmissionList } from "@/components/subjects/StudentSubmissionList";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { SubjectAssignmentApiProvider } from "@/providers/api/subject-assignment-api-provider";
-import { SubjectAssignmentSubmissionApiProvider } from "@/providers/api/subject-assignment-submission-api-provider";
 import {
     AssignmentSubmissionRow,
     TeacherSubjectAssignment,
 } from "@psb/shared/types";
 import {
-    mockNotificationApiClient,
     mockSubjectAssignmentApiClient,
     mockSubjectAssignmentSubmissionApiClient,
     mockToaster,
@@ -45,20 +41,7 @@ const lateSubmission: AssignmentSubmissionRow = {
 
 function render() {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <SubjectAssignmentApiProvider
-                client={mockSubjectAssignmentApiClient}
-            >
-                <SubjectAssignmentSubmissionApiProvider
-                    client={mockSubjectAssignmentSubmissionApiClient}
-                >
-                    <StudentSubmissionList
-                        assignmentId={1}
-                        classSubjectId={10}
-                    />
-                </SubjectAssignmentSubmissionApiProvider>
-            </SubjectAssignmentApiProvider>
-        </NotificationApiProvider>,
+        <StudentSubmissionList assignmentId={1} classSubjectId={10} />,
     );
 }
 

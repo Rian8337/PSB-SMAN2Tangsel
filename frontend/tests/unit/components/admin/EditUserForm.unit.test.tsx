@@ -1,14 +1,7 @@
 import { APIError } from "@/api";
 import { EditUserForm } from "@/components/admin/EditUserForm";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
-import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { UserListItem, UserRole } from "@psb/shared/types";
-import {
-    mockNotificationApiClient,
-    mockRouter,
-    mockToaster,
-    mockUserApiClient,
-} from "@test/mocks";
+import { mockRouter, mockToaster, mockUserApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -23,11 +16,7 @@ const mockUser: UserListItem = {
 
 function render(currentUserId = 2) {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <UserApiProvider client={mockUserApiClient}>
-                <EditUserForm user={mockUser} currentUserId={currentUserId} />
-            </UserApiProvider>
-        </NotificationApiProvider>,
+        <EditUserForm user={mockUser} currentUserId={currentUserId} />,
     );
 }
 

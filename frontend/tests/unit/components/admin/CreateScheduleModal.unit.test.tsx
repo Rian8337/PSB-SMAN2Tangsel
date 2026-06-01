@@ -3,8 +3,6 @@ import {
     CreateScheduleModal,
     CreateScheduleModalProps,
 } from "@/components/admin/CreateScheduleModal";
-import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
-import { ScheduleApiProvider } from "@/providers/api/schedule-api-provider";
 import { Class, ScheduleDay } from "@psb/shared/types";
 import {
     mockClassSubjectApiClient,
@@ -28,16 +26,12 @@ const clazz: Class = {
 
 function render(props: Partial<CreateScheduleModalProps> = {}) {
     return renderWithChakraProvider(
-        <ScheduleApiProvider client={mockScheduleApiClient}>
-            <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
-                <CreateScheduleModal
-                    clazz={clazz}
-                    isOpen={props.isOpen ?? true}
-                    onClose={onClose}
-                    onSuccess={onSuccess}
-                />
-            </ClassSubjectApiProvider>
-        </ScheduleApiProvider>,
+        <CreateScheduleModal
+            clazz={clazz}
+            isOpen={props.isOpen ?? true}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 }
 

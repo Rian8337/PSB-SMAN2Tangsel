@@ -2,13 +2,8 @@ import {
     ClassStudentManagement,
     ClassStudentManagementProps,
 } from "@/components/admin/ClassStudentManagement";
-import { ClassStudentApiProvider } from "@/providers/api/class-student-api-provider";
-import { NotificationApiProvider } from "@/providers/api/notification-api-provider";
 import { Class, UserListItem, UserRole } from "@psb/shared/types";
-import {
-    mockClassStudentApiClient,
-    mockNotificationApiClient,
-} from "@test/mocks";
+import { mockClassStudentApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -33,14 +28,7 @@ const mockStudents: UserListItem[] = [
 
 function render(props: Partial<ClassStudentManagementProps> = {}) {
     return renderWithChakraProvider(
-        <NotificationApiProvider client={mockNotificationApiClient}>
-            <ClassStudentApiProvider client={mockClassStudentApiClient}>
-                <ClassStudentManagement
-                    clazz={props.clazz ?? mockClass}
-                    {...props}
-                />
-            </ClassStudentApiProvider>
-        </NotificationApiProvider>,
+        <ClassStudentManagement clazz={props.clazz ?? mockClass} {...props} />,
     );
 }
 

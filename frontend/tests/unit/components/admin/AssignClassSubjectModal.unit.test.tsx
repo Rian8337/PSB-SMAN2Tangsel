@@ -3,8 +3,6 @@ import {
     AssignClassSubjectModal,
     AssignClassSubjectModalProps,
 } from "@/components/admin/AssignClassSubjectModal";
-import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
-import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { Class, Subject, UserListItem, UserRole } from "@psb/shared/types";
 import { mockClassSubjectApiClient, mockUserApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
@@ -37,17 +35,13 @@ const mockTeacher: UserListItem = {
 
 function render(props: Partial<AssignClassSubjectModalProps> = {}) {
     return renderWithChakraProvider(
-        <ClassSubjectApiProvider client={mockClassSubjectApiClient}>
-            <UserApiProvider client={mockUserApiClient}>
-                <AssignClassSubjectModal
-                    isOpen={props.isOpen ?? true}
-                    clazz={props.clazz ?? mockClass}
-                    onClose={onClose}
-                    onSuccess={onSuccess}
-                    {...props}
-                />
-            </UserApiProvider>
-        </ClassSubjectApiProvider>,
+        <AssignClassSubjectModal
+            isOpen={props.isOpen ?? true}
+            clazz={props.clazz ?? mockClass}
+            onClose={onClose}
+            onSuccess={onSuccess}
+            {...props}
+        />,
     );
 }
 

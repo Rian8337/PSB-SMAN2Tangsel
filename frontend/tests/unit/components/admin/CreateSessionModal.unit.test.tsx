@@ -3,7 +3,6 @@ import {
     CreateSessionModal,
     CreateSessionModalProps,
 } from "@/components/admin/CreateSessionModal";
-import { SessionApiProvider } from "@/providers/api/session-api-provider";
 import { mockSessionApiClient, mockToaster } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -15,13 +14,11 @@ function renderModal(props: Partial<CreateSessionModalProps> = {}) {
     const onSuccess = props.onSuccess ?? vi.fn();
 
     const renderResult = renderWithChakraProvider(
-        <SessionApiProvider client={mockSessionApiClient}>
-            <CreateSessionModal
-                isOpen={props.isOpen ?? true}
-                onClose={onClose}
-                onSuccess={onSuccess}
-            />
-        </SessionApiProvider>,
+        <CreateSessionModal
+            isOpen={props.isOpen ?? true}
+            onClose={onClose}
+            onSuccess={onSuccess}
+        />,
     );
 
     return { onClose, onSuccess, ...renderResult };
