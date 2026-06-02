@@ -12,12 +12,13 @@ import {
     useBreakpointValue,
     VStack,
 } from "@chakra-ui/react";
-import { Globe, MenuIcon } from "lucide-react";
-import { Locale, useLocale, useTranslations } from "next-intl";
+import { MenuIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PropsWithChildren, useState } from "react";
 import { Avatar } from "../ui/avatar";
 import { useAuthApiClient } from "@/providers/api/auth-api-provider";
 import { toaster } from "../ui/toaster";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 export interface NavItem {
     readonly label: string;
@@ -48,11 +49,6 @@ function SidebarContent({
     const authApiClient = useAuthApiClient();
     const router = useRouter();
     const pathname = usePathname();
-    const locale = useLocale();
-
-    function changeLocale(nextLocale: Locale) {
-        router.replace({ pathname }, { locale: nextLocale });
-    }
 
     function logout() {
         authApiClient
@@ -152,48 +148,9 @@ function SidebarContent({
             </VStack>
 
             <VStack spaceY={6}>
-                <Menu.Root
-                    positioning={{
-                        placement: isDesktop ? "right" : "top",
-                        offset: { mainAxis: 20 },
-                    }}
-                >
-                    <Menu.Trigger asChild>
-                        <IconButton
-                            aria-label="Change Language"
-                            variant="ghost"
-                            _hover={{ bg: "blackAlpha.200" }}
-                            cursor="pointer"
-                        >
-                            <Globe size={28} color="black" />
-                        </IconButton>
-                    </Menu.Trigger>
-
-                    <Menu.Positioner zIndex={1500}>
-                        <Menu.Content minW="150px">
-                            <Menu.Item
-                                value="id"
-                                onClick={() => {
-                                    changeLocale("id");
-                                }}
-                                fontWeight={locale === "id" ? "bold" : "normal"}
-                                cursor="pointer"
-                            >
-                                Bahasa Indonesia
-                            </Menu.Item>
-                            <Menu.Item
-                                value="en"
-                                onClick={() => {
-                                    changeLocale("en");
-                                }}
-                                fontWeight={locale === "en" ? "bold" : "normal"}
-                                cursor="pointer"
-                            >
-                                English
-                            </Menu.Item>
-                        </Menu.Content>
-                    </Menu.Positioner>
-                </Menu.Root>
+                <LocaleSwitcher
+                    menuPlacement={isDesktop ? "right" : "top"}
+                />
 
                 <Menu.Root
                     positioning={{
