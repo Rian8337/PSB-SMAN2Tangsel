@@ -89,8 +89,9 @@ function SidebarContent({
                     <Image
                         src="/school-logo.png"
                         alt="School Logo"
-                        width={50}
-                        height={50}
+                        w="full"
+                        h="full"
+                        objectFit="contain"
                     />
                 </Box>
 
@@ -250,8 +251,9 @@ export function BaseShell(props: BaseShellProps) {
                             <Image
                                 src="/school-logo.png"
                                 alt="School Logo"
-                                width={32}
-                                height={32}
+                                w="32px"
+                                h="32px"
+                                objectFit="contain"
                             />
                             <Text fontWeight="bold">{props.mobileTitle}</Text>
                         </HStack>
