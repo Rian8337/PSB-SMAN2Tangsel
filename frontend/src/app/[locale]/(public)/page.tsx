@@ -38,7 +38,7 @@ export default function HomePage() {
 
     return (
         <Flex
-            minH={{ base: "calc(100dvh - 4rem)", md: "100dvh" }}
+            minH="100dvh"
             alignItems="center"
             justifyContent="center"
             px={{ base: 6, md: 12, xl: 16 }}

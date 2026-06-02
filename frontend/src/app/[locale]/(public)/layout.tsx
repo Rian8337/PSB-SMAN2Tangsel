@@ -1,5 +1,5 @@
 import LocaleSwitcher from "@/components/LocaleSwitcher";
-import { Box, Flex, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Image, Text, VStack } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 import { PropsWithChildren } from "react";
 
@@ -47,41 +47,49 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                     </Text>
                 </VStack>
 
-                <LocaleSwitcher />
+                <LocaleSwitcher menuPlacement="right" />
             </VStack>
 
-            {/* Right side: mobile header + scrollable content */}
-            <Flex flex={1} direction="column" overflow="hidden">
-                {/* Mobile: top header bar */}
-                <Flex
-                    display={{ base: "flex", md: "none" }}
-                    h="16"
-                    bg="#B2CFF6"
-                    px={4}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flexShrink={0}
-                    shadow="sm"
+            {/* Content area (full screen on mobile, right panel on desktop) */}
+            <Box flex={1} overflowY="auto" bg="gray.50" position="relative">
+                {/* Mobile: small logo top-left + globe icon top-right */}
+                <Box
+                    display={{ base: "block", md: "none" }}
+                    position="absolute"
+                    top={3}
+                    left={3}
+                    zIndex={10}
                 >
-                    <HStack gap={3}>
+                    <Box
+                        w="40px"
+                        h="40px"
+                        borderRadius="full"
+                        overflow="hidden"
+                        bg="white"
+                        shadow="sm"
+                    >
                         <Image
                             src="/school-logo.png"
                             alt="School Logo"
-                            width={32}
-                            height={32}
+                            w="full"
+                            h="full"
+                            objectFit="contain"
                         />
-                        <Text fontWeight="bold" fontSize="sm">
-                            {t("appName")}
-                        </Text>
-                    </HStack>
-
-                    <LocaleSwitcher />
-                </Flex>
-
-                <Box flex={1} overflowY="auto" bg="gray.50">
-                    {children}
+                    </Box>
                 </Box>
-            </Flex>
+
+                <Box
+                    display={{ base: "block", md: "none" }}
+                    position="absolute"
+                    top={1}
+                    right={1}
+                    zIndex={10}
+                >
+                    <LocaleSwitcher menuPlacement="bottom-end" />
+                </Box>
+
+                {children}
+            </Box>
         </Flex>
     );
 }

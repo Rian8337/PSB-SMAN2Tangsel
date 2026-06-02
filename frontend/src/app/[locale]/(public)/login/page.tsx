@@ -57,7 +57,7 @@ export default function LoginPage() {
 
     return (
         <Flex
-            minH={{ base: "calc(100dvh - 4rem)", md: "100dvh" }}
+            minH="100dvh"
             alignItems="center"
             justifyContent="center"
             p={{ base: 6, md: 8 }}
