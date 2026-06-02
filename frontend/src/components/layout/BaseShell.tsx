@@ -46,6 +46,7 @@ function SidebarContent({
     props: BaseShellProps;
 }) {
     const t = useTranslations("BaseShell");
+    const tGlobal = useTranslations("Global");
     const authApiClient = useAuthApiClient();
     const router = useRouter();
     const pathname = usePathname();
@@ -78,22 +79,54 @@ function SidebarContent({
             alignItems="center"
             boxShadow="sm"
         >
-            <VStack spaceY={8}>
-                <Box
-                    w="50px"
-                    h="50px"
-                    borderRadius="full"
-                    overflow="hidden"
-                    bg="white"
-                >
-                    <Image
-                        src="/school-logo.png"
-                        alt="School Logo"
+            <VStack w="full" alignItems={{ base: "stretch", md: "center" }} gap={{ base: 1, md: 8 }}>
+                {!isDesktop ? (
+                    <HStack
                         w="full"
-                        h="full"
-                        objectFit="contain"
-                    />
-                </Box>
+                        px={4}
+                        pb={3}
+                        gap={3}
+                        borderBottom="1px solid"
+                        borderColor="blackAlpha.200"
+                    >
+                        <Box
+                            w="36px"
+                            h="36px"
+                            borderRadius="full"
+                            overflow="hidden"
+                            bg="white"
+                            flexShrink={0}
+                        >
+                            <Image
+                                src="/school-logo.png"
+                                alt="School Logo"
+                                w="full"
+                                h="full"
+                                objectFit="contain"
+                            />
+                        </Box>
+
+                        <Text fontWeight="bold" fontSize="sm" lineHeight="short">
+                            {tGlobal("appName")}
+                        </Text>
+                    </HStack>
+                ) : (
+                    <Box
+                        w="50px"
+                        h="50px"
+                        borderRadius="full"
+                        overflow="hidden"
+                        bg="white"
+                    >
+                        <Image
+                            src="/school-logo.png"
+                            alt="School Logo"
+                            w="full"
+                            h="full"
+                            objectFit="contain"
+                        />
+                    </Box>
+                )}
 
                 {props.sidebarExtra && (
                     <Box px={2}>{props.sidebarExtra}</Box>
@@ -108,15 +141,12 @@ function SidebarContent({
                             href={item.href}
                             onClick={onClose}
                         >
-                            <Flex
-                                align="center"
-                                justify="center"
-                                px={{ base: 4, md: 0 }}
-                                w={{ base: "full", md: "auto" }}
-                            >
+                            {isDesktop ? (
                                 <IconButton
                                     aria-label={item.label}
-                                    aria-current={active ? "page" : undefined}
+                                    aria-current={
+                                        active ? "page" : undefined
+                                    }
                                     variant={active ? "solid" : "ghost"}
                                     bg={
                                         active
@@ -124,31 +154,44 @@ function SidebarContent({
                                             : "transparent"
                                     }
                                     _hover={{ bg: "blackAlpha.300" }}
-                                    w={{ base: "full", md: "auto" }}
-                                    justifyContent={{
-                                        base: "flex-start",
-                                        md: "center",
-                                    }}
                                 >
                                     <item.icon size={28} color="black" />
-                                    {!isDesktop && (
-                                        <Text
-                                            ml={4}
-                                            fontWeight={
-                                                active ? "bold" : "medium"
-                                            }
-                                        >
-                                            {item.label}
-                                        </Text>
-                                    )}
                                 </IconButton>
-                            </Flex>
+                            ) : (
+                                <Flex
+                                    align="center"
+                                    gap={3}
+                                    mx={2}
+                                    px={3}
+                                    py={2}
+                                    borderRadius="md"
+                                    aria-current={
+                                        active ? "page" : undefined
+                                    }
+                                    bg={
+                                        active
+                                            ? "blackAlpha.200"
+                                            : "transparent"
+                                    }
+                                    _hover={{ bg: "blackAlpha.300" }}
+                                >
+                                    <item.icon size={22} color="black" />
+                                    <Text
+                                        fontWeight={
+                                            active ? "bold" : "medium"
+                                        }
+                                        fontSize="sm"
+                                    >
+                                        {item.label}
+                                    </Text>
+                                </Flex>
+                            )}
                         </Link>
                     );
                 })}
             </VStack>
 
-            <VStack spaceY={6}>
+            <VStack spaceY={6} pb={2}>
                 <LocaleSwitcher
                     menuPlacement={isDesktop ? "right" : "top"}
                 />
@@ -270,7 +313,7 @@ export function BaseShell(props: BaseShellProps) {
                     </Flex>
                 )}
 
-                <Box flex={1} overflowY="auto">
+                <Box flex={1} overflowY="auto" pb={8}>
                     {props.children}
                 </Box>
             </Flex>
