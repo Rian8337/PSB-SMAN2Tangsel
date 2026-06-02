@@ -7,9 +7,27 @@ import { AcademicSessionDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
 import { createContext, use, useEffect, useState } from "react";
 
+/**
+ * Context for managing the currently selected academic session in the admin interface. This allows
+ * admins to switch between sessions without having to set a session as active.
+ */
 interface AdminSessionContextValue {
+    /**
+     * The currently selected academic session. `null` if there is no active session or
+     * the session failed to load.
+     */
     selectedSession: AcademicSessionDTO | null;
+
+    /**
+     * Whether the session is currently being loaded.
+     */
     isLoadingSession: boolean;
+
+    /**
+     * Sets the currently selected session.
+     *
+     * @param session The session to select.
+     */
     setSelectedSession: (session: AcademicSessionDTO) => void;
 }
 
@@ -17,6 +35,9 @@ const AdminSessionContext = createContext<AdminSessionContextValue | null>(
     null,
 );
 
+/**
+ * Provider component for the {@link AdminSessionContext}.
+ */
 export function AdminSessionProvider({
     children,
 }: {
@@ -72,6 +93,9 @@ export function AdminSessionProvider({
     );
 }
 
+/**
+ * Hook to access the {@link AdminSessionContext}. Must be used within an {@link AdminSessionProvider}.
+ */
 export function useAdminSession(): AdminSessionContextValue | null {
     return use(AdminSessionContext);
 }
