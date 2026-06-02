@@ -6,6 +6,7 @@ import {
     Box,
     Button,
     Field,
+    Flex,
     Heading,
     Input,
     Stack,
@@ -55,43 +56,59 @@ export default function LoginPage() {
     }
 
     return (
-        <Box maxW="sm" mx="auto" mt="10">
-            <Heading size="2xl" mb="6" textAlign="center">
-                {t("title")}
-            </Heading>
-
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    void handleLogin(new FormData(e.currentTarget));
-                }}
+        <Flex
+            minH={{ base: "calc(100dvh - 4rem)", md: "100dvh" }}
+            alignItems="center"
+            justifyContent="center"
+            p={{ base: 6, md: 8 }}
+        >
+            <Box
+                w="full"
+                maxW="sm"
+                bg="white"
+                borderRadius="xl"
+                border="1px solid"
+                borderColor="gray.200"
+                shadow="md"
+                p={{ base: 6, md: 8 }}
             >
-                <Stack gap="4">
-                    <Field.Root required>
-                        <Field.Label>{t("id")}</Field.Label>
-                        <Input name="id" type="text" autoComplete="id" />
-                    </Field.Root>
+                <Heading size="2xl" mb={6} textAlign="center">
+                    {t("title")}
+                </Heading>
 
-                    <Field.Root required>
-                        <Field.Label>{t("password")}</Field.Label>
-                        <Input
-                            name="password"
-                            type="password"
-                            autoComplete="current-password"
-                        />
-                    </Field.Root>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        void handleLogin(new FormData(e.currentTarget));
+                    }}
+                >
+                    <Stack gap="4">
+                        <Field.Root required>
+                            <Field.Label>{t("id")}</Field.Label>
+                            <Input name="id" type="text" autoComplete="id" />
+                        </Field.Root>
 
-                    {error && (
-                        <Text color="fg.error" role="alert">
-                            {error}
-                        </Text>
-                    )}
+                        <Field.Root required>
+                            <Field.Label>{t("password")}</Field.Label>
+                            <Input
+                                name="password"
+                                type="password"
+                                autoComplete="current-password"
+                            />
+                        </Field.Root>
 
-                    <Button type="submit" loading={isLoading} width="full">
-                        {t("login")}
-                    </Button>
-                </Stack>
-            </form>
-        </Box>
+                        {error && (
+                            <Text color="fg.error" role="alert">
+                                {error}
+                            </Text>
+                        )}
+
+                        <Button type="submit" loading={isLoading} width="full">
+                            {t("login")}
+                        </Button>
+                    </Stack>
+                </form>
+            </Box>
+        </Flex>
     );
 }
