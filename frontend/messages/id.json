@@ -239,7 +239,6 @@
       }
     },
     "noActiveSession": "Tidak ada tahun ajaran aktif. Harap buat tahun ajaran terlebih dahulu.",
-    "activeSessionLabel": "Tahun Ajaran Aktif: {session} {semester}",
     "searchPlaceholder": "Cari kelas berdasarkan nama...",
     "addButton": "Tambah Kelas",
     "emptyState": "Tidak ada kelas yang ditemukan.",

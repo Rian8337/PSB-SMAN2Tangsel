@@ -242,7 +242,6 @@
       }
     },
     "noActiveSession": "There is no active academic year. Please create an academic year first.",
-    "activeSessionLabel": "Active Academic Year: {session} {semester}",
     "searchPlaceholder": "Search classes by name...",
     "addButton": "Add Class",
     "emptyState": "No classes found.",
