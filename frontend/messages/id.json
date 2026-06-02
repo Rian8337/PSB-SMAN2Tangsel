@@ -455,7 +455,13 @@
   "HomePage": {
     "title": "Selamat Datang di SMAN 2 Tangerang Selatan",
     "description": "Portal sumber belajar resmi.",
-    "loginButton": "Masuk"
+    "loginButton": "Masuk",
+    "materialsTitle": "Materi Pelajaran",
+    "materialsDescription": "Akses dan kelola sumber belajar yang dibagikan oleh guru Anda.",
+    "scheduleTitle": "Jadwal Kelas",
+    "scheduleDescription": "Lihat jadwal pelajaran mingguan dan unduh untuk aplikasi kalender.",
+    "assignmentsTitle": "Tugas",
+    "assignmentsDescription": "Kumpulkan tugas dan pantau status pengumpulan Anda."
   },
   "LoginPage": {
     "title": "Masuk",
