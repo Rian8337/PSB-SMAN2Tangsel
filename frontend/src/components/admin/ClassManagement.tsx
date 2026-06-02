@@ -16,7 +16,7 @@ import {
 import { Class } from "@psb/shared/types";
 import { BookOpen, CalendarDays, Plus, Search, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -40,6 +40,7 @@ export function ClassManagement() {
     const limit = 10;
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
+    const isInitialSessionMount = useRef(true);
 
     const fetchClasses = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
@@ -104,6 +105,17 @@ export function ClassManagement() {
         refreshTrigger,
         activeSession,
     ]);
+
+    // Reset pagination and search when the selected session changes.
+    useEffect(() => {
+        if (isInitialSessionMount.current) {
+            isInitialSessionMount.current = false;
+            return;
+        }
+
+        setPage(1);
+        setSearchQuery("");
+    }, [activeSession]);
 
     const handleDelete = (id: number, name: string) => {
         if (!confirm(t("delete.confirmation", { name }))) {
