@@ -28,7 +28,7 @@ export function Pagination({
 
             <HStack gap={2}>
                 <Button
-                    size="sm"
+                    size="md"
                     variant="outline"
                     disabled={page === 1 || isLoading}
                     onClick={onPrevPage}
@@ -37,7 +37,7 @@ export function Pagination({
                 </Button>
 
                 <Button
-                    size="sm"
+                    size="md"
                     variant="outline"
                     disabled={!hasMore || isLoading}
                     onClick={onNextPage}

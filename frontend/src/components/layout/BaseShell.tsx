@@ -197,7 +197,7 @@ function SidebarContent({
 
                 <Menu.Root
                     positioning={{
-                        placement: "right-end",
+                        placement: isDesktop ? "right-end" : "top-end",
                         offset: { mainAxis: 20 },
                     }}
                 >

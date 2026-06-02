@@ -28,7 +28,7 @@ export function PageHeader({
             alignItems="center"
             bg="white"
         >
-            <HStack spaceX={4}>
+            <HStack spaceX={4} minW={0} flex={1} overflow="hidden">
                 <IconButton
                     aria-label="go-back"
                     variant="ghost"
@@ -44,7 +44,7 @@ export function PageHeader({
                     <ArrowLeft size={32} color="black" strokeWidth={3} />
                 </IconButton>
 
-                <Heading as="h2" size={{ base: "lg", md: "xl" }} color="black">
+                <Heading as="h2" size={{ base: "lg", md: "xl" }} color="black" truncate>
                     {title}
                 </Heading>
             </HStack>

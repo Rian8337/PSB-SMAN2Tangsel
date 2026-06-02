@@ -54,7 +54,7 @@ export function MySchedule({ schedules }: MyScheduleClientViewProps) {
                 backButtonUrl={`/${sessionCode}/dashboard`}
             />
 
-            <Box flex={1} p={8} overflowY="auto">
+            <Box flex={1} p={{ base: 4, md: 8 }} overflowY="auto">
                 <Box mb={4}>
                     <Button
                         variant="outline"

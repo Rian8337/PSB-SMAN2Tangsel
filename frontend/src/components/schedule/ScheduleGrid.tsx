@@ -60,7 +60,7 @@ export function ScheduleGrid({
             maxH={maxHeight}
             position="relative"
         >
-            <Flex minW={{ base: "800px", lg: "100%" }} direction="column">
+            <Flex minW={{ base: "800px", md: "100%" }} direction="column">
                 <Flex position="sticky" top={0} zIndex={10} bg="white">
                     <Box
                         w={{ base: "60px", md: "100px" }}
