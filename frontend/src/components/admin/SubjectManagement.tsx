@@ -116,7 +116,7 @@ export function SubjectManagement() {
 
     return (
         <>
-            <PageHeader title={t("title")} backButtonUrl="/admin" />
+            <PageHeader title={t("title")} backButtonUrl="/admin" showSessionSwitcher={false} />
 
             <Box
                 p={{ base: 4, md: 8 }}

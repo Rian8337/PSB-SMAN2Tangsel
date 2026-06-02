@@ -78,6 +78,7 @@ export function ClassScheduleManagement({
             <PageHeader
                 title={t("title", { class: clazz.name })}
                 backButtonUrl="/admin/classes"
+                showSessionSwitcher={false}
                 rightElement={
                     <Text
                         color="gray.500"

@@ -143,22 +143,7 @@ export function ClassManagement() {
     };
 
     const header = (
-        <PageHeader
-            title={t("title")}
-            backButtonUrl="/admin"
-            rightElement={
-                <Text
-                    color="gray.500"
-                    fontWeight="medium"
-                    display={{ base: "none", md: "block" }}
-                >
-                    {t("activeSessionLabel", {
-                        session: activeSession?.session ?? "",
-                        semester: activeSession?.semester.toString() ?? "",
-                    })}
-                </Text>
-            }
-        />
+        <PageHeader title={t("title")} backButtonUrl="/admin" />
     );
 
     if (isLoadingSession) {

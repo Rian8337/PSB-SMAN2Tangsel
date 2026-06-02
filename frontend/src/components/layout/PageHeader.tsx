@@ -10,12 +10,14 @@ interface PageHeaderProps {
     title: string;
     backButtonUrl?: string;
     rightElement?: React.ReactNode;
+    showSessionSwitcher?: boolean;
 }
 
 export function PageHeader({
     title,
     backButtonUrl,
     rightElement,
+    showSessionSwitcher = true,
 }: PageHeaderProps) {
     const router = useRouter();
 
@@ -52,7 +54,7 @@ export function PageHeader({
             <HStack spaceX={4}>
                 {rightElement}
 
-                <SessionSwitcher />
+                {showSessionSwitcher && <SessionSwitcher />}
                 <NotificationBell />
             </HStack>
         </HStack>

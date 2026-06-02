@@ -93,6 +93,7 @@ export function EditClassForm({ clazz }: EditClassFormProps) {
             error={error}
             isLoading={isLoading}
             submitLabel={t("edit.submitButton")}
+            showSessionSwitcher={false}
         >
             <FormField label={t("fields.session.label")}>
                 <Input

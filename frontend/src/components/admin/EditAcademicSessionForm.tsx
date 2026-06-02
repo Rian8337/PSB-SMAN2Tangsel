@@ -108,6 +108,7 @@ export function EditAcademicSessionForm({
             error={error}
             isLoading={isLoading}
             submitLabel={t("updateButton")}
+            showSessionSwitcher={false}
         >
             <FormField label={t("fields.session.label")}>
                 <Input

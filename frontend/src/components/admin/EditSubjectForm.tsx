@@ -83,6 +83,7 @@ export function EditSubjectForm({ subject }: EditSubjectFormProps) {
             error={error}
             isLoading={isLoading}
             submitLabel={t("edit.submitButton")}
+            showSessionSwitcher={false}
         >
             <FormField label={t("fields.code.label")}>
                 <Input

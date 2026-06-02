@@ -11,6 +11,7 @@ export interface PageFormProps extends PropsWithChildren {
     readonly isLoading?: boolean;
     readonly backButtonUrl?: string;
     readonly submitLabel: string;
+    readonly showSessionSwitcher?: boolean;
 }
 
 export function PageForm({
@@ -20,11 +21,12 @@ export function PageForm({
     isLoading = false,
     submitLabel,
     backButtonUrl,
+    showSessionSwitcher,
     children,
 }: PageFormProps) {
     return (
         <>
-            <PageHeader title={title} backButtonUrl={backButtonUrl} />
+            <PageHeader title={title} backButtonUrl={backButtonUrl} showSessionSwitcher={showSessionSwitcher} />
 
             <Box p={{ base: 4, md: 8 }} maxW="md">
                 <VStack

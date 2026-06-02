@@ -75,6 +75,7 @@ export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
             error={error}
             isLoading={isLoading}
             submitLabel={t("updateButton")}
+            showSessionSwitcher={false}
         >
             <FormField label={t("fields.identifier.label")}>
                 <Input

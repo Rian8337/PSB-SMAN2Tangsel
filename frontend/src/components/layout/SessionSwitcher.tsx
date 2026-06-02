@@ -16,11 +16,6 @@ import {
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-function abbreviateSession(session: string, semester: number): string {
-    const [start, end] = session.split("/");
-    return `${start.slice(-2)}/${end.slice(-2)} · S${semester.toString()}`;
-}
-
 export function SessionSwitcher() {
     const t = useTranslations("SessionSwitcher");
     const authApiClient = useAuthApiClient();
@@ -119,7 +114,7 @@ export function SessionSwitcher() {
                     aria-label={t("label")}
                 >
                     {current
-                        ? abbreviateSession(current.session, current.semester)
+                        ? `${current.session}-${current.semester.toString()}`
                         : (currentCode ?? "...")}
                 </Button>
             </Menu.Trigger>
