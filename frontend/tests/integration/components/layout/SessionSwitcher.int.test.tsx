@@ -61,7 +61,7 @@ describe("SessionSwitcher (integration)", () => {
             ).not.toBeInTheDocument();
         });
 
-        it("renders the abbreviated current session in the trigger button", async () => {
+        it("renders the current session in the trigger button", async () => {
             mockAuthApiClient.getMySessions.mockResolvedValue(userSessions);
 
             renderAsUser();
@@ -70,7 +70,7 @@ describe("SessionSwitcher (integration)", () => {
                 name: "label",
             });
 
-            expect(trigger).toHaveTextContent("24/25 · S2");
+            expect(trigger).toHaveTextContent("2024/2025-2");
         });
 
         it("shows all available sessions when the menu is opened", async () => {
@@ -171,7 +171,7 @@ describe("SessionSwitcher (integration)", () => {
             expect(mockAuthApiClient.getMySessions).not.toHaveBeenCalled();
         });
 
-        it("renders the abbreviated selected session in the trigger button", async () => {
+        it("renders the selected session in the trigger button", async () => {
             mockSessionApiClient.listSessions.mockResolvedValue(adminSessions);
 
             renderAsAdmin();
@@ -180,8 +180,8 @@ describe("SessionSwitcher (integration)", () => {
                 name: "label",
             });
 
-            // getActive returns adminSessions[0] = 2024/2025 S2 --> "24/25 · S2"
-            expect(trigger).toHaveTextContent("24/25 · S2");
+            // getActive returns adminSessions[0] = 2024/2025 S2 --> "2024/2025-2"
+            expect(trigger).toHaveTextContent("2024/2025-2");
         });
 
         it("updates the selected session without navigating when a session is clicked", async () => {
@@ -204,7 +204,7 @@ describe("SessionSwitcher (integration)", () => {
 
             // The trigger button should now show the newly selected session.
             await waitFor(() => {
-                expect(trigger).toHaveTextContent("24/25 · S1");
+                expect(trigger).toHaveTextContent("2024/2025-1");
             });
         });
     });

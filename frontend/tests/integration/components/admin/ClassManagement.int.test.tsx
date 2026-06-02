@@ -20,6 +20,14 @@ const mockActiveSession: AcademicSessionDTO = {
     active: true,
 };
 
+const mockSecondSession: AcademicSessionDTO = {
+    session: "2023/2024",
+    semester: 2,
+    startTime: new Date(2024, 0, 1).getTime(),
+    endTime: new Date(2024, 5, 30).getTime(),
+    active: false,
+};
+
 const mockClasses: Class[] = [
     {
         id: 1,
@@ -142,6 +150,92 @@ describe("ClassManagement (integration)", () => {
                 }),
             );
         });
+    });
+
+    it("should not render the active session label", async () => {
+        mockSessionApiClient.getActive.mockResolvedValue(mockActiveSession);
+        mockClassApiClient.listClasses.mockResolvedValue(mockClasses);
+
+        render();
+
+        await waitFor(() => {
+            expect(screen.getByText("X IPA 1")).toBeInTheDocument();
+        });
+
+        expect(
+            screen.queryByText("activeSessionLabel"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("should reset page and search when the session is switched via the session switcher", async () => {
+        const user = userEvent.setup();
+
+        // 10 classes to fill the page limit and enable the "next page" button.
+        const tenClasses: Class[] = Array.from({ length: 10 }, (_, i) => ({
+            id: i + 1,
+            name: `X IPA ${(i + 1).toString()}`,
+            session: mockActiveSession.session,
+            semester: mockActiveSession.semester,
+        }));
+
+        mockSessionApiClient.getActive.mockResolvedValue(mockActiveSession);
+        mockSessionApiClient.listSessions.mockResolvedValue([
+            mockActiveSession,
+            mockSecondSession,
+        ]);
+        mockClassApiClient.listClasses.mockResolvedValue(tenClasses);
+
+        render();
+
+        // Wait for initial load.
+        await waitFor(() => {
+            expect(mockClassApiClient.listClasses).toHaveBeenCalledTimes(1);
+        });
+
+        // Advance to page 2.
+        const nextBtn = screen.getByRole("button", { name: "next" });
+        await user.click(nextBtn);
+
+        await waitFor(() => {
+            expect(mockClassApiClient.listClasses).toHaveBeenCalledWith(
+                expect.objectContaining({ offset: 10 }),
+            );
+        });
+
+        // Type a search query.
+        const searchInput = screen.getByPlaceholderText("searchPlaceholder");
+        await user.type(searchInput, "IPA");
+
+        await waitFor(() => {
+            expect(mockClassApiClient.listClasses).toHaveBeenCalledWith(
+                expect.objectContaining({ query: "IPA" }),
+            );
+        });
+
+        // Switch to the second session via SessionSwitcher.
+        mockClassApiClient.listClasses.mockResolvedValue([]);
+
+        const switcherTrigger = screen.getByRole("button", { name: "label" });
+        await user.click(switcherTrigger);
+
+        const sessionMenuItem = await screen.findByRole("menuitem", {
+            name: /2023\/2024/,
+        });
+        await user.click(sessionMenuItem);
+
+        // After switching, both the page (offset) and search query must be reset.
+        await waitFor(() => {
+            expect(mockClassApiClient.listClasses).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    session: mockSecondSession.session,
+                    semester: mockSecondSession.semester,
+                    query: "",
+                    offset: 0,
+                }),
+            );
+        });
+
+        expect(searchInput).toHaveValue("");
     });
 
     it("should prompt confirmation and delete a class when the trash icon is clicked", async () => {

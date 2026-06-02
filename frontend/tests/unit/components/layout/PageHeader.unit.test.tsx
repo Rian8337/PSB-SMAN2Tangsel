@@ -18,6 +18,12 @@ vi.mock("@/components/layout/NotificationBell", () => ({
     ),
 }));
 
+vi.mock("@/components/layout/SessionSwitcher", () => ({
+    SessionSwitcher: () => (
+        <div data-testid="mock-session-switcher">Switcher</div>
+    ),
+}));
+
 describe("PageHeader (unit)", () => {
     it("should render the title and default elements", () => {
         render({ backButtonUrl: "/previous-page" });
@@ -27,6 +33,22 @@ describe("PageHeader (unit)", () => {
         ).toBeInTheDocument();
 
         expect(screen.getByLabelText("go-back")).toBeVisible();
+
+        expect(
+            screen.getByTestId("mock-notification-bell"),
+        ).toBeInTheDocument();
+
+        expect(
+            screen.getByTestId("mock-session-switcher"),
+        ).toBeInTheDocument();
+    });
+
+    it("should not render the session switcher when showSessionSwitcher is false", () => {
+        render({ showSessionSwitcher: false });
+
+        expect(
+            screen.queryByTestId("mock-session-switcher"),
+        ).not.toBeInTheDocument();
 
         expect(
             screen.getByTestId("mock-notification-bell"),
