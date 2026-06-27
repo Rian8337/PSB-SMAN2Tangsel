@@ -51,6 +51,8 @@ export default withNextIntl({
     transpilePackages: ["@psb/shared"],
     experimental: {
         optimizePackageImports: ["@psb/shared", "@chakra-ui/react"],
+        workerThreads: false,
+        cpus: 1,
     },
     headers() {
         return [{ source: "/(.*)", headers: securityHeaders }];
