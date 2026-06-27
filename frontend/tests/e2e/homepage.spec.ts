@@ -11,9 +11,9 @@ test.describe("Homepage & i18n Localization", () => {
             "Selamat Datang",
         );
 
-        await expect(page.locator("p")).toContainText(
-            "Portal sumber belajar resmi",
-        );
+        await expect(
+            page.locator("p", { hasText: /Portal sumber belajar resmi/ }),
+        ).toBeVisible();
 
         const langButton = page.getByRole("button", {
             name: /change language/i,
