@@ -9,7 +9,9 @@
     "push-db:dev": "cross-env NODE_ENV=development drizzle-kit push --force",
     "push-db:test": "cross-env NODE_ENV=test drizzle-kit push --force",
     "start": "cross-env NODE_ENV=production node dist/index.js",
-    "test": "cross-env NODE_ENV=test vitest"
+    "test": "cross-env NODE_ENV=test vitest",
+    "register-admin": "cross-env NODE_ENV=production node dist/cli/register-admin.js",
+    "register-admin:dev": "cross-env NODE_ENV=development tsx src/cli/register-admin.ts"
   },
   "keywords": [],
   "author": "Rian8337",
