@@ -32,7 +32,7 @@ export class AuthController extends BaseController {
     @Post("/login")
     @Use(
         rateLimit({
-            windowMs: 15 * 60 * 1000,
+            windowMs: 5000,
             max: 5,
             // Don't apply rate limiting if we're running in E2E test mode, to avoid interfering with tests
             skip: () => {
