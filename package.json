@@ -1,7 +1,7 @@
 {
   "name": "psb-sman2",
   "private": true,
-  "packageManager": "pnpm@10.30.0",
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "pnpm -r run build",
     "build-shared": "pnpm --filter @psb/shared build",
