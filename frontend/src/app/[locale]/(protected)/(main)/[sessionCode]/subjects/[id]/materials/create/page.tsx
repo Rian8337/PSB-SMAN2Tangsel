@@ -20,7 +20,10 @@ export default async function CreateMaterialPage({
     }
 
     const classSubjectId = parseInt(id, 10);
-    if (isNaN(classSubjectId) || classSubjectId <= 0) notFound();
+
+    if (isNaN(classSubjectId) || classSubjectId <= 0) {
+        notFound();
+    }
 
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();

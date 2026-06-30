@@ -15,7 +15,10 @@ export default async function EditAssignmentPage({
     const { sessionCode, id, assignmentId: assignmentIdParam } = await params;
 
     const decoded = decodeSessionCode(sessionCode);
-    if (!decoded) notFound();
+
+    if (!decoded) {
+        notFound();
+    }
 
     const classSubjectId = parseInt(id, 10);
     const assignmentId = parseInt(assignmentIdParam, 10);

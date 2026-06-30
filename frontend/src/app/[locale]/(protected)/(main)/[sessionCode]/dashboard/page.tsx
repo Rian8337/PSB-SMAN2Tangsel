@@ -12,7 +12,10 @@ export default async function SessionDashboardPage({
     const { sessionCode } = await params;
 
     const decoded = decodeSessionCode(sessionCode);
-    if (!decoded) notFound();
+
+    if (!decoded) {
+        notFound();
+    }
 
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
