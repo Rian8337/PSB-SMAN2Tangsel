@@ -190,7 +190,15 @@ export function SubjectAssignment({
                 </Box>
 
                 {assignment?.dueAt && (
-                    <Text fontWeight="bold" color="green.500" mb={4}>
+                    <Text
+                        fontWeight="bold"
+                        color={
+                            new Date() <= new Date(assignment.dueAt)
+                                ? "green.500"
+                                : "red.500"
+                        }
+                        mb={4}
+                    >
                         {t("dueAt")}{" "}
                         {new Date(assignment.dueAt).toLocaleString()}
                     </Text>
@@ -240,9 +248,7 @@ export function SubjectAssignment({
                             isEditing ? (
                                 <ManageAssignmentSubmissionForm
                                     assignmentId={assignmentId}
-                                    submission={
-                                        studentAssignment.submission
-                                    }
+                                    submission={studentAssignment.submission}
                                     onSuccess={() => {
                                         setIsEditing(false);
                                         void fetchAssignment();
@@ -329,9 +335,10 @@ export function SubjectAssignment({
                                                             title: t(
                                                                 "removeErrorTitle",
                                                             ),
-                                                            description: t(
-                                                                "removeErrorMessage",
-                                                            ),
+                                                            description:
+                                                                t(
+                                                                    "removeErrorMessage",
+                                                                ),
                                                             type: "error",
                                                         });
                                                     })
