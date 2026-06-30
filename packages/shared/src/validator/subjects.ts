@@ -19,4 +19,6 @@ export const insertSubjectSchema = createInsertSchema(subjects, {
         .string()
         .min(1, "Subject name is required")
         .max(50, "Subject name must be at most 50 characters long"),
+
+    active: z.boolean().optional(),
 }).omit({ id: true });
