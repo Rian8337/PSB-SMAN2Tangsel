@@ -207,7 +207,13 @@ async function main() {
         await createAdminAccount(db, name, identifier, password);
         console.log("Admin account registered successfully.");
     } catch (err) {
-        if (err instanceof Error && err.message.includes("ER_DUP_ENTRY")) {
+        const cause = err instanceof Error ? err.cause : undefined;
+
+        const isDupEntry =
+            (err instanceof Error && err.message.includes("ER_DUP_ENTRY")) ||
+            (cause instanceof Error && cause.message.includes("ER_DUP_ENTRY"));
+
+        if (isDupEntry) {
             console.error(
                 `Error: Staff ID "${identifier}" is already in use. Please choose a different one.`,
             );
@@ -223,10 +229,16 @@ async function main() {
 
 if (require.main === module) {
     main().catch((err: unknown) => {
-        console.error(
-            "Error:",
-            err instanceof Error ? err.message : String(err),
-        );
+        if (err instanceof Error) {
+            console.error("Error:", err.message);
+
+            if (err.cause instanceof Error) {
+                console.error("Cause:", err.cause.message);
+            }
+        } else {
+            console.error("Error:", String(err));
+        }
+
         process.exit(1);
     });
 }
