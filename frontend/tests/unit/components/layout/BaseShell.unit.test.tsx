@@ -25,7 +25,6 @@ function renderPage(props: Partial<BaseShellProps> = {}) {
             navItems={props.navItems ?? navItems}
             mobileTitle={props.mobileTitle ?? "Mobile App Title"}
             settingsHref={props.settingsHref ?? "/settings"}
-            userName={props.userName ?? "John Doe"}
             userAvatar={props.userAvatar ?? "https://example.com/avatar.jpg"}
         >
             <div>Page Content</div>

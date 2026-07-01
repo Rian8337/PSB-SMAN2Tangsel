@@ -31,7 +31,6 @@ export function AdminDashboardShell({ children }: PropsWithChildren) {
         <BaseShell
             navItems={navItems}
             mobileTitle={t("mobileTitle")}
-            userName="Admin"
             userAvatar="/pas-foto.jpg"
             settingsHref="/admin/settings"
         >

@@ -30,7 +30,6 @@ export interface NavItem {
 export interface BaseShellProps extends PropsWithChildren {
     readonly navItems: NavItem[];
     readonly mobileTitle: string;
-    readonly userName: string;
     readonly userAvatar?: string;
     readonly settingsHref: string;
     readonly sidebarExtra?: React.ReactNode;
@@ -79,7 +78,11 @@ function SidebarContent({
             alignItems="center"
             boxShadow="sm"
         >
-            <VStack w="full" alignItems={{ base: "stretch", md: "center" }} gap={{ base: 1, md: 8 }}>
+            <VStack
+                w="full"
+                alignItems={{ base: "stretch", md: "center" }}
+                gap={{ base: 1, md: 8 }}
+            >
                 {!isDesktop ? (
                     <HStack
                         w="full"
@@ -106,7 +109,11 @@ function SidebarContent({
                             />
                         </Box>
 
-                        <Text fontWeight="bold" fontSize="sm" lineHeight="short">
+                        <Text
+                            fontWeight="bold"
+                            fontSize="sm"
+                            lineHeight="short"
+                        >
                             {tGlobal("appName")}
                         </Text>
                     </HStack>
@@ -128,9 +135,7 @@ function SidebarContent({
                     </Box>
                 )}
 
-                {props.sidebarExtra && (
-                    <Box px={2}>{props.sidebarExtra}</Box>
-                )}
+                {props.sidebarExtra && <Box px={2}>{props.sidebarExtra}</Box>}
 
                 {props.navItems.map((item) => {
                     const active = isActive(item.href, item.exact ?? false);
@@ -144,9 +149,7 @@ function SidebarContent({
                             {isDesktop ? (
                                 <IconButton
                                     aria-label={item.label}
-                                    aria-current={
-                                        active ? "page" : undefined
-                                    }
+                                    aria-current={active ? "page" : undefined}
                                     variant={active ? "solid" : "ghost"}
                                     bg={
                                         active
@@ -165,9 +168,7 @@ function SidebarContent({
                                     px={3}
                                     py={2}
                                     borderRadius="md"
-                                    aria-current={
-                                        active ? "page" : undefined
-                                    }
+                                    aria-current={active ? "page" : undefined}
                                     bg={
                                         active
                                             ? "blackAlpha.200"
@@ -177,9 +178,7 @@ function SidebarContent({
                                 >
                                     <item.icon size={22} color="black" />
                                     <Text
-                                        fontWeight={
-                                            active ? "bold" : "medium"
-                                        }
+                                        fontWeight={active ? "bold" : "medium"}
                                         fontSize="sm"
                                     >
                                         {item.label}
@@ -192,9 +191,7 @@ function SidebarContent({
             </VStack>
 
             <VStack spaceY={6} pb={2}>
-                <LocaleSwitcher
-                    menuPlacement={isDesktop ? "right" : "top"}
-                />
+                <LocaleSwitcher menuPlacement={isDesktop ? "right" : "top"} />
 
                 <Menu.Root
                     positioning={{
@@ -206,7 +203,6 @@ function SidebarContent({
                         <Box cursor="pointer">
                             <Avatar
                                 size="sm"
-                                name={props.userName}
                                 src={props.userAvatar}
                                 border="2px solid white"
                                 _hover={{ opacity: 0.8 }}

@@ -10,15 +10,24 @@ export function DashboardShell({ children }: PropsWithChildren) {
 
     const navItems: NavItem[] = [
         { label: t("home"), icon: Home, href: "/dashboard", exact: true },
-        { label: t("schedule"), icon: Calendar, href: "/schedule", exact: false },
-        { label: t("subjects"), icon: BookOpen, href: "/subjects", exact: false },
+        {
+            label: t("schedule"),
+            icon: Calendar,
+            href: "/schedule",
+            exact: false,
+        },
+        {
+            label: t("subjects"),
+            icon: BookOpen,
+            href: "/subjects",
+            exact: false,
+        },
     ];
 
     return (
         <BaseShell
             navItems={navItems}
             mobileTitle={t("mobileTitle")}
-            userName="Reza"
             userAvatar="/pas-foto.jpg"
             settingsHref="/settings"
         >
