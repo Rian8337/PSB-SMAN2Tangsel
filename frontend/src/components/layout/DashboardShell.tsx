@@ -28,7 +28,6 @@ export function DashboardShell({ children }: PropsWithChildren) {
         <BaseShell
             navItems={navItems}
             mobileTitle={t("mobileTitle")}
-            userAvatar="/pas-foto.jpg"
             settingsHref="/settings"
         >
             {children}

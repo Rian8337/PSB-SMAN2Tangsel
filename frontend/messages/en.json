@@ -612,6 +612,7 @@
     "downloadButton": "Download Schedule"
   },
   "BaseShell": {
+    "account": "Account",
     "logout": "Logout",
     "settings": "Settings",
     "logoutErrorTitle": "Failed to Logout",

@@ -609,6 +609,7 @@
     "downloadButton": "Unduh Jadwal"
   },
   "BaseShell": {
+    "account": "Akun",
     "logout": "Keluar",
     "settings": "Pengaturan",
     "logoutErrorTitle": "Gagal Keluar",

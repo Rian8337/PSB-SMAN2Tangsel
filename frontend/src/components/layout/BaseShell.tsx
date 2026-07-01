@@ -12,10 +12,9 @@ import {
     useBreakpointValue,
     VStack,
 } from "@chakra-ui/react";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, UserRoundArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PropsWithChildren, useState } from "react";
-import { Avatar } from "../ui/avatar";
 import { useAuthApiClient } from "@/providers/api/auth-api-provider";
 import { toaster } from "../ui/toaster";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
@@ -30,7 +29,6 @@ export interface NavItem {
 export interface BaseShellProps extends PropsWithChildren {
     readonly navItems: NavItem[];
     readonly mobileTitle: string;
-    readonly userAvatar?: string;
     readonly settingsHref: string;
     readonly sidebarExtra?: React.ReactNode;
 }
@@ -200,14 +198,14 @@ function SidebarContent({
                     }}
                 >
                     <Menu.Trigger asChild>
-                        <Box cursor="pointer">
-                            <Avatar
-                                size="sm"
-                                src={props.userAvatar}
-                                border="2px solid white"
-                                _hover={{ opacity: 0.8 }}
-                            />
-                        </Box>
+                        <IconButton
+                            aria-label={t("account")}
+                            variant="ghost"
+                            borderRadius="full"
+                            _hover={{ bg: "blackAlpha.300" }}
+                        >
+                            <UserRoundArrowLeft size={20} color="black" />
+                        </IconButton>
                     </Menu.Trigger>
 
                     <Menu.Positioner zIndex={1500}>

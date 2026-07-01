@@ -25,7 +25,6 @@ function renderPage(props: Partial<BaseShellProps> = {}) {
             navItems={props.navItems ?? navItems}
             mobileTitle={props.mobileTitle ?? "Mobile App Title"}
             settingsHref={props.settingsHref ?? "/settings"}
-            userAvatar={props.userAvatar ?? "https://example.com/avatar.jpg"}
         >
             <div>Page Content</div>
         </BaseShell>,
@@ -36,8 +35,9 @@ describe("BaseShell (unit)", () => {
     it("renders the sidebar with correct user info and navigation", () => {
         renderPage();
 
-        // JSDOM does not load images, so the avatar will fallback to initials.
-        expect(screen.getByText("JD")).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: /account/i }),
+        ).toBeInTheDocument();
 
         expect(
             screen.getByRole("button", { name: /home/i }),
@@ -94,8 +94,10 @@ describe("BaseShell (unit)", () => {
 
         renderPage();
 
-        const avatarButton = screen.getByText("JD");
-        await user.click(avatarButton);
+        const accountButton = screen.getByRole("button", {
+            name: /account/i,
+        });
+        await user.click(accountButton);
 
         const logoutItem = await screen.findByText(/logout/i);
         await user.click(logoutItem);
@@ -116,8 +118,10 @@ describe("BaseShell (unit)", () => {
 
         renderPage();
 
-        const avatarButton = await screen.findByText("JD");
-        await user.click(avatarButton);
+        const accountButton = await screen.findByRole("button", {
+            name: /account/i,
+        });
+        await user.click(accountButton);
 
         const logoutItem = await screen.findByText(/logout/i);
         await user.click(logoutItem);
