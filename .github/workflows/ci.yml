@@ -92,7 +92,7 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: pnpm test
+        run: pnpm exec vitest run
 
       - name: Upload test results
         if: always()
@@ -132,7 +132,7 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: pnpm test
+        run: pnpm exec vitest run
 
       - name: Upload test results
         if: always()
