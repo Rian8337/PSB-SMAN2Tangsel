@@ -99,7 +99,7 @@ function SidebarContent({
                             flexShrink={0}
                         >
                             <Image
-                                src="/school-logo.png"
+                                src="/school-logo.webp"
                                 alt="School Logo"
                                 w="full"
                                 h="full"
@@ -124,7 +124,7 @@ function SidebarContent({
                         bg="white"
                     >
                         <Image
-                            src="/school-logo.png"
+                            src="/school-logo.webp"
                             alt="School Logo"
                             w="full"
                             h="full"
@@ -286,7 +286,7 @@ export function BaseShell(props: BaseShellProps) {
                     >
                         <HStack spaceX={3}>
                             <Image
-                                src="/school-logo.png"
+                                src="/school-logo.webp"
                                 alt="School Logo"
                                 w="32px"
                                 h="32px"

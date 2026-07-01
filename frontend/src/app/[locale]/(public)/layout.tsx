@@ -29,7 +29,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                         shadow="md"
                     >
                         <Image
-                            src="/school-logo.png"
+                            src="/school-logo.webp"
                             alt="School Logo"
                             w="full"
                             h="full"
@@ -69,7 +69,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                         shadow="sm"
                     >
                         <Image
-                            src="/school-logo.png"
+                            src="/school-logo.webp"
                             alt="School Logo"
                             w="full"
                             h="full"
