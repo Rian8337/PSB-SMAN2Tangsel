@@ -111,7 +111,7 @@ describe("ClassManagement (integration)", () => {
         });
 
         // Verify the grid populated.
-        expect(screen.getByText("X IPA 1")).toBeInTheDocument();
+        expect(await screen.findByText("X IPA 1")).toBeInTheDocument();
         expect(screen.getByText("X IPS 1")).toBeInTheDocument();
     });
 
@@ -187,9 +187,12 @@ describe("ClassManagement (integration)", () => {
 
         render();
 
-        // Wait for initial load.
+        // Wait for initial load to finish (the next button is disabled while loading).
         await waitFor(() => {
             expect(mockClassApiClient.listClasses).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByRole("button", { name: "next" }),
+            ).not.toBeDisabled();
         });
 
         // Advance to page 2.

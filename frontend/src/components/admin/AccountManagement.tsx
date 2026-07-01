@@ -14,7 +14,7 @@ import {
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -31,7 +31,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
     const userApiClient = useUserApiClient();
 
     const [users, setUsers] = useState<UserListItem[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -42,8 +42,6 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
 
     const fetchUsers = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await userApiClient.listUsers(
                     undefined,
@@ -64,10 +62,6 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     description: t("fetchUserToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [userApiClient, t],
@@ -81,7 +75,9 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
 
         const controller = new AbortController();
 
-        void fetchUsers(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchUsers(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -184,7 +180,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                     flex={1}
                     w="full"
                 >
-                    {isLoading ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -299,7 +295,7 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                 <Pagination
                     page={page}
                     hasMore={users.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

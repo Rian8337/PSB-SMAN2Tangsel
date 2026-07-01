@@ -16,7 +16,7 @@ import {
 import { Class, ClassSubjectAssignment, UserRole } from "@psb/shared/types";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { AsyncSelect } from "../ui/AsyncSelect";
 import { Pagination } from "../ui/Pagination";
@@ -32,7 +32,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
     const classSubjectApiClient = useClassSubjectApiClient();
     const userApiClient = useUserApiClient();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [assignments, setAssignments] = useState<ClassSubjectAssignment[]>(
         [],
@@ -47,7 +47,6 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
 
     const fetchAssignments = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
             try {
                 const paginatedAssignments =
                     await classSubjectApiClient.listAssignedSubjects(
@@ -69,8 +68,6 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                setIsLoading(false);
             }
         },
         [clazz.id, classSubjectApiClient, limit, t],
@@ -83,7 +80,9 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
 
         const controller = new AbortController();
 
-        void fetchAssignments(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchAssignments(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -259,7 +258,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                     flex={1}
                     w="full"
                 >
-                    {isLoading && assignments.length === 0 ? (
+                    {isPending && assignments.length === 0 ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -391,7 +390,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                 <Pagination
                     page={page}
                     hasMore={assignments.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

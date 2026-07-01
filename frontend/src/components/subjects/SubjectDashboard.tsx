@@ -19,7 +19,7 @@ import {
 import { Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
 
@@ -40,14 +40,12 @@ export function SubjectDashboard({
     const [dashboard, setDashboard] = useState<SubjectDashboardData | null>(
         null,
     );
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
 
     const isTeacher = role === UserRole.teacher;
 
     const fetchDashboard = useCallback(
         async (signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await apiClient.getDashboard(
                     classSubjectId,
@@ -67,10 +65,6 @@ export function SubjectDashboard({
                 });
 
                 router.push("/subjects");
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [apiClient, classSubjectId, router, t],
@@ -79,14 +73,14 @@ export function SubjectDashboard({
     useEffect(() => {
         const controller = new AbortController();
 
-        void fetchDashboard(controller.signal);
+        startTransition(() => fetchDashboard(controller.signal));
 
         return () => {
             controller.abort();
         };
     }, [fetchDashboard]);
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 <PageHeader title="" backButtonUrl={`/${sessionCode}/dashboard`} />

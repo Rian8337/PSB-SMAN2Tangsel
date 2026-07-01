@@ -19,7 +19,7 @@ import {
 } from "@psb/shared/types";
 import { FileText } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
 
@@ -54,7 +54,7 @@ export function SubjectMaterial({
     const router = useRouter();
 
     const [material, setMaterial] = useState<SubjectMaterialData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
 
     const isTeacher = role === UserRole.teacher;
     const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
@@ -64,8 +64,6 @@ export function SubjectMaterial({
 
     const fetchMaterial = useCallback(
         async (signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await apiClient.getMaterial(materialId, signal);
 
@@ -82,10 +80,6 @@ export function SubjectMaterial({
                 });
 
                 router.push(backButtonUrl);
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [apiClient, materialId, router, t, backButtonUrl],
@@ -94,14 +88,14 @@ export function SubjectMaterial({
     useEffect(() => {
         const controller = new AbortController();
 
-        void fetchMaterial(controller.signal);
+        startTransition(() => fetchMaterial(controller.signal));
 
         return () => {
             controller.abort();
         };
     }, [fetchMaterial]);
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 <PageHeader title="" backButtonUrl={backButtonUrl} />
@@ -259,7 +253,9 @@ export function SubjectMaterial({
                                         buildVisibilityFormData(material),
                                     )
                                     .then(() => {
-                                        void fetchMaterial();
+                                        startTransition(() =>
+                                            fetchMaterial(),
+                                        );
                                     })
                                     .catch(() => {
                                         toaster.create({

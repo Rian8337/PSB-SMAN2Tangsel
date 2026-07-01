@@ -19,7 +19,13 @@ import {
     TeacherSubjectAssignment,
 } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+    useTransition,
+} from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
 
@@ -56,7 +62,7 @@ export function StudentSubmissionList({
         AssignmentSubmissionRow[] | null
     >(null);
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
     const [search, setSearch] = useState("");
     const [isDownloadingAll, setIsDownloadingAll] = useState(false);
     const [downloadingStudents, setDownloadingStudents] = useState(
@@ -65,8 +71,6 @@ export function StudentSubmissionList({
 
     const fetchData = useCallback(
         async (signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const [assignmentData, submissionData] = await Promise.all([
                     assignmentApiClient.getAssignment(assignmentId, signal),
@@ -87,10 +91,6 @@ export function StudentSubmissionList({
                 });
 
                 router.push(backButtonUrl);
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [
@@ -106,7 +106,7 @@ export function StudentSubmissionList({
     useEffect(() => {
         const controller = new AbortController();
 
-        void fetchData(controller.signal);
+        startTransition(() => fetchData(controller.signal));
 
         return () => {
             controller.abort();
@@ -191,7 +191,7 @@ export function StudentSubmissionList({
             });
     };
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 <PageHeader title="" backButtonUrl={backButtonUrl} />

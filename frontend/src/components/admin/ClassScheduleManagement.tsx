@@ -5,7 +5,7 @@ import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { Class, ScheduleDTO } from "@psb/shared/types";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { ScheduleGrid } from "../schedule/ScheduleGrid";
 import { toaster } from "../ui/toaster";
@@ -23,7 +23,8 @@ export function ClassScheduleManagement({
     const classApiClient = useClassApiClient();
 
     const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
+    const [, startBackgroundTransition] = useTransition();
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -32,11 +33,7 @@ export function ClassScheduleManagement({
     );
 
     const fetchSchedules = useCallback(
-        async (isBackgroundRefresh: boolean, signal?: AbortSignal) => {
-            if (!isBackgroundRefresh) {
-                setIsLoading(true);
-            }
-
+        async (signal?: AbortSignal) => {
             try {
                 const data = await classApiClient.getClassSchedule(
                     clazz.id,
@@ -54,10 +51,6 @@ export function ClassScheduleManagement({
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [classApiClient, clazz.id, t],
@@ -65,8 +58,15 @@ export function ClassScheduleManagement({
 
     useEffect(() => {
         const controller = new AbortController();
+        const isBackgroundRefresh = refreshTrigger > 0;
 
-        void fetchSchedules(refreshTrigger > 0, controller.signal);
+        if (isBackgroundRefresh) {
+            startBackgroundTransition(() =>
+                fetchSchedules(controller.signal),
+            );
+        } else {
+            startTransition(() => fetchSchedules(controller.signal));
+        }
 
         return () => {
             controller.abort();
@@ -116,7 +116,7 @@ export function ClassScheduleManagement({
                 </Flex>
 
                 <Box flex={1} w="full">
-                    {isLoading ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="400px">
                             <Spinner size="xl" />
                         </Flex>

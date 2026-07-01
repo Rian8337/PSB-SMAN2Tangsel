@@ -18,7 +18,7 @@ import {
 } from "@psb/shared/types";
 import { Check, Plus, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -32,7 +32,7 @@ export function AcademicSessionManagement() {
     const sessionApiClient = useSessionApiClient();
 
     const [sessions, setSessions] = useState<AcademicSessionDTO[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -43,8 +43,6 @@ export function AcademicSessionManagement() {
 
     const fetchSessions = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await sessionApiClient.listSessions(
                     query,
@@ -64,10 +62,6 @@ export function AcademicSessionManagement() {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [sessionApiClient, t],
@@ -81,7 +75,9 @@ export function AcademicSessionManagement() {
 
         const controller = new AbortController();
 
-        void fetchSessions(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchSessions(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -197,7 +193,7 @@ export function AcademicSessionManagement() {
                     flex={1}
                     w="full"
                 >
-                    {isLoading ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -304,7 +300,7 @@ export function AcademicSessionManagement() {
                 <Pagination
                     page={page}
                     hasMore={sessions.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

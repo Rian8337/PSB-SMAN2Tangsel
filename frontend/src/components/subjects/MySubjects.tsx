@@ -11,7 +11,7 @@ import {
 } from "@psb/shared/types";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -28,7 +28,7 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
     const router = useRouter();
 
     const [subjects, setSubjects] = useState<ClassSubjectAssignment[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [searchQuery, setSearchQuery] = useState("");
     const [page, setPage] = useState(1);
     const limit = 10;
@@ -37,8 +37,6 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
 
     const fetchSubjects = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await subjectApiClient.getMySubjects(
                     query,
@@ -60,10 +58,6 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [subjectApiClient, t, session, semester],
@@ -76,7 +70,9 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
 
         const controller = new AbortController();
 
-        void fetchSubjects(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchSubjects(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -134,7 +130,7 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
                     flex={1}
                     w="full"
                 >
-                    {isLoading ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -210,7 +206,7 @@ export function MySubjects({ session, semester }: MySubjectsProps) {
                 <Pagination
                     page={page}
                     hasMore={subjects.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

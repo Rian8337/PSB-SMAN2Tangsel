@@ -14,7 +14,7 @@ import {
 import { Subject } from "@psb/shared/types";
 import { Check, Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -27,7 +27,7 @@ export function SubjectManagement() {
     const subjectApiClient = useSubjectApiClient();
 
     const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -38,8 +38,6 @@ export function SubjectManagement() {
 
     const fetchSubjects = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await subjectApiClient.listSubjects(
                     query,
@@ -59,10 +57,6 @@ export function SubjectManagement() {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [subjectApiClient, t],
@@ -76,7 +70,9 @@ export function SubjectManagement() {
 
         const controller = new AbortController();
 
-        void fetchSubjects(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchSubjects(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -183,7 +179,7 @@ export function SubjectManagement() {
                     flex={1}
                     w="full"
                 >
-                    {isLoading ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -271,7 +267,7 @@ export function SubjectManagement() {
                 <Pagination
                     page={page}
                     hasMore={subjects.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

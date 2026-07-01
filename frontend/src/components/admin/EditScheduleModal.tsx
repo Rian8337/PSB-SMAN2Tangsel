@@ -5,7 +5,13 @@ import { useScheduleApiClient } from "@/providers/api/schedule-api-provider";
 import { Button, Flex, Input, NativeSelect, Spinner } from "@chakra-ui/react";
 import { ScheduleDay } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
-import { SubmitEvent, useCallback, useEffect, useState } from "react";
+import {
+    SubmitEvent,
+    useCallback,
+    useEffect,
+    useState,
+    useTransition,
+} from "react";
 import { FormDialog } from "../ui/FormDialog";
 import { FormField } from "../ui/FormField";
 import { toaster } from "../ui/toaster";
@@ -40,7 +46,7 @@ export function EditScheduleModal({
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
 
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, startFetchTransition] = useTransition();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +58,6 @@ export function EditScheduleModal({
 
     const fetchSchedule = useCallback(
         async (signal?: AbortSignal) => {
-            setIsFetching(true);
             setError(null);
 
             try {
@@ -79,10 +84,6 @@ export function EditScheduleModal({
                     description: t("edit.fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsFetching(false);
-                }
             }
         },
         [scheduleApiClient, scheduleId, t],
@@ -95,7 +96,7 @@ export function EditScheduleModal({
 
         const controller = new AbortController();
 
-        void fetchSchedule(controller.signal);
+        startFetchTransition(() => fetchSchedule(controller.signal));
 
         return () => {
             controller.abort();

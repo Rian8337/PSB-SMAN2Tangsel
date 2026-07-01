@@ -15,7 +15,7 @@ import {
 import { Class, UserListItem } from "@psb/shared/types";
 import { Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -29,7 +29,7 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
     const t = useTranslations("ClassStudentManagement");
     const classStudentApiClient = useClassStudentApiClient();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [enrolledStudents, setEnrolledStudents] = useState<UserListItem[]>(
         [],
@@ -42,14 +42,17 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    useEffect(() => {
+    const [prevDebouncedSearchQuery, setPrevDebouncedSearchQuery] = useState(
+        debouncedSearchQuery,
+    );
+
+    if (debouncedSearchQuery !== prevDebouncedSearchQuery) {
+        setPrevDebouncedSearchQuery(debouncedSearchQuery);
         setPage(1);
-    }, [debouncedSearchQuery]);
+    }
 
     const fetchStudents = useCallback(
         async (query?: string, page = 1, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const students =
                     await classStudentApiClient.getEnrolledStudents(
@@ -71,10 +74,6 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [clazz.id, classStudentApiClient, limit, t],
@@ -89,7 +88,9 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
 
         const controller = new AbortController();
 
-        void fetchStudents(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchStudents(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -226,7 +227,7 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                     flex={1}
                     w="full"
                 >
-                    {isLoading && enrolledStudents.length === 0 ? (
+                    {isPending && enrolledStudents.length === 0 ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -298,7 +299,7 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
                 <Pagination
                     page={page}
                     hasMore={enrolledStudents.length >= limit}
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

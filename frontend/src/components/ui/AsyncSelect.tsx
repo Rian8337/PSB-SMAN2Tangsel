@@ -3,7 +3,7 @@
 import { useDebounce } from "@/hooks";
 import { Box, Input, List, Spinner, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
 export interface AsyncSelectOption {
     readonly value: number;
@@ -30,7 +30,7 @@ export function AsyncSelect({
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState(value?.label ?? "");
     const [options, setOptions] = useState<AsyncSelectOption[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     const debouncedQuery = useDebounce(inputValue, 300);
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -57,8 +57,6 @@ export function AsyncSelect({
 
     const loadOptions = useCallback(
         async (query: string, signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await fetchOptions(query, signal);
                 setOptions(data);
@@ -68,10 +66,6 @@ export function AsyncSelect({
                 }
 
                 setOptions([]);
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [fetchOptions],
@@ -85,7 +79,9 @@ export function AsyncSelect({
 
         const controller = new AbortController();
 
-        void loadOptions(debouncedQuery, controller.signal);
+        startTransition(() =>
+            loadOptions(debouncedQuery, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -126,7 +122,7 @@ export function AsyncSelect({
                     maxH="200px"
                     overflowY="auto"
                 >
-                    {isLoading ? (
+                    {isPending ? (
                         <Box p={4} textAlign="center">
                             <Spinner size="sm" />
                         </Box>

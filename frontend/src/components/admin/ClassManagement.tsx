@@ -16,7 +16,7 @@ import {
 import { Class } from "@psb/shared/types";
 import { BookOpen, CalendarDays, Plus, Search, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { Pagination } from "../ui/Pagination";
 import { toaster } from "../ui/toaster";
@@ -31,7 +31,7 @@ export function ClassManagement() {
         useAdminSession()!;
 
     const [classes, setClasses] = useState<Class[]>([]);
-    const [isLoadingClasses, setIsLoadingClasses] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -47,8 +47,6 @@ export function ClassManagement() {
             if (!activeSession) {
                 return;
             }
-
-            setIsLoadingClasses(true);
 
             try {
                 const data = await classApiClient.listClasses({
@@ -71,10 +69,6 @@ export function ClassManagement() {
                     description: t("fetchToast.errorMessage"),
                     type: "error",
                 });
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoadingClasses(false);
-                }
             }
         },
         [classApiClient, activeSession, t],
@@ -92,7 +86,9 @@ export function ClassManagement() {
 
         const controller = new AbortController();
 
-        void fetchClasses(debouncedSearchQuery, page, controller.signal);
+        startTransition(() =>
+            fetchClasses(debouncedSearchQuery, page, controller.signal),
+        );
 
         return () => {
             controller.abort();
@@ -247,7 +243,7 @@ export function ClassManagement() {
                     flex={1}
                     w="full"
                 >
-                    {isLoadingClasses ? (
+                    {isPending ? (
                         <Flex justify="center" align="center" h="200px">
                             <Spinner size="xl" />
                         </Flex>
@@ -353,7 +349,7 @@ export function ClassManagement() {
                 <Pagination
                     page={page}
                     hasMore={classes.length >= limit}
-                    isLoading={isLoadingClasses}
+                    isLoading={isPending}
                     onPrevPage={() => {
                         setPage((p) => p - 1);
                     }}

@@ -22,7 +22,7 @@ import {
 } from "@psb/shared/types";
 import { FileText } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
 import { toaster } from "../ui/toaster";
 import { ManageAssignmentSubmissionForm } from "./ManageAssignmentSubmissionForm";
@@ -72,7 +72,7 @@ export function SubjectAssignment({
         StudentSubjectAssignment | TeacherSubjectAssignment | null
     >(null);
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
 
     const isStudent = role === UserRole.student;
     const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
@@ -84,8 +84,6 @@ export function SubjectAssignment({
 
     const fetchAssignment = useCallback(
         async (signal?: AbortSignal) => {
-            setIsLoading(true);
-
             try {
                 const data = await apiClient.getAssignment(
                     assignmentId,
@@ -105,10 +103,6 @@ export function SubjectAssignment({
                 });
 
                 router.push(backButtonUrl);
-            } finally {
-                if (!signal?.aborted) {
-                    setIsLoading(false);
-                }
             }
         },
         [apiClient, assignmentId, router, t, backButtonUrl],
@@ -117,14 +111,14 @@ export function SubjectAssignment({
     useEffect(() => {
         const controller = new AbortController();
 
-        void fetchAssignment(controller.signal);
+        startTransition(() => fetchAssignment(controller.signal));
 
         return () => {
             controller.abort();
         };
     }, [fetchAssignment]);
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 <PageHeader title="" backButtonUrl={backButtonUrl} />
@@ -251,7 +245,7 @@ export function SubjectAssignment({
                                     submission={studentAssignment.submission}
                                     onSuccess={() => {
                                         setIsEditing(false);
-                                        void fetchAssignment();
+                                        startTransition(() => fetchAssignment());
                                     }}
                                     onCancel={() => {
                                         setIsEditing(false);
@@ -328,7 +322,7 @@ export function SubjectAssignment({
                                                             type: "success",
                                                         });
 
-                                                        void fetchAssignment();
+                                                        startTransition(() => fetchAssignment());
                                                     })
                                                     .catch(() => {
                                                         toaster.create({
@@ -356,7 +350,7 @@ export function SubjectAssignment({
                             <ManageAssignmentSubmissionForm
                                 assignmentId={assignmentId}
                                 onSuccess={() => {
-                                    void fetchAssignment();
+                                    startTransition(() => fetchAssignment());
                                 }}
                             />
                         )}
@@ -442,7 +436,7 @@ export function SubjectAssignment({
                                         ),
                                     )
                                     .then(() => {
-                                        void fetchAssignment();
+                                        startTransition(() => fetchAssignment());
                                     })
                                     .catch(() => {
                                         toaster.create({
