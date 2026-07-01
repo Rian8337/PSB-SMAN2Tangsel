@@ -239,12 +239,7 @@ export function EditScheduleModal({
                                 name="day"
                                 value={day.toString()}
                                 onChange={(e) => {
-                                    setDay(
-                                        parseInt(
-                                            e.target.value,
-                                            10,
-                                        ) as ScheduleDay,
-                                    );
+                                    setDay(parseInt(e.target.value, 10));
                                 }}
                             >
                                 <option value={ScheduleDay.monday}>

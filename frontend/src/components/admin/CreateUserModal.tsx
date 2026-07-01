@@ -133,7 +133,7 @@ export function CreateUserModal({
                         name="role"
                         value={role.toString()}
                         onChange={(e) => {
-                            setRole(Number(e.target.value) as UserRole);
+                            setRole(Number(e.target.value));
                         }}
                         placeholder={t("createUser.dialog.rolePlaceholder")}
                     >

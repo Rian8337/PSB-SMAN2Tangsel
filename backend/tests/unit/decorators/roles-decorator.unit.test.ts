@@ -1,7 +1,6 @@
 import { Roles } from "@/decorators/roles";
 import { useContainer } from "@/dependencies/container";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { IAuthService } from "@/services";
 import { UserRole } from "@psb/shared/types";
 import {
     createMockMethodDecoratorTestTarget,
@@ -17,7 +16,7 @@ describe("@Roles", () => {
         const container = createTestContainer((container) => {
             container.registerInstance(
                 dependencyTokens.authService,
-                mockAuthService as IAuthService,
+                mockAuthService,
             );
         });
 
