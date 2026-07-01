@@ -90,6 +90,17 @@ export default defineConfig(
         },
     })),
     {
+        // eslint-plugin-react's "detect" setting (set by eslint-config-next)
+        // calls the removed `context.getFilename()` API under ESLint 10 and
+        // crashes. Pin the version so it skips detection.
+        files: ["frontend/**/*.{ts,tsx}"],
+        settings: {
+            react: {
+                version: "19.2.7",
+            },
+        },
+    },
+    {
         files: ["**/tests/**"],
         plugins: { vitest },
         rules: {
