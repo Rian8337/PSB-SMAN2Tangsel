@@ -2,6 +2,7 @@
 
 import { useNotifications } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
+import { formatNotificationDate } from "@/utils/date";
 import {
     Box,
     HStack,
@@ -176,14 +177,10 @@ export function NotificationBell() {
                                             color="gray.500"
                                             mt={2}
                                         >
-                                            {new Date(
+                                            {formatNotificationDate(
                                                 n.createdAt,
-                                            ).toLocaleDateString(locale, {
-                                                day: "numeric",
-                                                month: "short",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
+                                                locale,
+                                            )}
                                         </Text>
                                     </Box>
                                 ))}
