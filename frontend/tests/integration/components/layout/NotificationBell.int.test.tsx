@@ -133,6 +133,70 @@ describe("NotificationBell (integration)", () => {
         expect(mockRouter.push).toHaveBeenCalledWith("/dashboard/schedule");
     });
 
+    it("should display a relative time for recent notifications", async () => {
+        const user = userEvent.setup();
+        const now = new Date("2026-04-21T10:30:00").getTime();
+
+        vi.setSystemTime(now);
+
+        try {
+            mockNotificationApiClient.getNotifications.mockResolvedValue([
+                {
+                    ...mockNotifications[0],
+                    createdAt: now - 5 * 60 * 1000,
+                },
+            ]);
+            mockNotificationApiClient.getUnreadCount.mockResolvedValue(1);
+
+            render();
+
+            const bellButton = await screen.findByRole("button", {
+                name: "Notifications",
+            });
+            await user.click(bellButton);
+
+            // Locale is mocked to "id" (see tests/mocks/i18n.ts).
+            await waitFor(() => {
+                expect(
+                    screen.getByText("5 menit yang lalu"),
+                ).toBeInTheDocument();
+            });
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it("should display an absolute date for older notifications", async () => {
+        const user = userEvent.setup();
+
+        mockNotificationApiClient.getNotifications.mockResolvedValue(
+            mockNotifications,
+        );
+        mockNotificationApiClient.getUnreadCount.mockResolvedValue(1);
+
+        render();
+
+        const bellButton = await screen.findByRole("button", {
+            name: "Notifications",
+        });
+        await user.click(bellButton);
+
+        await waitFor(() => {
+            expect(
+                screen.getByText(
+                    new Date(
+                        mockNotifications[1].createdAt,
+                    ).toLocaleDateString("id", {
+                        day: "numeric",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
+                ),
+            ).toBeInTheDocument();
+        });
+    });
+
     it("should display the empty state if there are no notifications", async () => {
         const user = userEvent.setup();
 
