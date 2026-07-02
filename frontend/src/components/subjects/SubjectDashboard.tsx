@@ -83,7 +83,10 @@ export function SubjectDashboard({
     if (isPending) {
         return (
             <>
-                <PageHeader title="" backButtonUrl={`/${sessionCode}/dashboard`} />
+                <PageHeader
+                    title=""
+                    backButtonUrl={`/${sessionCode}/subjects`}
+                />
 
                 <Flex justify="center" align="center" h="200px">
                     <Spinner size="xl" />
@@ -102,7 +105,7 @@ export function SubjectDashboard({
                             : dashboard.subject.name
                         : ""
                 }
-                backButtonUrl={`/${sessionCode}/dashboard`}
+                backButtonUrl={`/${sessionCode}/subjects`}
                 rightElement={
                     dashboard && (
                         <Text
