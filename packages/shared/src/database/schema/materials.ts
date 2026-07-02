@@ -42,7 +42,7 @@ export const materials = mysqlTable(
         /**
          * The time at which this material was last updated.
          */
-        lastUpdatedAt: timestamp().defaultNow().notNull(),
+        lastUpdatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 
         /**
          * The title of this material.

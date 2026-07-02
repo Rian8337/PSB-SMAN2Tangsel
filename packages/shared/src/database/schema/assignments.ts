@@ -47,7 +47,7 @@ export const assignments = mysqlTable("assignment", {
     /**
      * The time at which this assignment was last updated.
      */
-    lastUpdatedAt: timestamp().defaultNow().notNull(),
+    lastUpdatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 
     /**
      * The title of this assignment.
