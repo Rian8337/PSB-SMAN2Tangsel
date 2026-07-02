@@ -240,7 +240,7 @@ export function BaseShell(props: BaseShellProps) {
     const isDesktop = useBreakpointValue({ base: false, md: true }) ?? true;
 
     return (
-        <Flex h="100dvh" w="full" overflow="hidden" bg="gray.50">
+        <Flex h="100svh" w="full" overflow="hidden" bg="gray.50">
             {isDesktop && <SidebarContent isDesktop props={props} />}
 
             {!isDesktop && isMobileMenuOpen && (
