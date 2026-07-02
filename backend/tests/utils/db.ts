@@ -55,6 +55,7 @@ export const testDb = createDatabase({
     password: process.env[EnvironmentVariableKey.databasePassword],
     database: workerDbName,
     port: parseInt(process.env[EnvironmentVariableKey.databasePort] ?? "3306"),
+    timezone: "+00:00",
 });
 
 /**
