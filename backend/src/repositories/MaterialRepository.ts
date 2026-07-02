@@ -223,7 +223,7 @@ export class MaterialRepository
         await this.db.transaction(async (tx) => {
             await tx
                 .update(materials)
-                .set({ title, description, visible, lastUpdatedAt: new Date() })
+                .set({ title, description, visible })
                 .where(eq(materials.id, materialId));
 
             await tx

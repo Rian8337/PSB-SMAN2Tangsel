@@ -235,7 +235,6 @@ export class AssignmentRepository
                     description,
                     dueAt,
                     visible,
-                    lastUpdatedAt: new Date(),
                 })
                 .where(eq(assignments.id, assignmentId));
 
