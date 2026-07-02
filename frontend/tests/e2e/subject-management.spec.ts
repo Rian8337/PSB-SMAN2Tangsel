@@ -3,22 +3,51 @@ import { expect, test } from "./fixtures";
 import { loginAdministrator } from "./utils/login";
 
 test.describe("Subject Management", () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAdministrator(page);
+    // Generate a unique suffix to ensure no collision with existing seeded data or parallel test runs.
+    const uniqueSuffix = Date.now().toString().slice(-4);
+
+    const createCode = `E2EC-${uniqueSuffix}`;
+    const editSubject: Subject = {
+        id: 0,
+        code: `E2EE-${uniqueSuffix}`,
+        name: `Mata Pelajaran E2E Edit ${uniqueSuffix}`,
+        active: true,
+    };
+    const deleteSubject: Subject = {
+        id: 0,
+        code: `E2ED-${uniqueSuffix}`,
+        name: `Mata Pelajaran E2E Delete ${uniqueSuffix}`,
+        active: true,
+    };
+
+    test.beforeAll(async ({ workerSetup }) => {
+        const { seeders } = workerSetup.dbManager;
+
+        await seeders.subjects.seedMany(
+            { code: editSubject.code, name: editSubject.name, active: true },
+            {
+                code: deleteSubject.code,
+                name: deleteSubject.name,
+                active: true,
+            },
+        );
     });
 
-    test("should complete the subject management flow", async ({ page }) => {
-        // Generate a unique code to ensure no collision with existing seeded data.
-        const uniqueSuffix = Date.now().toString().slice(-4);
+    test.afterAll(async ({ workerSetup }) => {
+        const { seeders } = workerSetup.dbManager;
 
-        const testSubject: Subject = {
-            id: 0,
-            code: `E2E-${uniqueSuffix}`,
-            name: `Mata Pelajaran E2E ${uniqueSuffix}`,
-            active: true,
-        };
+        // Clean up regardless of whether an individual test already removed its own subject via the UI, since
+        // `subject` is a primary table and cannot be bulk-cleaned without also wiping shared worker data (e.g. users).
+        await Promise.all([
+            seeders.subjects.deleteWhere({ code: createCode }),
+            seeders.subjects.deleteWhere({ code: editSubject.code }),
+            seeders.subjects.deleteWhere({ code: deleteSubject.code }),
+        ]);
+    });
 
-        // Navigate
+    test.beforeEach(async ({ page }) => {
+        await loginAdministrator(page);
+
         const dashboardCard = page
             .locator('a[href="/admin/subjects"]')
             .filter({ hasText: /Kelola daftar mata pelajaran/i });
@@ -27,8 +56,9 @@ test.describe("Subject Management", () => {
 
         await expect(page).toHaveURL(/\/admin\/subjects/);
         await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
+    });
 
-        // Create subject
+    test("should allow creating a subject", async ({ page }) => {
         const openCreateModalButton = page.getByRole("button", {
             name: /tambah|add/i,
         });
@@ -45,8 +75,10 @@ test.describe("Subject Management", () => {
         const codeInput = dialog.locator('input[name="code"]');
         const nameInput = dialog.locator('input[name="name"]');
 
-        await codeInput.fill(testSubject.code);
-        await nameInput.fill(testSubject.name);
+        const testName = `Mata Pelajaran E2E Create ${uniqueSuffix}`;
+
+        await codeInput.fill(createCode);
+        await nameInput.fill(testName);
 
         const createSubjectResponse = page.waitForResponse((response) => {
             const pathname = new URL(response.url()).pathname;
@@ -69,7 +101,6 @@ test.describe("Subject Management", () => {
         await expect(successToast).toBeHidden();
         await expect(dialog).toBeHidden({ timeout: 10000 });
 
-        // Search subject
         const searchInput = page.locator('input[name="search"]');
 
         const searchSubjectsResponse = page.waitForResponse((response) => {
@@ -83,17 +114,40 @@ test.describe("Subject Management", () => {
             );
         });
 
-        await searchInput.fill(testSubject.code);
+        await searchInput.fill(createCode);
         await searchSubjectsResponse;
 
         const subjectRow = page.getByRole("row", {
-            name: new RegExp(testSubject.code, "i"),
+            name: new RegExp(createCode, "i"),
         });
 
         await expect(subjectRow).toBeVisible();
-        await expect(subjectRow).toContainText(testSubject.name);
+        await expect(subjectRow).toContainText(testName);
+    });
 
-        // Edit subject
+    test("should allow editing a subject", async ({ page }) => {
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchSubjectsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/subjects/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(editSubject.code);
+        await searchSubjectsResponse;
+
+        const subjectRow = page.getByRole("row", {
+            name: new RegExp(editSubject.code, "i"),
+        });
+
+        await expect(subjectRow).toBeVisible();
+
         const editLink = subjectRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
 
@@ -107,7 +161,7 @@ test.describe("Subject Management", () => {
         const editNameInput = page.locator('input[name="name"]');
         await expect(editNameInput).toBeVisible();
 
-        const updatedName = `${testSubject.name} Updated`;
+        const updatedName = `${editSubject.name} Updated`;
         await editNameInput.fill(updatedName);
 
         const activeSwitch = page.getByRole("checkbox");
@@ -124,7 +178,6 @@ test.describe("Subject Management", () => {
         await expect(page).toHaveURL(/\/admin\/subjects/);
         await expect(updateToast).toBeHidden();
 
-        // Delete subject
         const searchUpdatedSubjectsResponse = page.waitForResponse(
             (response) => {
                 const url = response.url();
@@ -142,19 +195,43 @@ test.describe("Subject Management", () => {
         await searchUpdatedSubjectsResponse;
 
         const updatedRow = page.getByRole("row", {
-            name: new RegExp(testSubject.code, "i"),
+            name: new RegExp(editSubject.code, "i"),
         });
 
         await expect(updatedRow).toBeVisible();
         await expect(updatedRow).toContainText(updatedName);
+    });
+
+    test("should allow deleting a subject", async ({ page }) => {
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchSubjectsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/subjects/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(deleteSubject.code);
+        await searchSubjectsResponse;
+
+        const subjectRow = page.getByRole("row", {
+            name: new RegExp(deleteSubject.code, "i"),
+        });
+
+        await expect(subjectRow).toBeVisible();
 
         page.once("dialog", async (confirmDialog) => {
-            expect(confirmDialog.message()).toContain(testSubject.code);
+            expect(confirmDialog.message()).toContain(deleteSubject.code);
             await confirmDialog.accept();
         });
 
-        const deleteButton = updatedRow.getByRole("button", {
-            name: new RegExp(`delete-${testSubject.code}`, "i"),
+        const deleteButton = subjectRow.getByRole("button", {
+            name: new RegExp(`delete-${deleteSubject.code}`, "i"),
         });
 
         await deleteButton.click();
@@ -162,7 +239,7 @@ test.describe("Subject Management", () => {
         const deleteToast = page.getByText(/berhasil|success/i).last();
 
         await expect(deleteToast).toBeVisible();
-        await expect(updatedRow).toBeHidden();
+        await expect(subjectRow).toBeHidden();
         await expect(deleteToast).toBeHidden();
 
         // Search is still applied, so no subjects should be found

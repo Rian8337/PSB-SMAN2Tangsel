@@ -1,3 +1,4 @@
+import { Page } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { ScheduleDay } from "@psb/shared/types";
 import { expect, test } from "./fixtures";
@@ -5,22 +6,57 @@ import { loginAdministrator } from "./utils/login";
 
 test.describe("Class Schedule Management", () => {
     const subject = seededPrimaryData.subjects[0];
-    const className = `X-1 E2E ${Date.now().toString().slice(-6)}`;
+    const subjectQuery = subject.name;
+    const session = seededPrimaryData.sessions[0];
+    const uniqueSuffix = Date.now().toString().slice(-6);
+
+    const createClassName = `X-1 E2E Create ${uniqueSuffix}`;
+    const editClassName = `X-1 E2E Edit ${uniqueSuffix}`;
+    const deleteClassName = `X-1 E2E Delete ${uniqueSuffix}`;
 
     test.beforeAll(async ({ workerSetup: { dbManager } }) => {
         const { seeders } = dbManager;
-        const session = seededPrimaryData.sessions[0];
 
-        const clazz = await seeders.classes.seedOne({
-            name: className,
-            session: session.session,
-            semester: session.semester,
-        });
+        const [createClass, editClass, deleteClass] =
+            await seeders.classes.seedMany(
+                {
+                    name: createClassName,
+                    session: session.session,
+                    semester: session.semester,
+                },
+                {
+                    name: editClassName,
+                    session: session.session,
+                    semester: session.semester,
+                },
+                {
+                    name: deleteClassName,
+                    session: session.session,
+                    semester: session.semester,
+                },
+            );
 
-        await seeders.classSubjects.seedOne({
-            classId: clazz.id!,
-            subjectId: subject.id,
-        });
+        const [, editClassSubject, deleteClassSubject] =
+            await seeders.classSubjects.seedMany(
+                { classId: createClass.id!, subjectId: subject.id },
+                { classId: editClass.id!, subjectId: subject.id },
+                { classId: deleteClass.id!, subjectId: subject.id },
+            );
+
+        await seeders.schedules.seedMany(
+            {
+                classSubjectId: editClassSubject.id!,
+                day: ScheduleDay.wednesday,
+                startTime: new Date(2024, 0, 1, 8),
+                endTime: new Date(2024, 0, 1, 9, 30),
+            },
+            {
+                classSubjectId: deleteClassSubject.id!,
+                day: ScheduleDay.thursday,
+                startTime: new Date(2024, 0, 1, 8),
+                endTime: new Date(2024, 0, 1, 9, 30),
+            },
+        );
     });
 
     test.afterAll(async ({ workerSetup: { dbManager } }) => {
@@ -31,12 +67,7 @@ test.describe("Class Schedule Management", () => {
         await loginAdministrator(page);
     });
 
-    test("should complete the class schedule management flow", async ({
-        page,
-    }) => {
-        const subjectQuery = subject.name;
-
-        // Navigate to Class Management
+    async function navigateToClassSchedules(page: Page, className: string) {
         const dashboardCard = page
             .locator('a[href="/admin/classes"]')
             .filter({ hasText: /Atur ruang kelas untuk/i });
@@ -57,19 +88,23 @@ test.describe("Class Schedule Management", () => {
         await scheduleLink.click();
 
         await expect(page).toHaveURL(/\/admin\/classes\/\d+\/schedules/);
+    }
 
-        const waitForScheduleGridRefresh = () =>
-            page.waitForResponse((response) => {
-                const url = new URL(response.url());
+    function waitForScheduleGridRefresh(page: Page) {
+        return page.waitForResponse((response) => {
+            const url = new URL(response.url());
 
-                return (
-                    response.request().method() === "GET" &&
-                    response.ok() &&
-                    /\/classes\/\d+\/schedules\/?$/.test(url.pathname)
-                );
-            });
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                /\/classes\/\d+\/schedules\/?$/.test(url.pathname)
+            );
+        });
+    }
 
-        // Create schedule
+    test("should allow creating a class schedule", async ({ page }) => {
+        await navigateToClassSchedules(page, createClassName);
+
         const openCreateModalButton = page.getByRole("button", {
             name: /tambah|add/i,
         });
@@ -109,7 +144,7 @@ test.describe("Class Schedule Management", () => {
                 /\/schedule\/?$/.test(new URL(response.url()).pathname),
         );
 
-        const refreshAfterCreateResponse = waitForScheduleGridRefresh();
+        const refreshAfterCreateResponse = waitForScheduleGridRefresh(page);
 
         await Promise.all([
             createScheduleResponse,
@@ -123,7 +158,16 @@ test.describe("Class Schedule Management", () => {
         await expect(successToast).toBeHidden();
         await expect(createDialog).toBeHidden({ timeout: 10000 });
 
-        // Verify & Edit Schedule
+        const scheduleBlock = page
+            .getByRole("button", { name: new RegExp(subjectQuery, "i") })
+            .first();
+
+        await expect(scheduleBlock).toBeVisible({ timeout: 15000 });
+    });
+
+    test("should allow editing a class schedule", async ({ page }) => {
+        await navigateToClassSchedules(page, editClassName);
+
         const scheduleBlock = page
             .getByRole("button", { name: new RegExp(subjectQuery, "i") })
             .first();
@@ -140,7 +184,6 @@ test.describe("Class Schedule Management", () => {
         await scheduleBlock.click();
 
         const fetchResponse = await fetchSchedulePromise;
-
         expect(fetchResponse.ok()).toBe(true);
 
         const editDialog = page.getByRole("dialog", {
@@ -149,7 +192,6 @@ test.describe("Class Schedule Management", () => {
 
         await expect(editDialog).toBeVisible();
 
-        // Update times
         await editDialog.locator('input[name="startTime"]').fill("10:00");
         await editDialog.locator('input[name="endTime"]').fill("11:30");
 
@@ -160,7 +202,7 @@ test.describe("Class Schedule Management", () => {
                 response.url().includes("/schedule/"),
         );
 
-        const refreshAfterUpdateResponse = waitForScheduleGridRefresh();
+        const refreshAfterUpdateResponse = waitForScheduleGridRefresh(page);
 
         await Promise.all([
             updateScheduleResponse,
@@ -168,11 +210,22 @@ test.describe("Class Schedule Management", () => {
             editDialog.getByRole("button", { name: /simpan|save/i }).click(),
         ]);
 
+        const successToast = page.getByText(/berhasil|success/i).first();
+
         await expect(successToast).toBeVisible();
         await expect(successToast).toBeHidden();
         await expect(editDialog).toBeHidden({ timeout: 10000 });
+    });
 
-        // Delete Schedule
+    test("should allow deleting a class schedule", async ({ page }) => {
+        await navigateToClassSchedules(page, deleteClassName);
+
+        const scheduleBlock = page
+            .getByRole("button", { name: new RegExp(subjectQuery, "i") })
+            .first();
+
+        await expect(scheduleBlock).toBeVisible({ timeout: 15000 });
+
         await Promise.all([
             page.waitForResponse(
                 (res) =>
@@ -182,6 +235,10 @@ test.describe("Class Schedule Management", () => {
             ),
             scheduleBlock.click(),
         ]);
+
+        const editDialog = page.getByRole("dialog", {
+            name: /ubah jadwal|edit schedule/i,
+        });
 
         await expect(editDialog).toBeVisible();
 
@@ -196,13 +253,15 @@ test.describe("Class Schedule Management", () => {
                 response.url().includes("/schedule/"),
         );
 
-        const refreshAfterDeleteResponse = waitForScheduleGridRefresh();
+        const refreshAfterDeleteResponse = waitForScheduleGridRefresh(page);
 
         await Promise.all([
             deleteScheduleResponse,
             refreshAfterDeleteResponse,
             editDialog.getByRole("button", { name: /hapus|delete/i }).click(),
         ]);
+
+        const successToast = page.getByText(/berhasil|success/i).first();
 
         await expect(successToast).toBeVisible();
         await expect(successToast).toBeHidden();

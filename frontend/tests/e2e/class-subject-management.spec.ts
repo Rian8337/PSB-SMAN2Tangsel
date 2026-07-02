@@ -1,32 +1,59 @@
+import { Page } from "@playwright/test";
 import { seededPrimaryData } from "@psb/shared/tests";
 import { expect, test } from "./fixtures";
 import { loginAdministrator } from "./utils/login";
 import { UserRole } from "@psb/shared/types";
 
 test.describe("Class Subject Management", () => {
+    const session = seededPrimaryData.sessions[0];
+    const uniqueSuffix = Date.now().toString().slice(-4);
+
+    const assignClassName = `Test Class Assign E2E ${uniqueSuffix}`;
+    const updateClassName = `Test Class Update Teacher E2E ${uniqueSuffix}`;
+    const unassignClassName = `Test Class Unassign E2E ${uniqueSuffix}`;
+
     test.beforeAll(async ({ workerSetup }) => {
         const { seeders } = workerSetup.dbManager;
-        const session = seededPrimaryData.sessions[0];
 
-        await seeders.classes.seedOne({
-            name: "Test Class E2E",
-            session: session.session,
-            semester: session.semester,
-        });
-    });
+        const [, updateClass, unassignClass] = await seeders.classes.seedMany(
+            {
+                name: assignClassName,
+                session: session.session,
+                semester: session.semester,
+            },
+            {
+                name: updateClassName,
+                session: session.session,
+                semester: session.semester,
+            },
+            {
+                name: unassignClassName,
+                session: session.session,
+                semester: session.semester,
+            },
+        );
 
-    test.beforeEach(async ({ page }) => {
-        await loginAdministrator(page);
+        await seeders.classSubjects.seedMany(
+            {
+                classId: updateClass.id!,
+                subjectId: seededPrimaryData.subjects[1].id,
+            },
+            {
+                classId: unassignClass.id!,
+                subjectId: seededPrimaryData.subjects[1].id,
+            },
+        );
     });
 
     test.afterAll(async ({ workerSetup }) => {
         await workerSetup.dbManager.cleanupSecondaryTables();
     });
 
-    test("should complete the class subject assignment flow", async ({
-        page,
-    }) => {
-        // Navigate to page
+    test.beforeEach(async ({ page }) => {
+        await loginAdministrator(page);
+    });
+
+    async function navigateToClassSubjects(page: Page, className: string) {
         const dashboardCard = page
             .locator('a[href="/admin/classes"]')
             .filter({ hasText: /Atur ruang kelas untuk/i });
@@ -35,8 +62,14 @@ test.describe("Class Subject Management", () => {
         await expect(page).toHaveURL(/\/admin\/classes/);
         await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
 
-        const firstClassRow = page.locator("tbody tr").first();
-        const manageSubjectsLink = firstClassRow.locator(
+        const classRow = page
+            .locator("tbody tr")
+            .filter({ hasText: className })
+            .first();
+
+        await expect(classRow).toBeVisible({ timeout: 15000 });
+
+        const manageSubjectsLink = classRow.locator(
             'a[aria-label^="manage-subjects-"]',
         );
 
@@ -44,8 +77,11 @@ test.describe("Class Subject Management", () => {
 
         await expect(page).toHaveURL(/\/admin\/classes\/\d+\/subjects/);
         await expect(page.locator("table")).toBeVisible();
+    }
 
-        // Assign subject
+    test("should allow assigning a subject to a class", async ({ page }) => {
+        await navigateToClassSubjects(page, assignClassName);
+
         // Target the button with the Plus icon.
         const openAssignModalButton = page
             .locator("button")
@@ -96,7 +132,6 @@ test.describe("Class Subject Management", () => {
         await expect(dialog).toBeHidden();
         await expect(successToast).toBeHidden({ timeout: 10000 });
 
-        // Search assigned subject
         const searchInput = page.locator('input[name="search"]');
 
         const searchAssignedPromise = page.waitForResponse((response) => {
@@ -114,7 +149,34 @@ test.describe("Class Subject Management", () => {
         const searchAssignedResponse = await searchAssignedPromise;
         expect(searchAssignedResponse.ok()).toBe(true);
 
-        // Verify the newly assigned subject row exists.
+        const subjectRow = page
+            .locator("tbody tr")
+            .filter({ hasText: /MA2/i })
+            .first();
+
+        await expect(subjectRow).toBeVisible();
+    });
+
+    test("should allow updating the teacher of an assigned subject", async ({
+        page,
+    }) => {
+        await navigateToClassSubjects(page, updateClassName);
+
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchAssignedPromise = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                url.includes("/subjects") &&
+                url.includes("query=MA2")
+            );
+        });
+
+        await searchInput.fill("MA2");
+        await searchAssignedPromise;
+
         const subjectRow = page
             .locator("tbody tr")
             .filter({ hasText: /MA2/i })
@@ -122,7 +184,6 @@ test.describe("Class Subject Management", () => {
 
         await expect(subjectRow).toBeVisible();
 
-        // Update teacher
         const seededTeacher = seededPrimaryData.users.find(
             (u) => u.role === UserRole.teacher,
         )!;
@@ -159,7 +220,37 @@ test.describe("Class Subject Management", () => {
         await expect(updateToast).toBeVisible();
         await expect(updateToast).toBeHidden({ timeout: 10000 });
 
-        // Unassign subject
+        // The committed value lives in the input's `value` attribute, not its text content.
+        await expect(inlineTeacherInput).toHaveValue(seededTeacher.name);
+    });
+
+    test("should allow unassigning a subject from a class", async ({
+        page,
+    }) => {
+        await navigateToClassSubjects(page, unassignClassName);
+
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchAssignedPromise = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                url.includes("/subjects") &&
+                url.includes("query=MA2")
+            );
+        });
+
+        await searchInput.fill("MA2");
+        await searchAssignedPromise;
+
+        const subjectRow = page
+            .locator("tbody tr")
+            .filter({ hasText: /MA2/i })
+            .first();
+
+        await expect(subjectRow).toBeVisible();
+
         page.once("dialog", async (confirmDialog) => {
             await confirmDialog.accept();
         });

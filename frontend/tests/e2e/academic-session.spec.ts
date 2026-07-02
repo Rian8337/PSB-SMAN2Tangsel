@@ -2,20 +2,45 @@ import { expect, test } from "./fixtures";
 import { loginAdministrator } from "./utils/login";
 
 test.describe("Academic Session Management", () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAdministrator(page);
+    const createSession = "2036/2037";
+    const editSession = "2037/2038";
+    const deleteSession = "2038/2039";
+    const testSemester = "1";
+
+    test.beforeAll(async ({ workerSetup }) => {
+        const { seeders } = workerSetup.dbManager;
+
+        await seeders.sessions.seedMany(
+            {
+                session: editSession,
+                semester: 1,
+                startTime: new Date("2037-01-01"),
+                endTime: new Date("2037-06-01"),
+            },
+            {
+                session: deleteSession,
+                semester: 1,
+                startTime: new Date("2038-01-01"),
+                endTime: new Date("2038-06-01"),
+            },
+        );
     });
 
-    test("should complete the academic session management flow", async ({
-        page,
-    }) => {
-        const testSession = "2035/2036";
-        const testSemester = "1";
-        const startDate = "2035-01-01";
-        const endDate = "2035-06-01";
-        const updatedStartDate = "2035-02-01";
+    test.afterAll(async ({ workerSetup }) => {
+        const { seeders } = workerSetup.dbManager;
 
-        // Navigate
+        // Clean up regardless of whether an individual test already removed its own session via the UI, since
+        // `session` is a primary table and cannot be bulk-cleaned without also wiping shared worker data (e.g. users).
+        await Promise.all([
+            seeders.sessions.deleteWhere({ session: createSession, semester: 1 }),
+            seeders.sessions.deleteWhere({ session: editSession, semester: 1 }),
+            seeders.sessions.deleteWhere({ session: deleteSession, semester: 1 }),
+        ]);
+    });
+
+    test.beforeEach(async ({ page }) => {
+        await loginAdministrator(page);
+
         const dashboardCard = page
             .locator('a[href="/admin/academic-years"]')
             .filter({ hasText: /Konfigurasi semester dan tahun/i });
@@ -24,8 +49,12 @@ test.describe("Academic Session Management", () => {
 
         await expect(page).toHaveURL(/\/admin\/academic-years/);
         await expect(page.locator("table")).toBeVisible({ timeout: 15000 });
+    });
 
-        // Create session
+    test("should allow creating an academic session", async ({ page }) => {
+        const startDate = "2036-01-01";
+        const endDate = "2036-06-01";
+
         const openCreateModalButton = page.getByRole("button", {
             name: /tambah|add/i,
         });
@@ -39,7 +68,7 @@ test.describe("Academic Session Management", () => {
         await expect(dialog).toBeVisible();
 
         const sessionInput = dialog.locator('input[name="session"]');
-        await sessionInput.fill(testSession);
+        await sessionInput.fill(createSession);
 
         await dialog
             .locator('select[name="semester"]')
@@ -68,7 +97,6 @@ test.describe("Academic Session Management", () => {
         await expect(successToast).toBeHidden();
         await expect(dialog).toBeHidden({ timeout: 10000 });
 
-        // Search session
         const searchInput = page.locator('input[name="search"]');
 
         const searchSessionsResponse = page.waitForResponse((response) => {
@@ -82,16 +110,41 @@ test.describe("Academic Session Management", () => {
             );
         });
 
-        await searchInput.fill(testSession);
+        await searchInput.fill(createSession);
         await searchSessionsResponse;
 
         const sessionRow = page.getByRole("row", {
-            name: new RegExp(testSession),
+            name: new RegExp(createSession),
+        });
+
+        await expect(sessionRow).toBeVisible();
+    });
+
+    test("should allow editing an academic session", async ({ page }) => {
+        const updatedStartDate = "2037-02-01";
+
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchSessionsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/sessions/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(editSession);
+        await searchSessionsResponse;
+
+        const sessionRow = page.getByRole("row", {
+            name: new RegExp(editSession),
         });
 
         await expect(sessionRow).toBeVisible();
 
-        // Edit session
         const editLink = sessionRow.getByRole("link", { name: /edit/i });
         await expect(editLink).toBeVisible();
 
@@ -99,7 +152,9 @@ test.describe("Academic Session Management", () => {
 
         await Promise.all([
             page.waitForURL(
-                /\/admin\/academic-years\/edit\?session=2035%2F2036&semester=1/,
+                new RegExp(
+                    `/admin/academic-years/edit\\?session=${encodeURIComponent(editSession)}&semester=1`,
+                ),
             ),
             page.keyboard.press("Enter"),
         ]);
@@ -120,7 +175,6 @@ test.describe("Academic Session Management", () => {
         await expect(page).toHaveURL(/\/admin\/academic-years/);
         await expect(updateToast).toBeHidden();
 
-        // Delete session
         const searchUpdatedSessionsResponse = page.waitForResponse(
             (response) => {
                 const url = response.url();
@@ -134,21 +188,45 @@ test.describe("Academic Session Management", () => {
             },
         );
 
-        await searchInput.fill(testSession);
+        await searchInput.fill(editSession);
         await searchUpdatedSessionsResponse;
 
         const updatedRow = page.getByRole("row", {
-            name: new RegExp(testSession),
+            name: new RegExp(editSession),
         });
+
         await expect(updatedRow).toBeVisible();
+    });
+
+    test("should allow deleting an academic session", async ({ page }) => {
+        const searchInput = page.locator('input[name="search"]');
+
+        const searchSessionsResponse = page.waitForResponse((response) => {
+            const url = response.url();
+
+            return (
+                response.request().method() === "GET" &&
+                response.ok() &&
+                url.includes("/sessions/list") &&
+                url.includes("query=")
+            );
+        });
+
+        await searchInput.fill(deleteSession);
+        await searchSessionsResponse;
+
+        const sessionRow = page.getByRole("row", {
+            name: new RegExp(deleteSession),
+        });
+        await expect(sessionRow).toBeVisible();
 
         page.once("dialog", async (confirmDialog) => {
-            expect(confirmDialog.message()).toContain(testSession);
+            expect(confirmDialog.message()).toContain(deleteSession);
             await confirmDialog.accept();
         });
 
-        const deleteButton = updatedRow.getByRole("button", {
-            name: `delete-${testSession}-semester-${testSemester}`,
+        const deleteButton = sessionRow.getByRole("button", {
+            name: `delete-${deleteSession}-semester-${testSemester}`,
         });
 
         await deleteButton.click();
@@ -156,7 +234,7 @@ test.describe("Academic Session Management", () => {
         const deleteToast = page.getByText(/berhasil|success/i).last();
 
         await expect(deleteToast).toBeVisible();
-        await expect(updatedRow).toBeHidden();
+        await expect(sessionRow).toBeHidden();
         await expect(deleteToast).toBeHidden();
 
         const clearSearchResponse = page.waitForResponse(
@@ -170,7 +248,7 @@ test.describe("Academic Session Management", () => {
         await clearSearchResponse;
 
         await expect(
-            page.getByRole("row", { name: new RegExp(testSession) }),
+            page.getByRole("row", { name: new RegExp(deleteSession) }),
         ).toHaveCount(0);
     });
 });
