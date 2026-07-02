@@ -138,6 +138,61 @@ describe("ManageAssignmentForm (integration)", () => {
             ).toBeInTheDocument();
         });
 
+        it("should pre-fill the due date input using local time, not UTC", () => {
+            vi.stubEnv("TZ", "Asia/Jakarta");
+
+            const dueAt = "2026-07-05T16:30:00.000Z";
+
+            renderWithChakraProvider(
+                <ManageAssignmentForm
+                    classSubjectId={10}
+                    assignment={{ ...mockAssignment, dueAt }}
+                />,
+            );
+
+            const dueAtInput = screen.getByLabelText("dueAtLabel");
+
+            // 16:30 UTC is 23:30 in Asia/Jakarta (UTC+7).
+            expect(dueAtInput).toHaveValue("2026-07-05T23:30");
+
+            vi.unstubAllEnvs();
+        });
+
+        it("should convert the due date to a UTC ISO string before submitting", async () => {
+            vi.stubEnv("TZ", "Asia/Jakarta");
+
+            const user = userEvent.setup();
+
+            mockSubjectAssignmentApiClient.updateAssignment.mockResolvedValue(
+                undefined,
+            );
+
+            renderEdit();
+
+            const dueAtInput = screen.getByLabelText("dueAtLabel");
+
+            // 10:00 in Asia/Jakarta (UTC+7) is 03:00 UTC.
+            await user.type(dueAtInput, "2026-08-01T10:00");
+
+            await user.click(
+                screen.getByRole("button", { name: "submitEdit" }),
+            );
+
+            await waitFor(() => {
+                expect(
+                    mockSubjectAssignmentApiClient.updateAssignment,
+                ).toHaveBeenCalled();
+            });
+
+            const formData =
+                mockSubjectAssignmentApiClient.updateAssignment.mock
+                    .calls[0][1];
+
+            expect(formData.get("dueAt")).toBe("2026-08-01T03:00:00.000Z");
+
+            vi.unstubAllEnvs();
+        });
+
         it("should call updateAssignment with FormData on submit and redirect", async () => {
             const user = userEvent.setup();
 
