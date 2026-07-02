@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm";
-import { foreignKey, int, mysqlTable, timestamp } from "drizzle-orm/mysql-core";
+import { relations, sql } from "drizzle-orm";
+import { datetime, foreignKey, int, mysqlTable } from "drizzle-orm/mysql-core";
 import { assignments } from "./assignments";
 import { assignmentSubmissionAttachments } from "./assignmentSubmissionAttachments";
 import { students } from "./students";
@@ -24,7 +24,9 @@ export const assignmentSubmissions = mysqlTable(
         /**
          * The time at which this assignment submission was created.
          */
-        createdAt: timestamp().defaultNow().notNull(),
+        createdAt: datetime()
+            .default(sql`(now())`)
+            .notNull(),
 
         /**
          * The ID of the student who submits this assignment submission, which is also the ID of the corresponding

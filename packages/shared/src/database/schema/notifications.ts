@@ -1,12 +1,13 @@
+import { sql } from "drizzle-orm";
 import {
     bigint,
     boolean,
+    datetime,
     foreignKey,
     index,
     int,
     mysqlTable,
     text,
-    timestamp,
 } from "drizzle-orm/mysql-core";
 import { users } from "./users";
 
@@ -19,7 +20,9 @@ export const notifications = mysqlTable(
         /**
          * The time at which this notification was created.
          */
-        createdAt: timestamp().defaultNow().notNull(),
+        createdAt: datetime()
+            .default(sql`(now())`)
+            .notNull(),
 
         /**
          * The system-issued identification number of this notification.

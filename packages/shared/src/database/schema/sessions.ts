@@ -1,9 +1,9 @@
 import { relations } from "drizzle-orm";
 import {
     boolean,
+    datetime,
     mysqlTable,
     primaryKey,
-    timestamp,
     tinyint,
     varchar,
 } from "drizzle-orm/mysql-core";
@@ -37,12 +37,12 @@ export const sessions = mysqlTable(
         /**
          * The time at which the academic session and semester starts.
          */
-        startTime: timestamp().notNull(),
+        startTime: datetime().notNull(),
 
         /**
          * The time at which the academic session and semester ends.
          */
-        endTime: timestamp().notNull(),
+        endTime: datetime().notNull(),
     },
     (table) => [primaryKey({ columns: [table.session, table.semester] })],
 );

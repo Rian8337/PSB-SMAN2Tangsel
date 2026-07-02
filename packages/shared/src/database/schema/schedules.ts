@@ -1,10 +1,10 @@
 import { relations } from "drizzle-orm";
 import {
+    datetime,
     foreignKey,
     index,
     int,
     mysqlTable,
-    timestamp,
     tinyint,
 } from "drizzle-orm/mysql-core";
 import { ScheduleDay } from "../../types";
@@ -40,7 +40,7 @@ export const schedules = mysqlTable(
          * Note that the day represented by this timestamp is ignored, and only the time is used. The day
          * of the schedule is determined by the {@link day} field.
          */
-        startTime: timestamp().notNull(),
+        startTime: datetime().notNull(),
 
         /**
          * The time at which the schedule ends.
@@ -48,7 +48,7 @@ export const schedules = mysqlTable(
          * Note that the day represented by this timestamp is ignored, and only the time is used. The day
          * of the schedule is determined by the {@link day} field.
          */
-        endTime: timestamp().notNull(),
+        endTime: datetime().notNull(),
     },
     (table) => [
         foreignKey({

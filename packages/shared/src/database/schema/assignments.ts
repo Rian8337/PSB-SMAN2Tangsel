@@ -1,5 +1,6 @@
 import {
     boolean,
+    datetime,
     int,
     mysqlTable,
     text,
@@ -42,7 +43,7 @@ export const assignments = mysqlTable("assignment", {
     /**
      * The deadline of this assignment.
      */
-    dueAt: timestamp(),
+    dueAt: datetime(),
 
     /**
      * The time at which this assignment was last updated.
