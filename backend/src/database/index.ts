@@ -32,5 +32,6 @@ export function createDatabase(container = getContainer()) {
                 EnvironmentVariableKey.databasePort,
             ) ?? "3306",
         ),
+        timezone: "+00:00",
     });
 }
