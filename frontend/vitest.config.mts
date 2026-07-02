@@ -12,7 +12,7 @@ export default defineConfig({
         ],
         environment: "jsdom",
         setupFiles: ["./tests/setup.ts"],
-        maxWorkers: process.env.CI ? 1 : undefined,
+        maxWorkers: process.env.CI ? 1 : "25%",
         globals: true,
         silent: "passed-only",
         passWithNoTests: true,

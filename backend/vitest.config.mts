@@ -10,7 +10,7 @@ export default defineConfig({
         ],
         globals: true,
         setupFiles: "./tests/setup.ts",
-        maxWorkers: process.env.CI ? 1 : undefined,
+        maxWorkers: process.env.CI ? 1 : "25%",
         hookTimeout: 30000,
         silent: "passed-only",
         passWithNoTests: true,

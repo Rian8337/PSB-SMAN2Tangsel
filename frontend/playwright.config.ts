@@ -12,7 +12,7 @@ if (!process.env.CI) {
 export default defineConfig({
     testDir: "./tests/e2e",
     forbidOnly: !!process.env.CI,
-    workers: process.env.CI ? 1 : undefined,
+    workers: process.env.CI ? 1 : "25%",
     retries: process.env.CI ? 2 : 0,
     reporter: [["html", { open: "never" }]],
     use: {
