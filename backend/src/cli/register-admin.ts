@@ -150,6 +150,7 @@ async function main() {
         port: parseInt(
             process.env[EnvironmentVariableKey.databasePort] ?? "3306",
         ),
+        timezone: "+00:00",
     });
 
     const rl = createInterface({
