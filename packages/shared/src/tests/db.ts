@@ -1,7 +1,7 @@
-import { AnyMySqlTable } from "drizzle-orm/mysql-core";
+import { AnyMySqlColumn, AnyMySqlTable } from "drizzle-orm/mysql-core";
 import * as schema from "../database/schema";
 import { DrizzleDb, UserRole } from "../types";
-import { sql } from "drizzle-orm";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
 
 //#region Global Database Seeding
 
@@ -150,6 +150,17 @@ interface TableSeeder<T extends AnyMySqlTable> {
      * @returns The seeded values.
      */
     readonly seedMany: (...values: Insert<T>[]) => Promise<Insert<T>[]>;
+
+    /**
+     * Deletes records from the table that match all of the given column values.
+     *
+     * Primarily used to clean up individual records that were seeded into primary tables (e.g.,
+     * {@link schema.subjects}, {@link schema.sessions}), for which calling `cleanupPrimaryTables` is too broad
+     * since it would also wipe out data (e.g., {@link schema.users}) that other tests in the same worker rely on.
+     *
+     * @param match The column values to match records against for deletion.
+     */
+    readonly deleteWhere: (match: Partial<Insert<T>>) => Promise<void>;
 }
 
 /**
@@ -184,6 +195,24 @@ export function createDatabaseManager(db: DrizzleDb) {
                 }
 
                 return values;
+            },
+
+            deleteWhere: async (match) => {
+                const columns = getTableColumns(table);
+
+                const conditions = Object.entries(match)
+                    .filter(([column]) => column in columns)
+                    .map(([column, value]) =>
+                        eq(columns[column] as AnyMySqlColumn, value),
+                    );
+
+                if (conditions.length === 0) {
+                    throw new Error(
+                        "deleteWhere requires at least one column to match on.",
+                    );
+                }
+
+                await db.delete(table).where(and(...conditions));
             },
         };
     }
