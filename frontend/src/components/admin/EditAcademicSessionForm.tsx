@@ -2,6 +2,7 @@
 
 import { APIError } from "@/api";
 import { useRouter } from "@/i18n/navigation";
+import { useAdminSession } from "@/providers/AdminSessionContext";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import { Input } from "@chakra-ui/react";
 import { AcademicSessionDTO } from "@psb/shared/types";
@@ -22,6 +23,7 @@ export function EditAcademicSessionForm({
     const formT = useTranslations("Form");
     const t = useTranslations("EditAcademicSession");
     const sessionApiClient = useSessionApiClient();
+    const adminSession = useAdminSession();
     const router = useRouter();
 
     const formatDate = (timestamp: number) => {
@@ -81,6 +83,7 @@ export function EditAcademicSessionForm({
                     type: "success",
                 });
 
+                adminSession?.refreshSession();
                 router.push("/admin/academic-years");
                 router.refresh();
             })

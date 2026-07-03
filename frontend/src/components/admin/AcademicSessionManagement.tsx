@@ -1,6 +1,7 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
+import { useAdminSession } from "@/providers/AdminSessionContext";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import {
     Badge,
@@ -30,6 +31,7 @@ export function AcademicSessionManagement() {
     const locale = useLocale();
     const t = useTranslations("AcademicSession");
     const sessionApiClient = useSessionApiClient();
+    const adminSession = useAdminSession();
 
     const [sessions, setSessions] = useState<AcademicSessionDTO[]>([]);
     const [isPending, startTransition] = useTransition();
@@ -319,6 +321,7 @@ export function AcademicSessionManagement() {
                             setPage(1);
                             setSearchQuery("");
                             setRefreshTrigger((prev) => prev + 1);
+                            adminSession?.refreshSession();
                         }}
                     />
                 )}
