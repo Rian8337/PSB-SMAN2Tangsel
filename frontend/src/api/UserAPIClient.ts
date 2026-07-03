@@ -49,35 +49,28 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         password: string,
         role: UserRole,
         identifier: string,
-    ): Promise<void> {
+    ) {
         await this.post("/create", {
             body: JSON.stringify({ name, password, role, identifier }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async updateUser(
-        userId: number,
-        name: string,
-        active: boolean,
-    ): Promise<void> {
+    async updateUser(userId: number, name: string, active: boolean) {
         await this.patch(`/${userId.toString()}`, {
             body: JSON.stringify({ name, active }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async updatePassword(
-        currentPassword: string,
-        newPassword: string,
-    ): Promise<void> {
+    async updatePassword(currentPassword: string, newPassword: string) {
         await this.patch("/update-password", {
             body: JSON.stringify({ currentPassword, newPassword }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async deleteUser(userId: number): Promise<void> {
+    async deleteUser(userId: number) {
         await this.delete(`/${userId.toString()}`);
     }
 }

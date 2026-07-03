@@ -63,11 +63,7 @@ export class ClassRepository
             .offset(offset);
     }
 
-    async create(
-        name: string,
-        session: ValidSession,
-        semester: ValidSemester,
-    ): Promise<void> {
+    async create(name: string, session: ValidSession, semester: ValidSemester) {
         await this.db.insert(classes).values({
             name,
             session,
@@ -75,7 +71,7 @@ export class ClassRepository
         });
     }
 
-    async update(id: number, name: string): Promise<void> {
+    async update(id: number, name: string) {
         await this.db.update(classes).set({ name }).where(eq(classes.id, id));
     }
 
@@ -97,7 +93,7 @@ export class ClassRepository
             .then((res) => res.length > 0);
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number) {
         await this.db.delete(classes).where(eq(classes.id, id));
     }
 }

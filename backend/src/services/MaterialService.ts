@@ -141,7 +141,7 @@ export class MaterialService implements IMaterialService {
         newFiles: TempFile[],
         renamedAttachments: { id: number; newName: string }[],
         deletedAttachmentIds: number[],
-    ): Promise<void> {
+    ) {
         const existing = await this.materialRepository.getTeacherMaterial(
             materialId,
             teacherId,
@@ -177,7 +177,7 @@ export class MaterialService implements IMaterialService {
         );
     }
 
-    async deleteMaterial(materialId: number, teacherId: number): Promise<void> {
+    async deleteMaterial(materialId: number, teacherId: number) {
         const existing = await this.materialRepository.getTeacherMaterial(
             materialId,
             teacherId,

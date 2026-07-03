@@ -63,14 +63,14 @@ export class ClassStudentAPIClient
         return this.get(url, { signal }).then((res) => res.json());
     }
 
-    async enrollStudent(classId: number, studentId: number): Promise<void> {
+    async enrollStudent(classId: number, studentId: number) {
         await this.post(`/${classId.toString()}/students`, {
             body: JSON.stringify({ studentId }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async unenrollStudent(classId: number, studentId: number): Promise<void> {
+    async unenrollStudent(classId: number, studentId: number) {
         await this.delete(
             `/${classId.toString()}/students/${studentId.toString()}`,
         );

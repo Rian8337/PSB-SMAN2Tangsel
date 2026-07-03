@@ -66,8 +66,5 @@ export interface ISubjectAssignmentSubmissionAPIClient {
      * @param assignmentId The unique identifier of the assignment.
      * @param signal An optional {@link AbortSignal} to cancel the request.
      */
-    deleteSubmission(
-        assignmentId: number,
-        signal?: AbortSignal,
-    ): Promise<void>;
+    deleteSubmission(assignmentId: number, signal?: AbortSignal): Promise<void>;
 }

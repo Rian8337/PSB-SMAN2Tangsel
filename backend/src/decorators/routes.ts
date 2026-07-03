@@ -34,8 +34,7 @@ function createRouteDecorator(method: HttpMethod) {
         return (target, propertyKey) => {
             const routes: RouteDefinition[] =
                 (Reflect.getMetadata("routes", target.constructor) as
-                    | RouteDefinition[]
-                    | undefined) ?? [];
+                    RouteDefinition[] | undefined) ?? [];
 
             routes.push({
                 path,

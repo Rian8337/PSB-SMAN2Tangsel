@@ -67,7 +67,7 @@ export class ClassSubjectAPIClient
         classId: number,
         subjectId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         await this.post(`/${classId.toString()}/subjects`, {
             body: JSON.stringify({ subjectId, teacherId }),
             headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ export class ClassSubjectAPIClient
         classId: number,
         assignmentId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         await this.patch(
             `/${classId.toString()}/subjects/${assignmentId.toString()}`,
             {
@@ -88,10 +88,7 @@ export class ClassSubjectAPIClient
         );
     }
 
-    async unassignSubject(
-        classId: number,
-        assignmentId: number,
-    ): Promise<void> {
+    async unassignSubject(classId: number, assignmentId: number) {
         await this.delete(
             `/${classId.toString()}/subjects/${assignmentId.toString()}`,
         );

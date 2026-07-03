@@ -19,8 +19,7 @@ export function Injectable(token: InjectionToken): ClassDecorator {
 
         const classes =
             (Reflect.getMetadata("classes", globalThis) as
-                | constructor<unknown>[]
-                | undefined) ?? [];
+                constructor<unknown>[] | undefined) ?? [];
 
         Reflect.defineMetadata(
             "classes",

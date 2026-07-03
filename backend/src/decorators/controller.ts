@@ -15,8 +15,7 @@ export function Controller(basePath = ""): ClassDecorator {
 
         const controllers =
             (Reflect.getMetadata("controllers", globalThis) as
-                | constructor<unknown>[]
-                | undefined) ?? [];
+                constructor<unknown>[] | undefined) ?? [];
 
         Reflect.defineMetadata(
             "controllers",

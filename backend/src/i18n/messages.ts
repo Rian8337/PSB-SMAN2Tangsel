@@ -193,8 +193,7 @@ export const messages = {
         material: {
             invalidId: "ID materi harus berupa bilangan bulat positif.",
             invalidTitle: "Judul materi tidak valid.",
-            invalidClassSubjectId:
-                "ID mata pelajaran kelas tidak valid.",
+            invalidClassSubjectId: "ID mata pelajaran kelas tidak valid.",
         },
         materialService: {
             notFound: "Materi tidak ditemukan.",

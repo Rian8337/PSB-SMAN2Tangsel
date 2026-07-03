@@ -8,8 +8,9 @@ import { useLocale } from "next-intl";
 import { createContext, use, useMemo } from "react";
 import { ApiProviderProps } from "./api-provider-props";
 
-const ApiContext =
-    createContext<ISubjectAssignmentSubmissionAPIClient | null>(null);
+const ApiContext = createContext<ISubjectAssignmentSubmissionAPIClient | null>(
+    null,
+);
 
 /**
  * Provider for an {@link ISubjectAssignmentSubmissionAPIClient}.

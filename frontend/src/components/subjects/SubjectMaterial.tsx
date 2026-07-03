@@ -253,9 +253,7 @@ export function SubjectMaterial({
                                         buildVisibilityFormData(material),
                                     )
                                     .then(() => {
-                                        startTransition(() =>
-                                            fetchMaterial(),
-                                        );
+                                        startTransition(() => fetchMaterial());
                                     })
                                     .catch(() => {
                                         toaster.create({

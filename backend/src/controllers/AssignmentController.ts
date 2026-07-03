@@ -159,9 +159,7 @@ export class AssignmentController extends BaseController {
         }
 
         try {
-            const parsedId = coercedAssignmentIdSchema.safeParse(
-                req.params.id,
-            );
+            const parsedId = coercedAssignmentIdSchema.safeParse(req.params.id);
 
             if (!parsedId.success) {
                 throw new BadRequestError(
@@ -202,18 +200,13 @@ export class AssignmentController extends BaseController {
      */
     @Delete("/:id")
     @Roles(UserRole.teacher)
-    async deleteAssignment(
-        req: ApiRequest<{ id: string }>,
-        res: ApiResponse,
-    ) {
+    async deleteAssignment(req: ApiRequest<{ id: string }>, res: ApiResponse) {
         if (!this.verifySession(req, res)) {
             return;
         }
 
         try {
-            const parsedId = coercedAssignmentIdSchema.safeParse(
-                req.params.id,
-            );
+            const parsedId = coercedAssignmentIdSchema.safeParse(req.params.id);
 
             if (!parsedId.success) {
                 throw new BadRequestError(

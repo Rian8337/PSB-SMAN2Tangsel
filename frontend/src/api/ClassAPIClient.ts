@@ -63,21 +63,21 @@ export class ClassAPIClient extends APIClient implements IClassAPIClient {
         name: string,
         session: ValidSession,
         semester: ValidSemester,
-    ): Promise<void> {
+    ) {
         await this.post("/", {
             body: JSON.stringify({ name, session, semester }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async updateClass(id: number, name: string): Promise<void> {
+    async updateClass(id: number, name: string) {
         await this.patch(`/${id.toString()}`, {
             body: JSON.stringify({ name }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async deleteClass(id: number): Promise<void> {
+    async deleteClass(id: number) {
         await this.delete(`/${id.toString()}`);
     }
 }

@@ -35,8 +35,7 @@ function normalizeBrowserApiBaseUrl(url: string): string {
  * - **Server**: `API_BASE_URL` → `NEXT_PUBLIC_API_URL` → `http://127.0.0.1:3001`.
  */
 export function getBackendBaseUrl(): string {
-    const fallback =
-        process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+    const fallback = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
 
     if (typeof window !== "undefined") {
         const runtimeCandidate = (globalThis as Record<string, unknown>)

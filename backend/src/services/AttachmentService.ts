@@ -37,7 +37,7 @@ export class AttachmentService implements IAttachmentService {
         return { id: record.id, name: record.name };
     }
 
-    async delete(ids: number[]): Promise<void> {
+    async delete(ids: number[]) {
         if (ids.length === 0) {
             return;
         }
@@ -51,9 +51,7 @@ export class AttachmentService implements IAttachmentService {
         await this.attachmentRepository.deleteByIds(ids);
     }
 
-    async updateRenameAttachments(
-        renames: { id: number; newName: string }[],
-    ): Promise<void> {
+    async updateRenameAttachments(renames: { id: number; newName: string }[]) {
         if (renames.length === 0) {
             return;
         }

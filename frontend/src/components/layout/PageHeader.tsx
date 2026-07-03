@@ -46,7 +46,12 @@ export function PageHeader({
                     <ArrowLeft size={32} color="black" strokeWidth={3} />
                 </IconButton>
 
-                <Heading as="h2" size={{ base: "lg", md: "xl" }} color="black" truncate>
+                <Heading
+                    as="h2"
+                    size={{ base: "lg", md: "xl" }}
+                    color="black"
+                    truncate
+                >
                     {title}
                 </Heading>
             </HStack>

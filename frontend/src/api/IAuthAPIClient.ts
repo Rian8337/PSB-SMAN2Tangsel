@@ -1,4 +1,8 @@
-import { LoginResponseBody, SuccessfulLoginResponse, UserSessionDTO } from "@psb/shared/types";
+import {
+    LoginResponseBody,
+    SuccessfulLoginResponse,
+    UserSessionDTO,
+} from "@psb/shared/types";
 
 /**
  * Provides operations for authentication-related API calls.

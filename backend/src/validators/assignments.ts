@@ -37,7 +37,8 @@ const dueAtSchema = z.preprocess(
     (v) => (v === "" || v == null ? null : v),
     z.union([
         z.null(),
-        z.string()
+        z
+            .string()
             .refine((v) => !isNaN(new Date(v).getTime()), assignmentDueAtError)
             .transform((v) => new Date(v)),
     ]),

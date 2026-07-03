@@ -145,19 +145,14 @@ export class ScheduleRepository
         return result.insertId;
     }
 
-    async update(
-        id: number,
-        day: ScheduleDay,
-        startTime: Date,
-        endTime: Date,
-    ): Promise<void> {
+    async update(id: number, day: ScheduleDay, startTime: Date, endTime: Date) {
         await this.db
             .update(schedules)
             .set({ day, startTime, endTime })
             .where(eq(schedules.id, id));
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number) {
         await this.db.delete(schedules).where(eq(schedules.id, id));
     }
 

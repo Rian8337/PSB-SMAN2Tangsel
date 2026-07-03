@@ -78,7 +78,10 @@ export interface ISubmissionRepository {
      * @param submissionId The unique identifier of the submission.
      * @param attachmentIds The IDs of the new attachments to add.
      */
-    addAttachments(submissionId: number, attachmentIds: number[]): Promise<void>;
+    addAttachments(
+        submissionId: number,
+        attachmentIds: number[],
+    ): Promise<void>;
 
     /**
      * Deletes the submission with the given ID.

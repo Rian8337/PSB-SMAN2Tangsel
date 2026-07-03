@@ -26,7 +26,11 @@ export function PageForm({
 }: PageFormProps) {
     return (
         <>
-            <PageHeader title={title} backButtonUrl={backButtonUrl} showSessionSwitcher={showSessionSwitcher} />
+            <PageHeader
+                title={title}
+                backButtonUrl={backButtonUrl}
+                showSessionSwitcher={showSessionSwitcher}
+            />
 
             <Box p={{ base: 4, md: 8 }} maxW="md">
                 <VStack

@@ -29,16 +29,13 @@ export class SubjectAssignmentAPIClient
         return this.post("/", { body: data }).then((res) => res.json());
     }
 
-    async updateAssignment(
-        assignmentId: number,
-        data: FormData,
-    ): Promise<void> {
+    async updateAssignment(assignmentId: number, data: FormData) {
         await this.put(`/${assignmentId.toString()}`, {
             body: data,
         });
     }
 
-    async deleteAssignment(assignmentId: number): Promise<void> {
+    async deleteAssignment(assignmentId: number) {
         await this.delete(`/${assignmentId.toString()}`);
     }
 }

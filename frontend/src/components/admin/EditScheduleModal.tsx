@@ -266,7 +266,10 @@ export function EditScheduleModal({
                         </NativeSelect.Root>
                     </FormField>
 
-                    <FormField label={t("fields.startTime.label")} id="startTime">
+                    <FormField
+                        label={t("fields.startTime.label")}
+                        id="startTime"
+                    >
                         <Input
                             id="startTime"
                             name="startTime"

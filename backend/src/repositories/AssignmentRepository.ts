@@ -226,7 +226,7 @@ export class AssignmentRepository
         dueAt: Date | null,
         visible: boolean,
         attachmentIds: number[],
-    ): Promise<void> {
+    ) {
         await this.db.transaction(async (tx) => {
             await tx
                 .update(assignments)
@@ -253,7 +253,7 @@ export class AssignmentRepository
         });
     }
 
-    async deleteAssignment(assignmentId: number): Promise<void> {
+    async deleteAssignment(assignmentId: number) {
         await this.db
             .delete(assignments)
             .where(eq(assignments.id, assignmentId));

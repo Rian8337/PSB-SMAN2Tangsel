@@ -58,14 +58,14 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         return { blob, filename };
     }
 
-    async createSchedule(options: CreateScheduleOptions): Promise<void> {
+    async createSchedule(options: CreateScheduleOptions) {
         await this.post("/", {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(options),
         });
     }
 
-    async updateSchedule(options: UpdateScheduleOptions): Promise<void> {
+    async updateSchedule(options: UpdateScheduleOptions) {
         const { id, ...data } = options;
 
         await this.put(`/${id.toString()}`, {
@@ -74,7 +74,7 @@ export class ScheduleAPIClient extends APIClient implements IScheduleAPIClient {
         });
     }
 
-    async deleteSchedule(id: number): Promise<void> {
+    async deleteSchedule(id: number) {
         await this.delete(`/${id.toString()}`);
     }
 }

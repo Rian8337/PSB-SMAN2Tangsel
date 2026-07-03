@@ -79,9 +79,7 @@ export function AsyncSelect({
 
         const controller = new AbortController();
 
-        startTransition(() =>
-            loadOptions(debouncedQuery, controller.signal),
-        );
+        startTransition(() => loadOptions(debouncedQuery, controller.signal));
 
         return () => {
             controller.abort();

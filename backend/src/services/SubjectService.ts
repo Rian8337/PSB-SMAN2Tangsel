@@ -44,7 +44,7 @@ export class SubjectService implements ISubjectService {
         return this.subjectRepository.list(query, limit, offset);
     }
 
-    async createSubject(code: string, name: string): Promise<void> {
+    async createSubject(code: string, name: string) {
         const existing = await this.subjectRepository.getByCode(code);
 
         if (existing) {
@@ -59,7 +59,7 @@ export class SubjectService implements ISubjectService {
         code: string,
         name: string,
         active: boolean,
-    ): Promise<void> {
+    ) {
         const existing = await this.subjectRepository.getById(id);
 
         if (!existing) {
@@ -77,7 +77,7 @@ export class SubjectService implements ISubjectService {
         return this.subjectRepository.update(id, code, name, active);
     }
 
-    async deleteSubject(id: number): Promise<void> {
+    async deleteSubject(id: number) {
         const subject = await this.subjectRepository.getById(id);
 
         if (!subject) {

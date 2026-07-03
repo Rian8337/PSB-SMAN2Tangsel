@@ -28,7 +28,7 @@ export class AuthAPIClient extends APIClient implements IAuthAPIClient {
         }).then((res) => res.json() as Promise<LoginResponseBody>);
     }
 
-    async logout(signal?: AbortSignal): Promise<void> {
+    async logout(signal?: AbortSignal) {
         await this.post("/logout", { signal });
     }
 
@@ -39,8 +39,8 @@ export class AuthAPIClient extends APIClient implements IAuthAPIClient {
     }
 
     getMySessions(signal?: AbortSignal): Promise<UserSessionDTO[]> {
-        return this.get(`${getBackendBaseUrl()}/users/me/sessions`, { signal }).then(
-            (res) => res.json(),
-        );
+        return this.get(`${getBackendBaseUrl()}/users/me/sessions`, {
+            signal,
+        }).then((res) => res.json());
     }
 }

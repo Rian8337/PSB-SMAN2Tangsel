@@ -29,8 +29,7 @@ export function Use(
             // Controller-level middleware
             const existing =
                 (Reflect.getMetadata("controller:middlewares", target) as
-                    | RequestHandler[]
-                    | undefined) ?? [];
+                    RequestHandler[] | undefined) ?? [];
 
             Reflect.defineMetadata(
                 "controller:middlewares",

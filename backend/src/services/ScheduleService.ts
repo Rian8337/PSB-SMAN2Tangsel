@@ -41,7 +41,11 @@ export class ScheduleService implements IScheduleService {
         semester?: ValidSemester,
     ): Promise<ScheduleDTO[]> {
         return session && semester
-            ? this.scheduleRepository.findByTeacherId(teacherId, session, semester)
+            ? this.scheduleRepository.findByTeacherId(
+                  teacherId,
+                  session,
+                  semester,
+              )
             : this.scheduleRepository.findByTeacherId(teacherId);
     }
 
@@ -101,7 +105,7 @@ export class ScheduleService implements IScheduleService {
         return Buffer.from(value);
     }
 
-    async create(options: CreateScheduleOptions): Promise<void> {
+    async create(options: CreateScheduleOptions) {
         this.validateTimeOrder(options.startTime, options.endTime);
 
         const hasConflict = await this.scheduleRepository.hasConflict(
@@ -123,7 +127,7 @@ export class ScheduleService implements IScheduleService {
         );
     }
 
-    async update(options: UpdateScheduleOptions): Promise<void> {
+    async update(options: UpdateScheduleOptions) {
         this.validateTimeOrder(options.startTime, options.endTime);
 
         const existingSchedule = await this.getById(options.id);
@@ -148,7 +152,7 @@ export class ScheduleService implements IScheduleService {
         );
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number) {
         await this.scheduleRepository.delete(id);
     }
 

@@ -182,7 +182,7 @@ export class ClassSubjectRepository
         classId: number,
         subjectId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         await this.db.insert(classSubjects).values({
             classId,
             subjectId,
@@ -194,7 +194,7 @@ export class ClassSubjectRepository
         classId: number,
         assignmentId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         await this.db
             .update(classSubjects)
             .set({ teacherId })
@@ -226,10 +226,7 @@ export class ClassSubjectRepository
         return assignmentCount.length > 0;
     }
 
-    async unassignSubject(
-        classId: number,
-        assignmentId: number,
-    ): Promise<void> {
+    async unassignSubject(classId: number, assignmentId: number) {
         await this.db
             .delete(classSubjects)
             .where(

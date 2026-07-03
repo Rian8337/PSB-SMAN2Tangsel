@@ -28,20 +28,14 @@ export class FileRepository implements IFileRepository {
         return readFile(join(this.storagePath, relativePath));
     }
 
-    async saveFile(
-        sourcePath: string,
-        destRelativePath: string,
-    ): Promise<void> {
+    async saveFile(sourcePath: string, destRelativePath: string) {
         const dest = join(this.storagePath, destRelativePath);
 
         await mkdir(dirname(dest), { recursive: true });
         await copyFile(sourcePath, dest);
     }
 
-    async rename(
-        oldRelativePath: string,
-        newRelativePath: string,
-    ): Promise<void> {
+    async rename(oldRelativePath: string, newRelativePath: string) {
         const { storagePath } = this;
 
         await rename(
@@ -50,7 +44,7 @@ export class FileRepository implements IFileRepository {
         );
     }
 
-    async deleteFile(relativePath: string): Promise<void> {
+    async deleteFile(relativePath: string) {
         try {
             await unlink(join(this.storagePath, relativePath));
         } catch (e) {

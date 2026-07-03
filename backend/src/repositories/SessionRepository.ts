@@ -75,7 +75,7 @@ export class SessionRepository
         startTime: Date,
         endTime: Date,
         active: boolean,
-    ): Promise<void> {
+    ) {
         await this.db.transaction(async (tx) => {
             if (active) {
                 // Deactivate any currently active session.
@@ -101,7 +101,7 @@ export class SessionRepository
         startTime: Date,
         endTime: Date,
         active: boolean,
-    ): Promise<void> {
+    ) {
         await this.db.transaction(async (tx) => {
             if (active) {
                 // Deactivate any currently active session.
@@ -127,10 +127,7 @@ export class SessionRepository
         });
     }
 
-    async delete(
-        session: ValidSession,
-        semester: ValidSemester,
-    ): Promise<void> {
+    async delete(session: ValidSession, semester: ValidSemester) {
         // TODO: delete all data related to this session that are not stored in the database (e.g., attachments in the file system)
         await this.db
             .delete(sessions)

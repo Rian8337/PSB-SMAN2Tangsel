@@ -53,7 +53,7 @@ export class ClassStudentService implements IClassStudentService {
         );
     }
 
-    async enrollStudent(classId: number, studentId: number): Promise<void> {
+    async enrollStudent(classId: number, studentId: number) {
         const clazz = await this.classRepository.getById(classId);
 
         if (!clazz) {
@@ -81,7 +81,7 @@ export class ClassStudentService implements IClassStudentService {
         await this.classStudentRepository.enrollStudent(classId, studentId);
     }
 
-    async unenrollStudent(classId: number, studentId: number): Promise<void> {
+    async unenrollStudent(classId: number, studentId: number) {
         await this.classStudentRepository.unenrollStudent(classId, studentId);
     }
 }

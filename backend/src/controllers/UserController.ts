@@ -4,7 +4,12 @@ import { Delete, Get, Patch, Post } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
 import { IClassSubjectService, IUserService } from "@/services";
-import { ApiRequest, ApiResponse, BadRequestError, ForbiddenError } from "@/types";
+import {
+    ApiRequest,
+    ApiResponse,
+    BadRequestError,
+    ForbiddenError,
+} from "@/types";
 import {
     coercedUserIdSchema,
     createUserSchema,
@@ -58,15 +63,17 @@ export class UserController extends BaseController {
 
             switch (sessionData.role) {
                 case UserRole.student:
-                    sessions = await this.classSubjectService.getStudentSessions(
-                        sessionData.userId,
-                    );
+                    sessions =
+                        await this.classSubjectService.getStudentSessions(
+                            sessionData.userId,
+                        );
                     break;
 
                 case UserRole.teacher:
-                    sessions = await this.classSubjectService.getTeacherSessions(
-                        sessionData.userId,
-                    );
+                    sessions =
+                        await this.classSubjectService.getTeacherSessions(
+                            sessionData.userId,
+                        );
                     break;
 
                 default:

@@ -148,11 +148,11 @@ export class ClassStudentRepository
             .then((res) => res.at(0) ?? null);
     }
 
-    async enrollStudent(classId: number, studentId: number): Promise<void> {
+    async enrollStudent(classId: number, studentId: number) {
         await this.db.insert(studentClasses).values({ classId, studentId });
     }
 
-    async unenrollStudent(classId: number, studentId: number): Promise<void> {
+    async unenrollStudent(classId: number, studentId: number) {
         await this.db
             .delete(studentClasses)
             .where(

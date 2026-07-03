@@ -20,13 +20,11 @@ export function createRouter(container = getContainer()) {
 
     const controllers =
         (Reflect.getMetadata("controllers", globalThis) as
-            | (new () => Record<string, RequestHandler>)[]
-            | undefined) ?? [];
+            (new () => Record<string, RequestHandler>)[] | undefined) ?? [];
 
     for (const ControllerClass of controllers) {
         const basePath = Reflect.getMetadata("basePath", ControllerClass) as
-            | string
-            | undefined;
+            string | undefined;
 
         if (!basePath) {
             throw new Error(
@@ -36,8 +34,7 @@ export function createRouter(container = getContainer()) {
 
         const routes =
             (Reflect.getMetadata("routes", ControllerClass) as
-                | RouteDefinition[]
-                | undefined) ?? [];
+                RouteDefinition[] | undefined) ?? [];
 
         if (routes.length === 0) {
             // Skip controllers without routes
@@ -46,8 +43,7 @@ export function createRouter(container = getContainer()) {
 
         const controllerMiddlewares =
             (Reflect.getMetadata("controller:middlewares", ControllerClass) as
-                | RequestHandler[]
-                | undefined) ?? [];
+                RequestHandler[] | undefined) ?? [];
 
         if (!container.isRegistered(ControllerClass)) {
             container.registerSingleton(ControllerClass);

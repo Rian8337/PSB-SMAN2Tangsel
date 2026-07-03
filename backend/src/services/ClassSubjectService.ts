@@ -81,7 +81,7 @@ export class ClassSubjectService implements IClassSubjectService {
         classId: number,
         subjectId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         const clazz = await this.classRepository.getById(classId);
 
         if (!clazz) {
@@ -105,7 +105,7 @@ export class ClassSubjectService implements IClassSubjectService {
         classId: number,
         assignmentId: number,
         teacherId: number | null,
-    ): Promise<void> {
+    ) {
         await this.classSubjectRepository.updateAssignedSubject(
             classId,
             assignmentId,
@@ -113,10 +113,7 @@ export class ClassSubjectService implements IClassSubjectService {
         );
     }
 
-    async unassignSubject(
-        classId: number,
-        assignmentId: number,
-    ): Promise<void> {
+    async unassignSubject(classId: number, assignmentId: number) {
         const hasContent =
             await this.classSubjectRepository.hasAssociatedContent(
                 assignmentId,
@@ -136,11 +133,10 @@ export class ClassSubjectService implements IClassSubjectService {
         classSubjectId: number,
         studentId: number,
     ): Promise<SubjectDashboard> {
-        const dashboard =
-            await this.classSubjectRepository.getStudentDashboard(
-                classSubjectId,
-                studentId,
-            );
+        const dashboard = await this.classSubjectRepository.getStudentDashboard(
+            classSubjectId,
+            studentId,
+        );
 
         if (!dashboard) {
             throw new NotFoundError("classSubjectService.notFound");
@@ -153,11 +149,10 @@ export class ClassSubjectService implements IClassSubjectService {
         classSubjectId: number,
         teacherId: number,
     ): Promise<SubjectDashboard> {
-        const dashboard =
-            await this.classSubjectRepository.getTeacherDashboard(
-                classSubjectId,
-                teacherId,
-            );
+        const dashboard = await this.classSubjectRepository.getTeacherDashboard(
+            classSubjectId,
+            teacherId,
+        );
 
         if (!dashboard) {
             throw new NotFoundError("classSubjectService.notFound");

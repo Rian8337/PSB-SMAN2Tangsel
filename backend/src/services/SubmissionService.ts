@@ -2,7 +2,10 @@ import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IAssignmentRepository, ISubmissionRepository } from "@/repositories";
 import { ConflictError, NotFoundError } from "@/types";
-import { AssignmentSubmissionRow, SubjectAssignmentSubmission } from "@psb/shared/types";
+import {
+    AssignmentSubmissionRow,
+    SubjectAssignmentSubmission,
+} from "@psb/shared/types";
 import { inject } from "tsyringe";
 import { IAttachmentService, TempFile } from "./IAttachmentService";
 import { IFileService, ZipEntry } from "./IFileService";
@@ -116,7 +119,7 @@ export class SubmissionService implements ISubmissionService {
         newFiles: TempFile[],
         renamedAttachments: { id: number; newName: string }[],
         deletedAttachmentIds: number[],
-    ): Promise<void> {
+    ) {
         const submission = await this.submissionRepository.getByStudent(
             assignmentId,
             studentId,
@@ -127,7 +130,9 @@ export class SubmissionService implements ISubmissionService {
         }
 
         await this.attachmentService.delete(deletedAttachmentIds);
-        await this.attachmentService.updateRenameAttachments(renamedAttachments);
+        await this.attachmentService.updateRenameAttachments(
+            renamedAttachments,
+        );
 
         const savedAttachments = await Promise.all(
             newFiles.map((file) => this.attachmentService.saveFile(file)),
@@ -139,10 +144,7 @@ export class SubmissionService implements ISubmissionService {
         );
     }
 
-    async deleteSubmission(
-        assignmentId: number,
-        studentId: number,
-    ): Promise<void> {
+    async deleteSubmission(assignmentId: number, studentId: number) {
         const submission = await this.submissionRepository.getByStudent(
             assignmentId,
             studentId,

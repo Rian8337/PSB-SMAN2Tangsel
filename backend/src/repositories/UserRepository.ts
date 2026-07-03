@@ -86,7 +86,7 @@ export class UserRepository
         passwordHash: string,
         role: UserRole,
         identifier: string,
-    ): Promise<void> {
+    ) {
         await this.db.transaction(async (tx) => {
             const [userResult] = await tx.insert(users).values({
                 name,
@@ -117,24 +117,21 @@ export class UserRepository
         });
     }
 
-    async update(userId: number, name: string, active: boolean): Promise<void> {
+    async update(userId: number, name: string, active: boolean) {
         await this.db
             .update(users)
             .set({ name, active })
             .where(eq(users.id, userId));
     }
 
-    async updatePassword(
-        userId: number,
-        newPasswordHash: string,
-    ): Promise<void> {
+    async updatePassword(userId: number, newPasswordHash: string) {
         await this.db
             .update(users)
             .set({ password: newPasswordHash })
             .where(eq(users.id, userId));
     }
 
-    async delete(userId: number, tx?: Transaction): Promise<void> {
+    async delete(userId: number, tx?: Transaction) {
         const ctx = tx ?? this.db;
 
         await ctx.delete(users).where(eq(users.id, userId));

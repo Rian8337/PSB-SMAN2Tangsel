@@ -55,7 +55,7 @@ export class ClassService implements IClassService {
         name: string,
         session: ValidSession,
         semester: ValidSemester,
-    ): Promise<void> {
+    ) {
         const dbSession = await this.sessionRepository.get(session, semester);
 
         if (!dbSession) {
@@ -65,7 +65,7 @@ export class ClassService implements IClassService {
         await this.classRepository.create(name, session, semester);
     }
 
-    async updateClass(id: number, name: string): Promise<void> {
+    async updateClass(id: number, name: string) {
         const clazz = await this.classRepository.getById(id);
 
         if (!clazz) {
@@ -75,7 +75,7 @@ export class ClassService implements IClassService {
         await this.classRepository.update(id, name);
     }
 
-    async deleteClass(id: number): Promise<void> {
+    async deleteClass(id: number) {
         const [hasSubjects, hasStudents] = await Promise.all([
             this.classRepository.hasSubjects(id),
             this.classRepository.hasStudents(id),

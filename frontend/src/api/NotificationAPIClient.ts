@@ -32,10 +32,7 @@ export class NotificationAPIClient
             .then((data) => data.count);
     }
 
-    async updateReadStatus(
-        notificationId: number,
-        read: boolean,
-    ): Promise<void> {
+    async updateReadStatus(notificationId: number, read: boolean) {
         await this.patch(`/${notificationId.toString()}/read-status`, {
             body: JSON.stringify({ read }),
             headers: { "Content-Type": "application/json" },

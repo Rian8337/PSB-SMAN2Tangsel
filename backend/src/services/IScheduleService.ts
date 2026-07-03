@@ -1,4 +1,9 @@
-import { ScheduleDay, ScheduleDTO, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    ScheduleDay,
+    ScheduleDTO,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 
 export interface CreateScheduleOptions {
     readonly classSubjectId: number;

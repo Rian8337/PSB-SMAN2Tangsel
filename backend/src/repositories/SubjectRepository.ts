@@ -55,16 +55,11 @@ export class SubjectRepository
         return builder.limit(limit).offset(offset);
     }
 
-    async create(code: string, name: string): Promise<void> {
+    async create(code: string, name: string) {
         await this.db.insert(subjects).values({ code, name });
     }
 
-    async update(
-        id: number,
-        code: string,
-        name: string,
-        active: boolean,
-    ): Promise<void> {
+    async update(id: number, code: string, name: string, active: boolean) {
         await this.db
             .update(subjects)
             .set({ code, name, active })
@@ -80,7 +75,7 @@ export class SubjectRepository
             .then((rows) => rows.length > 0);
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number) {
         await this.db.delete(subjects).where(eq(subjects.id, id));
     }
 }

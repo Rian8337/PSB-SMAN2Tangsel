@@ -1,4 +1,7 @@
-import { AssignmentSubmissionRow, SubjectAssignmentSubmission } from "@psb/shared/types";
+import {
+    AssignmentSubmissionRow,
+    SubjectAssignmentSubmission,
+} from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { ISubjectAssignmentSubmissionAPIClient } from "./ISubjectAssignmentSubmissionAPIClient";
 
@@ -66,17 +69,16 @@ export class SubjectAssignmentSubmissionAPIClient
         assignmentId: number,
         data: FormData,
         signal?: AbortSignal,
-    ): Promise<void> {
+    ) {
         await this.put(`/${assignmentId.toString()}/submissions`, {
             body: data,
             signal,
         });
     }
 
-    async deleteSubmission(
-        assignmentId: number,
-        signal?: AbortSignal,
-    ): Promise<void> {
-        await this.delete(`/${assignmentId.toString()}/submissions`, { signal });
+    async deleteSubmission(assignmentId: number, signal?: AbortSignal) {
+        await this.delete(`/${assignmentId.toString()}/submissions`, {
+            signal,
+        });
     }
 }

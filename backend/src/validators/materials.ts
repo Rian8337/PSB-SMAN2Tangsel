@@ -37,7 +37,10 @@ export const createMaterialBodySchema = z.object({
         .number(materialClassSubjectIdError)
         .int(materialClassSubjectIdError)
         .positive(materialClassSubjectIdError),
-    title: z.string(materialTitleError).min(1, materialTitleError).max(255, materialTitleError),
+    title: z
+        .string(materialTitleError)
+        .min(1, materialTitleError)
+        .max(255, materialTitleError),
     description: z
         .string()
         .max(2000)
@@ -54,7 +57,10 @@ export const createMaterialBodySchema = z.object({
  * Arrays are sent as JSON strings from the frontend and parsed here.
  */
 export const updateMaterialBodySchema = z.object({
-    title: z.string(materialTitleError).min(1, materialTitleError).max(255, materialTitleError),
+    title: z
+        .string(materialTitleError)
+        .min(1, materialTitleError)
+        .max(255, materialTitleError),
     description: z
         .string()
         .max(2000)
@@ -64,21 +70,19 @@ export const updateMaterialBodySchema = z.object({
     visible: z
         .union([z.boolean(), z.string().transform((v) => v === "true")])
         .default(false),
-    deletedAttachmentIds: z
-        .preprocess(
-            (val) => (typeof val === "string" ? (JSON.parse(val) as unknown) : val),
-            z.array(z.number().int().positive()).default([]),
-        ),
-    renamedAttachments: z
-        .preprocess(
-            (val) => (typeof val === "string" ? (JSON.parse(val) as unknown) : val),
-            z
-                .array(
-                    z.object({
-                        id: z.number().int().positive(),
-                        newName: z.string().min(1),
-                    }),
-                )
-                .default([]),
-        ),
+    deletedAttachmentIds: z.preprocess(
+        (val) => (typeof val === "string" ? (JSON.parse(val) as unknown) : val),
+        z.array(z.number().int().positive()).default([]),
+    ),
+    renamedAttachments: z.preprocess(
+        (val) => (typeof val === "string" ? (JSON.parse(val) as unknown) : val),
+        z
+            .array(
+                z.object({
+                    id: z.number().int().positive(),
+                    newName: z.string().min(1),
+                }),
+            )
+            .default([]),
+    ),
 });

@@ -22,12 +22,7 @@ export class NotificationRepository
         super(db);
     }
 
-    async create(
-        userId: number,
-        title: string,
-        message: string,
-        url?: string,
-    ): Promise<void> {
+    async create(userId: number, title: string, message: string, url?: string) {
         await this.db
             .insert(notifications)
             .values({ userId, title, message, url });
@@ -38,7 +33,7 @@ export class NotificationRepository
         title: string,
         message: string,
         url?: string,
-    ): Promise<void> {
+    ) {
         if (userIds.length === 0) {
             return;
         }
@@ -70,10 +65,7 @@ export class NotificationRepository
             .offset(offset);
     }
 
-    async updateReadStatus(
-        notificationId: number,
-        read: boolean,
-    ): Promise<void> {
+    async updateReadStatus(notificationId: number, read: boolean) {
         await this.db
             .update(notifications)
             .set({ read })

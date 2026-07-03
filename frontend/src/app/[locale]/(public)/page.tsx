@@ -62,7 +62,11 @@ export default function HomePage() {
 
                 <VStack gap={3} w="full">
                     {features.map((feature) => (
-                        <Card.Root key={feature.title} variant="elevated" w="full">
+                        <Card.Root
+                            key={feature.title}
+                            variant="elevated"
+                            w="full"
+                        >
                             <Card.Body>
                                 <HStack gap={4} alignItems="flex-start">
                                     <Flex

@@ -219,7 +219,7 @@ export class MaterialRepository
         description: string | null,
         visible: boolean,
         attachmentIds: number[],
-    ): Promise<void> {
+    ) {
         await this.db.transaction(async (tx) => {
             await tx
                 .update(materials)
@@ -241,7 +241,7 @@ export class MaterialRepository
         });
     }
 
-    async deleteMaterial(materialId: number): Promise<void> {
+    async deleteMaterial(materialId: number) {
         await this.db.delete(materials).where(eq(materials.id, materialId));
     }
 
@@ -254,7 +254,9 @@ export class MaterialRepository
         return rows.map((r) => r.attachmentId);
     }
 
-    private async getMaterialById(materialId: number): Promise<SubjectMaterial> {
+    private async getMaterialById(
+        materialId: number,
+    ): Promise<SubjectMaterial> {
         const row = await this.db
             .select({
                 id: materials.id,
@@ -271,14 +273,19 @@ export class MaterialRepository
                 },
             })
             .from(materials)
-            .innerJoin(classSubjects, eq(materials.classSubjectId, classSubjects.id))
+            .innerJoin(
+                classSubjects,
+                eq(materials.classSubjectId, classSubjects.id),
+            )
             .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
             .where(eq(materials.id, materialId))
             .limit(1)
             .then((res) => res.at(0));
 
         if (!row) {
-            throw new Error(`Material ${materialId.toString()} not found after insert`);
+            throw new Error(
+                `Material ${materialId.toString()} not found after insert`,
+            );
         }
 
         return this.assembleMaterial(row);

@@ -5,7 +5,10 @@ import { DrizzleDb } from "@psb/shared/types";
 import { eq, inArray } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
-import { AttachmentRecord, IAttachmentRepository } from "./IAttachmentRepository";
+import {
+    AttachmentRecord,
+    IAttachmentRepository,
+} from "./IAttachmentRepository";
 
 /**
  * Provides operations for managing attachment records in the database.
@@ -23,7 +26,9 @@ export class AttachmentRepository
     }
 
     async create(name: string, path: string): Promise<AttachmentRecord> {
-        const [result] = await this.db.insert(attachments).values({ name, path });
+        const [result] = await this.db
+            .insert(attachments)
+            .values({ name, path });
 
         return { id: result.insertId, name, path };
     }
@@ -34,19 +39,23 @@ export class AttachmentRepository
         }
 
         return this.db
-            .select({ id: attachments.id, name: attachments.name, path: attachments.path })
+            .select({
+                id: attachments.id,
+                name: attachments.name,
+                path: attachments.path,
+            })
             .from(attachments)
             .where(inArray(attachments.id, ids));
     }
 
-    async updateNameAndPath(id: number, newName: string, newPath: string): Promise<void> {
+    async updateNameAndPath(id: number, newName: string, newPath: string) {
         await this.db
             .update(attachments)
             .set({ name: newName, path: newPath })
             .where(eq(attachments.id, id));
     }
 
-    async deleteByIds(ids: number[]): Promise<void> {
+    async deleteByIds(ids: number[]) {
         if (ids.length === 0) {
             return;
         }

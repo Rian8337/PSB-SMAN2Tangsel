@@ -44,7 +44,7 @@ export class UserService implements IUserService {
         password: string,
         role: UserRole,
         identifier: string,
-    ): Promise<void> {
+    ) {
         name = name.trim();
         identifier = identifier.trim();
 
@@ -83,7 +83,7 @@ export class UserService implements IUserService {
         );
     }
 
-    async update(userId: number, name: string, active: boolean): Promise<void> {
+    async update(userId: number, name: string, active: boolean) {
         name = name.trim();
 
         this.verifyName(name);
@@ -101,7 +101,7 @@ export class UserService implements IUserService {
         userId: number,
         currentPassword: string,
         newPassword: string,
-    ): Promise<void> {
+    ) {
         const user = await this.userRepository.findById(userId);
 
         if (!user) {
@@ -133,7 +133,7 @@ export class UserService implements IUserService {
         );
     }
 
-    async delete(userId: number): Promise<void> {
+    async delete(userId: number) {
         const user = await this.userRepository.findById(userId);
 
         if (!user) {

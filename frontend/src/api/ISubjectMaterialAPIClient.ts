@@ -23,7 +23,10 @@ export interface ISubjectMaterialAPIClient {
      * @param signal An optional {@link AbortSignal} to cancel the request.
      * @returns The created material.
      */
-    createMaterial(data: FormData, signal?: AbortSignal): Promise<SubjectMaterial>;
+    createMaterial(
+        data: FormData,
+        signal?: AbortSignal,
+    ): Promise<SubjectMaterial>;
 
     /**
      * Updates an existing material. Sends multipart form data.

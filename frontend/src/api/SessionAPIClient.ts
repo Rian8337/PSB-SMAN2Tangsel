@@ -37,7 +37,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         startTime: number,
         endTime: number,
         active: boolean,
-    ): Promise<void> {
+    ) {
         await this.post("/", {
             body: JSON.stringify({
                 session,
@@ -79,7 +79,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         startTime: number,
         endTime: number,
         active: boolean,
-    ): Promise<void> {
+    ) {
         await this.put("/", {
             body: JSON.stringify({
                 session,
@@ -92,10 +92,7 @@ export class SessionAPIClient extends APIClient implements ISessionAPIClient {
         });
     }
 
-    async deleteSession(
-        session: ValidSession,
-        semester: ValidSemester,
-    ): Promise<void> {
+    async deleteSession(session: ValidSession, semester: ValidSemester) {
         await this.delete("/", {
             body: JSON.stringify({ session, semester }),
             headers: { "Content-Type": "application/json" },

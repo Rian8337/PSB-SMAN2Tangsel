@@ -41,7 +41,7 @@ export class NotificationService implements INotificationService {
         notificationId: number,
         userId: number,
         read: boolean,
-    ): Promise<void> {
+    ) {
         // Ensure that the notification belongs to the user before updating.
         const notification =
             await this.notificationRepository.findById(notificationId);
@@ -67,7 +67,7 @@ export class NotificationService implements INotificationService {
         title: string,
         message: string,
         url?: string,
-    ): Promise<void> {
+    ) {
         return this.notificationRepository.create(userId, title, message, url);
     }
 
@@ -76,7 +76,7 @@ export class NotificationService implements INotificationService {
         title: string,
         message: string,
         url?: string,
-    ): Promise<void> {
+    ) {
         const studentIds =
             await this.classRepository.getEnrolledStudentIds(classId);
 

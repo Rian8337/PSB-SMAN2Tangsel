@@ -1,4 +1,7 @@
-import { getServerAuthApiClient, getServerSessionApiClient } from "@/api/server";
+import {
+    getServerAuthApiClient,
+    getServerSessionApiClient,
+} from "@/api/server";
 import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { encodeSessionCode } from "@/utils/sessionCode";

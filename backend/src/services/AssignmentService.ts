@@ -103,7 +103,9 @@ export class AssignmentService implements IAssignmentService {
         dueAt,
         visible,
         files,
-    }: Parameters<IAssignmentService["addAssignment"]>[0]): Promise<TeacherSubjectAssignment> {
+    }: Parameters<
+        IAssignmentService["addAssignment"]
+    >[0]): Promise<TeacherSubjectAssignment> {
         const classSubject =
             await this.classSubjectRepository.getTeacherClassSubject(
                 classSubjectId,
@@ -147,7 +149,7 @@ export class AssignmentService implements IAssignmentService {
         newFiles,
         renamedAttachments,
         deletedAttachmentIds,
-    }: Parameters<IAssignmentService["updateAssignment"]>[0]): Promise<void> {
+    }: Parameters<IAssignmentService["updateAssignment"]>[0]) {
         const existing = await this.assignmentRepository.getTeacherAssignment(
             assignmentId,
             teacherId,
@@ -184,10 +186,7 @@ export class AssignmentService implements IAssignmentService {
         );
     }
 
-    async deleteAssignment(
-        assignmentId: number,
-        teacherId: number,
-    ): Promise<void> {
+    async deleteAssignment(assignmentId: number, teacherId: number) {
         const existing = await this.assignmentRepository.getTeacherAssignment(
             assignmentId,
             teacherId,

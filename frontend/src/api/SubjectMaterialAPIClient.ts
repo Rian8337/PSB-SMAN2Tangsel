@@ -22,21 +22,21 @@ export class SubjectMaterialAPIClient
         );
     }
 
-    createMaterial(data: FormData, signal?: AbortSignal): Promise<SubjectMaterial> {
+    createMaterial(
+        data: FormData,
+        signal?: AbortSignal,
+    ): Promise<SubjectMaterial> {
         return this.post("/", { body: data, signal }).then((res) => res.json());
     }
 
-    updateMaterial(
-        materialId: number,
-        data: FormData,
-        signal?: AbortSignal,
-    ): Promise<void> {
-        return this.put(`/${materialId.toString()}`, { body: data, signal }).then(
-            () => undefined,
-        );
+    updateMaterial(materialId: number, data: FormData, signal?: AbortSignal) {
+        return this.put(`/${materialId.toString()}`, {
+            body: data,
+            signal,
+        }).then(() => undefined);
     }
 
-    deleteMaterial(materialId: number, signal?: AbortSignal): Promise<void> {
+    deleteMaterial(materialId: number, signal?: AbortSignal) {
         return this.delete(`/${materialId.toString()}`, { signal }).then(
             () => undefined,
         );

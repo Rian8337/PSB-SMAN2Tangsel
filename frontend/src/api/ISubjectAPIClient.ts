@@ -1,4 +1,9 @@
-import { ClassSubjectAssignment, Subject, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    ClassSubjectAssignment,
+    Subject,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 
 /**
  * Provides operations for subject-related API calls.

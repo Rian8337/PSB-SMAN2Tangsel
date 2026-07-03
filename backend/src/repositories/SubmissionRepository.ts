@@ -15,7 +15,10 @@ import {
 import { SQL, and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
-import { ISubmissionRepository, SubmissionDownloadRow } from "./ISubmissionRepository";
+import {
+    ISubmissionRepository,
+    SubmissionDownloadRow,
+} from "./ISubmissionRepository";
 
 /**
  * Defines operations for accessing assignment submission data in the database.
@@ -32,7 +35,9 @@ export class SubmissionRepository
         super(db);
     }
 
-    async getForAssignment(assignmentId: number): Promise<AssignmentSubmissionRow[]> {
+    async getForAssignment(
+        assignmentId: number,
+    ): Promise<AssignmentSubmissionRow[]> {
         const rows = await this.db
             .select({
                 studentId: users.id,
@@ -41,7 +46,10 @@ export class SubmissionRepository
                 submittedAt: assignmentSubmissions.createdAt,
             })
             .from(assignmentSubmissions)
-            .innerJoin(students, eq(assignmentSubmissions.studentId, students.userId))
+            .innerJoin(
+                students,
+                eq(assignmentSubmissions.studentId, students.userId),
+            )
             .innerJoin(users, eq(students.userId, users.id))
             .where(eq(assignmentSubmissions.assignmentId, assignmentId));
 
@@ -148,9 +156,13 @@ export class SubmissionRepository
 
     async getAttachmentIds(submissionId: number): Promise<number[]> {
         const rows = await this.db
-            .select({ attachmentId: assignmentSubmissionAttachments.attachmentId })
+            .select({
+                attachmentId: assignmentSubmissionAttachments.attachmentId,
+            })
             .from(assignmentSubmissionAttachments)
-            .where(eq(assignmentSubmissionAttachments.submissionId, submissionId));
+            .where(
+                eq(assignmentSubmissionAttachments.submissionId, submissionId),
+            );
 
         return rows.map((r) => r.attachmentId);
     }
@@ -185,20 +197,20 @@ export class SubmissionRepository
         return submission!;
     }
 
-    async addAttachments(
-        submissionId: number,
-        attachmentIds: number[],
-    ): Promise<void> {
+    async addAttachments(submissionId: number, attachmentIds: number[]) {
         if (attachmentIds.length === 0) {
             return;
         }
 
         await this.db.insert(assignmentSubmissionAttachments).values(
-            attachmentIds.map((attachmentId) => ({ submissionId, attachmentId })),
+            attachmentIds.map((attachmentId) => ({
+                submissionId,
+                attachmentId,
+            })),
         );
     }
 
-    async delete(submissionId: number): Promise<void> {
+    async delete(submissionId: number) {
         await this.db
             .delete(assignmentSubmissions)
             .where(eq(assignmentSubmissions.id, submissionId));

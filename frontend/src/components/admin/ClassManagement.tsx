@@ -138,9 +138,7 @@ export function ClassManagement() {
             });
     };
 
-    const header = (
-        <PageHeader title={t("title")} backButtonUrl="/admin" />
-    );
+    const header = <PageHeader title={t("title")} backButtonUrl="/admin" />;
 
     if (isLoadingSession) {
         return (

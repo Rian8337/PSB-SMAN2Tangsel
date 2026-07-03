@@ -1,4 +1,9 @@
-import { ClassSubjectAssignment, Subject, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    ClassSubjectAssignment,
+    Subject,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { APIClient } from "./APIClient";
 import { ISubjectAPIClient } from "./ISubjectAPIClient";
 
@@ -72,7 +77,7 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
         return this.get(url, { signal }).then((res) => res.json());
     }
 
-    async createSubject(code: string, name: string): Promise<void> {
+    async createSubject(code: string, name: string) {
         await this.post("/", {
             body: JSON.stringify({ code, name }),
             headers: { "Content-Type": "application/json" },
@@ -84,14 +89,14 @@ export class SubjectAPIClient extends APIClient implements ISubjectAPIClient {
         code: string,
         name: string,
         active: boolean,
-    ): Promise<void> {
+    ) {
         await this.put(`/${id.toString()}`, {
             body: JSON.stringify({ code, name, active }),
             headers: { "Content-Type": "application/json" },
         });
     }
 
-    async deleteSubject(id: number): Promise<void> {
+    async deleteSubject(id: number) {
         await this.delete(`/${id.toString()}`);
     }
 }

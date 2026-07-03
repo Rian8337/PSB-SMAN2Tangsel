@@ -35,7 +35,11 @@ export interface IAttachmentRepository {
      * @param newName The new display name.
      * @param newPath The new storage path relative to the storage root.
      */
-    updateNameAndPath(id: number, newName: string, newPath: string): Promise<void>;
+    updateNameAndPath(
+        id: number,
+        newName: string,
+        newPath: string,
+    ): Promise<void>;
 
     /**
      * Deletes attachment records by their IDs.

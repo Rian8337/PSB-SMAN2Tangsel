@@ -42,9 +42,8 @@ export function ClassStudentManagement({ clazz }: ClassStudentManagementProps) {
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    const [prevDebouncedSearchQuery, setPrevDebouncedSearchQuery] = useState(
-        debouncedSearchQuery,
-    );
+    const [prevDebouncedSearchQuery, setPrevDebouncedSearchQuery] =
+        useState(debouncedSearchQuery);
 
     if (debouncedSearchQuery !== prevDebouncedSearchQuery) {
         setPrevDebouncedSearchQuery(debouncedSearchQuery);

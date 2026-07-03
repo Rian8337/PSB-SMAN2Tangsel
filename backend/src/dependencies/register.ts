@@ -16,13 +16,11 @@ import { dependencyTokens } from "./tokens";
 export function registerDependencies(container = getContainer()) {
     const classes =
         (Reflect.getMetadata("classes", globalThis) as
-            | constructor<unknown>[]
-            | undefined) ?? [];
+            constructor<unknown>[] | undefined) ?? [];
 
     for (const cls of classes) {
         const token = Reflect.getMetadata("registrationToken", cls) as
-            | InjectionToken<unknown>
-            | undefined;
+            InjectionToken<unknown> | undefined;
 
         if (!token) {
             throw new Error(

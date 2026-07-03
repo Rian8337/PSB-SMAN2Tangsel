@@ -60,7 +60,7 @@ export class SessionService implements ISessionService {
         startTime: Date,
         endTime: Date,
         active: boolean,
-    ): Promise<void> {
+    ) {
         if (startTime >= endTime) {
             throw new BadRequestError("sessionService.invalidSessionTime");
         }
@@ -89,7 +89,7 @@ export class SessionService implements ISessionService {
         startTime: Date,
         endTime: Date,
         active: boolean,
-    ): Promise<void> {
+    ) {
         if (startTime >= endTime) {
             throw new BadRequestError("sessionService.invalidSessionTime");
         }
@@ -112,10 +112,7 @@ export class SessionService implements ISessionService {
         );
     }
 
-    async deleteSession(
-        session: ValidSession,
-        semester: ValidSemester,
-    ): Promise<void> {
+    async deleteSession(session: ValidSession, semester: ValidSemester) {
         const existingSession = await this.sessionRepository.get(
             session,
             semester,

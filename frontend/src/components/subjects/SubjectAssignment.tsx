@@ -245,7 +245,9 @@ export function SubjectAssignment({
                                     submission={studentAssignment.submission}
                                     onSuccess={() => {
                                         setIsEditing(false);
-                                        startTransition(() => fetchAssignment());
+                                        startTransition(() =>
+                                            fetchAssignment(),
+                                        );
                                     }}
                                     onCancel={() => {
                                         setIsEditing(false);
@@ -322,7 +324,9 @@ export function SubjectAssignment({
                                                             type: "success",
                                                         });
 
-                                                        startTransition(() => fetchAssignment());
+                                                        startTransition(() =>
+                                                            fetchAssignment(),
+                                                        );
                                                     })
                                                     .catch(() => {
                                                         toaster.create({
@@ -436,7 +440,9 @@ export function SubjectAssignment({
                                         ),
                                     )
                                     .then(() => {
-                                        startTransition(() => fetchAssignment());
+                                        startTransition(() =>
+                                            fetchAssignment(),
+                                        );
                                     })
                                     .catch(() => {
                                         toaster.create({

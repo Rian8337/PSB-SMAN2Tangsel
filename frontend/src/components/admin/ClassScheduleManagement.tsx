@@ -61,9 +61,7 @@ export function ClassScheduleManagement({
         const isBackgroundRefresh = refreshTrigger > 0;
 
         if (isBackgroundRefresh) {
-            startBackgroundTransition(() =>
-                fetchSchedules(controller.signal),
-            );
+            startBackgroundTransition(() => fetchSchedules(controller.signal));
         } else {
             startTransition(() => fetchSchedules(controller.signal));
         }
