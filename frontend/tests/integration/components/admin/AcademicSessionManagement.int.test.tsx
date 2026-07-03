@@ -1,6 +1,9 @@
+import { APIError } from "@/api";
 import { AcademicSessionManagement } from "@/components/admin/AcademicSessionManagement";
+import { ClassManagement } from "@/components/admin/ClassManagement";
+import { AdminSessionProvider } from "@/providers/AdminSessionContext";
 import { AcademicSessionDTO } from "@psb/shared/types";
-import { mockSessionApiClient } from "@test/mocks";
+import { mockClassApiClient, mockSessionApiClient } from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -137,5 +140,71 @@ describe("AcademicSessionManagement (integration)", () => {
         });
 
         expect(deleteBtn).not.toBeInTheDocument();
+    });
+
+    it("should refresh the shared active session so other admin pages pick up a newly created active session", async () => {
+        const user = userEvent.setup();
+
+        // No active session exists yet, mirroring a fresh installation.
+        mockSessionApiClient.getActive.mockRejectedValueOnce(
+            new APIError(404, "No active session"),
+        );
+
+        mockSessionApiClient.listSessions.mockResolvedValue([]);
+        mockClassApiClient.listClasses.mockResolvedValue([]);
+
+        const newSession: AcademicSessionDTO = {
+            session: "2025/2026",
+            semester: 1,
+            startTime: new Date(2025, 6, 1).getTime(),
+            endTime: new Date(2025, 11, 31).getTime(),
+            active: true,
+        };
+
+        mockSessionApiClient.createSession.mockResolvedValueOnce(undefined);
+
+        // Once the new session is created, refetching the active session must return it.
+        mockSessionApiClient.getActive.mockResolvedValueOnce(newSession);
+
+        // AdminSessionProvider is mounted once at the admin layout level, so both pages
+        // share the same context instance, just as they would across real navigation.
+        renderWithChakraProvider(
+            <AdminSessionProvider>
+                <AcademicSessionManagement />
+                <ClassManagement />
+            </AdminSessionProvider>,
+        );
+
+        await waitFor(() => {
+            expect(screen.getByText("noActiveSession")).toBeInTheDocument();
+        });
+
+        await user.click(screen.getByRole("button", { name: "addButton" }));
+
+        const startInput = screen.getByLabelText("dialog.startDate.label");
+        const endInput = screen.getByLabelText("dialog.endDate.label");
+        const activeSwitch = screen.getByRole("checkbox");
+
+        await user.type(startInput, "2025-07-01");
+        await user.type(endInput, "2025-12-31");
+        await user.click(activeSwitch.closest("label")!);
+
+        await user.click(
+            screen.getByRole("button", { name: "dialog.submitButton" }),
+        );
+
+        await waitFor(() => {
+            expect(mockSessionApiClient.createSession).toHaveBeenCalled();
+        });
+
+        // The AdminSessionContext must have refetched the active session, so ClassManagement
+        // (which never re-mounts during normal navigation) reflects the new active session
+        // instead of remaining stuck on "noActiveSession".
+        await waitFor(() => {
+            expect(mockSessionApiClient.getActive).toHaveBeenCalledTimes(2);
+            expect(
+                screen.queryByText("noActiveSession"),
+            ).not.toBeInTheDocument();
+        });
     });
 });
