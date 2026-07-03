@@ -5,7 +5,14 @@ import { toaster } from "@/components/ui/toaster";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
 import { AcademicSessionDTO } from "@psb/shared/types";
 import { useTranslations } from "next-intl";
-import { createContext, use, useEffect, useState } from "react";
+import {
+    createContext,
+    use,
+    useCallback,
+    useEffect,
+    useState,
+    useTransition,
+} from "react";
 
 /**
  * Context for managing the currently selected academic session in the admin interface. This allows
@@ -29,6 +36,13 @@ interface AdminSessionContextValue {
      * @param session The session to select.
      */
     setSelectedSession: (session: AcademicSessionDTO) => void;
+
+    /**
+     * Re-fetches the currently active session from the server. Should be called after any
+     * operation that may change which academic session is active (e.g., creating or updating
+     * a semester), since the active session is only fetched once when this provider mounts.
+     */
+    refreshSession: () => void;
 }
 
 const AdminSessionContext = createContext<AdminSessionContextValue | null>(
@@ -49,44 +63,55 @@ export function AdminSessionProvider({
     const [selectedSession, setSelectedSession] =
         useState<AcademicSessionDTO | null>(null);
 
-    const [isLoadingSession, setIsLoadingSession] = useState(true);
+    const [isLoadingSession, startTransition] = useTransition();
+
+    const fetchActiveSession = useCallback(
+        (signal?: AbortSignal) =>
+            sessionApiClient
+                .getActive(signal)
+                .then((session) => {
+                    setSelectedSession(session);
+                })
+                .catch((e: unknown) => {
+                    if (e instanceof Error && e.name === "AbortError") {
+                        return;
+                    }
+
+                    // 404 means no active session.
+                    if (e instanceof APIError && e.code === 404) {
+                        setSelectedSession(null);
+                        return;
+                    }
+
+                    toaster.create({
+                        title: t("fetchSessionToast.errorTitle"),
+                        description: t("fetchSessionToast.errorMessage"),
+                        type: "error",
+                    });
+                }),
+        [sessionApiClient, t],
+    );
 
     useEffect(() => {
         const controller = new AbortController();
 
-        sessionApiClient
-            .getActive(controller.signal)
-            .then((session) => {
-                setSelectedSession(session);
-            })
-            .catch((e: unknown) => {
-                if (e instanceof Error && e.name === "AbortError") {
-                    return;
-                }
-
-                // 404 means no active session; leave selectedSession as null silently.
-                if (e instanceof APIError && e.code === 404) {
-                    return;
-                }
-
-                toaster.create({
-                    title: t("fetchSessionToast.errorTitle"),
-                    description: t("fetchSessionToast.errorMessage"),
-                    type: "error",
-                });
-            })
-            .finally(() => {
-                setIsLoadingSession(false);
-            });
+        startTransition(() => fetchActiveSession(controller.signal));
 
         return () => {
             controller.abort();
         };
-    }, [sessionApiClient, t]);
+    }, [fetchActiveSession]);
 
     return (
         <AdminSessionContext
-            value={{ selectedSession, isLoadingSession, setSelectedSession }}
+            value={{
+                selectedSession,
+                isLoadingSession,
+                setSelectedSession,
+                refreshSession: () => {
+                    startTransition(() => fetchActiveSession());
+                },
+            }}
         >
             {children}
         </AdminSessionContext>
