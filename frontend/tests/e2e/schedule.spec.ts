@@ -36,7 +36,7 @@ test.describe("Student Dashboard Schedule", () => {
         await seeders.schedules.seedOne({
             id: 1,
             classSubjectId: classSubject.id!,
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             startTime: new Date(2024, 0, 1, 8),
             endTime: new Date(2024, 0, 1, 9, 30),
         });

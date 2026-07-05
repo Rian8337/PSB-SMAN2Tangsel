@@ -50,7 +50,7 @@ export class AssignmentController extends BaseController {
      * Returns the details of an assignment for the currently authenticated student or teacher.
      */
     @Get("/:id")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getAssignment(
         req: ApiRequest<
             { id: string },
@@ -75,7 +75,7 @@ export class AssignmentController extends BaseController {
             let assignment: StudentSubjectAssignment | TeacherSubjectAssignment;
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     assignment =
                         await this.assignmentService.getStudentAssignment(
                             parsedId.data,
@@ -83,7 +83,7 @@ export class AssignmentController extends BaseController {
                         );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     assignment =
                         await this.assignmentService.getTeacherAssignment(
                             parsedId.data,
@@ -105,7 +105,7 @@ export class AssignmentController extends BaseController {
      * Creates a new assignment in a class subject. Accepts multipart form data.
      */
     @Post("/")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async createAssignment(
         req: ApiRequest<
             Record<string, never>,
@@ -149,7 +149,7 @@ export class AssignmentController extends BaseController {
      * Updates an existing assignment. Accepts multipart form data.
      */
     @Put("/:id")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async updateAssignment(
         req: ApiRequest<{ id: string }, unknown, Record<string, unknown>>,
         res: ApiResponse,
@@ -199,7 +199,7 @@ export class AssignmentController extends BaseController {
      * Deletes an assignment and all its attachments and submissions.
      */
     @Delete("/:id")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async deleteAssignment(req: ApiRequest<{ id: string }>, res: ApiResponse) {
         if (!this.verifySession(req, res)) {
             return;
@@ -229,7 +229,7 @@ export class AssignmentController extends BaseController {
      * Streams an assignment attachment file to the client.
      */
     @Get("/:assignmentId/attachments/:attachmentId")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async downloadAttachment(
         req: ApiRequest<{ assignmentId: string; attachmentId: string }>,
         res: ApiResponse,
@@ -263,7 +263,7 @@ export class AssignmentController extends BaseController {
             let attachment: { path: string; name: string };
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     attachment =
                         await this.assignmentService.getStudentAttachment(
                             parsedAssignmentId.data,
@@ -272,7 +272,7 @@ export class AssignmentController extends BaseController {
                         );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     attachment =
                         await this.assignmentService.getTeacherAttachment(
                             parsedAssignmentId.data,
@@ -286,7 +286,7 @@ export class AssignmentController extends BaseController {
             }
 
             const storagePath = this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.storagePath,
+                EnvironmentVariableKey.StoragePath,
                 true,
             );
 

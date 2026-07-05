@@ -100,7 +100,7 @@ export const seededPrimaryData = {
             id: 1,
             name: "Administrator",
             password: testPasswordHash,
-            role: UserRole.administrator,
+            role: UserRole.Administrator,
             identifier: "1",
         },
         {
@@ -108,7 +108,7 @@ export const seededPrimaryData = {
             name: "Teacher",
             id: 2,
             password: testPasswordHash,
-            role: UserRole.teacher,
+            role: UserRole.Teacher,
             identifier: "2",
         },
         {
@@ -116,7 +116,7 @@ export const seededPrimaryData = {
             name: "Active Student",
             id: 3,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             identifier: "0012345678",
         },
         {
@@ -124,7 +124,7 @@ export const seededPrimaryData = {
             name: "Inactive Student",
             id: 4,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             identifier: "0012345679",
         },
     ] as const satisfies readonly Insert<typeof schema.users>[],

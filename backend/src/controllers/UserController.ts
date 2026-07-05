@@ -48,7 +48,7 @@ export class UserController extends BaseController {
      * Returns the distinct academic sessions and semesters the authenticated user has data in.
      */
     @Get("/me/sessions")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getMySessions(
         req: ApiRequest<unknown, UserSessionDTO[]>,
         res: ApiResponse<UserSessionDTO[]>,
@@ -62,14 +62,14 @@ export class UserController extends BaseController {
             let sessions: UserSessionDTO[] = [];
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     sessions =
                         await this.classSubjectService.getStudentSessions(
                             sessionData.userId,
                         );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     sessions =
                         await this.classSubjectService.getTeacherSessions(
                             sessionData.userId,
@@ -90,7 +90,7 @@ export class UserController extends BaseController {
      * Lists users for display in the UI.
      */
     @Get("/list")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async listUsers(
         req: ApiRequest<
             unknown,
@@ -133,7 +133,7 @@ export class UserController extends BaseController {
      * Obtains detailed information about a specific user by their ID.
      */
     @Get("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getUser(
         req: ApiRequest<{ id: string }, UserListItem>,
         res: ApiResponse<UserListItem>,
@@ -165,7 +165,7 @@ export class UserController extends BaseController {
      * Registers a new user.
      */
     @Post("/create")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async createUser(
         req: ApiRequest<
             unknown,
@@ -252,7 +252,7 @@ export class UserController extends BaseController {
      * Updates a user's name and active state.
      */
     @Patch("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async updateUser(
         req: ApiRequest<
             { id: string },
@@ -300,7 +300,7 @@ export class UserController extends BaseController {
      * Deletes a user.
      */
     @Delete("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async deleteUser(
         req: ApiRequest<{ id: string }, never>,
         res: ApiResponse<never>,

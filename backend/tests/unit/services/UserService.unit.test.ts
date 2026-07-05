@@ -16,7 +16,7 @@ describe("UserService (unit)", () => {
     const mockUser: User = {
         id: 1,
         name: "John Doe",
-        role: UserRole.student,
+        role: UserRole.Student,
         active: true,
         password: "idk",
         identifier: "1234567890",
@@ -69,7 +69,7 @@ describe("UserService (unit)", () => {
             await service.create(
                 "John Doe",
                 validPassword,
-                UserRole.student,
+                UserRole.Student,
                 "1234567890",
             );
 
@@ -78,7 +78,7 @@ describe("UserService (unit)", () => {
             expect(mockUserRepository.create).toHaveBeenCalledWith(
                 "John Doe",
                 "hashedPassword",
-                UserRole.student,
+                UserRole.Student,
                 "1234567890",
             );
         });
@@ -89,14 +89,14 @@ describe("UserService (unit)", () => {
             await service.create(
                 "   John Doe   ",
                 validPassword,
-                UserRole.student,
+                UserRole.Student,
                 "  1234567890   ",
             );
 
             expect(mockUserRepository.create).toHaveBeenCalledWith(
                 "John Doe",
                 "hashedPassword",
-                UserRole.student,
+                UserRole.Student,
                 "1234567890",
             );
         });
@@ -115,7 +115,7 @@ describe("UserService (unit)", () => {
                 service.create(
                     invalidUsername,
                     validPassword,
-                    UserRole.student,
+                    UserRole.Student,
                     "1234567890",
                 ),
             ).rejects.toThrow(new BadRequestError("user.invalidName"));
@@ -135,7 +135,7 @@ describe("UserService (unit)", () => {
                 service.create(
                     "John Doe",
                     invalidPassword,
-                    UserRole.student,
+                    UserRole.Student,
                     "1234567890",
                 ),
             ).rejects.toThrow(new BadRequestError("user.invalidPassword"));
@@ -155,7 +155,7 @@ describe("UserService (unit)", () => {
                     service.create(
                         "John Doe",
                         validPassword,
-                        UserRole.student,
+                        UserRole.Student,
                         invalidIdentifier,
                     ),
                 ).rejects.toThrow(
@@ -178,7 +178,7 @@ describe("UserService (unit)", () => {
                     service.create(
                         "John Doe",
                         validPassword,
-                        UserRole.teacher,
+                        UserRole.Teacher,
                         invalidIdentifier,
                     ),
                 ).rejects.toThrow(
@@ -192,7 +192,7 @@ describe("UserService (unit)", () => {
                 service.create(
                     "John Doe",
                     validPassword,
-                    UserRole.administrator,
+                    UserRole.Administrator,
                     "12345",
                 ),
             ).rejects.toThrow(new BadRequestError("user.invalidRole"));
@@ -246,7 +246,7 @@ describe("UserService (unit)", () => {
             active: true,
             name: "John Doe",
             password: "oldHashedPassword",
-            role: UserRole.student,
+            role: UserRole.Student,
             identifier: "1234567890",
         };
 
@@ -315,7 +315,7 @@ describe("UserService (unit)", () => {
             active: true,
             name: "John Doe",
             password: "hashedPassword",
-            role: UserRole.student,
+            role: UserRole.Student,
             identifier: "1234567890",
         };
 

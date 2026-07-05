@@ -11,11 +11,11 @@ test.describe("View Subject Material Flow", () => {
     const seededAttachment = seededPrimaryData.attachments[0];
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let classSubjectId: number;
@@ -147,9 +147,9 @@ test.describe("View Subject Material Flow", () => {
                 `/id/${sessionCode}/subjects/${classSubjectId.toString()}/materials/${visibleMaterialId.toString()}`,
             );
 
-            await expect(
-                page.getByText(seededAttachment.name),
-            ).toBeVisible({ timeout: 3000 });
+            await expect(page.getByText(seededAttachment.name)).toBeVisible({
+                timeout: 3000,
+            });
         }).toPass({ timeout: 15000 });
 
         const attachmentLink = page.getByRole("link", {

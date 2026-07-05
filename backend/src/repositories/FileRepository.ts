@@ -19,7 +19,7 @@ export class FileRepository implements IFileRepository {
         configService: IConfigService,
     ) {
         this.storagePath = configService.getEnvironmentVariable(
-            EnvironmentVariableKey.storagePath,
+            EnvironmentVariableKey.StoragePath,
             true,
         );
     }

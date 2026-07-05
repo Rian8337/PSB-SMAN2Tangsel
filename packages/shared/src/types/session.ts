@@ -25,7 +25,7 @@ interface BaseSessionData<TRole extends UserRole> {
 /**
  * Session data for a student.
  */
-export interface StudentSessionData extends BaseSessionData<UserRole.student> {
+export interface StudentSessionData extends BaseSessionData<UserRole.Student> {
     /**
      * The ID of the class the student is enrolled to.
      */
@@ -35,20 +35,18 @@ export interface StudentSessionData extends BaseSessionData<UserRole.student> {
 /**
  * Session data for a teacher.
  */
-export type TeacherSessionData = BaseSessionData<UserRole.teacher>;
+export type TeacherSessionData = BaseSessionData<UserRole.Teacher>;
 
 /**
  * Session data for an administrator.
  */
-export type AdministratorSessionData = BaseSessionData<UserRole.administrator>;
+export type AdministratorSessionData = BaseSessionData<UserRole.Administrator>;
 
 /**
  * All session data.
  */
 export type SessionData =
-    | StudentSessionData
-    | TeacherSessionData
-    | AdministratorSessionData;
+    StudentSessionData | TeacherSessionData | AdministratorSessionData;
 
 /**
  * Represents a session cookie's payload after decryption.

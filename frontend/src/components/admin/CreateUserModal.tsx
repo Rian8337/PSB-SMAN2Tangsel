@@ -28,7 +28,7 @@ export function CreateUserModal({
 
     const [name, setName] = useState("");
     const [identifier, setIdentifier] = useState("");
-    const [role, setRole] = useState(UserRole.student);
+    const [role, setRole] = useState(UserRole.Student);
     const [password, setPassword] = useState("");
 
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ export function CreateUserModal({
     const resetForm = () => {
         setName("");
         setIdentifier("");
-        setRole(UserRole.student);
+        setRole(UserRole.Student);
         setPassword("");
         setError(null);
     };
@@ -137,15 +137,15 @@ export function CreateUserModal({
                         }}
                         placeholder={t("createUser.dialog.rolePlaceholder")}
                     >
-                        <option value={UserRole.student.toString()}>
+                        <option value={UserRole.Student.toString()}>
                             {t("roles.0")}
                         </option>
 
-                        <option value={UserRole.teacher.toString()}>
+                        <option value={UserRole.Teacher.toString()}>
                             {t("roles.1")}
                         </option>
 
-                        <option value={UserRole.administrator.toString()}>
+                        <option value={UserRole.Administrator.toString()}>
                             {t("roles.2")}
                         </option>
                     </NativeSelect.Field>

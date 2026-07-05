@@ -58,7 +58,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 2,
                         identifier: "2",
-                        role: UserRole.teacher,
+                        role: UserRole.Teacher,
                     },
                 });
 
@@ -84,7 +84,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 2,
                         identifier: "2",
-                        role: UserRole.teacher,
+                        role: UserRole.Teacher,
                     },
                 });
 
@@ -107,7 +107,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 2,
                     identifier: "2",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 },
             });
 
@@ -141,7 +141,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 2,
                     identifier: "2",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 },
             });
 
@@ -175,7 +175,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 2,
                         identifier: "2",
-                        role: UserRole.teacher,
+                        role: UserRole.Teacher,
                     },
                 });
 
@@ -199,7 +199,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 2,
                     identifier: "2",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 },
             });
 
@@ -252,7 +252,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 3,
                         identifier: "3",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                     },
                 });
 
@@ -276,7 +276,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "3",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 
@@ -314,10 +314,7 @@ describe("SubmissionController (unit)", () => {
             ).not.toHaveBeenCalled();
         });
 
-        it.each([
-            { assignmentId: "abc" },
-            { assignmentId: "0" },
-        ])(
+        it.each([{ assignmentId: "abc" }, { assignmentId: "0" }])(
             "should return 400 for an invalid assignment ID: $assignmentId",
             async ({ assignmentId }) => {
                 const req = createUpdateMockRequest({
@@ -326,7 +323,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 3,
                         identifier: "3",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                     },
                 });
 
@@ -351,7 +348,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "3",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 
@@ -381,10 +378,7 @@ describe("SubmissionController (unit)", () => {
             ).not.toHaveBeenCalled();
         });
 
-        it.each([
-            { assignmentId: "abc" },
-            { assignmentId: "0" },
-        ])(
+        it.each([{ assignmentId: "abc" }, { assignmentId: "0" }])(
             "should return 400 for an invalid assignment ID: $assignmentId",
             async ({ assignmentId }) => {
                 const req = createMockRequest({
@@ -392,7 +386,7 @@ describe("SubmissionController (unit)", () => {
                     sessionData: {
                         userId: 3,
                         identifier: "3",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                     },
                 });
 
@@ -413,7 +407,7 @@ describe("SubmissionController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "3",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 

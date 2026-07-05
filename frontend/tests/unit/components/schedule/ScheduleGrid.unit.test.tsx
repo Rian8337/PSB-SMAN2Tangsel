@@ -32,7 +32,7 @@ describe("ScheduleGrid (unit)", () => {
             {
                 id: 1,
                 classSubjectId: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9, 30).getTime(),
                 subject: {
@@ -58,7 +58,7 @@ describe("ScheduleGrid (unit)", () => {
             {
                 id: 1,
                 classSubjectId: 1,
-                day: ScheduleDay.wednesday,
+                day: ScheduleDay.Wednesday,
                 startTime: new Date(2024, 0, 1, 10, 15).getTime(),
                 endTime: new Date(2024, 0, 1, 12, 45).getTime(),
                 subject: { code: "FA1", name: "Fisika" },

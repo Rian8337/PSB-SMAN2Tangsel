@@ -40,7 +40,7 @@ describe("SubjectDashboard (integration)", () => {
     });
 
     it("should call getDashboard with the correct classSubjectId on mount", () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         expect(mockSubjectDashboardApiClient.getDashboard).toHaveBeenCalledWith(
             1,
@@ -49,7 +49,7 @@ describe("SubjectDashboard (integration)", () => {
     });
 
     it("should display the subject name as the page title after loading", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -60,7 +60,7 @@ describe("SubjectDashboard (integration)", () => {
 
     describe("as a student", () => {
         it("should display all materials (visibility filtered server-side)", async () => {
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -71,7 +71,7 @@ describe("SubjectDashboard (integration)", () => {
         });
 
         it("should not show 'Add' buttons", async () => {
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -86,7 +86,7 @@ describe("SubjectDashboard (integration)", () => {
 
     describe("as a teacher", () => {
         it("should display all materials including hidden ones", async () => {
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -97,7 +97,7 @@ describe("SubjectDashboard (integration)", () => {
         });
 
         it("should show 'Add' buttons for materials and assignments", async () => {
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -112,7 +112,7 @@ describe("SubjectDashboard (integration)", () => {
         it("should navigate to the create material page when the Add Material button is clicked", async () => {
             const user = userEvent.setup();
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("addMaterial")).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe("SubjectDashboard (integration)", () => {
         it("should navigate to the create assignment page when the Add Assignment button is clicked", async () => {
             const user = userEvent.setup();
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("addAssignment")).toBeInTheDocument();
@@ -151,7 +151,7 @@ describe("SubjectDashboard (integration)", () => {
             new Error("Network error"),
         );
 
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(

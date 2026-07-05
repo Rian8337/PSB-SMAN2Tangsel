@@ -25,7 +25,7 @@ describe("ScheduleAPIClient (unit)", () => {
                 {
                     id: 1,
                     classSubjectId: 1,
-                    day: ScheduleDay.monday,
+                    day: ScheduleDay.Monday,
                     startTime: 0,
                     endTime: 100,
                     subject: { code: "T1", name: "Test" },
@@ -37,7 +37,11 @@ describe("ScheduleAPIClient (unit)", () => {
                 json: () => Promise.resolve(mockScheduleData),
             } as Response);
 
-            const result = await client.getSchedule(undefined, undefined, controller.signal);
+            const result = await client.getSchedule(
+                undefined,
+                undefined,
+                controller.signal,
+            );
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 

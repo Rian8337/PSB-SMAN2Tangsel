@@ -36,12 +36,12 @@ export default function LoginPage() {
 
             if (isSuccessfulLogin(loginResponse)) {
                 switch (loginResponse.role) {
-                    case UserRole.student:
-                    case UserRole.teacher:
+                    case UserRole.Student:
+                    case UserRole.Teacher:
                         router.push("/dashboard");
                         break;
 
-                    case UserRole.administrator:
+                    case UserRole.Administrator:
                         router.push("/admin");
                         break;
                 }

@@ -10,11 +10,11 @@ test.describe("View Student Submissions Flow", () => {
     const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let classSubjectId: number;
@@ -183,9 +183,7 @@ test.describe("View Student Submissions Flow", () => {
             ).toBeVisible({ timeout: 3000 });
         }).toPass({ timeout: 15000 });
 
-        await page
-            .getByRole("button", { name: "Pengumpulan siswa" })
-            .click();
+        await page.getByRole("button", { name: "Pengumpulan siswa" }).click();
 
         await expect(page).toHaveURL(
             new RegExp(

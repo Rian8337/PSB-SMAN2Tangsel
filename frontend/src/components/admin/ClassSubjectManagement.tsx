@@ -333,7 +333,7 @@ export function ClassSubjectManagement({ clazz }: ClassSubjectManagementProps) {
                                                         ) => {
                                                             const teachers =
                                                                 await userApiClient.listUsers(
-                                                                    UserRole.teacher,
+                                                                    UserRole.Teacher,
                                                                     query,
                                                                     10,
                                                                     undefined,

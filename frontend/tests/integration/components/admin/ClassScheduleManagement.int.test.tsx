@@ -16,7 +16,7 @@ const mockSchedules: ScheduleDTO[] = [
     {
         id: 99,
         classSubjectId: 123,
-        day: ScheduleDay.monday,
+        day: ScheduleDay.Monday,
         startTime: new Date().setHours(8, 0, 0, 0),
         endTime: new Date().setHours(9, 30, 0, 0),
         subject: {

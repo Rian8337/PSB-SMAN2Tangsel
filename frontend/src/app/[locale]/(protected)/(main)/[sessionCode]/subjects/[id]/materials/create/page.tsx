@@ -28,7 +28,7 @@ export default async function CreateMaterialPage({
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
-    if (user?.role !== UserRole.teacher) {
+    if (user?.role !== UserRole.Teacher) {
         notFound();
     }
 

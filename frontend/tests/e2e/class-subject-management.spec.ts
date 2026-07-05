@@ -185,7 +185,7 @@ test.describe("Class Subject Management", () => {
         await expect(subjectRow).toBeVisible();
 
         const seededTeacher = seededPrimaryData.users.find(
-            (u) => u.role === UserRole.teacher,
+            (u) => u.role === UserRole.Teacher,
         )!;
 
         const inlineTeacherInput = subjectRow.locator("input").first();

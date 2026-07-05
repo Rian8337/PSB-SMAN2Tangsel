@@ -25,7 +25,7 @@ describe("ClassStudentController (integration)", () => {
             identifier: "0012345680",
             name: "Fresh Student",
             password: testPassword,
-            role: UserRole.student,
+            role: UserRole.Student,
         });
 
         unenrolledStudent = await seeders.students.seedOne({

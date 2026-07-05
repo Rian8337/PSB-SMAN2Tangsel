@@ -19,7 +19,7 @@ function readBooleanEnv(name: string, fallback: boolean) {
 
 const workerId = process.env.VITEST_POOL_ID ?? "1";
 const baseDbName =
-    process.env[EnvironmentVariableKey.databaseName] ?? "psb_sman2_test";
+    process.env[EnvironmentVariableKey.DatabaseName] ?? "psb_sman2_test";
 
 const shouldUseWorkerDatabase = readBooleanEnv(
     "TEST_DB_PER_WORKER",
@@ -50,11 +50,11 @@ export const workerDbName = shouldUseWorkerDatabase
  * A Drizzle database instance for testing purposes, connected to the test database.
  */
 export const testDb = createDatabase({
-    host: process.env[EnvironmentVariableKey.databaseHost],
-    user: process.env[EnvironmentVariableKey.databaseUser],
-    password: process.env[EnvironmentVariableKey.databasePassword],
+    host: process.env[EnvironmentVariableKey.DatabaseHost],
+    user: process.env[EnvironmentVariableKey.DatabaseUser],
+    password: process.env[EnvironmentVariableKey.DatabasePassword],
     database: workerDbName,
-    port: parseInt(process.env[EnvironmentVariableKey.databasePort] ?? "3306"),
+    port: parseInt(process.env[EnvironmentVariableKey.DatabasePort] ?? "3306"),
     timezone: "+00:00",
 });
 

@@ -6,11 +6,11 @@ import request from "supertest";
 
 describe("NotificationController (integration)", () => {
     const studentUser = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student && u.active,
+        (u) => u.role === UserRole.Student && u.active,
     )!;
 
     const teacherUser = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let unreadNotificationId: number;

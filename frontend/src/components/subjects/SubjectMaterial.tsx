@@ -56,7 +56,7 @@ export function SubjectMaterial({
     const [material, setMaterial] = useState<SubjectMaterialData | null>(null);
     const [isPending, startTransition] = useTransition();
 
-    const isTeacher = role === UserRole.teacher;
+    const isTeacher = role === UserRole.Teacher;
     const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [isDeleting, setIsDeleting] = useState(false);

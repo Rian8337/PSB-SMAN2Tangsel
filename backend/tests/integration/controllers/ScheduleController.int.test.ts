@@ -44,7 +44,7 @@ describe("ScheduleController (integration)", () => {
         schedule = await seeders.schedules.seedOne({
             id: 1,
             classSubjectId: classSubject.id!,
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             startTime: new Date(2024, 0, 1, 8),
             endTime: new Date(2024, 0, 1, 9),
         });
@@ -91,7 +91,7 @@ describe("ScheduleController (integration)", () => {
             expect(res.body).toMatchObject({
                 id: schedule.id,
                 classSubjectId: classSubject.id,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: schedule.startTime.getTime(),
                 endTime: schedule.endTime.getTime(),
             });
@@ -118,7 +118,7 @@ describe("ScheduleController (integration)", () => {
             expect(res.body).toHaveLength(1);
 
             expect((res.body as (typeof schedule)[])[0].day).toBe(
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
             );
         });
 
@@ -133,7 +133,7 @@ describe("ScheduleController (integration)", () => {
             expect(res.body).toHaveLength(1);
 
             expect((res.body as (typeof schedule)[])[0].day).toBe(
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
             );
         });
 
@@ -153,7 +153,7 @@ describe("ScheduleController (integration)", () => {
         beforeAll(() => {
             payload = {
                 classSubjectId: classSubject.id!,
-                day: ScheduleDay.wednesday,
+                day: ScheduleDay.Wednesday,
                 startTime: new Date(2024, 0, 3, 10).getTime(),
                 endTime: new Date(2024, 0, 3, 11).getTime(),
             };
@@ -193,7 +193,7 @@ describe("ScheduleController (integration)", () => {
         let endpoint: string;
 
         const payload = {
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             // Shift schedule by 30 minutes.
             startTime: new Date(2024, 0, 1, 8, 30).getTime(),
             endTime: new Date(2024, 0, 1, 9, 30).getTime(),

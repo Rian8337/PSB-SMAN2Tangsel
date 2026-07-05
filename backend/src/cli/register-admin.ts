@@ -62,7 +62,7 @@ export async function createAdminAccount(
         const [result] = await tx.insert(users).values({
             name: name.trim(),
             password: passwordHash,
-            role: UserRole.administrator,
+            role: UserRole.Administrator,
             identifier: identifier.trim(),
             active: true,
         });
@@ -143,12 +143,12 @@ async function main() {
     }
 
     const db = createDatabase({
-        host: process.env[EnvironmentVariableKey.databaseHost],
-        user: process.env[EnvironmentVariableKey.databaseUser],
-        password: process.env[EnvironmentVariableKey.databasePassword],
-        database: process.env[EnvironmentVariableKey.databaseName],
+        host: process.env[EnvironmentVariableKey.DatabaseHost],
+        user: process.env[EnvironmentVariableKey.DatabaseUser],
+        password: process.env[EnvironmentVariableKey.DatabasePassword],
+        database: process.env[EnvironmentVariableKey.DatabaseName],
         port: parseInt(
-            process.env[EnvironmentVariableKey.databasePort] ?? "3306",
+            process.env[EnvironmentVariableKey.DatabasePort] ?? "3306",
         ),
         timezone: "+00:00",
     });

@@ -2,11 +2,11 @@
  * Available HTTP methods for route definitions.
  */
 export enum HttpMethod {
-    get = "get",
-    post = "post",
-    put = "put",
-    patch = "patch",
-    delete = "delete",
+    Get = "get",
+    Post = "post",
+    Put = "put",
+    Patch = "patch",
+    Delete = "delete",
 }
 
 /**
@@ -53,7 +53,7 @@ function createRouteDecorator(method: HttpMethod) {
  * @param path The path of the route.
  * @returns A method decorator that registers the route.
  */
-export const Get = createRouteDecorator(HttpMethod.get);
+export const Get = createRouteDecorator(HttpMethod.Get);
 
 /**
  * Marks a method as a route handler for a POST request.
@@ -61,7 +61,7 @@ export const Get = createRouteDecorator(HttpMethod.get);
  * @param path The path of the route.
  * @returns A method decorator that registers the route.
  */
-export const Post = createRouteDecorator(HttpMethod.post);
+export const Post = createRouteDecorator(HttpMethod.Post);
 
 /**
  * Marks a method as a route handler for a PUT request.
@@ -69,7 +69,7 @@ export const Post = createRouteDecorator(HttpMethod.post);
  * @param path The path of the route.
  * @returns A method decorator that registers the route.
  */
-export const Put = createRouteDecorator(HttpMethod.put);
+export const Put = createRouteDecorator(HttpMethod.Put);
 
 /**
  * Marks a method as a route handler for a PATCH request.
@@ -77,7 +77,7 @@ export const Put = createRouteDecorator(HttpMethod.put);
  * @param path The path of the route.
  * @return A method decorator that registers the route.
  */
-export const Patch = createRouteDecorator(HttpMethod.patch);
+export const Patch = createRouteDecorator(HttpMethod.Patch);
 
 /**
  * Marks a method as a route handler for a DELETE request.
@@ -85,4 +85,4 @@ export const Patch = createRouteDecorator(HttpMethod.patch);
  * @param path The path of the route.
  * @return A method decorator that registers the route.
  */
-export const Delete = createRouteDecorator(HttpMethod.delete);
+export const Delete = createRouteDecorator(HttpMethod.Delete);

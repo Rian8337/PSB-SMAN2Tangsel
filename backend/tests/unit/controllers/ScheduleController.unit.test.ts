@@ -37,7 +37,7 @@ describe("ScheduleController (unit)", () => {
             const schedule: ScheduleDTO = {
                 id: 1,
                 classSubjectId: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date("2024-01-01T08:00:00Z").getTime(),
                 endTime: new Date("2024-01-01T09:30:00Z").getTime(),
                 subject: {
@@ -84,7 +84,7 @@ describe("ScheduleController (unit)", () => {
             req.sessionData = {
                 classId: 1,
                 identifier: "1234567890",
-                role: UserRole.student,
+                role: UserRole.Student,
                 userId: 1,
             };
 
@@ -101,7 +101,7 @@ describe("ScheduleController (unit)", () => {
             mockScheduleService.getTeacherSchedule.mockResolvedValue([]);
 
             req.sessionData = {
-                role: UserRole.teacher,
+                role: UserRole.Teacher,
                 identifier: "1",
                 userId: 1,
             };
@@ -121,7 +121,7 @@ describe("ScheduleController (unit)", () => {
             mockScheduleService.getTeacherSchedule.mockResolvedValue([]);
 
             req.sessionData = {
-                role: UserRole.teacher,
+                role: UserRole.Teacher,
                 identifier: "1",
                 userId: 2,
             };
@@ -145,7 +145,7 @@ describe("ScheduleController (unit)", () => {
             mockScheduleService.getClassSchedule.mockResolvedValue([]);
 
             req.sessionData = {
-                role: UserRole.student,
+                role: UserRole.Student,
                 identifier: "1234567890",
                 userId: 5,
                 classId: 1,
@@ -170,7 +170,7 @@ describe("ScheduleController (unit)", () => {
             );
 
             req.sessionData = {
-                role: UserRole.student,
+                role: UserRole.Student,
                 identifier: "1234567890",
                 userId: 5,
                 classId: 1,
@@ -192,7 +192,7 @@ describe("ScheduleController (unit)", () => {
             "should return 400 for invalid session/semester: session=%s semester=%s",
             async (session, semester) => {
                 req.sessionData = {
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                     identifier: "1",
                     userId: 1,
                 };
@@ -219,7 +219,7 @@ describe("ScheduleController (unit)", () => {
             req.sessionData = {
                 classId: 1,
                 identifier: "1234567890",
-                role: UserRole.student,
+                role: UserRole.Student,
                 userId: 1,
             };
 
@@ -272,7 +272,7 @@ describe("ScheduleController (unit)", () => {
             req = createMockRequest({
                 body: {
                     classSubjectId: 1,
-                    day: ScheduleDay.monday,
+                    day: ScheduleDay.Monday,
                     startTime: new Date("1970-01-01T08:00:00Z").getTime(),
                     endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 },
@@ -284,7 +284,7 @@ describe("ScheduleController (unit)", () => {
 
             expect(mockScheduleService.create).toHaveBeenCalledWith({
                 classSubjectId: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 startTime: expect.any(Date),
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -354,7 +354,7 @@ describe("ScheduleController (unit)", () => {
             req = createMockRequest({
                 params: { id: "1" },
                 body: {
-                    day: ScheduleDay.monday,
+                    day: ScheduleDay.Monday,
                     startTime: new Date("1970-01-01T08:00:00Z").getTime(),
                     endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 },
@@ -366,7 +366,7 @@ describe("ScheduleController (unit)", () => {
 
             expect(mockScheduleService.update).toHaveBeenCalledWith({
                 id: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 startTime: expect.any(Date),
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

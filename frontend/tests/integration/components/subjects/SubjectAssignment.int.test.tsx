@@ -56,7 +56,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should call getAssignment with the correct assignmentId on mount", () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         expect(
             mockSubjectAssignmentApiClient.getAssignment,
@@ -64,7 +64,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should display the subject name as the page heading after loading", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -74,7 +74,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should display the assignment title after loading", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -84,7 +84,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should display the assignment description", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText("Submit a report")).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should display attachment filenames", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText("instructions.pdf")).toBeInTheDocument();
@@ -106,7 +106,7 @@ describe("SubjectAssignment (integration)", () => {
             attachments: [],
         });
 
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText("noAttachments")).toBeInTheDocument();
@@ -114,7 +114,7 @@ describe("SubjectAssignment (integration)", () => {
     });
 
     it("should display dueAt when present", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText(/dueAt/)).toBeInTheDocument();
@@ -123,7 +123,7 @@ describe("SubjectAssignment (integration)", () => {
 
     describe("as a student", () => {
         it("should show a file upload form when the student has no submission", async () => {
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -146,7 +146,7 @@ describe("SubjectAssignment (integration)", () => {
                 },
             });
 
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(screen.getByText("report.pdf")).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe("SubjectAssignment (integration)", () => {
         });
 
         it("should not show assignment management buttons", async () => {
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -192,7 +192,7 @@ describe("SubjectAssignment (integration)", () => {
                 },
             });
 
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -227,7 +227,7 @@ describe("SubjectAssignment (integration)", () => {
                 undefined,
             );
 
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -261,7 +261,7 @@ describe("SubjectAssignment (integration)", () => {
         });
 
         it("should show Edit, Delete, Student submissions, and Hide from students buttons for a visible assignment", async () => {
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -288,7 +288,7 @@ describe("SubjectAssignment (integration)", () => {
                 visible: false,
             });
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -298,7 +298,7 @@ describe("SubjectAssignment (integration)", () => {
         });
 
         it("should not show the submission section", async () => {
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -314,7 +314,7 @@ describe("SubjectAssignment (integration)", () => {
         it("should navigate to the edit page when the edit button is clicked", async () => {
             const user = userEvent.setup();
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -338,7 +338,7 @@ describe("SubjectAssignment (integration)", () => {
                 undefined,
             );
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -368,7 +368,7 @@ describe("SubjectAssignment (integration)", () => {
                 undefined,
             );
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -393,7 +393,7 @@ describe("SubjectAssignment (integration)", () => {
             new Error("Network error"),
         );
 
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(

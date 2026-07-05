@@ -38,7 +38,7 @@ export class SubmissionController extends BaseController {
      * Downloads a ZIP archive of student submission attachments for the given assignment.
      */
     @Get("/:assignmentId/submissions/download")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async downloadSubmissions(
         req: ApiRequest<
             { assignmentId: string },
@@ -101,7 +101,7 @@ export class SubmissionController extends BaseController {
      * Returns all student submissions for the given assignment.
      */
     @Get("/:assignmentId/submissions")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async getSubmissions(
         req: ApiRequest<{ assignmentId: string }, AssignmentSubmissionRow[]>,
         res: ApiResponse<AssignmentSubmissionRow[]>,
@@ -136,7 +136,7 @@ export class SubmissionController extends BaseController {
      * Creates a new submission for the authenticated student on the given assignment.
      */
     @Post("/:assignmentId/submissions")
-    @Roles(UserRole.student)
+    @Roles(UserRole.Student)
     async createSubmission(
         req: ApiRequest<
             { assignmentId: string },
@@ -178,7 +178,7 @@ export class SubmissionController extends BaseController {
      * Updates the submission of the authenticated student on the given assignment.
      */
     @Put("/:assignmentId/submissions")
-    @Roles(UserRole.student)
+    @Roles(UserRole.Student)
     async updateSubmission(
         req: ApiRequest<
             { assignmentId: string },
@@ -230,7 +230,7 @@ export class SubmissionController extends BaseController {
      * Deletes the submission of the authenticated student on the given assignment.
      */
     @Delete("/:assignmentId/submissions")
-    @Roles(UserRole.student)
+    @Roles(UserRole.Student)
     async deleteSubmission(
         req: ApiRequest<{ assignmentId: string }>,
         res: ApiResponse,

@@ -59,7 +59,7 @@ describe("CreateScheduleModal (unit)", () => {
         });
 
         expect(daySelect).toBeInTheDocument();
-        expect(daySelect).toHaveValue(ScheduleDay.monday.toString());
+        expect(daySelect).toHaveValue(ScheduleDay.Monday.toString());
 
         // Inputs for time
         const startInput = screen.getByLabelText("fields.startTime.label");
@@ -133,7 +133,7 @@ describe("CreateScheduleModal (unit)", () => {
 
         await user.selectOptions(
             screen.getByRole("combobox", { name: "fields.day.label" }),
-            ScheduleDay.tuesday.toString(),
+            ScheduleDay.Tuesday.toString(),
         );
 
         const startInput = screen.getByLabelText("fields.startTime.label");
@@ -157,7 +157,7 @@ describe("CreateScheduleModal (unit)", () => {
         await waitFor(() => {
             expect(mockScheduleApiClient.createSchedule).toHaveBeenCalledWith({
                 classSubjectId: 1,
-                day: ScheduleDay.tuesday,
+                day: ScheduleDay.Tuesday,
                 startTime: expectedStartDate,
                 endTime: expectedEndDate,
             });

@@ -39,7 +39,7 @@ export default async function SubjectsPage({
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
-    if (!user || user.role === UserRole.administrator) {
+    if (!user || user.role === UserRole.Administrator) {
         notFound();
     }
 

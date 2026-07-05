@@ -46,13 +46,13 @@ test.describe("Class Schedule Management", () => {
         await seeders.schedules.seedMany(
             {
                 classSubjectId: editClassSubject.id!,
-                day: ScheduleDay.wednesday,
+                day: ScheduleDay.Wednesday,
                 startTime: new Date(2024, 0, 1, 8),
                 endTime: new Date(2024, 0, 1, 9, 30),
             },
             {
                 classSubjectId: deleteClassSubject.id!,
-                day: ScheduleDay.thursday,
+                day: ScheduleDay.Thursday,
                 startTime: new Date(2024, 0, 1, 8),
                 endTime: new Date(2024, 0, 1, 9, 30),
             },
@@ -132,7 +132,7 @@ test.describe("Class Schedule Management", () => {
 
         await createDialog
             .locator('select[name="day"]')
-            .selectOption(ScheduleDay.tuesday.toString());
+            .selectOption(ScheduleDay.Tuesday.toString());
 
         await createDialog.locator('input[name="startTime"]').fill("08:00");
         await createDialog.locator('input[name="endTime"]').fill("09:30");

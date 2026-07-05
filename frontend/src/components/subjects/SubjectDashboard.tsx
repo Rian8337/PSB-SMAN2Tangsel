@@ -42,7 +42,7 @@ export function SubjectDashboard({
     );
     const [isPending, startTransition] = useTransition();
 
-    const isTeacher = role === UserRole.teacher;
+    const isTeacher = role === UserRole.Teacher;
 
     const fetchDashboard = useCallback(
         async (signal?: AbortSignal) => {

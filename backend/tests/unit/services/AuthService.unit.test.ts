@@ -25,7 +25,7 @@ describe("AuthService (unit)", () => {
     describe("Initialization", () => {
         it("should throw if session encryption key is not 32 characters long", () => {
             vi.stubEnv(
-                EnvironmentVariableKey.sessionEncryptionKey,
+                EnvironmentVariableKey.SessionEncryptionKey,
                 "*".repeat(16),
             );
 
@@ -50,11 +50,11 @@ describe("AuthService (unit)", () => {
                     name: "Test",
                     identifier: "0011223344",
                     password: hashSync("test", 10),
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     userId: 1,
                 },
                 sessionData: {
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     userId: 1,
                     identifier: "0011223344",
                 },

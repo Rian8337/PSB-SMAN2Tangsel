@@ -51,7 +51,7 @@ describe("SubjectDashboardController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "0012345678",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 
@@ -73,7 +73,7 @@ describe("SubjectDashboardController (unit)", () => {
                 sessionData: {
                     userId: 2,
                     identifier: "2",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 },
             });
 
@@ -91,7 +91,7 @@ describe("SubjectDashboardController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     identifier: "1",
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                 },
             });
 
@@ -106,26 +106,25 @@ describe("SubjectDashboardController (unit)", () => {
             ).not.toHaveBeenCalled();
         });
 
-        it.each([
-            { id: "abc" },
-            { id: "0" },
-            { id: "-5" },
-        ])("should return 400 for an invalid ID: $id", async ({ id }) => {
-            const req = createMockRequest({
-                params: { id },
-                sessionData: {
-                    userId: 3,
-                    identifier: "0012345678",
-                    role: UserRole.student,
-                },
-            });
+        it.each([{ id: "abc" }, { id: "0" }, { id: "-5" }])(
+            "should return 400 for an invalid ID: $id",
+            async ({ id }) => {
+                const req = createMockRequest({
+                    params: { id },
+                    sessionData: {
+                        userId: 3,
+                        identifier: "0012345678",
+                        role: UserRole.Student,
+                    },
+                });
 
-            await controller.getDashboard(req, res);
+                await controller.getDashboard(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(
-                mockClassSubjectService.getStudentDashboard,
-            ).not.toHaveBeenCalled();
-        });
+                expect(res.status).toHaveBeenCalledWith(400);
+                expect(
+                    mockClassSubjectService.getStudentDashboard,
+                ).not.toHaveBeenCalled();
+            },
+        );
     });
 });

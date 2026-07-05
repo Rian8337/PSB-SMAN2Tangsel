@@ -10,11 +10,11 @@ test.describe("Manage Assignment Flow", () => {
     const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     let classSubjectId: number;
@@ -130,9 +130,9 @@ test.describe("Manage Assignment Flow", () => {
                 `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${editAssignmentId.toString()}/edit`,
             );
 
-            await expect(
-                page.locator('input[name="title"]'),
-            ).toBeVisible({ timeout: 3000 });
+            await expect(page.locator('input[name="title"]')).toBeVisible({
+                timeout: 3000,
+            });
         }).toPass({ timeout: 15000 });
 
         const titleInput = page.locator('input[name="title"]');
@@ -169,9 +169,7 @@ test.describe("Manage Assignment Flow", () => {
             ).toBeVisible({ timeout: 3000 });
         }).toPass({ timeout: 15000 });
 
-        await page
-            .getByRole("button", { name: /tampilkan ke siswa/i })
-            .click();
+        await page.getByRole("button", { name: /tampilkan ke siswa/i }).click();
 
         await expect(
             page.getByRole("button", { name: /sembunyikan dari siswa/i }),

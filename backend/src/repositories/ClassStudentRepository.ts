@@ -114,7 +114,7 @@ export class ClassStudentRepository
                 users,
                 and(
                     eq(students.userId, users.id),
-                    eq(users.role, UserRole.student),
+                    eq(users.role, UserRole.Student),
                     eq(users.active, true),
                 ),
             )

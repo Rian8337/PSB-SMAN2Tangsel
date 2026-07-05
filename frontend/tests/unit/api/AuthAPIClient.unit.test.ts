@@ -12,7 +12,7 @@ describe("AuthAPIClient (unit)", () => {
     const mockSuccessResponse: SuccessfulLoginResponse = {
         id: 1,
         name: "Admin",
-        role: UserRole.administrator,
+        role: UserRole.Administrator,
     };
 
     const mockFailedResponse: FailedLoginResponse = {

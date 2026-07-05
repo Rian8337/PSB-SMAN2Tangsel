@@ -10,11 +10,11 @@ test.describe("Manage Assignment Submission Flow", () => {
     const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let classSubjectId: number;
@@ -99,9 +99,9 @@ test.describe("Manage Assignment Submission Flow", () => {
             ).toBeVisible({ timeout: 5000 });
         }).toPass({ timeout: 15000 });
 
-        await expect(
-            page.getByLabel(/tambah berkas/i),
-        ).toBeVisible({ timeout: 10000 });
+        await expect(page.getByLabel(/tambah berkas/i)).toBeVisible({
+            timeout: 10000,
+        });
 
         await expect(
             page.getByRole("button", { name: /kumpulkan/i }),
@@ -116,18 +116,16 @@ test.describe("Manage Assignment Submission Flow", () => {
                 `/id/${sessionCode}/subjects/${classSubjectId.toString()}/assignments/${submitAssignmentId.toString()}`,
             );
 
-            await expect(
-                page.getByLabel(/tambah berkas/i),
-            ).toBeVisible({ timeout: 3000 });
+            await expect(page.getByLabel(/tambah berkas/i)).toBeVisible({
+                timeout: 3000,
+            });
         }).toPass({ timeout: 15000 });
 
-        await page
-            .getByLabel(/tambah berkas/i)
-            .setInputFiles({
-                name: "tugas.txt",
-                mimeType: "text/plain",
-                buffer: Buffer.from("isi tugas"),
-            });
+        await page.getByLabel(/tambah berkas/i).setInputFiles({
+            name: "tugas.txt",
+            mimeType: "text/plain",
+            buffer: Buffer.from("isi tugas"),
+        });
 
         await expect(async () => {
             await page.getByRole("button", { name: /kumpulkan/i }).click();
@@ -185,9 +183,9 @@ test.describe("Manage Assignment Submission Flow", () => {
         await page.getByRole("button", { name: /hapus/i }).click();
 
         // After removal the file upload form should reappear.
-        await expect(
-            page.getByLabel(/tambah berkas/i),
-        ).toBeVisible({ timeout: 10000 });
+        await expect(page.getByLabel(/tambah berkas/i)).toBeVisible({
+            timeout: 10000,
+        });
     });
 
     test("Teacher cannot see the submission form", async ({ page }) => {
@@ -203,8 +201,6 @@ test.describe("Manage Assignment Submission Flow", () => {
             ).toBeVisible({ timeout: 3000 });
         }).toPass({ timeout: 15000 });
 
-        await expect(
-            page.getByLabel(/tambah berkas/i),
-        ).toHaveCount(0);
+        await expect(page.getByLabel(/tambah berkas/i)).toHaveCount(0);
     });
 });

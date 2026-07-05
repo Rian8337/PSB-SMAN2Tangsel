@@ -99,7 +99,7 @@ export class SessionController extends BaseController {
      * Lists academic sessions and semesters for display in the UI.
      */
     @Get("/list")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async listSessions(
         req: ApiRequest<
             unknown,
@@ -136,7 +136,7 @@ export class SessionController extends BaseController {
      * Creates a new academic session. If `active` is set to `true`, it will deactivate any currently active session.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async createSession(
         req: ApiRequest<unknown, never, Partial<AcademicSessionDTO>>,
         res: ApiResponse<never>,
@@ -169,7 +169,7 @@ export class SessionController extends BaseController {
      * Updates the details of an existing academic session and semester. If `active` is set to `true`, it will deactivate any currently active session.
      */
     @Put("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async updateSession(
         req: ApiRequest<unknown, never, Partial<AcademicSessionDTO>>,
         res: ApiResponse<never>,
@@ -202,7 +202,7 @@ export class SessionController extends BaseController {
      * Deletes the specified academic session and semester.
      */
     @Delete("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async deleteSession(
         req: ApiRequest<
             unknown,

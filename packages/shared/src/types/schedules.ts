@@ -2,11 +2,11 @@
  * The days of the week for schedules.
  */
 export enum ScheduleDay {
-    monday,
-    tuesday,
-    wednesday,
-    thursday,
-    friday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
 }
 
 /**

@@ -147,7 +147,7 @@ export default async function middleware(request: NextRequest) {
         // If the user is already logged in, redirect them to the appropriate dashboard.
         if (pathname.includes("/login")) {
             const targetPath =
-                role === UserRole.administrator ? "/admin" : "/dashboard";
+                role === UserRole.Administrator ? "/admin" : "/dashboard";
 
             return NextResponse.redirect(
                 new URL(`/${locale}${targetPath}`, request.url),
@@ -155,13 +155,13 @@ export default async function middleware(request: NextRequest) {
         }
 
         // Block access to admin routes for non-admin users, and redirect admin users away from main routes.
-        if (role === UserRole.administrator && !isAdminRoute) {
+        if (role === UserRole.Administrator && !isAdminRoute) {
             return NextResponse.redirect(
                 new URL(`/${locale}/admin`, request.url),
             );
         }
 
-        if (role !== UserRole.administrator && isAdminRoute) {
+        if (role !== UserRole.Administrator && isAdminRoute) {
             return NextResponse.redirect(
                 new URL(`/${locale}/dashboard`, request.url),
             );

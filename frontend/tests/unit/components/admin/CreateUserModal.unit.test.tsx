@@ -136,7 +136,7 @@ describe("CreateUserModal (unit)", () => {
             screen.getByRole("combobox", {
                 name: "createUser.dialog.roleLabel",
             }),
-            UserRole.teacher.toString(),
+            UserRole.Teacher.toString(),
         );
 
         const submitButton = screen.getByRole("button", {
@@ -148,7 +148,7 @@ describe("CreateUserModal (unit)", () => {
         expect(mockUserApiClient.createUser).toHaveBeenCalledWith(
             "Test User",
             "StrongPassword!23",
-            UserRole.teacher,
+            UserRole.Teacher,
             "12345",
         );
 
@@ -226,7 +226,7 @@ describe("CreateUserModal (unit)", () => {
 
         await user.type(nameInput, "Test User");
         await user.type(idInput, "12345");
-        await user.selectOptions(roleSelect, UserRole.student.toString());
+        await user.selectOptions(roleSelect, UserRole.Student.toString());
         await user.type(passwordInput, "StrongPassword!23");
 
         await user.click(
@@ -239,7 +239,7 @@ describe("CreateUserModal (unit)", () => {
 
         expect(nameInput).toHaveValue("");
         expect(idInput).toHaveValue("");
-        expect(roleSelect).toHaveValue(UserRole.student.toString());
+        expect(roleSelect).toHaveValue(UserRole.Student.toString());
         expect(passwordInput).toHaveValue("");
     });
 });

@@ -41,7 +41,7 @@ describe("SubjectMaterial (integration)", () => {
     });
 
     it("should call getMaterial with the correct materialId on mount", () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         expect(mockSubjectMaterialApiClient.getMaterial).toHaveBeenCalledWith(
             1,
@@ -50,7 +50,7 @@ describe("SubjectMaterial (integration)", () => {
     });
 
     it("should display the subject name as the page heading after loading", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -60,7 +60,7 @@ describe("SubjectMaterial (integration)", () => {
     });
 
     it("should display the material title after loading", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -70,7 +70,7 @@ describe("SubjectMaterial (integration)", () => {
     });
 
     it("should display the material description", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(
@@ -80,7 +80,7 @@ describe("SubjectMaterial (integration)", () => {
     });
 
     it("should display attachment links", async () => {
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText("buku.pdf")).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe("SubjectMaterial (integration)", () => {
             attachments: [],
         });
 
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(screen.getByText("noAttachments")).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe("SubjectMaterial (integration)", () => {
 
     describe("as a student", () => {
         it("should not show Edit/Delete/Toggle buttons", async () => {
-            render(UserRole.student);
+            render(UserRole.Student);
 
             await waitFor(() => {
                 expect(
@@ -122,7 +122,7 @@ describe("SubjectMaterial (integration)", () => {
 
     describe("as a teacher", () => {
         it("should show Edit, Delete, and Hide from students buttons for a visible material", async () => {
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("editButton")).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe("SubjectMaterial (integration)", () => {
                 visible: false,
             });
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("showToStudents")).toBeInTheDocument();
@@ -152,7 +152,7 @@ describe("SubjectMaterial (integration)", () => {
             new Error("Network error"),
         );
 
-        render(UserRole.student);
+        render(UserRole.Student);
 
         await waitFor(() => {
             expect(mockSubjectMaterialApiClient.getMaterial).toHaveBeenCalled();
@@ -167,7 +167,7 @@ describe("SubjectMaterial (integration)", () => {
         it("should navigate to the edit page when the Edit button is clicked", async () => {
             const user = userEvent.setup();
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("editButton")).toBeInTheDocument();
@@ -189,7 +189,7 @@ describe("SubjectMaterial (integration)", () => {
                 undefined,
             );
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("deleteButton")).toBeInTheDocument();
@@ -215,7 +215,7 @@ describe("SubjectMaterial (integration)", () => {
                 undefined,
             );
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(
@@ -244,7 +244,7 @@ describe("SubjectMaterial (integration)", () => {
                 new Error("Network error"),
             );
 
-            render(UserRole.teacher);
+            render(UserRole.Teacher);
 
             await waitFor(() => {
                 expect(screen.getByText("deleteButton")).toBeInTheDocument();

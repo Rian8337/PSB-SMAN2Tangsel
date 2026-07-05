@@ -28,7 +28,7 @@ describe("AssignmentController (unit)", () => {
     const teacherSession: TeacherSessionData = {
         userId: 2,
         identifier: "2",
-        role: UserRole.teacher,
+        role: UserRole.Teacher,
     };
 
     let res: ReturnType<typeof createMockResponse>;
@@ -90,7 +90,7 @@ describe("AssignmentController (unit)", () => {
                     sessionData: {
                         userId: 3,
                         identifier: "0012345678",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                     },
                 });
 
@@ -110,7 +110,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     identifier: "1",
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                 },
             });
 
@@ -137,7 +137,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "0012345678",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 
@@ -160,7 +160,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 2,
                     identifier: "2",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 },
             });
 
@@ -384,7 +384,7 @@ describe("AssignmentController (unit)", () => {
                     sessionData: {
                         userId: 3,
                         identifier: "0012345678",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                     },
                 });
 
@@ -400,7 +400,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 1,
                     identifier: "1",
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                 },
             });
 
@@ -431,7 +431,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "0012345678",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 
@@ -460,8 +460,7 @@ describe("AssignmentController (unit)", () => {
             );
 
             let errorHandler:
-                | ((err: NodeJS.ErrnoException) => void)
-                | undefined;
+                ((err: NodeJS.ErrnoException) => void) | undefined;
 
             fsMock.createReadStream.mockReturnValue({
                 on: vi.fn(
@@ -488,7 +487,7 @@ describe("AssignmentController (unit)", () => {
                 sessionData: {
                     userId: 3,
                     identifier: "0012345678",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                 },
             });
 

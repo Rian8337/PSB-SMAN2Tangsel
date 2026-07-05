@@ -7,11 +7,11 @@ import { useTranslations } from "next-intl";
 
 function getDayLabels(t: ReturnType<typeof useTranslations<"Day">>) {
     return [
-        { label: t("monday"), value: ScheduleDay.monday },
-        { label: t("tuesday"), value: ScheduleDay.tuesday },
-        { label: t("wednesday"), value: ScheduleDay.wednesday },
-        { label: t("thursday"), value: ScheduleDay.thursday },
-        { label: t("friday"), value: ScheduleDay.friday },
+        { label: t("monday"), value: ScheduleDay.Monday },
+        { label: t("tuesday"), value: ScheduleDay.Tuesday },
+        { label: t("wednesday"), value: ScheduleDay.Wednesday },
+        { label: t("thursday"), value: ScheduleDay.Thursday },
+        { label: t("friday"), value: ScheduleDay.Friday },
     ];
 }
 

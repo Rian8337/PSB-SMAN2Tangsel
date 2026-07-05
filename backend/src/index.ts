@@ -13,7 +13,7 @@ const app = createApp();
 const configService = getContainer().resolve(dependencyTokens.configService);
 
 const port = parseInt(
-    configService.getEnvironmentVariable(EnvironmentVariableKey.port) ?? "3001",
+    configService.getEnvironmentVariable(EnvironmentVariableKey.Port) ?? "3001",
 );
 
 app.listen(port, (err) => {

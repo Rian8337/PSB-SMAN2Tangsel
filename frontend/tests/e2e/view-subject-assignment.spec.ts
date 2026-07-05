@@ -11,11 +11,11 @@ test.describe("View Subject Assignment Flow", () => {
     const seededAttachment = seededPrimaryData.attachments[0];
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let classSubjectId: number;
@@ -98,13 +98,11 @@ test.describe("View Subject Assignment Flow", () => {
         await expect(page.locator('input[type="file"]')).toBeVisible();
 
         // Management buttons should not be present.
-        await expect(
-            page.getByRole("button", { name: "Edit" }),
-        ).toHaveCount(0);
+        await expect(page.getByRole("button", { name: "Edit" })).toHaveCount(0);
 
-        await expect(
-            page.getByRole("button", { name: "Hapus" }),
-        ).toHaveCount(0);
+        await expect(page.getByRole("button", { name: "Hapus" })).toHaveCount(
+            0,
+        );
     });
 
     test("Student accessing a hidden assignment should be redirected to the subject dashboard", async ({

@@ -68,7 +68,7 @@ describe("ScheduleService (unit)", () => {
                 {
                     id: 1,
                     classSubjectId: 1,
-                    day: ScheduleDay.monday,
+                    day: ScheduleDay.Monday,
                     startTime: new Date("1970-01-01T08:00:00Z").getTime(),
                     endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                     subject: { code: "MA1", name: "Matematika Wajib " },
@@ -94,7 +94,7 @@ describe("ScheduleService (unit)", () => {
     describe("create", () => {
         const options: CreateScheduleOptions = {
             classSubjectId: 1,
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             startTime: new Date("1970-01-01T08:00:00Z"),
             endTime: new Date("1970-01-01T09:30:00Z"),
         };
@@ -139,7 +139,7 @@ describe("ScheduleService (unit)", () => {
     describe("update", () => {
         const options: UpdateScheduleOptions = {
             id: 99,
-            day: ScheduleDay.tuesday,
+            day: ScheduleDay.Tuesday,
             startTime: new Date("1970-01-01T10:00:00Z"),
             endTime: new Date("1970-01-01T11:30:00Z"),
         };
@@ -167,7 +167,7 @@ describe("ScheduleService (unit)", () => {
             mockScheduleRepository.findById.mockResolvedValueOnce({
                 id: 99,
                 classSubjectId: 5,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date("1970-01-01T08:00:00Z").getTime(),
                 endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 subject: {
@@ -187,7 +187,7 @@ describe("ScheduleService (unit)", () => {
             mockScheduleRepository.findById.mockResolvedValueOnce({
                 id: 99,
                 classSubjectId: 5,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date("1970-01-01T08:00:00Z").getTime(),
                 endTime: new Date("1970-01-01T09:30:00Z").getTime(),
                 subject: {

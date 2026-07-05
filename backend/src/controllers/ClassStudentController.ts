@@ -31,7 +31,7 @@ export class ClassStudentController extends BaseController {
      * Obtains a list of students enrolled in a specific class.
      */
     @Get("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getEnrolledStudents(
         req: ApiRequest<
             { id: string },
@@ -75,7 +75,7 @@ export class ClassStudentController extends BaseController {
      * Obtains a list of students not enrolled in a specific class, optionally filtered by a search query and paginated with limit and offset parameters.
      */
     @Get("/unenrolled")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getUnenrolledStudents(
         req: ApiRequest<
             { id: string },
@@ -120,7 +120,7 @@ export class ClassStudentController extends BaseController {
      * Enrolls a student in a class.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async enrollStudent(
         req: ApiRequest<{ id: string }, never, { studentId: number }>,
         res: ApiResponse<never>,
@@ -157,7 +157,7 @@ export class ClassStudentController extends BaseController {
      * Unenrolls a student from a class.
      */
     @Delete("/:studentId")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async unenrollStudent(
         req: ApiRequest<{ id: string; studentId: string }, never>,
         res: ApiResponse<never>,

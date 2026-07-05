@@ -36,7 +36,7 @@ describe("register-admin (integration)", () => {
         expect(inserted).toBeDefined();
         expect(inserted.name).toBe("Test Admin");
         expect(inserted.identifier).toBe(testIdentifier);
-        expect(inserted.role).toBe(UserRole.administrator);
+        expect(inserted.role).toBe(UserRole.Administrator);
         expect(inserted.active).toBe(true);
         expect(inserted.password).not.toBe(testPassword);
     });

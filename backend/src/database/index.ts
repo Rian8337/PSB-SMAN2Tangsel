@@ -16,20 +16,20 @@ export function createDatabase(container = getContainer()) {
 
     return createNewDatabase({
         host: configService.getEnvironmentVariable(
-            EnvironmentVariableKey.databaseHost,
+            EnvironmentVariableKey.DatabaseHost,
         ),
         user: configService.getEnvironmentVariable(
-            EnvironmentVariableKey.databaseUser,
+            EnvironmentVariableKey.DatabaseUser,
         ),
         password: configService.getEnvironmentVariable(
-            EnvironmentVariableKey.databasePassword,
+            EnvironmentVariableKey.DatabasePassword,
         ),
         database: configService.getEnvironmentVariable(
-            EnvironmentVariableKey.databaseName,
+            EnvironmentVariableKey.DatabaseName,
         ),
         port: parseInt(
             configService.getEnvironmentVariable(
-                EnvironmentVariableKey.databasePort,
+                EnvironmentVariableKey.DatabasePort,
             ) ?? "3306",
         ),
         timezone: "+00:00",

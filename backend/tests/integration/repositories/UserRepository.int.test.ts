@@ -90,10 +90,10 @@ describe("UserRepository (integration)", () => {
         });
 
         it("should filter users by role", async () => {
-            const users = await repository.listUsers(UserRole.student);
+            const users = await repository.listUsers(UserRole.Student);
 
             expect(users.length).toBeGreaterThan(0);
-            expect(users.every((u) => u.role === UserRole.student)).toBe(true);
+            expect(users.every((u) => u.role === UserRole.Student)).toBe(true);
         });
     });
 });

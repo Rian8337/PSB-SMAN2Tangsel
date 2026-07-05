@@ -60,7 +60,7 @@ describe("ClassController (integration)", () => {
 
         schedule = await seeders.schedules.seedOne({
             classSubjectId: classSubject.id!,
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             startTime: new Date(2024, 0, 1, 8),
             endTime: new Date(2024, 0, 1, 9),
         });
@@ -206,7 +206,7 @@ describe("ClassController (integration)", () => {
             expect(body).toBeInstanceOf(Array);
             expect(body).toHaveLength(1);
             expect(body[0].id).toBe(schedule.id);
-            expect(body[0].day).toBe(ScheduleDay.monday);
+            expect(body[0].day).toBe(ScheduleDay.Monday);
         });
     });
 

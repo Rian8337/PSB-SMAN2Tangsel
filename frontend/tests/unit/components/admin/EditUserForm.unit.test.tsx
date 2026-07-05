@@ -11,7 +11,7 @@ const mockUser: UserListItem = {
     active: true,
     identifier: "1234567890",
     name: "John Doe",
-    role: UserRole.student,
+    role: UserRole.Student,
 };
 
 function render(currentUserId = 2) {

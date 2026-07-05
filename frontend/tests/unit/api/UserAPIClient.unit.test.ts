@@ -10,7 +10,7 @@ describe("UserAPIClient (unit)", () => {
         id: 1,
         name: "John Doe",
         identifier: "1",
-        role: UserRole.teacher,
+        role: UserRole.Teacher,
         active: true,
     };
 
@@ -88,7 +88,7 @@ describe("UserAPIClient (unit)", () => {
         });
 
         it("should append the role parameter when provided", async () => {
-            await client.listUsers(UserRole.student);
+            await client.listUsers(UserRole.Student);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
@@ -96,7 +96,7 @@ describe("UserAPIClient (unit)", () => {
             const urlStr = (url as URL | string).toString();
 
             expect(urlStr).toContain("/users/list");
-            expect(urlStr).toContain(`role=${UserRole.student.toString()}`);
+            expect(urlStr).toContain(`role=${UserRole.Student.toString()}`);
         });
     });
 
@@ -105,7 +105,7 @@ describe("UserAPIClient (unit)", () => {
             await client.createUser(
                 "Jane Doe",
                 "securePass",
-                UserRole.student,
+                UserRole.Student,
                 "jane123",
             );
 
@@ -127,7 +127,7 @@ describe("UserAPIClient (unit)", () => {
                 JSON.stringify({
                     name: "Jane Doe",
                     password: "securePass",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     identifier: "jane123",
                 }),
             );

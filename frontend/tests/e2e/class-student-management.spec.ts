@@ -15,7 +15,7 @@ test.describe("Class Student Management", () => {
     // and unenroll scenarios each need their own student to avoid the seeded enrollment for one
     // test making that student unavailable in the other test's enrollment autocomplete.
     const enrollStudentName = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!.name;
 
     const unenrollStudentName = `Unenroll Target Student E2E ${uniqueSuffix}`;
@@ -40,7 +40,7 @@ test.describe("Class Student Management", () => {
             active: true,
             name: unenrollStudentName,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             identifier: `9${uniqueSuffix}0`,
         });
 

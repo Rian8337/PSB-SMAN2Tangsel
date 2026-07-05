@@ -54,7 +54,7 @@ export class ScheduleController extends BaseController {
      * Obtains the schedule for the currently authenticated user.
      */
     @Get("/")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getMySchedule(
         req: ApiRequest<
             unknown,
@@ -97,7 +97,7 @@ export class ScheduleController extends BaseController {
      * for the active academic session.
      */
     @Get("/download")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async downloadSchedule(
         req: ApiRequest<unknown, Buffer>,
         res: ApiResponse<Buffer>,
@@ -131,7 +131,7 @@ export class ScheduleController extends BaseController {
      * Fetches a schedule by its ID.
      */
     @Get("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getById(
         req: ApiRequest<{ id: string }, ScheduleDTO>,
         res: ApiResponse<ScheduleDTO>,
@@ -157,7 +157,7 @@ export class ScheduleController extends BaseController {
      * Creates a new schedule for a class subject.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async create(
         req: ApiRequest<
             unknown,
@@ -192,7 +192,7 @@ export class ScheduleController extends BaseController {
      * Updates an existing schedule by its ID.
      */
     @Put("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async update(
         req: ApiRequest<
             { id: string },
@@ -239,7 +239,7 @@ export class ScheduleController extends BaseController {
      * Deletes a schedule by its ID.
      */
     @Delete("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async delete(
         req: ApiRequest<{ id: string }, never>,
         res: ApiResponse<never>,
@@ -267,7 +267,7 @@ export class ScheduleController extends BaseController {
         semester?: ValidSemester,
     ): Promise<ScheduleDTO[]> {
         switch (sessionData?.role) {
-            case UserRole.student: {
+            case UserRole.Student: {
                 let classId: number | undefined;
 
                 if (session && semester) {
@@ -286,7 +286,7 @@ export class ScheduleController extends BaseController {
                     : [];
             }
 
-            case UserRole.teacher:
+            case UserRole.Teacher:
                 return this.scheduleService.getTeacherSchedule(
                     sessionData.userId,
                     session,

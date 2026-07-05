@@ -24,7 +24,7 @@ describe("@Roles", () => {
     });
 
     it("Adds middleware metadata", () => {
-        const t = createMockMethodDecoratorTestTarget(Roles, UserRole.student);
+        const t = createMockMethodDecoratorTestTarget(Roles, UserRole.Student);
 
         const middlewares = Reflect.getMetadata(
             "route:middlewares",
@@ -42,7 +42,7 @@ describe("@Roles", () => {
             next();
         });
 
-        const t = createMockMethodDecoratorTestTarget(Roles, UserRole.student);
+        const t = createMockMethodDecoratorTestTarget(Roles, UserRole.Student);
 
         const middlewares = Reflect.getMetadata(
             "route:middlewares",
@@ -63,7 +63,7 @@ describe("@Roles", () => {
         );
 
         expect(mockAuthService.verifySession).toHaveBeenCalledWith(
-            UserRole.student,
+            UserRole.Student,
         );
     });
 });

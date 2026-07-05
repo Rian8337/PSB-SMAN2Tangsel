@@ -8,11 +8,11 @@ test.describe("View Subject Flow", () => {
     const session = seededPrimaryData.sessions[0];
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     let classSubjectId: number;

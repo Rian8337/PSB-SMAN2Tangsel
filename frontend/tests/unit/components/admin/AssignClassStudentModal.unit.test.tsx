@@ -24,7 +24,7 @@ const mockStudent: UserListItem = {
     id: 101,
     name: "Budi Santoso",
     identifier: "NISN123",
-    role: UserRole.student,
+    role: UserRole.Student,
     active: true,
 };
 

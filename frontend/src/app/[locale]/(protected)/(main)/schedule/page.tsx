@@ -19,7 +19,7 @@ export default async function MyScheduleRedirectPage({
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
-    if (!user || user.role === UserRole.administrator) {
+    if (!user || user.role === UserRole.Administrator) {
         notFound();
     }
 

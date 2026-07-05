@@ -230,10 +230,10 @@ export function AccountManagement({ currentUserId }: AccountManagementProps) {
                                                 <Badge
                                                     colorPalette={
                                                         user.role ===
-                                                        UserRole.administrator
+                                                        UserRole.Administrator
                                                             ? "purple"
                                                             : user.role ===
-                                                                UserRole.teacher
+                                                                UserRole.Teacher
                                                               ? "blue"
                                                               : "green"
                                                     }

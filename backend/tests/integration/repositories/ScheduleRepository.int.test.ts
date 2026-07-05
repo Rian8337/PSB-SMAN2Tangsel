@@ -37,7 +37,7 @@ describe("ScheduleRepository (integration)", () => {
 
         schedule = await seeders.schedules.seedOne({
             classSubjectId: classSubject.id!,
-            day: ScheduleDay.monday,
+            day: ScheduleDay.Monday,
             startTime: new Date(2024, 0, 1, 8),
             endTime: new Date(2024, 0, 1, 9),
         });
@@ -52,7 +52,7 @@ describe("ScheduleRepository (integration)", () => {
             expect(scheduleDto).toMatchObject({
                 id: schedule.id,
                 classSubjectId: classSubject.id,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9).getTime(),
                 subject: {
@@ -78,7 +78,7 @@ describe("ScheduleRepository (integration)", () => {
             expect(schedule).toHaveLength(1);
             expect(schedule[0]).toMatchObject({
                 id: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9).getTime(),
             });
@@ -98,7 +98,7 @@ describe("ScheduleRepository (integration)", () => {
             expect(schedule).toHaveLength(1);
             expect(schedule[0]).toMatchObject({
                 id: 1,
-                day: ScheduleDay.monday,
+                day: ScheduleDay.Monday,
                 startTime: new Date(2024, 0, 1, 8).getTime(),
                 endTime: new Date(2024, 0, 1, 9).getTime(),
             });
@@ -116,7 +116,7 @@ describe("ScheduleRepository (integration)", () => {
             // Different day, no overlap.
             const diffDay = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.tuesday,
+                ScheduleDay.Tuesday,
                 new Date(2024, 0, 2, 8),
                 new Date(2024, 0, 2, 9),
             );
@@ -126,7 +126,7 @@ describe("ScheduleRepository (integration)", () => {
             // Same day, strictly before (adjacent).
             const before = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 7),
                 new Date(2024, 0, 1, 8),
             );
@@ -136,7 +136,7 @@ describe("ScheduleRepository (integration)", () => {
             // Same day, strictly after (adjacent).
             const after = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 9),
                 new Date(2024, 0, 1, 10),
             );
@@ -148,7 +148,7 @@ describe("ScheduleRepository (integration)", () => {
             // Exact match.
             const exact = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 8),
                 new Date(2024, 0, 1, 9),
             );
@@ -158,7 +158,7 @@ describe("ScheduleRepository (integration)", () => {
             // Starts before, ends during.
             const partialStart = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 7, 30),
                 new Date(2024, 0, 1, 8, 30),
             );
@@ -168,7 +168,7 @@ describe("ScheduleRepository (integration)", () => {
             // Starts during, ends after.
             const partialEnd = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 8, 30),
                 new Date(2024, 0, 1, 9, 30),
             );
@@ -178,7 +178,7 @@ describe("ScheduleRepository (integration)", () => {
             // Complete engulfment.
             const engulfed = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 7),
                 new Date(2024, 0, 1, 10),
             );
@@ -189,7 +189,7 @@ describe("ScheduleRepository (integration)", () => {
         it("should return false when ignoring its own schedule ID (Update Scenario)", async () => {
             const result = await repository.hasConflict(
                 classSubject.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 8, 30),
                 new Date(2024, 0, 1, 9, 30),
                 schedule.id,
@@ -215,7 +215,7 @@ describe("ScheduleRepository (integration)", () => {
             // Schedule class 2 at the exact same time as class 1.
             const result = await repository.hasConflict(
                 classSubject2.id!,
-                ScheduleDay.monday,
+                ScheduleDay.Monday,
                 new Date(2024, 0, 1, 8),
                 new Date(2024, 0, 1, 9),
             );
@@ -231,7 +231,7 @@ describe("ScheduleRepository (integration)", () => {
             // Save the ID for next tests.
             newScheduleId = await repository.create(
                 classSubject.id!,
-                ScheduleDay.wednesday,
+                ScheduleDay.Wednesday,
                 new Date(2024, 0, 3, 10),
                 new Date(2024, 0, 3, 11),
             );
@@ -246,14 +246,14 @@ describe("ScheduleRepository (integration)", () => {
         it("should update an existing schedule", async () => {
             await repository.update(
                 newScheduleId,
-                ScheduleDay.thursday,
+                ScheduleDay.Thursday,
                 new Date(2024, 0, 4, 13),
                 new Date(2024, 0, 4, 15),
             );
 
             const updated = await repository.findById(newScheduleId);
 
-            expect(updated?.day).toBe(ScheduleDay.thursday);
+            expect(updated?.day).toBe(ScheduleDay.Thursday);
             expect(updated?.startTime).toBe(new Date(2024, 0, 4, 13).getTime());
         });
 

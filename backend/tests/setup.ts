@@ -14,7 +14,7 @@ import {
 loadEnvironmentVariables(true);
 
 // Ensure all test code and migration commands target the same resolved database name.
-process.env[EnvironmentVariableKey.databaseName] = workerDbName;
+process.env[EnvironmentVariableKey.DatabaseName] = workerDbName;
 
 let setupHappened = false;
 let rootConnection: Awaited<ReturnType<typeof createConnection>> | undefined;
@@ -28,11 +28,11 @@ beforeAll(async () => {
 
     if (shouldManageTestDatabaseLifecycle) {
         rootConnection = await createConnection({
-            host: process.env[EnvironmentVariableKey.databaseHost],
-            user: process.env[EnvironmentVariableKey.databaseUser],
-            password: process.env[EnvironmentVariableKey.databasePassword],
+            host: process.env[EnvironmentVariableKey.DatabaseHost],
+            user: process.env[EnvironmentVariableKey.DatabaseUser],
+            password: process.env[EnvironmentVariableKey.DatabasePassword],
             port: parseInt(
-                process.env[EnvironmentVariableKey.databasePort] ?? "3306",
+                process.env[EnvironmentVariableKey.DatabasePort] ?? "3306",
             ),
         });
 

@@ -25,7 +25,7 @@ describe("LoginPage", () => {
         mockAuthApiClient.login.mockResolvedValueOnce({
             id: 1234567890,
             name: "John Doe",
-            role: UserRole.student,
+            role: UserRole.Student,
         });
 
         renderPage();
@@ -43,9 +43,9 @@ describe("LoginPage", () => {
     });
 
     it.each([
-        { role: UserRole.student, expectedPath: "/dashboard" },
-        { role: UserRole.teacher, expectedPath: "/dashboard" },
-        { role: UserRole.administrator, expectedPath: "/admin" },
+        { role: UserRole.Student, expectedPath: "/dashboard" },
+        { role: UserRole.Teacher, expectedPath: "/dashboard" },
+        { role: UserRole.Administrator, expectedPath: "/admin" },
     ])(
         "navigates to $expectedPath for $role",
         async ({ role, expectedPath }) => {

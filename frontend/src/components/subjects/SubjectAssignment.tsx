@@ -74,7 +74,7 @@ export function SubjectAssignment({
 
     const [isPending, startTransition] = useTransition();
 
-    const isStudent = role === UserRole.student;
+    const isStudent = role === UserRole.Student;
     const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
 
     const [isDeleting, setIsDeleting] = useState(false);

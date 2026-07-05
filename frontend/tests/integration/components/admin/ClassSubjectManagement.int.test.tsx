@@ -79,7 +79,7 @@ describe("ClassSubjectManagement (integration)", () => {
                 id: 99,
                 name: "Siti Guru",
                 identifier: "NIP-999",
-                role: UserRole.teacher,
+                role: UserRole.Teacher,
                 active: true,
             },
         ]);

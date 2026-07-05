@@ -37,7 +37,7 @@ export class ClassSubjectController extends BaseController {
      * Obtains a list of subjects assigned to a specific class, optionally filtered by a search query and paginated with limit and offset parameters.
      */
     @Get("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async listAssignedSubjects(
         req: ApiRequest<
             { id: string },
@@ -81,7 +81,7 @@ export class ClassSubjectController extends BaseController {
      * Lists subjects that are not yet assigned to a specific class for display in the subject selection dropdown when assigning subjects to a class.
      */
     @Get("/unassigned")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async listUnassignedSubjects(
         req: ApiRequest<
             { id: string },
@@ -126,7 +126,7 @@ export class ClassSubjectController extends BaseController {
      * Assigns a subject to a class. If the teacher ID is not provided, the subject will be assigned to the class without a teacher.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async assignSubject(
         req: ApiRequest<
             { id: string },
@@ -180,7 +180,7 @@ export class ClassSubjectController extends BaseController {
      * Updates the teacher assigned to a class subject. If the teacher ID is not provided, the subject will be unassigned from any teacher.
      */
     @Patch("/:classSubjectId")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async updateAssignedSubject(
         req: ApiRequest<
             { id: string; classSubjectId: string },
@@ -235,7 +235,7 @@ export class ClassSubjectController extends BaseController {
      * the class subject assignment.
      */
     @Delete("/:classSubjectId")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async unassignSubject(
         req: ApiRequest<{ id: string; classSubjectId: string }, never>,
         res: ApiResponse<never>,

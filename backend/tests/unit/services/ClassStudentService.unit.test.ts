@@ -21,7 +21,7 @@ describe("ClassStudentService", () => {
             id: 100,
             name: "Budi",
             identifier: "123",
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
         },
     ];

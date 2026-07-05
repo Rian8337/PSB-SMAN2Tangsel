@@ -10,11 +10,11 @@ test.describe("Manage Subject Material Flow", () => {
     const sessionCode = encodeSessionCode(session.session, session.semester);
 
     const teacher = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.teacher,
+        (u) => u.role === UserRole.Teacher,
     )!;
 
     const student = seededPrimaryData.users.find(
-        (u) => u.role === UserRole.student,
+        (u) => u.role === UserRole.Student,
     )!;
 
     let classSubjectId: number;

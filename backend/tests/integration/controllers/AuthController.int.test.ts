@@ -26,7 +26,7 @@ describe("AuthController (integration)", () => {
             name: "Soon To Be Inactive User",
             identifier: deactivationUserIdentifier,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
         });
 

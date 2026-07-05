@@ -29,7 +29,7 @@ const mockTeacher: UserListItem = {
     id: 1,
     name: "Budi Santoso",
     identifier: "1",
-    role: UserRole.teacher,
+    role: UserRole.Teacher,
     active: true,
 };
 

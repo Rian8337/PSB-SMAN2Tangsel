@@ -36,7 +36,7 @@ describe("ClassStudentRepository (integration)", () => {
         const enrolledUser = await seeders.users.seedOne({
             identifier: "0012345680",
             name: "Enrolled Student",
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
             password: testPassword,
         });
@@ -48,7 +48,7 @@ describe("ClassStudentRepository (integration)", () => {
         const unenrolledUser = await seeders.users.seedOne({
             identifier: "0012345681",
             name: "Unenrolled Student",
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
             password: testPassword,
         });
@@ -60,7 +60,7 @@ describe("ClassStudentRepository (integration)", () => {
         const inactiveUser = await seeders.users.seedOne({
             identifier: "0012345682",
             name: "Inactive Student",
-            role: UserRole.student,
+            role: UserRole.Student,
             active: false,
             password: testPassword,
         });

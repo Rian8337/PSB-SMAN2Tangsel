@@ -64,7 +64,7 @@ describe("SubjectController (integration)", () => {
             const agent = request.agent(app);
 
             const studentUser = seededPrimaryData.users.find(
-                (u) => u.role === UserRole.student,
+                (u) => u.role === UserRole.Student,
             )!;
 
             const student = seededPrimaryData.students.find(
@@ -109,7 +109,7 @@ describe("SubjectController (integration)", () => {
             const agent = request.agent(app);
 
             const teacherUser = seededPrimaryData.users.find(
-                (u) => u.role === UserRole.teacher,
+                (u) => u.role === UserRole.Teacher,
             )!;
 
             const teacher = seededPrimaryData.teachers.find(

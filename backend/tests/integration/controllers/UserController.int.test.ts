@@ -29,7 +29,7 @@ describe("UserController (integration)", () => {
             name: "Integration Test User",
             identifier: testUserIdentifier,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
         });
 
@@ -40,7 +40,7 @@ describe("UserController (integration)", () => {
             name: "Delete Me User",
             identifier: deleteUserIdentifier,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
         });
 
@@ -51,7 +51,7 @@ describe("UserController (integration)", () => {
             name: "Password Update User",
             identifier: passwordTestIdentifier,
             password: testPasswordHash,
-            role: UserRole.student,
+            role: UserRole.Student,
             active: true,
         });
     });
@@ -174,7 +174,7 @@ describe("UserController (integration)", () => {
                 expect(res.status).toBe(200);
                 expect(body.id).toBe(testUserId);
                 expect(body.name).toBe("Integration Test User");
-                expect(body.role).toBe(UserRole.student);
+                expect(body.role).toBe(UserRole.Student);
             });
 
             it("should return 400 for invalid ID parameter", async () => {
@@ -200,7 +200,7 @@ describe("UserController (integration)", () => {
                     name: "Brand New User",
                     identifier: createdUserIdentifier,
                     password: "StrongPassword123!",
-                    role: UserRole.teacher,
+                    role: UserRole.Teacher,
                 });
 
                 expect(res.status).toBe(201);
@@ -214,7 +214,7 @@ describe("UserController (integration)", () => {
 
                 expect(listBody.length).toBeGreaterThan(0);
                 expect(listBody[0].name).toBe("Brand New User");
-                expect(listBody[0].role).toBe(UserRole.teacher);
+                expect(listBody[0].role).toBe(UserRole.Teacher);
             });
 
             it("should return 400 for missing fields", async () => {

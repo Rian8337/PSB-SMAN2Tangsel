@@ -72,7 +72,7 @@ export function AssignClassSubjectModal({
     const fetchTeachers = useCallback(
         async (query: string, signal?: AbortSignal) => {
             const teachers = await userApiClient.listUsers(
-                UserRole.teacher,
+                UserRole.Teacher,
                 query,
                 10,
                 undefined,

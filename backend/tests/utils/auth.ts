@@ -13,7 +13,7 @@ const loginEndpoint = "/auth/login";
  * @returns The response from the login endpoint.
  */
 export function loginStudent(agent: TestAgent) {
-    return loginUser(agent, UserRole.student);
+    return loginUser(agent, UserRole.Student);
 }
 
 /**
@@ -25,7 +25,7 @@ export function loginStudent(agent: TestAgent) {
  * @returns The response from the login endpoint.
  */
 export function loginTeacher(agent: TestAgent) {
-    return loginUser(agent, UserRole.teacher);
+    return loginUser(agent, UserRole.Teacher);
 }
 
 /**
@@ -37,7 +37,7 @@ export function loginTeacher(agent: TestAgent) {
  * @returns The response from the login endpoint.
  */
 export function loginAdministrator(agent: TestAgent) {
-    return loginUser(agent, UserRole.administrator);
+    return loginUser(agent, UserRole.Administrator);
 }
 
 async function loginUser(agent: TestAgent, role: UserRole) {

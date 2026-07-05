@@ -14,7 +14,7 @@ test.describe("Account Management", () => {
             identifier: `99999${Date.now().toString().slice(-5)}`,
             name: `End to End Test User`,
             password: "StrongPassword!23",
-            role: UserRole.student,
+            role: UserRole.Student,
             userId: 0,
         };
 
@@ -49,7 +49,7 @@ test.describe("Account Management", () => {
 
         await nameInput.fill(registeredUser.name);
         await identifierInput.fill(registeredUser.identifier);
-        await roleSelect.selectOption(UserRole.student.toString());
+        await roleSelect.selectOption(UserRole.Student.toString());
         await passwordInput.fill(registeredUser.password);
 
         const createUserResponse = page.waitForResponse((response) => {

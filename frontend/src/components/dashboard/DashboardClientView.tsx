@@ -35,7 +35,7 @@ export function DashboardClientView({
             color: "teal.500",
             title: t("cards.subjects.title"),
             description: t(
-                role === UserRole.student
+                role === UserRole.Student
                     ? "cards.subjects.studentDescription"
                     : "cards.subjects.teacherDescription",
             ),

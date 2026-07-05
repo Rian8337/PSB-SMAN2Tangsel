@@ -46,7 +46,7 @@ export class MaterialController extends BaseController {
      * Returns the details of a material for the currently authenticated student or teacher.
      */
     @Get("/:id")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getMaterial(
         req: ApiRequest<{ id: string }, SubjectMaterial>,
         res: ApiResponse<SubjectMaterial>,
@@ -68,14 +68,14 @@ export class MaterialController extends BaseController {
             let material: SubjectMaterial;
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     material = await this.materialService.getStudentMaterial(
                         parsedId.data,
                         sessionData.userId,
                     );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     material = await this.materialService.getTeacherMaterial(
                         parsedId.data,
                         sessionData.userId,
@@ -96,7 +96,7 @@ export class MaterialController extends BaseController {
      * Streams a material attachment file to the client.
      */
     @Get("/:materialId/attachments/:attachmentId")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async downloadAttachment(
         req: ApiRequest<{ materialId: string; attachmentId: string }>,
         res: ApiResponse,
@@ -130,7 +130,7 @@ export class MaterialController extends BaseController {
             let attachment: { path: string; name: string };
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     attachment =
                         await this.materialService.getStudentAttachment(
                             parsedMaterialId.data,
@@ -139,7 +139,7 @@ export class MaterialController extends BaseController {
                         );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     attachment =
                         await this.materialService.getTeacherAttachment(
                             parsedMaterialId.data,
@@ -153,7 +153,7 @@ export class MaterialController extends BaseController {
             }
 
             const storagePath = this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.storagePath,
+                EnvironmentVariableKey.StoragePath,
                 true,
             );
 
@@ -193,7 +193,7 @@ export class MaterialController extends BaseController {
      * Creates a new material in a class subject. Accepts multipart form data.
      */
     @Post("/")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async createMaterial(
         req: ApiRequest<
             Record<string, never>,
@@ -236,7 +236,7 @@ export class MaterialController extends BaseController {
      * Updates an existing material. Accepts multipart form data.
      */
     @Put("/:id")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async updateMaterial(
         req: ApiRequest<{ id: string }, unknown, Record<string, unknown>>,
         res: ApiResponse,
@@ -285,7 +285,7 @@ export class MaterialController extends BaseController {
      * Deletes a material and all its attachments.
      */
     @Delete("/:id")
-    @Roles(UserRole.teacher)
+    @Roles(UserRole.Teacher)
     async deleteMaterial(req: ApiRequest<{ id: string }>, res: ApiResponse) {
         if (!this.verifySession(req, res)) {
             return;

@@ -8,7 +8,7 @@ import { UserRole } from "@psb/shared/types";
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginStudent(page: Page) {
-    await loginUser(page, UserRole.student);
+    await loginUser(page, UserRole.Student);
 }
 
 /**
@@ -17,7 +17,7 @@ export async function loginStudent(page: Page) {
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginTeacher(page: Page) {
-    await loginUser(page, UserRole.teacher);
+    await loginUser(page, UserRole.Teacher);
 }
 
 /**
@@ -26,7 +26,7 @@ export async function loginTeacher(page: Page) {
  * @param page The Playwright page object to perform actions on.
  */
 export async function loginAdministrator(page: Page) {
-    await loginUser(page, UserRole.administrator);
+    await loginUser(page, UserRole.Administrator);
 }
 
 async function loginUser(page: Page, role: UserRole) {
@@ -42,7 +42,9 @@ async function loginUser(page: Page, role: UserRole) {
 
     await Promise.all([
         page.waitForURL(
-            user.role === UserRole.administrator ? /.*\/admin/ : /.*\/dashboard/,
+            user.role === UserRole.Administrator
+                ? /.*\/admin/
+                : /.*\/dashboard/,
             { waitUntil: "load", timeout: 15000 },
         ),
         page.click('button[type="submit"]'),

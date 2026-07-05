@@ -23,7 +23,7 @@ const createLocalTimestamp = (hours: number, minutes: number) => {
 const mockSchedule: ScheduleDTO = {
     id: 1,
     classSubjectId: 1,
-    day: ScheduleDay.monday,
+    day: ScheduleDay.Monday,
     startTime: createLocalTimestamp(8, 0),
     endTime: createLocalTimestamp(9, 30),
     subject: { code: "MA1", name: "Math" },
@@ -59,7 +59,7 @@ describe("EditScheduleModal (unit)", () => {
             name: "fields.day.label",
         });
 
-        expect(daySelect).toHaveValue(ScheduleDay.monday.toString());
+        expect(daySelect).toHaveValue(ScheduleDay.Monday.toString());
 
         const startInput = screen.getByLabelText("fields.startTime.label");
         const endInput = screen.getByLabelText("fields.endTime.label");
@@ -126,7 +126,7 @@ describe("EditScheduleModal (unit)", () => {
 
         await user.selectOptions(
             screen.getByRole("combobox", { name: "fields.day.label" }),
-            ScheduleDay.tuesday.toString(),
+            ScheduleDay.Tuesday.toString(),
         );
 
         const startInput = screen.getByLabelText("fields.startTime.label");
@@ -153,7 +153,7 @@ describe("EditScheduleModal (unit)", () => {
         await waitFor(() => {
             expect(mockScheduleApiClient.updateSchedule).toHaveBeenCalledWith({
                 id: mockSchedule.id,
-                day: ScheduleDay.tuesday,
+                day: ScheduleDay.Tuesday,
                 startTime: expectedStartDate,
                 endTime: expectedEndDate,
             });

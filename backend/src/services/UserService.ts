@@ -59,13 +59,13 @@ export class UserService implements IUserService {
         }
 
         switch (role) {
-            case UserRole.student:
+            case UserRole.Student:
                 if (!/^\d{10}$/.test(identifier)) {
                     throw new BadRequestError("user.invalidIdentifier");
                 }
                 break;
 
-            case UserRole.teacher:
+            case UserRole.Teacher:
                 if (!/^[1-9]\d*$/.test(identifier)) {
                     throw new BadRequestError("user.invalidIdentifier");
                 }

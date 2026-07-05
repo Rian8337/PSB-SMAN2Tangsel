@@ -26,7 +26,7 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
                 params: { id: "2" },
@@ -40,7 +40,7 @@ describe("UserController (unit)", () => {
                 password: "testpassword",
                 identifier: "1234567890",
                 name: "John Doe",
-                role: UserRole.student,
+                role: UserRole.Student,
             };
 
             mockUserService.findById.mockResolvedValue(mockUser);
@@ -95,7 +95,7 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
             });
@@ -117,7 +117,7 @@ describe("UserController (unit)", () => {
         });
 
         it("should parse and pass valid role, query, limit, and offset queries to service", async () => {
-            req.query.role = UserRole.student.toString();
+            req.query.role = UserRole.Student.toString();
             req.query.query = "test";
             req.query.limit = "10";
             req.query.offset = "20";
@@ -125,7 +125,7 @@ describe("UserController (unit)", () => {
             await controller.listUsers(req, res);
 
             expect(mockUserService.listUsers).toHaveBeenCalledWith(
-                UserRole.student,
+                UserRole.Student,
                 "test",
                 10,
                 20,
@@ -204,13 +204,13 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
                 body: {
                     name: "John Doe",
                     password: "Password123!",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     identifier: "1234567890",
                 },
             });
@@ -224,7 +224,7 @@ describe("UserController (unit)", () => {
             expect(mockUserService.create).toHaveBeenCalledWith(
                 "John Doe",
                 "Password123!",
-                UserRole.student,
+                UserRole.Student,
                 "1234567890",
             );
 
@@ -265,7 +265,7 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
                 params: { id: "2" },
@@ -352,7 +352,7 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
                 body: {
@@ -403,7 +403,7 @@ describe("UserController (unit)", () => {
             req = createMockRequest({
                 sessionData: {
                     userId: 1,
-                    role: UserRole.administrator,
+                    role: UserRole.Administrator,
                     identifier: "1",
                 },
                 params: {

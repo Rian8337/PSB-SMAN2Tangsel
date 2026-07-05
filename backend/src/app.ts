@@ -16,7 +16,7 @@ function getAllowedCorsOrigins(container: DependencyContainer) {
 
     const additionalOrigins = (
         configService.getEnvironmentVariable(
-            EnvironmentVariableKey.corsOrigins,
+            EnvironmentVariableKey.CorsOrigins,
         ) ?? ""
     )
         .split(",")
@@ -49,7 +49,7 @@ export function createApp(container = getContainer()) {
         .use(
             cookieParser(
                 configService.getEnvironmentVariable(
-                    EnvironmentVariableKey.cookieSecret,
+                    EnvironmentVariableKey.CookieSecret,
                 ),
             ),
         )

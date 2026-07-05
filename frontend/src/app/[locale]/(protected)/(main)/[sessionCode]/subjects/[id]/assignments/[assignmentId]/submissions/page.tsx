@@ -31,7 +31,7 @@ export default async function StudentSubmissionsPage({
     const authApiClient = await getServerAuthApiClient();
     const user = await authApiClient.getMe();
 
-    if (user?.role !== UserRole.teacher) {
+    if (user?.role !== UserRole.Teacher) {
         notFound();
     }
 

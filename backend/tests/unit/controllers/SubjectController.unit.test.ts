@@ -60,7 +60,7 @@ describe("SubjectController (unit)", () => {
                     sessionData: {
                         userId: 1,
                         identifier: "1",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                         classId: 10,
                     },
                 });
@@ -129,7 +129,7 @@ describe("SubjectController (unit)", () => {
                     sessionData: {
                         userId: 2,
                         identifier: "2",
-                        role: UserRole.teacher,
+                        role: UserRole.Teacher,
                     },
                 });
             });
@@ -203,7 +203,7 @@ describe("SubjectController (unit)", () => {
                     sessionData: {
                         userId: 1,
                         identifier: "1",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                         classId: 10,
                     },
                 });
@@ -227,7 +227,7 @@ describe("SubjectController (unit)", () => {
                     sessionData: {
                         userId: 1,
                         identifier: "1",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                         classId: 10,
                     },
                 });
@@ -259,7 +259,7 @@ describe("SubjectController (unit)", () => {
                     sessionData: {
                         userId: 1,
                         identifier: "1",
-                        role: UserRole.student,
+                        role: UserRole.Student,
                         classId: 10,
                     },
                 });

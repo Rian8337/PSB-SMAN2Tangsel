@@ -36,7 +36,7 @@ export function CreateScheduleModal({
     const [selectedClassSubject, setSelectedClassSubject] =
         useState<AsyncSelectOption | null>(null);
 
-    const [day, setDay] = useState(ScheduleDay.monday);
+    const [day, setDay] = useState(ScheduleDay.Monday);
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
 
@@ -45,7 +45,7 @@ export function CreateScheduleModal({
 
     const resetForm = () => {
         setSelectedClassSubject(null);
-        setDay(ScheduleDay.monday);
+        setDay(ScheduleDay.Monday);
         setStartTime("");
         setEndTime("");
         setError(null);
@@ -175,23 +175,23 @@ export function CreateScheduleModal({
                             setDay(parseInt(e.target.value, 10));
                         }}
                     >
-                        <option value={ScheduleDay.monday}>
+                        <option value={ScheduleDay.Monday}>
                             {dayT("monday")}
                         </option>
 
-                        <option value={ScheduleDay.tuesday}>
+                        <option value={ScheduleDay.Tuesday}>
                             {dayT("tuesday")}
                         </option>
 
-                        <option value={ScheduleDay.wednesday}>
+                        <option value={ScheduleDay.Wednesday}>
                             {dayT("wednesday")}
                         </option>
 
-                        <option value={ScheduleDay.thursday}>
+                        <option value={ScheduleDay.Thursday}>
                             {dayT("thursday")}
                         </option>
 
-                        <option value={ScheduleDay.friday}>
+                        <option value={ScheduleDay.Friday}>
                             {dayT("friday")}
                         </option>
                     </NativeSelect.Field>

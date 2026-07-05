@@ -45,7 +45,7 @@ export class SubjectController extends BaseController {
      * Obtains the subjects for the currently authenticated user.
      */
     @Get("/me")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getMySubjects(
         req: ApiRequest<
             unknown,
@@ -86,7 +86,7 @@ export class SubjectController extends BaseController {
             let subjects: ClassSubjectAssignment[] = [];
 
             switch (sessionData.role) {
-                case UserRole.student: {
+                case UserRole.Student: {
                     let classId: number | undefined;
 
                     if (session && semester) {
@@ -112,7 +112,7 @@ export class SubjectController extends BaseController {
                     break;
                 }
 
-                case UserRole.teacher: {
+                case UserRole.Teacher: {
                     let targetSession = session;
                     let targetSemester = semester;
 
@@ -210,7 +210,7 @@ export class SubjectController extends BaseController {
      * Creates a new subject.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async createSubject(
         req: ApiRequest<unknown, never, Partial<Subject>>,
         res: ApiResponse<never>,
@@ -237,7 +237,7 @@ export class SubjectController extends BaseController {
      * Updates an existing subject.
      */
     @Put("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async updateSubject(
         req: ApiRequest<{ id: string }, never, Partial<Subject>>,
         res: ApiResponse<never>,
@@ -274,7 +274,7 @@ export class SubjectController extends BaseController {
      * Deletes a subject.
      */
     @Delete("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async deleteSubject(
         req: ApiRequest<{ id: string }, never>,
         res: ApiResponse<never>,

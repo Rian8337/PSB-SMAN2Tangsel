@@ -38,7 +38,7 @@ describe("NotificationController (unit)", () => {
                 req.sessionData = {
                     classId: 1,
                     identifier: "1234567890",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     userId: 1,
                 };
             });
@@ -112,7 +112,7 @@ describe("NotificationController (unit)", () => {
                 req.sessionData = {
                     classId: 1,
                     identifier: "1234567890",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     userId: 1,
                 };
             });
@@ -155,7 +155,7 @@ describe("NotificationController (unit)", () => {
                 req.sessionData = {
                     classId: 1,
                     identifier: "1234567890",
-                    role: UserRole.student,
+                    role: UserRole.Student,
                     userId: 1,
                 };
             });

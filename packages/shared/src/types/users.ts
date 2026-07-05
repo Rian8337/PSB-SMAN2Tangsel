@@ -4,9 +4,9 @@ import { administrators, students, teachers, users } from "../database/schema";
  * Available user roles.
  */
 export enum UserRole {
-    student,
-    teacher,
-    administrator,
+    Student,
+    Teacher,
+    Administrator,
 }
 
 /**

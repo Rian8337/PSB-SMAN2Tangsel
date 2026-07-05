@@ -13,11 +13,11 @@ describe("Route decorators (unit)", () => {
     const path = "/test";
 
     it.each([
-        { decorator: Get, expectedMethod: HttpMethod.get, path },
-        { decorator: Post, expectedMethod: HttpMethod.post, path },
-        { decorator: Put, expectedMethod: HttpMethod.put, path },
-        { decorator: Patch, expectedMethod: HttpMethod.patch, path },
-        { decorator: Delete, expectedMethod: HttpMethod.delete, path },
+        { decorator: Get, expectedMethod: HttpMethod.Get, path },
+        { decorator: Post, expectedMethod: HttpMethod.Post, path },
+        { decorator: Put, expectedMethod: HttpMethod.Put, path },
+        { decorator: Patch, expectedMethod: HttpMethod.Patch, path },
+        { decorator: Delete, expectedMethod: HttpMethod.Delete, path },
     ])(
         "Registers the route with the correct metadata for $expectedMethod",
         ({ decorator, expectedMethod, path }) => {

@@ -99,15 +99,15 @@ export class UserRepository
             const userId = userResult.insertId;
 
             switch (role) {
-                case UserRole.student:
+                case UserRole.Student:
                     await tx.insert(students).values({ userId });
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     await tx.insert(teachers).values({ userId });
                     break;
 
-                case UserRole.administrator:
+                case UserRole.Administrator:
                     await tx.insert(administrators).values({ userId });
                     break;
 

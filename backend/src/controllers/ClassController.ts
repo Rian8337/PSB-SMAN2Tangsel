@@ -40,7 +40,7 @@ export class ClassController extends BaseController {
      * Lists classes in a specific academic session and semester, optionally filtered by a search query, and paginated with limit and offset.
      */
     @Get("/list")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async list(
         req: ApiRequest<
             unknown,
@@ -83,7 +83,7 @@ export class ClassController extends BaseController {
      * Obtains the schedule for a specific class.
      */
     @Get("/:id/schedules")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getClassSchedule(
         req: ApiRequest<{ id: string }, ScheduleDTO[]>,
         res: ApiResponse<ScheduleDTO[]>,
@@ -111,7 +111,7 @@ export class ClassController extends BaseController {
      * Obtains the details of a class by its unique identifier.
      */
     @Get("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async getById(
         req: ApiRequest<{ id: string }, Class>,
         res: ApiResponse<Class>,
@@ -137,7 +137,7 @@ export class ClassController extends BaseController {
      * Creates a new class with the provided name, academic session, and semester.
      */
     @Post("/")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async create(
         req: ApiRequest<unknown, never, Partial<Class>>,
         res: ApiResponse<never>,
@@ -167,7 +167,7 @@ export class ClassController extends BaseController {
      * Updates the name of an existing class identified by its ID.
      */
     @Patch("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async update(
         req: ApiRequest<{ id: string }, never, { name: string }>,
         res: ApiResponse<never>,
@@ -201,7 +201,7 @@ export class ClassController extends BaseController {
      * Deletes a class by its ID. A class that has associated subjects or students cannot be deleted.
      */
     @Delete("/:id")
-    @Roles(UserRole.administrator)
+    @Roles(UserRole.Administrator)
     async delete(
         req: ApiRequest<{ id: string }, never>,
         res: ApiResponse<never>,

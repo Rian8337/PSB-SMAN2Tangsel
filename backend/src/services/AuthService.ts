@@ -49,7 +49,7 @@ export class AuthService implements IAuthService {
         private readonly studentRepository: IStudentRepository,
     ) {
         const keyHex = this.configService.getEnvironmentVariable(
-            EnvironmentVariableKey.sessionEncryptionKey,
+            EnvironmentVariableKey.SessionEncryptionKey,
             true,
         );
 
@@ -64,19 +64,19 @@ export class AuthService implements IAuthService {
         // SameSite cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
         this.requireSameSiteCookies =
             this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.nodeEnv,
+                EnvironmentVariableKey.NodeEnv,
             ) === "production" &&
             this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.isE2ETest,
+                EnvironmentVariableKey.IsE2ETest,
             ) !== "true";
 
         // Secure cookies must be disabled in end-to-end test mode to allow WebKit Playwright to access the cookies.
         this.requireSecureCookies =
             this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.nodeEnv,
+                EnvironmentVariableKey.NodeEnv,
             ) === "production" &&
             this.configService.getEnvironmentVariable(
-                EnvironmentVariableKey.isE2ETest,
+                EnvironmentVariableKey.IsE2ETest,
             ) !== "true";
     }
 
@@ -97,7 +97,7 @@ export class AuthService implements IAuthService {
         let sessionData: SessionData;
 
         switch (user.role) {
-            case UserRole.student:
+            case UserRole.Student:
                 sessionData = {
                     userId: user.id,
                     identifier: user.identifier,
@@ -108,8 +108,8 @@ export class AuthService implements IAuthService {
                 };
                 break;
 
-            case UserRole.teacher:
-            case UserRole.administrator:
+            case UserRole.Teacher:
+            case UserRole.Administrator:
                 sessionData = {
                     userId: user.id,
                     identifier: user.identifier,

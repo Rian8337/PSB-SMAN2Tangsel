@@ -31,7 +31,7 @@ export class SubjectDashboardController extends BaseController {
      * Returns the subject dashboard for the currently authenticated student or teacher.
      */
     @Get("/:id/dashboard")
-    @Roles(UserRole.student, UserRole.teacher)
+    @Roles(UserRole.Student, UserRole.Teacher)
     async getDashboard(
         req: ApiRequest<{ id: string }, SubjectDashboard>,
         res: ApiResponse<SubjectDashboard>,
@@ -55,7 +55,7 @@ export class SubjectDashboardController extends BaseController {
             let dashboard: SubjectDashboard;
 
             switch (sessionData.role) {
-                case UserRole.student:
+                case UserRole.Student:
                     dashboard =
                         await this.classSubjectService.getStudentDashboard(
                             parsedId.data,
@@ -63,7 +63,7 @@ export class SubjectDashboardController extends BaseController {
                         );
                     break;
 
-                case UserRole.teacher:
+                case UserRole.Teacher:
                     dashboard =
                         await this.classSubjectService.getTeacherDashboard(
                             parsedId.data,
