@@ -133,6 +133,8 @@ interface Localization {
         readonly duplicatePassword: string;
         readonly invalidCurrentPassword: string;
         readonly userNotFound: string;
+        readonly cannotModifySelf: string;
+        readonly cannotRemoveLastAdministrator: string;
     };
 }
 
@@ -274,6 +276,10 @@ export const messages = {
                 "Kata sandi baru tidak boleh sama dengan kata sandi lama.",
             invalidCurrentPassword: "Kata sandi saat ini tidak valid.",
             userNotFound: "Pengguna tidak ditemukan.",
+            cannotModifySelf:
+                "Anda tidak dapat menghapus atau menonaktifkan akun Anda sendiri.",
+            cannotRemoveLastAdministrator:
+                "Tidak dapat menghapus atau menonaktifkan administrator aktif terakhir.",
         },
     },
     en: {
@@ -402,6 +408,10 @@ export const messages = {
                 "New password must be different from the old password.",
             invalidCurrentPassword: "Invalid current password.",
             userNotFound: "User not found.",
+            cannotModifySelf:
+                "You cannot delete or deactivate your own account.",
+            cannotRemoveLastAdministrator:
+                "Cannot delete or deactivate the last active administrator.",
         },
     },
 } as const satisfies Record<string, Localization>;

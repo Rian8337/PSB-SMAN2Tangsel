@@ -83,7 +83,12 @@ export class UserService implements IUserService {
         );
     }
 
-    async update(userId: number, name: string, active: boolean) {
+    async update(
+        userId: number,
+        name: string,
+        active: boolean,
+        requesterId: number,
+    ) {
         name = name.trim();
 
         this.verifyName(name);
@@ -92,6 +97,14 @@ export class UserService implements IUserService {
 
         if (!user) {
             throw new NotFoundError("userService.userNotFound");
+        }
+
+        if (user.role === UserRole.Administrator && user.active && !active) {
+            await this.verifyAdministratorRemoval(userId);
+        }
+
+        if (userId === requesterId && !active) {
+            throw new BadRequestError("userService.cannotModifySelf");
         }
 
         await this.userRepository.update(userId, name, active);
@@ -133,11 +146,19 @@ export class UserService implements IUserService {
         );
     }
 
-    async delete(userId: number) {
+    async delete(userId: number, requesterId: number) {
         const user = await this.userRepository.findById(userId);
 
         if (!user) {
             throw new NotFoundError("userService.userNotFound");
+        }
+
+        if (user.role === UserRole.Administrator && user.active) {
+            await this.verifyAdministratorRemoval(userId);
+        }
+
+        if (userId === requesterId) {
+            throw new BadRequestError("userService.cannotModifySelf");
         }
 
         await this.transactionManager.execute(async (tx) => {
@@ -146,6 +167,17 @@ export class UserService implements IUserService {
         });
 
         // TODO: delete assignment submission files for students
+    }
+
+    private async verifyAdministratorRemoval(userId: number) {
+        const remainingActiveAdministrators =
+            await this.userRepository.countActiveAdministrators(userId);
+
+        if (remainingActiveAdministrators === 0) {
+            throw new BadRequestError(
+                "userService.cannotRemoveLastAdministrator",
+            );
+        }
     }
 
     private verifyName(name: string) {

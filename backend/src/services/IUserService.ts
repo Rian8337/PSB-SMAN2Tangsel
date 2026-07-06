@@ -49,8 +49,14 @@ export interface IUserService {
      * @param userId The ID of the user to update.
      * @param name The updated name.
      * @param active The updated active state.
+     * @param requesterId The ID of the user making the request.
      */
-    update(userId: number, name: string, active: boolean): Promise<void>;
+    update(
+        userId: number,
+        name: string,
+        active: boolean,
+        requesterId: number,
+    ): Promise<void>;
 
     /**
      * Updates the password of an existing user.
@@ -69,6 +75,7 @@ export interface IUserService {
      * Deletes an existing user.
      *
      * @param userId The ID of the user to be deleted.
+     * @param requesterId The ID of the user making the request.
      */
-    delete(userId: number): Promise<void>;
+    delete(userId: number, requesterId: number): Promise<void>;
 }

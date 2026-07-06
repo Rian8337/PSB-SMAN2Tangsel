@@ -261,6 +261,10 @@ export class UserController extends BaseController {
         >,
         res: ApiResponse<never>,
     ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
         try {
             const parsedId = coercedUserIdSchema.safeParse(req.params.id);
 
@@ -288,6 +292,7 @@ export class UserController extends BaseController {
                 parsedId.data,
                 parsedName.data,
                 active,
+                req.sessionData.userId,
             );
 
             res.sendStatus(200);
@@ -305,6 +310,10 @@ export class UserController extends BaseController {
         req: ApiRequest<{ id: string }, never>,
         res: ApiResponse<never>,
     ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
         try {
             const paramsId = coercedUserIdSchema.safeParse(req.params.id);
 
@@ -314,7 +323,10 @@ export class UserController extends BaseController {
                 );
             }
 
-            await this.userService.delete(paramsId.data);
+            await this.userService.delete(
+                paramsId.data,
+                req.sessionData.userId,
+            );
 
             res.sendStatus(204);
         } catch (e) {
