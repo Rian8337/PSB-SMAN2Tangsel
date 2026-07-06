@@ -1,7 +1,7 @@
 import { UserRepository } from "@/repositories";
-import { seededPrimaryData } from "@psb/shared/tests";
+import { seededPrimaryData, testPasswordHash } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
-import { testDb } from "@test/utils";
+import { seeders, testDb } from "@test/utils";
 
 describe("UserRepository (integration)", () => {
     const repository = new UserRepository(testDb);
@@ -94,6 +94,52 @@ describe("UserRepository (integration)", () => {
 
             expect(users.length).toBeGreaterThan(0);
             expect(users.every((u) => u.role === UserRole.Student)).toBe(true);
+        });
+    });
+
+    describe("countActiveAdministrators", () => {
+        const extraAdminIdentifier = `9${Date.now().toString()}`;
+
+        afterEach(async () => {
+            await seeders.users.deleteWhere({
+                identifier: extraAdminIdentifier,
+            });
+        });
+
+        it("should count active administrators and support excluding a user", async () => {
+            const baseline = await repository.countActiveAdministrators();
+
+            const admin = await seeders.users.seedOne({
+                name: "Extra Administrator",
+                identifier: extraAdminIdentifier,
+                password: testPasswordHash,
+                role: UserRole.Administrator,
+                active: true,
+            });
+
+            const afterSeed = await repository.countActiveAdministrators();
+            expect(afterSeed).toBe(baseline + 1);
+
+            const excludingNew = await repository.countActiveAdministrators(
+                admin.id,
+            );
+
+            expect(excludingNew).toBe(baseline);
+        });
+
+        it("should not count inactive administrators", async () => {
+            const baseline = await repository.countActiveAdministrators();
+
+            await seeders.users.seedOne({
+                name: "Inactive Administrator",
+                identifier: extraAdminIdentifier,
+                password: testPasswordHash,
+                role: UserRole.Administrator,
+                active: false,
+            });
+
+            const afterSeed = await repository.countActiveAdministrators();
+            expect(afterSeed).toBe(baseline);
         });
     });
 });

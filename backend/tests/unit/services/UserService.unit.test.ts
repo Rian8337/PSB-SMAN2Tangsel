@@ -200,6 +200,8 @@ describe("UserService (unit)", () => {
     });
 
     describe("update", () => {
+        const requesterId = 2;
+
         beforeEach(() => {
             mockUserRepository.findById.mockResolvedValue(mockUser);
         });
@@ -207,7 +209,7 @@ describe("UserService (unit)", () => {
         it("should trim the name before validation and updating", async () => {
             mockUserRepository.update.mockResolvedValue(undefined);
 
-            await service.update(1, "   John Doe   ", true);
+            await service.update(1, "   John Doe   ", true, requesterId);
 
             expect(mockUserRepository.update).toHaveBeenCalledWith(
                 1,
@@ -227,15 +229,77 @@ describe("UserService (unit)", () => {
             ["John_Doe"],
         ])("should throw for invalid username: %s", async (invalidUsername) => {
             await expect(
-                service.update(1, invalidUsername, true),
+                service.update(1, invalidUsername, true, requesterId),
             ).rejects.toThrow(new BadRequestError("user.invalidName"));
         });
 
         it("should throw if user is not found", async () => {
             mockUserRepository.findById.mockResolvedValueOnce(null);
 
-            await expect(service.update(999, "John Doe", true)).rejects.toThrow(
-                new NotFoundError("userService.userNotFound"),
+            await expect(
+                service.update(999, "John Doe", true, requesterId),
+            ).rejects.toThrow(new NotFoundError("userService.userNotFound"));
+        });
+
+        it("should throw if a user tries to deactivate their own account", async () => {
+            await expect(
+                service.update(1, "John Doe", false, 1),
+            ).rejects.toThrow(
+                new BadRequestError("userService.cannotModifySelf"),
+            );
+
+            expect(mockUserRepository.update).not.toHaveBeenCalled();
+        });
+
+        it("should allow a user to rename or reactivate their own account", async () => {
+            mockUserRepository.update.mockResolvedValue(undefined);
+
+            await service.update(1, "John Doe", true, 1);
+
+            expect(mockUserRepository.update).toHaveBeenCalledWith(
+                1,
+                "John Doe",
+                true,
+            );
+        });
+
+        it("should throw when deactivating the last active administrator", async () => {
+            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+
+            mockUserRepository.findById.mockResolvedValueOnce(adminUser);
+            mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
+                0,
+            );
+
+            await expect(
+                service.update(1, "John Doe", false, requesterId),
+            ).rejects.toThrow(
+                new BadRequestError("userService.cannotRemoveLastAdministrator"),
+            );
+
+            expect(
+                mockUserRepository.countActiveAdministrators,
+            ).toHaveBeenCalledWith(1);
+
+            expect(mockUserRepository.update).not.toHaveBeenCalled();
+        });
+
+        it("should allow deactivating an administrator if other active administrators remain", async () => {
+            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+
+            mockUserRepository.findById.mockResolvedValueOnce(adminUser);
+            mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
+                1,
+            );
+
+            mockUserRepository.update.mockResolvedValue(undefined);
+
+            await service.update(1, "John Doe", false, requesterId);
+
+            expect(mockUserRepository.update).toHaveBeenCalledWith(
+                1,
+                "John Doe",
+                false,
             );
         });
     });
@@ -319,11 +383,13 @@ describe("UserService (unit)", () => {
             identifier: "1234567890",
         };
 
+        const requesterId = 2;
+
         it("should execute transaction and delete the user", async () => {
             mockUserRepository.findById.mockResolvedValueOnce(mockUser);
             mockUserRepository.delete.mockResolvedValueOnce(undefined);
 
-            await service.delete(mockUser.id);
+            await service.delete(mockUser.id, requesterId);
 
             expect(mockUserRepository.findById).toHaveBeenCalledWith(
                 mockUser.id,
@@ -341,13 +407,63 @@ describe("UserService (unit)", () => {
         it("should throw if user is not found", async () => {
             mockUserRepository.findById.mockResolvedValueOnce(null);
 
-            await expect(service.delete(999)).rejects.toThrow(
-                new NotFoundError("userService.userNotFound"),
-            );
+            await expect(
+                service.delete(999, requesterId),
+            ).rejects.toThrow(new NotFoundError("userService.userNotFound"));
 
             expect(mockUserRepository.findById).toHaveBeenCalledWith(999);
             expect(mockTransactionManager.execute).not.toHaveBeenCalled();
             expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+
+        it("should throw if a user tries to delete their own account", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(mockUser);
+
+            await expect(service.delete(1, 1)).rejects.toThrow(
+                new BadRequestError("userService.cannotModifySelf"),
+            );
+
+            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
+            expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+
+        it("should throw when deleting the last active administrator", async () => {
+            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+
+            mockUserRepository.findById.mockResolvedValueOnce(adminUser);
+            mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
+                0,
+            );
+
+            await expect(
+                service.delete(1, requesterId),
+            ).rejects.toThrow(
+                new BadRequestError("userService.cannotRemoveLastAdministrator"),
+            );
+
+            expect(
+                mockUserRepository.countActiveAdministrators,
+            ).toHaveBeenCalledWith(1);
+
+            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
+            expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+
+        it("should allow deleting an administrator if other active administrators remain", async () => {
+            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+
+            mockUserRepository.findById.mockResolvedValueOnce(adminUser);
+            mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
+                1,
+            );
+            mockUserRepository.delete.mockResolvedValueOnce(undefined);
+
+            await service.delete(1, requesterId);
+
+            expect(mockUserRepository.delete).toHaveBeenCalledWith(
+                1,
+                expect.anything(),
+            );
         });
     });
 });

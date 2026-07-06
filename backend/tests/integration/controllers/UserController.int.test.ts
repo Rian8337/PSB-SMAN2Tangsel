@@ -1,5 +1,9 @@
 import { users } from "@psb/shared/schema";
-import { testPassword, testPasswordHash } from "@psb/shared/tests";
+import {
+    seededPrimaryData,
+    testPassword,
+    testPasswordHash,
+} from "@psb/shared/tests";
 import { UserListItem, UserRole } from "@psb/shared/types";
 import { app } from "@test/setup/app";
 import {
@@ -370,6 +374,92 @@ describe("UserController (integration)", () => {
 
             const listBody = listRes.body as UserListItem[];
             expect(listBody.length).toBe(0);
+        });
+    });
+
+    describe("Administrator management safeguards", () => {
+        const seededAdminId = seededPrimaryData.users.find(
+            (u) => u.role === UserRole.Administrator,
+        )!.id;
+
+        describe("protecting the last active administrator", () => {
+            it("should return 400 when the sole active administrator tries to delete themselves", async () => {
+                const agent = request.agent(app);
+                await loginAdministrator(agent);
+
+                const res = await agent.delete(
+                    `/users/${seededAdminId.toString()}`,
+                );
+
+                expect(res.status).toBe(400);
+            });
+
+            it("should return 400 when the sole active administrator tries to deactivate themselves via PATCH", async () => {
+                const agent = request.agent(app);
+                await loginAdministrator(agent);
+
+                const res = await agent
+                    .patch(`/users/${seededAdminId.toString()}`)
+                    .send({ name: "Administrator", active: false });
+
+                expect(res.status).toBe(400);
+            });
+        });
+
+        describe("protecting an administrator's own account", () => {
+            const tempAdminIdentifier = `13${identifierSuffix}`;
+            let tempAdminId: number;
+
+            beforeAll(async () => {
+                const admin = await seeders.users.seedOne({
+                    name: "Temporary Administrator",
+                    identifier: tempAdminIdentifier,
+                    password: testPasswordHash,
+                    role: UserRole.Administrator,
+                    active: true,
+                });
+
+                tempAdminId = admin.id!;
+            });
+
+            afterAll(async () => {
+                await seeders.users.deleteWhere({
+                    identifier: tempAdminIdentifier,
+                });
+            });
+
+            it("should return 400 when an administrator tries to delete their own account, even if other admins exist", async () => {
+                const agent = request.agent(app);
+                await loginWithCredentials(agent, tempAdminIdentifier);
+
+                const res = await agent.delete(
+                    `/users/${tempAdminId.toString()}`,
+                );
+
+                expect(res.status).toBe(400);
+            });
+
+            it("should return 400 when an administrator tries to deactivate their own account via PATCH, even if other admins exist", async () => {
+                const agent = request.agent(app);
+                await loginWithCredentials(agent, tempAdminIdentifier);
+
+                const res = await agent
+                    .patch(`/users/${tempAdminId.toString()}`)
+                    .send({ name: "Temporary Administrator", active: false });
+
+                expect(res.status).toBe(400);
+            });
+
+            it("should allow an administrator to delete a different, non-last active administrator", async () => {
+                const agent = request.agent(app);
+                await loginAdministrator(agent);
+
+                const res = await agent.delete(
+                    `/users/${tempAdminId.toString()}`,
+                );
+
+                expect(res.status).toBe(204);
+            });
         });
     });
 });

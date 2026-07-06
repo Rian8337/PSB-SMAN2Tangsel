@@ -3,11 +3,16 @@ import { User, UserListItem, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
+    mockClassSubjectService,
     mockUserService,
 } from "@test/mocks";
 
 describe("UserController (unit)", () => {
-    const controller = new UserController(mockUserService);
+    const controller = new UserController(
+        mockUserService,
+        mockClassSubjectService,
+    );
+
     let res: ReturnType<typeof createMockResponse>;
 
     beforeEach(() => {
@@ -285,9 +290,19 @@ describe("UserController (unit)", () => {
                 2,
                 "Jane Doe",
                 false,
+                1,
             );
 
             expect(res.sendStatus).toHaveBeenCalledWith(200);
+        });
+
+        it("should return 401 if requested without a session", async () => {
+            req.sessionData = undefined;
+
+            await controller.updateUser(req, res);
+
+            expect(mockUserService.update).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(401);
         });
 
         it.each([
@@ -417,8 +432,17 @@ describe("UserController (unit)", () => {
 
             await controller.deleteUser(req, res);
 
-            expect(mockUserService.delete).toHaveBeenCalledWith(2);
+            expect(mockUserService.delete).toHaveBeenCalledWith(2, 1);
             expect(res.sendStatus).toHaveBeenCalledWith(204);
+        });
+
+        it("should return 401 if requested without a session", async () => {
+            req.sessionData = undefined;
+
+            await controller.deleteUser(req, res);
+
+            expect(mockUserService.delete).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(401);
         });
 
         it.each([
