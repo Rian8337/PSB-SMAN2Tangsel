@@ -144,10 +144,6 @@ export function CreateUserModal({
                         <option value={UserRole.Teacher.toString()}>
                             {t("roles.1")}
                         </option>
-
-                        <option value={UserRole.Administrator.toString()}>
-                            {t("roles.2")}
-                        </option>
                     </NativeSelect.Field>
                 </NativeSelect.Root>
             </FormField>
