@@ -732,7 +732,8 @@
         "placeholder": "Masukkan nama lengkap"
       },
       "identifier": {
-        "label": "NISN / NIP"
+        "label": "NISN / NIP",
+        "placeholder": "Masukkan NISN atau NIP"
       }
     },
     "updateButton": "Perbarui Pengguna",

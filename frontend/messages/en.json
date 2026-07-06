@@ -735,7 +735,8 @@
         "placeholder": "Enter full name"
       },
       "identifier": {
-        "label": "NISN / NIP"
+        "label": "NISN / NIP",
+        "placeholder": "Enter NISN or NIP"
       }
     },
     "updateButton": "Update User",

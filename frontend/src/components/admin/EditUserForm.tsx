@@ -24,6 +24,7 @@ export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
     const router = useRouter();
 
     const [name, setName] = useState(user.name);
+    const [identifier, setIdentifier] = useState(user.identifier);
     const [isActive, setIsActive] = useState(user.active);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
         e.preventDefault();
         setError(null);
 
-        if (!name.trim()) {
+        if (!name.trim() || !identifier.trim()) {
             setError(formT("missingFields"));
             return;
         }
@@ -40,7 +41,7 @@ export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
         setIsLoading(true);
 
         userApiClient
-            .updateUser(user.id, name, isActive)
+            .updateUser(user.id, name, identifier, isActive)
             .then(() => {
                 toaster.create({
                     title: t("toast.successTitle"),
@@ -80,14 +81,15 @@ export function EditUserForm({ user, currentUserId }: EditUserFormProps) {
             <FormField label={t("fields.identifier.label")}>
                 <Input
                     name="identifier"
-                    value={user.identifier}
-                    readOnly
-                    disabled
+                    value={identifier}
+                    placeholder={t("fields.identifier.placeholder")}
                     bg="gray.200"
                     border="none"
                     borderRadius="sm"
-                    color="gray"
-                    cursor="not-allowed"
+                    onChange={(e) => {
+                        setIdentifier(e.target.value);
+                    }}
+                    _focus={{ ring: 2, ringColor: "blue.500" }}
                 />
             </FormField>
 
