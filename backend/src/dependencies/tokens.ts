@@ -14,7 +14,6 @@ import {
     ISubmissionRepository,
     ISubjectRepository,
     ITeacherRepository,
-    ITransactionManager,
     IUserRepository,
 } from "@/repositories";
 import {
@@ -47,13 +46,6 @@ export const dependencyTokens = {
     db: Symbol.for("drizzleDb") as InjectionToken<DrizzleDb>,
 
     //#region Repositories
-
-    /**
-     * Injection token for an {@link ITransactionManager}.
-     */
-    transactionManager: Symbol.for(
-        "transactionManager",
-    ) as InjectionToken<ITransactionManager>,
 
     /**
      * Injection token for an {@link IAdministratorRepository}.
