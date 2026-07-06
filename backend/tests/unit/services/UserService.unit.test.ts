@@ -1,7 +1,11 @@
 import { UserService } from "@/services";
-import { BadRequestError, NotFoundError } from "@/types";
+import { BadRequestError, ConflictError, NotFoundError } from "@/types";
 import { User, UserRole } from "@psb/shared/types";
-import { mockTransactionManager, mockUserRepository } from "@test/mocks";
+import {
+    mockClassStudentRepository,
+    mockSubmissionRepository,
+    mockUserRepository,
+} from "@test/mocks";
 
 const bcryptMock = vi.hoisted(() => ({
     hash: vi.fn(),
@@ -11,7 +15,11 @@ const bcryptMock = vi.hoisted(() => ({
 vi.mock("bcrypt", () => bcryptMock);
 
 describe("UserService (unit)", () => {
-    const service = new UserService(mockTransactionManager, mockUserRepository);
+    const service = new UserService(
+        mockUserRepository,
+        mockSubmissionRepository,
+        mockClassStudentRepository,
+    );
 
     const mockUser: User = {
         id: 1,
@@ -264,7 +272,10 @@ describe("UserService (unit)", () => {
         });
 
         it("should throw when deactivating the last active administrator", async () => {
-            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+            const adminUser: User = {
+                ...mockUser,
+                role: UserRole.Administrator,
+            };
 
             mockUserRepository.findById.mockResolvedValueOnce(adminUser);
             mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
@@ -274,7 +285,9 @@ describe("UserService (unit)", () => {
             await expect(
                 service.update(1, "John Doe", false, requesterId),
             ).rejects.toThrow(
-                new BadRequestError("userService.cannotRemoveLastAdministrator"),
+                new BadRequestError(
+                    "userService.cannotRemoveLastAdministrator",
+                ),
             );
 
             expect(
@@ -285,7 +298,10 @@ describe("UserService (unit)", () => {
         });
 
         it("should allow deactivating an administrator if other active administrators remain", async () => {
-            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+            const adminUser: User = {
+                ...mockUser,
+                role: UserRole.Administrator,
+            };
 
             mockUserRepository.findById.mockResolvedValueOnce(adminUser);
             mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
@@ -385,7 +401,12 @@ describe("UserService (unit)", () => {
 
         const requesterId = 2;
 
-        it("should execute transaction and delete the user", async () => {
+        beforeEach(() => {
+            mockSubmissionRepository.hasSubmissions.mockResolvedValue(false);
+            mockClassStudentRepository.hasEnrollments.mockResolvedValue(false);
+        });
+
+        it("should delete the user", async () => {
             mockUserRepository.findById.mockResolvedValueOnce(mockUser);
             mockUserRepository.delete.mockResolvedValueOnce(undefined);
 
@@ -395,24 +416,17 @@ describe("UserService (unit)", () => {
                 mockUser.id,
             );
 
-            expect(mockTransactionManager.execute).toHaveBeenCalledOnce();
-
-            expect(mockUserRepository.delete).toHaveBeenCalledWith(
-                mockUser.id,
-                // Transaction object
-                expect.anything(),
-            );
+            expect(mockUserRepository.delete).toHaveBeenCalledWith(mockUser.id);
         });
 
         it("should throw if user is not found", async () => {
             mockUserRepository.findById.mockResolvedValueOnce(null);
 
-            await expect(
-                service.delete(999, requesterId),
-            ).rejects.toThrow(new NotFoundError("userService.userNotFound"));
+            await expect(service.delete(999, requesterId)).rejects.toThrow(
+                new NotFoundError("userService.userNotFound"),
+            );
 
             expect(mockUserRepository.findById).toHaveBeenCalledWith(999);
-            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
             expect(mockUserRepository.delete).not.toHaveBeenCalled();
         });
 
@@ -423,34 +437,38 @@ describe("UserService (unit)", () => {
                 new BadRequestError("userService.cannotModifySelf"),
             );
 
-            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
             expect(mockUserRepository.delete).not.toHaveBeenCalled();
         });
 
         it("should throw when deleting the last active administrator", async () => {
-            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+            const adminUser: User = {
+                ...mockUser,
+                role: UserRole.Administrator,
+            };
 
             mockUserRepository.findById.mockResolvedValueOnce(adminUser);
             mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
                 0,
             );
 
-            await expect(
-                service.delete(1, requesterId),
-            ).rejects.toThrow(
-                new BadRequestError("userService.cannotRemoveLastAdministrator"),
+            await expect(service.delete(1, requesterId)).rejects.toThrow(
+                new BadRequestError(
+                    "userService.cannotRemoveLastAdministrator",
+                ),
             );
 
             expect(
                 mockUserRepository.countActiveAdministrators,
             ).toHaveBeenCalledWith(1);
 
-            expect(mockTransactionManager.execute).not.toHaveBeenCalled();
             expect(mockUserRepository.delete).not.toHaveBeenCalled();
         });
 
         it("should allow deleting an administrator if other active administrators remain", async () => {
-            const adminUser: User = { ...mockUser, role: UserRole.Administrator };
+            const adminUser: User = {
+                ...mockUser,
+                role: UserRole.Administrator,
+            };
 
             mockUserRepository.findById.mockResolvedValueOnce(adminUser);
             mockUserRepository.countActiveAdministrators.mockResolvedValueOnce(
@@ -460,9 +478,51 @@ describe("UserService (unit)", () => {
 
             await service.delete(1, requesterId);
 
+            expect(mockUserRepository.delete).toHaveBeenCalledWith(1);
+        });
+
+        it("should throw when deleting a student who has assignment submissions", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(mockUser);
+            mockSubmissionRepository.hasSubmissions.mockResolvedValueOnce(true);
+
+            await expect(
+                service.delete(mockUser.id, requesterId),
+            ).rejects.toThrow(new ConflictError("userService.userInUse"));
+
+            expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+
+        it("should throw when deleting a student who has class enrollments", async () => {
+            mockUserRepository.findById.mockResolvedValueOnce(mockUser);
+            mockClassStudentRepository.hasEnrollments.mockResolvedValueOnce(
+                true,
+            );
+
+            await expect(
+                service.delete(mockUser.id, requesterId),
+            ).rejects.toThrow(new ConflictError("userService.userInUse"));
+
+            expect(mockUserRepository.delete).not.toHaveBeenCalled();
+        });
+
+        it("should not check for related data when deleting a non-student user", async () => {
+            const teacherUser: User = { ...mockUser, role: UserRole.Teacher };
+
+            mockUserRepository.findById.mockResolvedValueOnce(teacherUser);
+            mockUserRepository.delete.mockResolvedValueOnce(undefined);
+
+            await service.delete(teacherUser.id, requesterId);
+
+            expect(
+                mockSubmissionRepository.hasSubmissions,
+            ).not.toHaveBeenCalled();
+
+            expect(
+                mockClassStudentRepository.hasEnrollments,
+            ).not.toHaveBeenCalled();
+
             expect(mockUserRepository.delete).toHaveBeenCalledWith(
-                1,
-                expect.anything(),
+                teacherUser.id,
             );
         });
     });
