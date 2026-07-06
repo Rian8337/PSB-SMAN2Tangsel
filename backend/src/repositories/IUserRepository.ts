@@ -75,4 +75,12 @@ export interface IUserRepository {
      * @param tx An optional transaction object to execute the delete operation within a transaction. If not provided, the delete operation will be executed without a transaction.
      */
     delete(userId: number, tx?: Transaction): Promise<void>;
+
+    /**
+     * Counts the number of active administrator accounts.
+     *
+     * @param excludingUserId An optional user ID to exclude from the count.
+     * @returns The number of active administrator accounts.
+     */
+    countActiveAdministrators(excludingUserId?: number): Promise<number>;
 }

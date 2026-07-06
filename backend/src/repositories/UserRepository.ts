@@ -8,7 +8,7 @@ import {
     UserListItem,
     UserRole,
 } from "@psb/shared/types";
-import { and, eq, like, or, SQL } from "drizzle-orm";
+import { and, count, eq, like, ne, or, SQL } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IUserRepository } from "./IUserRepository";
@@ -135,5 +135,22 @@ export class UserRepository
         const ctx = tx ?? this.db;
 
         await ctx.delete(users).where(eq(users.id, userId));
+    }
+
+    countActiveAdministrators(excludingUserId?: number): Promise<number> {
+        const whereConditions: (SQL | undefined)[] = [
+            eq(users.role, UserRole.Administrator),
+            eq(users.active, true),
+        ];
+
+        if (excludingUserId !== undefined) {
+            whereConditions.push(ne(users.id, excludingUserId));
+        }
+
+        return this.db
+            .select({ value: count() })
+            .from(users)
+            .where(and(...whereConditions))
+            .then((res) => res.at(0)?.value ?? 0);
     }
 }
