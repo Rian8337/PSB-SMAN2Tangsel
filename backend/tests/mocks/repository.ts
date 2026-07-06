@@ -83,6 +83,9 @@ export const mockClassSubjectRepository: Mocked<IClassSubjectRepository> = {
     getStudentDashboard: vi.fn(),
     getTeacherDashboard: vi.fn(),
     getTeacherClassSubject: vi.fn(),
+    getStudentClassIdForSession: vi.fn(),
+    getStudentSessions: vi.fn(),
+    getTeacherSessions: vi.fn(),
 };
 
 /**
@@ -160,6 +163,7 @@ export const mockUserRepository: Mocked<IUserRepository> = {
     update: vi.fn(),
     updatePassword: vi.fn(),
     delete: vi.fn(),
+    countActiveAdministrators: vi.fn(),
 };
 
 /**
