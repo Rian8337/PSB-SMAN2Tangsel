@@ -163,6 +163,40 @@ describe("ClassSubjectRepository (integration)", () => {
         });
     });
 
+    describe("getTeacherClassSubject", () => {
+        it("should return the class subject with its class ID and academic session/semester", async () => {
+            const result = await repository.getTeacherClassSubject(
+                readOnlyClassSubject.id!,
+                teacher.userId,
+            );
+
+            expect(result).toEqual({
+                id: readOnlyClassSubject.id,
+                classId: readOnlyClass.id,
+                session: session.session,
+                semester: session.semester,
+            });
+        });
+
+        it("should return null if the teacher is not assigned to the class subject", async () => {
+            const result = await repository.getTeacherClassSubject(
+                readOnlyClassSubject.id!,
+                teacher.userId + 999,
+            );
+
+            expect(result).toBeNull();
+        });
+
+        it("should return null if the class subject does not exist", async () => {
+            const result = await repository.getTeacherClassSubject(
+                999999,
+                teacher.userId,
+            );
+
+            expect(result).toBeNull();
+        });
+    });
+
     describe("listUnassignedSubjects", () => {
         it("should return subjects that are NOT assigned to the class", async () => {
             const unassigned = await repository.listUnassignedSubjects(

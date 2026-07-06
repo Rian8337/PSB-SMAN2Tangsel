@@ -183,9 +183,9 @@ describe("AssignmentService (unit)", () => {
             ).rejects.toThrow(new NotFoundError("assignmentService.notFound"));
         });
 
-        it("should save files, create assignment, send notification, and return the created assignment", async () => {
+        it("should save files, create assignment, return the created assignment, and not send a notification when not visible", async () => {
             mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
-                { id: 10, classId: 3 },
+                { id: 10, classId: 3, session: "2024/2025", semester: 1 },
             );
 
             mockAttachmentService.saveFile.mockResolvedValue({
@@ -227,6 +227,47 @@ describe("AssignmentService (unit)", () => {
             );
 
             expect(result).toEqual(mockAssignment);
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should send a session-scoped notification when the assignment is visible", async () => {
+            mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
+                { id: 10, classId: 3, session: "2024/2025", semester: 1 },
+            );
+
+            mockAttachmentService.saveFile.mockResolvedValue({
+                id: 7,
+                name: "soal.pdf",
+            });
+
+            mockAssignmentRepository.addAssignment.mockResolvedValue({
+                ...mockAssignment,
+                visible: true,
+            });
+
+            mockNotificationService.publishToClass.mockResolvedValue(undefined);
+
+            await service.addAssignment({
+                classSubjectId: 10,
+                teacherId: 2,
+                title: "Tugas Baru",
+                description: "Deskripsi",
+                dueAt: null,
+                visible: true,
+                files: [
+                    { path: "/tmp/soal.pdf", originalFilename: "soal.pdf" },
+                ],
+            });
+
+            expect(mockNotificationService.publishToClass).toHaveBeenCalledWith(
+                3,
+                "Tugas Baru",
+                "Deskripsi",
+                "/24251/subjects/10/assignments/5",
+            );
         });
     });
 
@@ -313,6 +354,84 @@ describe("AssignmentService (unit)", () => {
                 null,
                 false,
                 [9],
+            );
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should not send a notification when visibility stays the same", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue(
+                mockExisting, // visible: true
+            );
+
+            mockAttachmentService.delete.mockResolvedValue(undefined);
+            mockAttachmentService.updateRenameAttachments.mockResolvedValue(
+                undefined,
+            );
+            mockAssignmentRepository.updateAssignment.mockResolvedValue(
+                undefined,
+            );
+
+            await service.updateAssignment({
+                assignmentId: 1,
+                teacherId: 2,
+                title: "Judul Baru",
+                description: "Deskripsi",
+                dueAt: null,
+                visible: true, // already visible, stays visible
+                newFiles: [],
+                renamedAttachments: [],
+                deletedAttachmentIds: [],
+            });
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should send a session-scoped notification when visibility transitions from hidden to visible", async () => {
+            mockAssignmentRepository.getTeacherAssignment.mockResolvedValue({
+                ...mockExisting,
+                visible: false,
+            });
+
+            mockAttachmentService.delete.mockResolvedValue(undefined);
+            mockAttachmentService.updateRenameAttachments.mockResolvedValue(
+                undefined,
+            );
+            mockAssignmentRepository.updateAssignment.mockResolvedValue(
+                undefined,
+            );
+
+            mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
+                { id: 10, classId: 3, session: "2024/2025", semester: 2 },
+            );
+
+            mockNotificationService.publishToClass.mockResolvedValue(undefined);
+
+            await service.updateAssignment({
+                assignmentId: 1,
+                teacherId: 2,
+                title: "Judul Baru",
+                description: "Deskripsi",
+                dueAt: null,
+                visible: true,
+                newFiles: [],
+                renamedAttachments: [],
+                deletedAttachmentIds: [],
+            });
+
+            expect(
+                mockClassSubjectRepository.getTeacherClassSubject,
+            ).toHaveBeenCalledWith(10, 2);
+
+            expect(mockNotificationService.publishToClass).toHaveBeenCalledWith(
+                3,
+                "Judul Baru",
+                "Deskripsi",
+                "/24252/subjects/10/assignments/1",
             );
         });
     });

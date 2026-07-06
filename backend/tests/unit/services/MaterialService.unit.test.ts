@@ -149,9 +149,9 @@ describe("MaterialService (unit)", () => {
             ).rejects.toThrow(new NotFoundError("materialService.notFound"));
         });
 
-        it("should save files, create material, send notification, and return the created material", async () => {
+        it("should save files, create material, return the created material, and not send a notification when not visible", async () => {
             mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
-                { id: 10, classId: 3 },
+                { id: 10, classId: 3, session: "2024/2025", semester: 1 },
             );
 
             mockAttachmentService.saveFile.mockResolvedValue({
@@ -186,6 +186,44 @@ describe("MaterialService (unit)", () => {
             );
 
             expect(result).toEqual(mockMaterial);
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should send a session-scoped notification when the material is visible", async () => {
+            mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
+                { id: 10, classId: 3, session: "2024/2025", semester: 1 },
+            );
+
+            mockAttachmentService.saveFile.mockResolvedValue({
+                id: 7,
+                name: "file.pdf",
+            });
+
+            mockMaterialRepository.addMaterial.mockResolvedValue({
+                ...mockMaterial,
+                visible: true,
+            });
+
+            mockNotificationService.publishToClass.mockResolvedValue(undefined);
+
+            await service.addMaterial(
+                10,
+                2,
+                "New Material",
+                "Description",
+                true,
+                [{ path: "/tmp/file.pdf", originalFilename: "file.pdf" }],
+            );
+
+            expect(mockNotificationService.publishToClass).toHaveBeenCalledWith(
+                3,
+                "New Material",
+                "Description",
+                "/24251/subjects/10/materials/5",
+            );
         });
     });
 
@@ -251,6 +289,78 @@ describe("MaterialService (unit)", () => {
                 "Desc",
                 false,
                 [9], // only the new attachment since ID 2 was deleted
+            );
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should not send a notification when visibility stays the same", async () => {
+            mockMaterialRepository.getTeacherMaterial.mockResolvedValue(
+                mockExisting, // visible: true
+            );
+
+            mockAttachmentService.delete.mockResolvedValue(undefined);
+            mockAttachmentService.updateRenameAttachments.mockResolvedValue(
+                undefined,
+            );
+            mockMaterialRepository.updateMaterial.mockResolvedValue(undefined);
+
+            await service.updateMaterial(
+                1,
+                2,
+                "New Title",
+                "Desc",
+                true, // already visible, stays visible
+                [],
+                [],
+                [],
+            );
+
+            expect(
+                mockNotificationService.publishToClass,
+            ).not.toHaveBeenCalled();
+        });
+
+        it("should send a session-scoped notification when visibility transitions from hidden to visible", async () => {
+            mockMaterialRepository.getTeacherMaterial.mockResolvedValue({
+                ...mockExisting,
+                visible: false,
+            });
+
+            mockAttachmentService.delete.mockResolvedValue(undefined);
+            mockAttachmentService.updateRenameAttachments.mockResolvedValue(
+                undefined,
+            );
+            mockMaterialRepository.updateMaterial.mockResolvedValue(undefined);
+
+            mockClassSubjectRepository.getTeacherClassSubject.mockResolvedValue(
+                { id: 10, classId: 3, session: "2024/2025", semester: 2 },
+            );
+
+            mockNotificationService.publishToClass.mockResolvedValue(undefined);
+
+            await service.updateMaterial(
+                1,
+                2,
+                "New Title",
+                "Desc",
+                true,
+                [],
+                [],
+                [],
+            );
+
+            expect(
+                mockClassSubjectRepository.getTeacherClassSubject,
+            ).toHaveBeenCalledWith(10, 2);
+
+            expect(mockNotificationService.publishToClass).toHaveBeenCalledWith(
+                3,
+                "New Title",
+                "Desc",
+                "/24252/subjects/10/materials/1",
             );
         });
     });
