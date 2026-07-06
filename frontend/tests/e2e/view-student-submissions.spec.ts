@@ -1,6 +1,6 @@
 import { seededPrimaryData } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
-import { encodeSessionCode } from "@/utils/sessionCode";
+import { encodeSessionCode } from "@psb/shared/utils";
 import { expect, test } from "./fixtures";
 import { loginStudent, loginTeacher } from "./utils/login";
 

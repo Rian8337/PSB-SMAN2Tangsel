@@ -5,7 +5,6 @@ import { useRouter } from "@/i18n/navigation";
 import { useAdminSession } from "@/providers/AdminSessionContext";
 import { useAuthApiClient } from "@/providers/api/auth-api-provider";
 import { useSessionApiClient } from "@/providers/api/session-api-provider";
-import { encodeSessionCode } from "@/utils/sessionCode";
 import { Button, Menu } from "@chakra-ui/react";
 import {
     AcademicSessionDTO,
@@ -13,6 +12,7 @@ import {
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
+import { encodeSessionCode } from "@psb/shared/utils";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
