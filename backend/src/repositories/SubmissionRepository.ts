@@ -215,4 +215,13 @@ export class SubmissionRepository
             .delete(assignmentSubmissions)
             .where(eq(assignmentSubmissions.id, submissionId));
     }
+
+    hasSubmissions(studentId: number): Promise<boolean> {
+        return this.db
+            .select()
+            .from(assignmentSubmissions)
+            .where(eq(assignmentSubmissions.studentId, studentId))
+            .limit(1)
+            .then((res) => res.length > 0);
+    }
 }

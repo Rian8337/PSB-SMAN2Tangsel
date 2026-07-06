@@ -89,4 +89,13 @@ export interface ISubmissionRepository {
      * @param submissionId The unique identifier of the submission.
      */
     delete(submissionId: number): Promise<void>;
+
+    /**
+     * Checks if the given student has made any assignment submissions. This is used to prevent deletion of
+     * students with existing submission history.
+     *
+     * @param studentId The unique identifier of the student.
+     * @returns `true` if the student has made any submissions, `false` otherwise.
+     */
+    hasSubmissions(studentId: number): Promise<boolean>;
 }
