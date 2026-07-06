@@ -162,4 +162,13 @@ export class ClassStudentRepository
                 ),
             );
     }
+
+    hasEnrollments(studentId: number): Promise<boolean> {
+        return this.db
+            .select()
+            .from(studentClasses)
+            .where(eq(studentClasses.studentId, studentId))
+            .limit(1)
+            .then((res) => res.length > 0);
+    }
 }

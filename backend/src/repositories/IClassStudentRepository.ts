@@ -68,4 +68,13 @@ export interface IClassStudentRepository {
      * @param studentId The unique identifier of the student to unenroll from the class.
      */
     unenrollStudent(classId: number, studentId: number): Promise<void>;
+
+    /**
+     * Checks if the given student has any class enrollment record, past or present.
+     * This is used to prevent deletion of students with existing enrollment history.
+     *
+     * @param studentId The unique identifier of the student.
+     * @returns `true` if the student has any enrollment record, `false` otherwise.
+     */
+    hasEnrollments(studentId: number): Promise<boolean>;
 }
