@@ -67,6 +67,7 @@ export const mockClassStudentRepository: Mocked<IClassStudentRepository> = {
     findActiveEnrollment: vi.fn(),
     enrollStudent: vi.fn(),
     unenrollStudent: vi.fn(),
+    hasEnrollments: vi.fn(),
 };
 
 /**
@@ -187,6 +188,7 @@ export const mockSubmissionRepository: Mocked<ISubmissionRepository> = {
     add: vi.fn(),
     addAttachments: vi.fn(),
     delete: vi.fn(),
+    hasSubmissions: vi.fn(),
 };
 
 /**
