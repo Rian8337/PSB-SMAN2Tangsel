@@ -14,6 +14,7 @@ import {
     coercedUserIdSchema,
     createUserSchema,
     listQuerySchema,
+    validIdentifierSchema,
     validNameSchema,
     validPasswordSchema,
     validRoleSchema,
@@ -257,7 +258,7 @@ export class UserController extends BaseController {
         req: ApiRequest<
             { id: string },
             never,
-            Partial<{ name: string; active: boolean }>
+            Partial<{ name: string; identifier: string; active: boolean }>
         >,
         res: ApiResponse<never>,
     ) {
@@ -282,6 +283,16 @@ export class UserController extends BaseController {
                 );
             }
 
+            const parsedIdentifier = validIdentifierSchema.safeParse(
+                req.body.identifier,
+            );
+
+            if (!parsedIdentifier.success) {
+                throw new BadRequestError(
+                    parsedIdentifier.error.issues[0].message as MessageKey,
+                );
+            }
+
             const { active } = req.body;
 
             if (typeof active !== "boolean") {
@@ -291,6 +302,7 @@ export class UserController extends BaseController {
             await this.userService.update(
                 parsedId.data,
                 parsedName.data,
+                parsedIdentifier.data,
                 active,
                 req.sessionData.userId,
             );

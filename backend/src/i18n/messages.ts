@@ -136,6 +136,7 @@ interface Localization {
         readonly cannotModifySelf: string;
         readonly cannotRemoveLastAdministrator: string;
         readonly userInUse: string;
+        readonly duplicateIdentifier: string;
     };
 }
 
@@ -283,6 +284,7 @@ export const messages = {
                 "Tidak dapat menghapus atau menonaktifkan administrator aktif terakhir.",
             userInUse:
                 "Pengguna yang memiliki data terkait (misalnya pengumpulan tugas atau riwayat kelas) tidak dapat dihapus.",
+            duplicateIdentifier: "Identifikasi tersebut sudah digunakan.",
         },
     },
     en: {
@@ -417,6 +419,7 @@ export const messages = {
                 "Cannot delete or deactivate the last active administrator.",
             userInUse:
                 "Users with associated data (e.g. assignment submissions or class history) cannot be deleted.",
+            duplicateIdentifier: "That identifier is already in use.",
         },
     },
 } as const satisfies Record<string, Localization>;

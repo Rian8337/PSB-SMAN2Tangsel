@@ -117,10 +117,15 @@ export class UserRepository
         });
     }
 
-    async update(userId: number, name: string, active: boolean) {
+    async update(
+        userId: number,
+        name: string,
+        identifier: string,
+        active: boolean,
+    ) {
         await this.db
             .update(users)
-            .set({ name, active })
+            .set({ name, identifier, active })
             .where(eq(users.id, userId));
     }
 

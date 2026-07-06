@@ -60,26 +60,11 @@ export class UserService implements IUserService {
             throw new BadRequestError("user.invalidPassword");
         }
 
-        if (identifier.length === 0) {
-            throw new BadRequestError("user.invalidIdentifier");
+        if (role !== UserRole.Student && role !== UserRole.Teacher) {
+            throw new BadRequestError("user.invalidRole");
         }
 
-        switch (role) {
-            case UserRole.Student:
-                if (!/^\d{10}$/.test(identifier)) {
-                    throw new BadRequestError("user.invalidIdentifier");
-                }
-                break;
-
-            case UserRole.Teacher:
-                if (!/^[1-9]\d*$/.test(identifier)) {
-                    throw new BadRequestError("user.invalidIdentifier");
-                }
-                break;
-
-            default:
-                throw new BadRequestError("user.invalidRole");
-        }
+        this.verifyIdentifierFormat(identifier, role);
 
         return this.userRepository.create(
             name,
@@ -92,10 +77,12 @@ export class UserService implements IUserService {
     async update(
         userId: number,
         name: string,
+        identifier: string,
         active: boolean,
         requesterId: number,
     ) {
         name = name.trim();
+        identifier = identifier.trim();
 
         this.verifyName(name);
 
@@ -103,6 +90,17 @@ export class UserService implements IUserService {
 
         if (!user) {
             throw new NotFoundError("userService.userNotFound");
+        }
+
+        this.verifyIdentifierFormat(identifier, user.role);
+
+        if (identifier !== user.identifier) {
+            const existingUser =
+                await this.userRepository.findByIdentifier(identifier);
+
+            if (existingUser && existingUser.id !== userId) {
+                throw new ConflictError("userService.duplicateIdentifier");
+            }
         }
 
         if (user.role === UserRole.Administrator && user.active && !active) {
@@ -113,7 +111,7 @@ export class UserService implements IUserService {
             throw new BadRequestError("userService.cannotModifySelf");
         }
 
-        await this.userRepository.update(userId, name, active);
+        await this.userRepository.update(userId, name, identifier, active);
     }
 
     async updatePassword(
@@ -199,6 +197,27 @@ export class UserService implements IUserService {
             !/^[a-zA-Z\s]+$/.test(name)
         ) {
             throw new BadRequestError("user.invalidName");
+        }
+    }
+
+    private verifyIdentifierFormat(identifier: string, role: UserRole) {
+        if (identifier.length === 0) {
+            throw new BadRequestError("user.invalidIdentifier");
+        }
+
+        switch (role) {
+            case UserRole.Student:
+                if (!/^\d{10}$/.test(identifier)) {
+                    throw new BadRequestError("user.invalidIdentifier");
+                }
+                break;
+
+            case UserRole.Teacher:
+            case UserRole.Administrator:
+                if (!/^[1-9]\d*$/.test(identifier)) {
+                    throw new BadRequestError("user.invalidIdentifier");
+                }
+                break;
         }
     }
 }

@@ -44,16 +44,18 @@ export interface IUserService {
     ): Promise<void>;
 
     /**
-     * Updates the name and active state of an existing user.
+     * Updates the name, identifier, and active state of an existing user.
      *
      * @param userId The ID of the user to update.
      * @param name The updated name.
+     * @param identifier The updated identifier.
      * @param active The updated active state.
      * @param requesterId The ID of the user making the request.
      */
     update(
         userId: number,
         name: string,
+        identifier: string,
         active: boolean,
         requesterId: number,
     ): Promise<void>;
