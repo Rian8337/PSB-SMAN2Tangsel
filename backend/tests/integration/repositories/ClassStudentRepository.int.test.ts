@@ -197,4 +197,22 @@ describe("ClassStudentRepository (integration)", () => {
             expect(dbRecords).toHaveLength(0);
         });
     });
+
+    describe("hasEnrollments", () => {
+        it("should return false when the student has no enrollment record", async () => {
+            const result = await repository.hasEnrollments(
+                inactiveStudentUserId,
+            );
+
+            expect(result).toBe(false);
+        });
+
+        it("should return true when the student has an enrollment record", async () => {
+            const result = await repository.hasEnrollments(
+                unenrolledStudentUserId,
+            );
+
+            expect(result).toBe(true);
+        });
+    });
 });
