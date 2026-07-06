@@ -375,6 +375,69 @@ describe("UserController (integration)", () => {
             const listBody = listRes.body as UserListItem[];
             expect(listBody.length).toBe(0);
         });
+
+        describe("preventing deletion of students with related data", () => {
+            const relatedDataIdentifier = `14${identifierSuffix}`;
+            let studentWithDataId: number;
+
+            beforeAll(async () => {
+                const session = seededPrimaryData.sessions[0];
+                const subject = seededPrimaryData.subjects[0];
+                const teacher = seededPrimaryData.teachers[0];
+
+                const student = await seeders.users.seedOne({
+                    name: "Student With Submission",
+                    identifier: relatedDataIdentifier,
+                    password: testPasswordHash,
+                    role: UserRole.Student,
+                    active: true,
+                });
+
+                studentWithDataId = student.id!;
+
+                await seeders.students.seedOne({ userId: studentWithDataId });
+
+                const cls = await seeders.classes.seedOne({
+                    name: "UC-Delete-Guard",
+                    session: session.session,
+                    semester: session.semester,
+                });
+
+                const classSubject = await seeders.classSubjects.seedOne({
+                    classId: cls.id!,
+                    subjectId: subject.id,
+                    teacherId: teacher.userId,
+                });
+
+                const assignment = await seeders.assignments.seedOne({
+                    classSubjectId: classSubject.id!,
+                    title: "Delete Guard Assignment",
+                    visible: true,
+                });
+
+                await seeders.assignmentSubmissions.seedOne({
+                    assignmentId: assignment.id!,
+                    studentId: studentWithDataId,
+                });
+            });
+
+            afterAll(async () => {
+                await seeders.users.deleteWhere({
+                    identifier: relatedDataIdentifier,
+                });
+            });
+
+            it("should return 409 when an administrator tries to delete a student with assignment submissions", async () => {
+                const agent = request.agent(app);
+                await loginAdministrator(agent);
+
+                const res = await agent.delete(
+                    `/users/${studentWithDataId.toString()}`,
+                );
+
+                expect(res.status).toBe(409);
+            });
+        });
     });
 
     describe("Administrator management safeguards", () => {
