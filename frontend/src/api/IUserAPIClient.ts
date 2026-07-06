@@ -51,9 +51,15 @@ export interface IUserAPIClient {
      *
      * @param userId The ID of the user.
      * @param name The new name of the user.
+     * @param identifier The new identifier of the user.
      * @param active Whether the user is active.
      */
-    updateUser(userId: number, name: string, active: boolean): Promise<void>;
+    updateUser(
+        userId: number,
+        name: string,
+        identifier: string,
+        active: boolean,
+    ): Promise<void>;
 
     /**
      * Updates the password of the currently authenticated user.

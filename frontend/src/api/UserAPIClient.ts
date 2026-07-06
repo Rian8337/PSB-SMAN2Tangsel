@@ -56,9 +56,14 @@ export class UserAPIClient extends APIClient implements IUserAPIClient {
         });
     }
 
-    async updateUser(userId: number, name: string, active: boolean) {
+    async updateUser(
+        userId: number,
+        name: string,
+        identifier: string,
+        active: boolean,
+    ) {
         await this.patch(`/${userId.toString()}`, {
-            body: JSON.stringify({ name, active }),
+            body: JSON.stringify({ name, identifier, active }),
             headers: { "Content-Type": "application/json" },
         });
     }
