@@ -31,6 +31,10 @@
     "./validator": {
       "default": "./dist/validator/index.js",
       "types": "./dist/validator/index.d.ts"
+    },
+    "./utils": {
+      "default": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
     }
   },
   "dependencies": {
