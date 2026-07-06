@@ -1,6 +1,6 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { SubjectAssignment } from "@/components/subjects/SubjectAssignment";
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 

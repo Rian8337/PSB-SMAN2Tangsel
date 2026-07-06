@@ -1,7 +1,7 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { DashboardClientView } from "@/components/dashboard/DashboardClientView";
-import { decodeSessionCode } from "@/utils/sessionCode";
 import { UserRole } from "@psb/shared/types";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { notFound } from "next/navigation";
 
 export default async function SessionDashboardPage({

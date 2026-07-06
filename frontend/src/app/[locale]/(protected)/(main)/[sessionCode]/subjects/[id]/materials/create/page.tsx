@@ -3,7 +3,7 @@ import {
     getServerSubjectDashboardApiClient,
 } from "@/api/server";
 import { ManageMaterialForm } from "@/components/subjects/ManageMaterialForm";
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 

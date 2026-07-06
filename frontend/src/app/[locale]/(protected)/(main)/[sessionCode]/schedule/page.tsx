@@ -4,7 +4,7 @@ import {
 } from "@/api/server";
 import { MySchedule } from "@/components/schedule/MySchedule";
 import { routing } from "@/i18n/routing";
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";

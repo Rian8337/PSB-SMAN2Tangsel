@@ -1,7 +1,7 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { MySubjects } from "@/components/subjects/MySubjects";
 import { routing } from "@/i18n/routing";
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { UserRole } from "@psb/shared/types";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";

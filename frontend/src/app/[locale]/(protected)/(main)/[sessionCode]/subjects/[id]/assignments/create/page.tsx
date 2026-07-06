@@ -3,7 +3,7 @@ import {
     getServerSubjectDashboardApiClient,
 } from "@/api/server";
 import { ManageAssignmentForm } from "@/components/subjects/ManageAssignmentForm";
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 import { UserRole } from "@psb/shared/types";
 import { notFound } from "next/navigation";
 

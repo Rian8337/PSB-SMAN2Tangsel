@@ -1,4 +1,4 @@
-import { decodeSessionCode } from "@/utils/sessionCode";
+import { decodeSessionCode } from "@psb/shared/utils";
 
 describe("decodeSessionCode (unit)", () => {
     describe("valid inputs", () => {
