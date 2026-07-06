@@ -48,7 +48,7 @@ This project does not provide grading or examination features.
 ### User Account Module
 
 - UC01 – Change Account Password: Allows students, teachers, and administrators to change the password of their registered account.
-- UC02 – Manage User Account: Allows administrators to manage student and teacher accounts. They can add or remove student and teacher accounts, as well as change the account’s name, but not change their identification number or password.
+- UC02 – Manage User Account: Allows administrators to manage student and teacher accounts. They can add or remove student and teacher accounts, as well as change the account’s name and identification number (e.g. to correct a registration typo), but not change their password.
 
 ### Academic Module
 
