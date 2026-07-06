@@ -60,35 +60,47 @@ export function AdminSessionProvider({
     const t = useTranslations("AdminSessionProvider");
     const sessionApiClient = useSessionApiClient();
 
-    const [selectedSession, setSelectedSession] =
-        useState<AcademicSessionDTO | null>(null);
+    // `undefined` means the session hasn't been fetched yet. `null` means it was fetched but
+    // no session is active. Keeping both states in one variable ensures `selectedSession` and
+    // `isLoadingSession` (derived below) always update in the same render.
+    // If they were tracked by separate `useState`/`useTransition` calls, the two could commit
+    // in different renders, letting consumers briefly see a resolved session while
+    // `isLoadingSession` was still `true`.
+    const [selectedSession, setSelectedSession] = useState<
+        AcademicSessionDTO | null | undefined
+    >(undefined);
 
-    const [isLoadingSession, startTransition] = useTransition();
+    const isLoadingSession = selectedSession === undefined;
+
+    // This is only used to wrap `fetchActiveSession` calls in the effect below.
+    // `isLoadingSession` (derived from `selectedSession`) is what consumers read,
+    // since `isPending` from `useTransition` can lag a render behind the
+    // `setSelectedSession` call it wraps.
+    const [, startTransition] = useTransition();
 
     const fetchActiveSession = useCallback(
-        (signal?: AbortSignal) =>
-            sessionApiClient
-                .getActive(signal)
-                .then((session) => {
-                    setSelectedSession(session);
-                })
-                .catch((e: unknown) => {
-                    if (e instanceof Error && e.name === "AbortError") {
-                        return;
-                    }
+        async (signal?: AbortSignal) => {
+            try {
+                const session = await sessionApiClient.getActive(signal);
 
-                    // 404 means no active session.
-                    if (e instanceof APIError && e.code === 404) {
-                        setSelectedSession(null);
-                        return;
-                    }
+                setSelectedSession(session);
+            } catch (e) {
+                if (e instanceof Error && e.name === "AbortError") {
+                    return;
+                }
 
+                setSelectedSession(null);
+
+                // 404 means no active session. Anything else is unexpected.
+                if (!(e instanceof APIError && e.code === 404)) {
                     toaster.create({
                         title: t("fetchSessionToast.errorTitle"),
                         description: t("fetchSessionToast.errorMessage"),
                         type: "error",
                     });
-                }),
+                }
+            }
+        },
         [sessionApiClient, t],
     );
 
@@ -100,12 +112,12 @@ export function AdminSessionProvider({
         return () => {
             controller.abort();
         };
-    }, [fetchActiveSession]);
+    }, [fetchActiveSession, startTransition]);
 
     return (
         <AdminSessionContext
             value={{
-                selectedSession,
+                selectedSession: selectedSession ?? null,
                 isLoadingSession,
                 setSelectedSession,
                 refreshSession: () => {
