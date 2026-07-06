@@ -209,19 +209,28 @@ describe("UserService (unit)", () => {
 
     describe("update", () => {
         const requesterId = 2;
+        const identifier = mockUser.identifier;
 
         beforeEach(() => {
             mockUserRepository.findById.mockResolvedValue(mockUser);
+            mockUserRepository.findByIdentifier.mockResolvedValue(null);
         });
 
-        it("should trim the name before validation and updating", async () => {
+        it("should trim the name and identifier before validation and updating", async () => {
             mockUserRepository.update.mockResolvedValue(undefined);
 
-            await service.update(1, "   John Doe   ", true, requesterId);
+            await service.update(
+                1,
+                "   John Doe   ",
+                `  ${identifier}  `,
+                true,
+                requesterId,
+            );
 
             expect(mockUserRepository.update).toHaveBeenCalledWith(
                 1,
                 "John Doe",
+                identifier,
                 true,
             );
         });
@@ -237,7 +246,7 @@ describe("UserService (unit)", () => {
             ["John_Doe"],
         ])("should throw for invalid username: %s", async (invalidUsername) => {
             await expect(
-                service.update(1, invalidUsername, true, requesterId),
+                service.update(1, invalidUsername, identifier, true, requesterId),
             ).rejects.toThrow(new BadRequestError("user.invalidName"));
         });
 
@@ -245,13 +254,102 @@ describe("UserService (unit)", () => {
             mockUserRepository.findById.mockResolvedValueOnce(null);
 
             await expect(
-                service.update(999, "John Doe", true, requesterId),
+                service.update(999, "John Doe", identifier, true, requesterId),
             ).rejects.toThrow(new NotFoundError("userService.userNotFound"));
+        });
+
+        it.each([
+            // Too short
+            ["12345"],
+            // Too long
+            ["12345678901"],
+            // Letters included
+            ["12345ABCDE"],
+        ])(
+            "should throw for invalid student identifier: %s",
+            async (invalidIdentifier) => {
+                await expect(
+                    service.update(
+                        1,
+                        "John Doe",
+                        invalidIdentifier,
+                        true,
+                        requesterId,
+                    ),
+                ).rejects.toThrow(new BadRequestError("user.invalidIdentifier"));
+
+                expect(mockUserRepository.update).not.toHaveBeenCalled();
+            },
+        );
+
+        it.each([
+            // Leading zero
+            ["0123"],
+            // Letters
+            ["abc"],
+            // Negative
+            ["-100"],
+        ])(
+            "should throw for invalid teacher/administrator identifier: %s",
+            async (invalidIdentifier) => {
+                const teacherUser: User = {
+                    ...mockUser,
+                    role: UserRole.Teacher,
+                };
+
+                mockUserRepository.findById.mockResolvedValueOnce(teacherUser);
+
+                await expect(
+                    service.update(
+                        1,
+                        "John Doe",
+                        invalidIdentifier,
+                        true,
+                        requesterId,
+                    ),
+                ).rejects.toThrow(new BadRequestError("user.invalidIdentifier"));
+
+                expect(mockUserRepository.update).not.toHaveBeenCalled();
+            },
+        );
+
+        it("should throw if the new identifier is already used by another user", async () => {
+            const otherUser: User = {
+                ...mockUser,
+                id: 2,
+                identifier: "9999999999",
+            };
+
+            mockUserRepository.findByIdentifier.mockResolvedValueOnce(
+                otherUser,
+            );
+
+            await expect(
+                service.update(
+                    1,
+                    "John Doe",
+                    otherUser.identifier,
+                    true,
+                    requesterId,
+                ),
+            ).rejects.toThrow(
+                new ConflictError("userService.duplicateIdentifier"),
+            );
+
+            expect(mockUserRepository.update).not.toHaveBeenCalled();
+        });
+
+        it("should not check for duplicates if the identifier is unchanged", async () => {
+            mockUserRepository.update.mockResolvedValue(undefined);
+
+            await service.update(1, "John Doe", identifier, true, requesterId);
+
+            expect(mockUserRepository.findByIdentifier).not.toHaveBeenCalled();
         });
 
         it("should throw if a user tries to deactivate their own account", async () => {
             await expect(
-                service.update(1, "John Doe", false, 1),
+                service.update(1, "John Doe", identifier, false, 1),
             ).rejects.toThrow(
                 new BadRequestError("userService.cannotModifySelf"),
             );
@@ -262,11 +360,12 @@ describe("UserService (unit)", () => {
         it("should allow a user to rename or reactivate their own account", async () => {
             mockUserRepository.update.mockResolvedValue(undefined);
 
-            await service.update(1, "John Doe", true, 1);
+            await service.update(1, "John Doe", identifier, true, 1);
 
             expect(mockUserRepository.update).toHaveBeenCalledWith(
                 1,
                 "John Doe",
+                identifier,
                 true,
             );
         });
@@ -283,7 +382,7 @@ describe("UserService (unit)", () => {
             );
 
             await expect(
-                service.update(1, "John Doe", false, requesterId),
+                service.update(1, "John Doe", identifier, false, requesterId),
             ).rejects.toThrow(
                 new BadRequestError(
                     "userService.cannotRemoveLastAdministrator",
@@ -310,11 +409,12 @@ describe("UserService (unit)", () => {
 
             mockUserRepository.update.mockResolvedValue(undefined);
 
-            await service.update(1, "John Doe", false, requesterId);
+            await service.update(1, "John Doe", identifier, false, requesterId);
 
             expect(mockUserRepository.update).toHaveBeenCalledWith(
                 1,
                 "John Doe",
+                identifier,
                 false,
             );
         });

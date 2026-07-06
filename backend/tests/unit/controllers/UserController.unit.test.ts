@@ -369,7 +369,7 @@ describe("UserController (unit)", () => {
         const createMockRequest = createMockRequestFactory<
             { id: string },
             never,
-            Partial<{ name: string; active: boolean }>
+            Partial<{ name: string; identifier: string; active: boolean }>
         >();
 
         let req: ReturnType<typeof createMockRequest>;
@@ -384,6 +384,7 @@ describe("UserController (unit)", () => {
                 params: { id: "2" },
                 body: {
                     name: "Jane Doe",
+                    identifier: "1234567890",
                     active: false,
                 },
             });
@@ -397,6 +398,7 @@ describe("UserController (unit)", () => {
             expect(mockUserService.update).toHaveBeenCalledWith(
                 2,
                 "Jane Doe",
+                "1234567890",
                 false,
                 1,
             );
@@ -444,6 +446,25 @@ describe("UserController (unit)", () => {
             expect(mockUserService.update).not.toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(400);
         });
+
+        it.each([
+            // Invalid identifier type
+            { identifier: 123 },
+            // Missing identifier
+            { identifier: undefined },
+            // Empty identifier
+            { identifier: "" },
+        ])(
+            "should return 400 for invalid identifier: %o",
+            async ({ identifier }) => {
+                req.body.identifier = identifier as unknown as string;
+
+                await controller.updateUser(req, res);
+
+                expect(mockUserService.update).not.toHaveBeenCalled();
+                expect(res.status).toHaveBeenCalledWith(400);
+            },
+        );
 
         it.each([
             // Invalid active type

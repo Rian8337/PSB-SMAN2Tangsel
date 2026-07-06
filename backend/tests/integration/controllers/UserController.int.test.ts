@@ -26,6 +26,7 @@ describe("UserController (integration)", () => {
     const deleteUserIdentifier = `11${identifierSuffix}`;
     const createdUserIdentifier = `9${Date.now().toString()}`;
     const passwordTestIdentifier = `12${identifierSuffix}`;
+    const updatedUserIdentifier = `15${identifierSuffix}`;
 
     beforeAll(async () => {
         // For testing GET and PATCH operations
@@ -69,6 +70,7 @@ describe("UserController (integration)", () => {
                     deleteUserIdentifier,
                     createdUserIdentifier,
                     passwordTestIdentifier,
+                    updatedUserIdentifier,
                 ]),
             );
 
@@ -237,6 +239,7 @@ describe("UserController (integration)", () => {
 
         const payload = {
             name: "Updated Integration User",
+            identifier: testUserIdentifier,
             active: false,
         };
 
@@ -265,11 +268,36 @@ describe("UserController (integration)", () => {
             expect(res.status).toBe(403);
         });
 
-        it("should update user name and active status if user is administrator", async () => {
+        it("should return 400 for a missing or empty identifier", async () => {
             const agent = request.agent(app);
             await loginAdministrator(agent);
 
-            const res = await agent.patch(endpoint).send(payload);
+            const res = await agent
+                .patch(endpoint)
+                .send({ ...payload, identifier: "" });
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 409 when the identifier is already used by another user", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent
+                .patch(endpoint)
+                .send({ ...payload, identifier: passwordTestIdentifier });
+
+            expect(res.status).toBe(409);
+        });
+
+        it("should update user name, identifier, and active status if user is administrator", async () => {
+            const agent = request.agent(app);
+            await loginAdministrator(agent);
+
+            const res = await agent
+                .patch(endpoint)
+                .send({ ...payload, identifier: updatedUserIdentifier });
+
             expect(res.status).toBe(200);
 
             // Verify the update
@@ -277,6 +305,7 @@ describe("UserController (integration)", () => {
             const getBody = getRes.body as UserListItem;
 
             expect(getBody.name).toBe(payload.name);
+            expect(getBody.identifier).toBe(updatedUserIdentifier);
             expect(getBody.active).toBe(payload.active);
         });
     });

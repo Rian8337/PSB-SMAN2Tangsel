@@ -1,7 +1,9 @@
 import { UserRepository } from "@/repositories";
+import { users } from "@psb/shared/schema";
 import { seededPrimaryData, testPasswordHash } from "@psb/shared/tests";
 import { UserRole } from "@psb/shared/types";
 import { seeders, testDb } from "@test/utils";
+import { eq } from "drizzle-orm";
 
 describe("UserRepository (integration)", () => {
     const repository = new UserRepository(testDb);
@@ -94,6 +96,44 @@ describe("UserRepository (integration)", () => {
 
             expect(users.length).toBeGreaterThan(0);
             expect(users.every((u) => u.role === UserRole.Student)).toBe(true);
+        });
+    });
+
+    describe("update", () => {
+        const initialIdentifier = `95${Date.now().toString().slice(-6)}`;
+        let userId: number;
+
+        beforeAll(async () => {
+            const user = await seeders.users.seedOne({
+                name: "Update Target User",
+                identifier: initialIdentifier,
+                password: testPasswordHash,
+                role: UserRole.Student,
+                active: true,
+            });
+
+            userId = user.id!;
+        });
+
+        afterAll(async () => {
+            await testDb.delete(users).where(eq(users.id, userId));
+        });
+
+        it("should update the user's name, identifier, and active state", async () => {
+            const newIdentifier = `96${Date.now().toString().slice(-6)}`;
+
+            await repository.update(
+                userId,
+                "Updated Name",
+                newIdentifier,
+                false,
+            );
+
+            const updated = await repository.findById(userId);
+
+            expect(updated?.name).toBe("Updated Name");
+            expect(updated?.identifier).toBe(newIdentifier);
+            expect(updated?.active).toBe(false);
         });
     });
 
