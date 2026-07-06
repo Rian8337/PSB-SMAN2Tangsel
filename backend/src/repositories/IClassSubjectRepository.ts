@@ -144,15 +144,12 @@ export interface IClassSubjectRepository {
     getTeacherClassSubject(
         classSubjectId: number,
         teacherId: number,
-    ): Promise<
-        | {
-              id: number;
-              classId: number;
-              session: ValidSession;
-              semester: ValidSemester;
-          }
-        | null
-    >;
+    ): Promise<{
+        id: number;
+        classId: number;
+        session: ValidSession;
+        semester: ValidSemester;
+    } | null>;
 
     /**
      * Resolves the class ID for a student in a given academic session and semester.

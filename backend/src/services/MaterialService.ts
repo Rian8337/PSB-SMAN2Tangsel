@@ -2,7 +2,11 @@ import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IClassSubjectRepository, IMaterialRepository } from "@/repositories";
 import { NotFoundError } from "@/types";
-import { SubjectMaterial, ValidSemester, ValidSession } from "@psb/shared/types";
+import {
+    SubjectMaterial,
+    ValidSemester,
+    ValidSession,
+} from "@psb/shared/types";
 import { encodeSessionCode } from "@psb/shared/utils";
 import { inject } from "tsyringe";
 import { IAttachmentService, TempFile } from "./IAttachmentService";

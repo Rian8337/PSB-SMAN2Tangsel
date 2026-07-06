@@ -380,15 +380,12 @@ export class ClassSubjectRepository
     async getTeacherClassSubject(
         classSubjectId: number,
         teacherId: number,
-    ): Promise<
-        | {
-              id: number;
-              classId: number;
-              session: ValidSession;
-              semester: ValidSemester;
-          }
-        | null
-    > {
+    ): Promise<{
+        id: number;
+        classId: number;
+        session: ValidSession;
+        semester: ValidSemester;
+    } | null> {
         return this.db
             .select({
                 id: classSubjects.id,
