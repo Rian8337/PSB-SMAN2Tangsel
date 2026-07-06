@@ -5,7 +5,10 @@ import { NotFoundError } from "@/types";
 import {
     StudentSubjectAssignment,
     TeacherSubjectAssignment,
+    ValidSemester,
+    ValidSession,
 } from "@psb/shared/types";
+import { encodeSessionCode } from "@psb/shared/utils";
 import { inject } from "tsyringe";
 import { IAssignmentService } from "./IAssignmentService";
 import { IAttachmentService } from "./IAttachmentService";
@@ -129,12 +132,19 @@ export class AssignmentService implements IAssignmentService {
             savedFiles.map((f) => f.id),
         );
 
-        void this.notificationService.publishToClass(
-            classSubject.classId,
-            title,
-            description ?? "",
-            `/subjects/${classSubjectId.toString()}/assignments/${assignment.id.toString()}`,
-        );
+        if (visible) {
+            void this.notificationService.publishToClass(
+                classSubject.classId,
+                title,
+                description ?? "",
+                this.buildAssignmentUrl(
+                    classSubject.session,
+                    classSubject.semester,
+                    classSubjectId,
+                    assignment.id,
+                ),
+            );
+        }
 
         return assignment;
     }
@@ -184,6 +194,37 @@ export class AssignmentService implements IAssignmentService {
             visible,
             keepIds,
         );
+
+        if (visible && !existing.visible) {
+            const classSubject =
+                await this.classSubjectRepository.getTeacherClassSubject(
+                    existing.classSubjectId,
+                    teacherId,
+                );
+
+            if (classSubject) {
+                void this.notificationService.publishToClass(
+                    classSubject.classId,
+                    title,
+                    description ?? "",
+                    this.buildAssignmentUrl(
+                        classSubject.session,
+                        classSubject.semester,
+                        existing.classSubjectId,
+                        assignmentId,
+                    ),
+                );
+            }
+        }
+    }
+
+    private buildAssignmentUrl(
+        session: ValidSession,
+        semester: ValidSemester,
+        classSubjectId: number,
+        assignmentId: number,
+    ): string {
+        return `/${encodeSessionCode(session, semester)}/subjects/${classSubjectId.toString()}/assignments/${assignmentId.toString()}`;
     }
 
     async deleteAssignment(assignmentId: number, teacherId: number) {

@@ -133,17 +133,26 @@ export interface IClassSubjectRepository {
     ): Promise<SubjectDashboard | null>;
 
     /**
-     * Returns the ID and class ID of a class subject if the given teacher is assigned to it.
-     * Used to verify teacher ownership before creating or modifying materials.
+     * Returns the ID, class ID, and academic session/semester of a class subject if the given
+     * teacher is assigned to it. Used to verify teacher ownership before creating or modifying
+     * materials, and to build session-scoped links (e.g. for notifications).
      *
      * @param classSubjectId The unique identifier of the class subject.
      * @param teacherId The unique identifier of the teacher.
-     * @returns An object with `id` and `classId`, or `null` if the teacher is not assigned.
+     * @returns An object with `id`, `classId`, `session`, and `semester`, or `null` if the teacher is not assigned.
      */
     getTeacherClassSubject(
         classSubjectId: number,
         teacherId: number,
-    ): Promise<{ id: number; classId: number } | null>;
+    ): Promise<
+        | {
+              id: number;
+              classId: number;
+              session: ValidSession;
+              semester: ValidSemester;
+          }
+        | null
+    >;
 
     /**
      * Resolves the class ID for a student in a given academic session and semester.

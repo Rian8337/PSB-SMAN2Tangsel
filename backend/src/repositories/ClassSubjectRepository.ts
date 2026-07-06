@@ -380,10 +380,24 @@ export class ClassSubjectRepository
     async getTeacherClassSubject(
         classSubjectId: number,
         teacherId: number,
-    ): Promise<{ id: number; classId: number } | null> {
+    ): Promise<
+        | {
+              id: number;
+              classId: number;
+              session: ValidSession;
+              semester: ValidSemester;
+          }
+        | null
+    > {
         return this.db
-            .select({ id: classSubjects.id, classId: classSubjects.classId })
+            .select({
+                id: classSubjects.id,
+                classId: classSubjects.classId,
+                session: classes.session,
+                semester: classes.semester,
+            })
             .from(classSubjects)
+            .innerJoin(classes, eq(classSubjects.classId, classes.id))
             .where(
                 and(
                     eq(classSubjects.id, classSubjectId),

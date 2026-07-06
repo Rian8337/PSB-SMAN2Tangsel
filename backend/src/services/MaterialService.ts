@@ -2,7 +2,8 @@ import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { IClassSubjectRepository, IMaterialRepository } from "@/repositories";
 import { NotFoundError } from "@/types";
-import { SubjectMaterial } from "@psb/shared/types";
+import { SubjectMaterial, ValidSemester, ValidSession } from "@psb/shared/types";
+import { encodeSessionCode } from "@psb/shared/utils";
 import { inject } from "tsyringe";
 import { IAttachmentService, TempFile } from "./IAttachmentService";
 import { IMaterialService } from "./IMaterialService";
@@ -122,12 +123,19 @@ export class MaterialService implements IMaterialService {
             savedFiles.map((f) => f.id),
         );
 
-        void this.notificationService.publishToClass(
-            classSubject.classId,
-            title,
-            description ?? "",
-            `/subjects/${classSubjectId.toString()}/materials/${material.id.toString()}`,
-        );
+        if (visible) {
+            void this.notificationService.publishToClass(
+                classSubject.classId,
+                title,
+                description ?? "",
+                this.buildMaterialUrl(
+                    classSubject.session,
+                    classSubject.semester,
+                    classSubjectId,
+                    material.id,
+                ),
+            );
+        }
 
         return material;
     }
@@ -175,6 +183,37 @@ export class MaterialService implements IMaterialService {
             visible,
             keepIds,
         );
+
+        if (visible && !existing.visible) {
+            const classSubject =
+                await this.classSubjectRepository.getTeacherClassSubject(
+                    existing.classSubjectId,
+                    teacherId,
+                );
+
+            if (classSubject) {
+                void this.notificationService.publishToClass(
+                    classSubject.classId,
+                    title,
+                    description ?? "",
+                    this.buildMaterialUrl(
+                        classSubject.session,
+                        classSubject.semester,
+                        existing.classSubjectId,
+                        materialId,
+                    ),
+                );
+            }
+        }
+    }
+
+    private buildMaterialUrl(
+        session: ValidSession,
+        semester: ValidSemester,
+        classSubjectId: number,
+        materialId: number,
+    ): string {
+        return `/${encodeSessionCode(session, semester)}/subjects/${classSubjectId.toString()}/materials/${materialId.toString()}`;
     }
 
     async deleteMaterial(materialId: number, teacherId: number) {
