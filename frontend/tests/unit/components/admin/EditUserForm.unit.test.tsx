@@ -34,7 +34,7 @@ describe("EditUserForm (unit)", () => {
 
         expect(identifierInput).toBeInTheDocument();
         expect(identifierInput.value).toBe(mockUser.identifier);
-        expect(identifierInput).toBeDisabled();
+        expect(identifierInput).toBeEnabled();
 
         const nameInput = screen.getByDisplayValue<HTMLInputElement>(
             mockUser.name,
@@ -70,6 +70,27 @@ describe("EditUserForm (unit)", () => {
         expect(await screen.findByText("missingFields")).toBeInTheDocument();
     });
 
+    it("shows a validation error if identifier is empty", async () => {
+        const user = userEvent.setup();
+
+        render();
+
+        const identifierInput = screen.getByDisplayValue(
+            mockUser.identifier,
+        );
+
+        const updateButton = screen.getByRole("button", {
+            name: "updateButton",
+        });
+
+        await user.clear(identifierInput);
+        await user.type(identifierInput, "   ");
+        await user.click(updateButton);
+
+        expect(mockUserApiClient.updateUser).not.toHaveBeenCalled();
+        expect(await screen.findByText("missingFields")).toBeInTheDocument();
+    });
+
     it("disables the active switch when editing own user", () => {
         render(1);
 
@@ -99,6 +120,7 @@ describe("EditUserForm (unit)", () => {
             expect(mockUserApiClient.updateUser).toHaveBeenCalledWith(
                 1,
                 "Jane Doe",
+                mockUser.identifier,
                 false,
             );
         });

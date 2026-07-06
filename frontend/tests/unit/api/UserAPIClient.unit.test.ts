@@ -136,7 +136,7 @@ describe("UserAPIClient (unit)", () => {
 
     describe("updateUser", () => {
         it("should send a PATCH request with the updated user data", async () => {
-            await client.updateUser(42, "Jane Smith", false);
+            await client.updateUser(42, "Jane Smith", "1234567890", false);
 
             expect(fetchSpy).toHaveBeenCalledOnce();
 
@@ -153,7 +153,11 @@ describe("UserAPIClient (unit)", () => {
             );
 
             expect(options?.body).toBe(
-                JSON.stringify({ name: "Jane Smith", active: false }),
+                JSON.stringify({
+                    name: "Jane Smith",
+                    identifier: "1234567890",
+                    active: false,
+                }),
             );
         });
     });
