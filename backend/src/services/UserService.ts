@@ -1,7 +1,11 @@
 import { Injectable } from "@/decorators/injectable";
 import { dependencyTokens } from "@/dependencies/tokens";
-import { ITransactionManager, IUserRepository } from "@/repositories";
-import { BadRequestError, NotFoundError } from "@/types";
+import {
+    IClassStudentRepository,
+    ISubmissionRepository,
+    IUserRepository,
+} from "@/repositories";
+import { BadRequestError, ConflictError, NotFoundError } from "@/types";
 import { User, UserListItem, UserRole } from "@psb/shared/types";
 import { passwordRegex } from "@psb/shared/validator";
 import { compare, hash } from "bcrypt";
@@ -14,10 +18,12 @@ import { IUserService } from "./IUserService";
 @Injectable(dependencyTokens.userService)
 export class UserService implements IUserService {
     constructor(
-        @inject(dependencyTokens.transactionManager)
-        private readonly transactionManager: ITransactionManager,
         @inject(dependencyTokens.userRepository)
         private readonly userRepository: IUserRepository,
+        @inject(dependencyTokens.submissionRepository)
+        private readonly submissionRepository: ISubmissionRepository,
+        @inject(dependencyTokens.classStudentRepository)
+        private readonly classStudentRepository: IClassStudentRepository,
     ) {}
 
     async findById(id: number): Promise<User> {
@@ -161,12 +167,18 @@ export class UserService implements IUserService {
             throw new BadRequestError("userService.cannotModifySelf");
         }
 
-        await this.transactionManager.execute(async (tx) => {
-            // TODO: delete user's related data (e.g. assignment submissions) in a transaction when the corresponding repositories are implemented
-            await this.userRepository.delete(user.id, tx);
-        });
+        if (user.role === UserRole.Student) {
+            const [hasSubmissions, hasEnrollments] = await Promise.all([
+                this.submissionRepository.hasSubmissions(userId),
+                this.classStudentRepository.hasEnrollments(userId),
+            ]);
 
-        // TODO: delete assignment submission files for students
+            if (hasSubmissions || hasEnrollments) {
+                throw new ConflictError("userService.userInUse");
+            }
+        }
+
+        await this.userRepository.delete(user.id);
     }
 
     private async verifyAdministratorRemoval(userId: number) {

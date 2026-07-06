@@ -135,6 +135,7 @@ interface Localization {
         readonly userNotFound: string;
         readonly cannotModifySelf: string;
         readonly cannotRemoveLastAdministrator: string;
+        readonly userInUse: string;
     };
 }
 
@@ -280,6 +281,8 @@ export const messages = {
                 "Anda tidak dapat menghapus atau menonaktifkan akun Anda sendiri.",
             cannotRemoveLastAdministrator:
                 "Tidak dapat menghapus atau menonaktifkan administrator aktif terakhir.",
+            userInUse:
+                "Pengguna yang memiliki data terkait (misalnya pengumpulan tugas atau riwayat kelas) tidak dapat dihapus.",
         },
     },
     en: {
@@ -412,6 +415,8 @@ export const messages = {
                 "You cannot delete or deactivate your own account.",
             cannotRemoveLastAdministrator:
                 "Cannot delete or deactivate the last active administrator.",
+            userInUse:
+                "Users with associated data (e.g. assignment submissions or class history) cannot be deleted.",
         },
     },
 } as const satisfies Record<string, Localization>;
