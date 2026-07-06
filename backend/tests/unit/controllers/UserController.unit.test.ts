@@ -1,5 +1,10 @@
 import { UserController } from "@/controllers";
-import { User, UserListItem, UserRole } from "@psb/shared/types";
+import {
+    User,
+    UserListItem,
+    UserRole,
+    UserSessionDTO,
+} from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
@@ -17,6 +22,109 @@ describe("UserController (unit)", () => {
 
     beforeEach(() => {
         res = createMockResponse();
+    });
+
+    describe("getMySessions", () => {
+        const createMockRequest = createMockRequestFactory<
+            unknown,
+            UserSessionDTO[]
+        >();
+
+        let req: ReturnType<typeof createMockRequest>;
+
+        const mockSessions: UserSessionDTO[] = [
+            { session: "2023/2024", semester: 1 },
+        ];
+
+        it("should return the student's sessions if the user is a student", async () => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 1,
+                    role: UserRole.Student,
+                    identifier: "0012345678",
+                },
+            });
+
+            mockClassSubjectService.getStudentSessions.mockResolvedValue(
+                mockSessions,
+            );
+
+            await controller.getMySessions(req, res);
+
+            expect(
+                mockClassSubjectService.getStudentSessions,
+            ).toHaveBeenCalledWith(1);
+
+            expect(
+                mockClassSubjectService.getTeacherSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(res.json).toHaveBeenCalledWith(mockSessions);
+        });
+
+        it("should return the teacher's sessions if the user is a teacher", async () => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 2,
+                    role: UserRole.Teacher,
+                    identifier: "2",
+                },
+            });
+
+            mockClassSubjectService.getTeacherSessions.mockResolvedValue(
+                mockSessions,
+            );
+
+            await controller.getMySessions(req, res);
+
+            expect(
+                mockClassSubjectService.getTeacherSessions,
+            ).toHaveBeenCalledWith(2);
+
+            expect(
+                mockClassSubjectService.getStudentSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(res.json).toHaveBeenCalledWith(mockSessions);
+        });
+
+        it("should return 403 if the user is an administrator", async () => {
+            req = createMockRequest({
+                sessionData: {
+                    userId: 3,
+                    role: UserRole.Administrator,
+                    identifier: "1",
+                },
+            });
+
+            await controller.getMySessions(req, res);
+
+            expect(
+                mockClassSubjectService.getStudentSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(
+                mockClassSubjectService.getTeacherSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(res.status).toHaveBeenCalledWith(403);
+        });
+
+        it("should return 401 if requested without a session", async () => {
+            req = createMockRequest({ sessionData: undefined });
+
+            await controller.getMySessions(req, res);
+
+            expect(
+                mockClassSubjectService.getStudentSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(
+                mockClassSubjectService.getTeacherSessions,
+            ).not.toHaveBeenCalled();
+
+            expect(res.status).toHaveBeenCalledWith(401);
+        });
     });
 
     describe("getUser", () => {
