@@ -1,6 +1,9 @@
 import { SubmissionRepository } from "@/repositories/SubmissionRepository";
-import { seededPrimaryData } from "@psb/shared/tests";
+import { users } from "@psb/shared/schema";
+import { seededPrimaryData, testPassword } from "@psb/shared/tests";
+import { UserRole } from "@psb/shared/types";
 import { seeders, testDb, testDbManager } from "@test/utils";
+import { eq } from "drizzle-orm";
 
 describe("SubmissionRepository (integration)", () => {
     const repository = new SubmissionRepository(testDb);
@@ -463,6 +466,45 @@ describe("SubmissionRepository (integration)", () => {
             );
 
             expect(result).toBeNull();
+        });
+    });
+
+    describe("hasSubmissions", () => {
+        let freshStudentUserId: number;
+
+        beforeAll(async () => {
+            const freshStudentUser = await seeders.users.seedOne({
+                identifier: `0099${Date.now().toString().slice(-6)}`,
+                name: "Fresh Submission Student",
+                role: UserRole.Student,
+                active: true,
+                password: testPassword,
+            });
+
+            freshStudentUserId = freshStudentUser.id!;
+
+            await seeders.students.seedOne({ userId: freshStudentUserId });
+        });
+
+        afterAll(async () => {
+            await testDb.delete(users).where(eq(users.id, freshStudentUserId));
+        });
+
+        it("should return false when the student has no submissions", async () => {
+            const result = await repository.hasSubmissions(freshStudentUserId);
+
+            expect(result).toBe(false);
+        });
+
+        it("should return true when the student has at least one submission", async () => {
+            await seeders.assignmentSubmissions.seedOne({
+                assignmentId,
+                studentId: freshStudentUserId,
+            });
+
+            const result = await repository.hasSubmissions(freshStudentUserId);
+
+            expect(result).toBe(true);
         });
     });
 });
