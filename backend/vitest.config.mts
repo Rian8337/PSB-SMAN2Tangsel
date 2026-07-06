@@ -17,7 +17,7 @@ export default defineConfig({
         mockReset: true,
         reporters: [
             "default",
-            ["html", { outputFile: "./html/test-results.html" }],
+            ["html", { outputFile: "./html/index.html" }],
         ],
     },
 });
