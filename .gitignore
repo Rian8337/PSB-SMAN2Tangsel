@@ -65,3 +65,6 @@ CLAUDE.local.md
 
 # Artifacts
 artifacts/
+
+# SonarQube
+.scannerwork/

@@ -19,5 +19,11 @@ export default defineConfig({
             "default",
             ["html", { outputFile: "./html/index.html" }],
         ],
+        coverage: {
+            provider: "v8",
+            include: ["src/**"],
+            reporter: ["text", "lcov"],
+            reportsDirectory: "./coverage",
+        },
     },
 });

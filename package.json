@@ -7,7 +7,8 @@
     "build-shared": "pnpm --filter @psb/shared build",
     "dev": "pnpm --filter backend --filter frontend --parallel run dev",
     "start": "pnpm --filter backend --filter frontend --parallel start",
-    "lint": "eslint . --cache"
+    "lint": "eslint . --cache",
+    "sonar": ". ./.env.sonar && sonar"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
