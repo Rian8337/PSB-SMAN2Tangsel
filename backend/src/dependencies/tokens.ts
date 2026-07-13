@@ -6,6 +6,7 @@ import {
     IClassStudentRepository,
     IClassSubjectRepository,
     IFileRepository,
+    IMaterialBookmarkRepository,
     IMaterialRepository,
     INotificationRepository,
     IScheduleRepository,
@@ -25,6 +26,7 @@ import {
     IClassSubjectService,
     IConfigService,
     IFileService,
+    IMaterialBookmarkService,
     IMaterialService,
     INotificationService,
     IScheduleService,
@@ -95,6 +97,13 @@ export const dependencyTokens = {
     classStudentRepository: Symbol.for(
         "classStudentRepository",
     ) as InjectionToken<IClassStudentRepository>,
+
+    /**
+     * Injection token for an {@link IMaterialBookmarkRepository}.
+     */
+    materialBookmarkRepository: Symbol.for(
+        "materialBookmarkRepository",
+    ) as InjectionToken<IMaterialBookmarkRepository>,
 
     /**
      * Injection token for an {@link IMaterialRepository}.
@@ -207,6 +216,13 @@ export const dependencyTokens = {
     configService: Symbol.for(
         "configService",
     ) as InjectionToken<IConfigService>,
+
+    /**
+     * Injection token for an {@link IMaterialBookmarkService}.
+     */
+    materialBookmarkService: Symbol.for(
+        "materialBookmarkService",
+    ) as InjectionToken<IMaterialBookmarkService>,
 
     /**
      * Injection token for an {@link IMaterialService}.
