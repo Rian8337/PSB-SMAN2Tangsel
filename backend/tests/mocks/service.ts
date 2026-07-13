@@ -7,6 +7,7 @@ import {
     IClassSubjectService,
     IConfigService,
     IFileService,
+    IMaterialBookmarkService,
     IMaterialService,
     INotificationService,
     IScheduleService,
@@ -172,6 +173,16 @@ export const mockAssignmentService: Mocked<IAssignmentService> = {
     addAssignment: vi.fn(),
     updateAssignment: vi.fn(),
     deleteAssignment: vi.fn(),
+};
+
+/**
+ * Mock implementation of {@link IMaterialBookmarkService}.
+ */
+export const mockMaterialBookmarkService: Mocked<IMaterialBookmarkService> = {
+    addBookmark: vi.fn(),
+    removeBookmark: vi.fn(),
+    getBookmarkedMaterialIds: vi.fn(),
+    getMyBookmarks: vi.fn(),
 };
 
 /**

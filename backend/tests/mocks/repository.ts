@@ -6,6 +6,7 @@ import {
     IClassStudentRepository,
     IClassSubjectRepository,
     IFileRepository,
+    IMaterialBookmarkRepository,
     IMaterialRepository,
     INotificationRepository,
     IScheduleRepository,
@@ -186,6 +187,17 @@ export const mockAssignmentRepository: Mocked<IAssignmentRepository> = {
     getAssignmentAttachmentIds: vi.fn(),
     getSubmissionAttachmentIds: vi.fn(),
 };
+
+/**
+ * Mock implementation of {@link IMaterialBookmarkRepository}.
+ */
+export const mockMaterialBookmarkRepository: Mocked<IMaterialBookmarkRepository> =
+    {
+        add: vi.fn(),
+        remove: vi.fn(),
+        findBookmarkedMaterialIds: vi.fn(),
+        findByUserForSession: vi.fn(),
+    };
 
 /**
  * Mock implementation of {@link IMaterialRepository}.
