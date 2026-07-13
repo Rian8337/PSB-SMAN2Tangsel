@@ -68,3 +68,6 @@ artifacts/
 
 # SonarQube
 .scannerwork/
+
+# Local scratch state (subagent-driven-development progress ledger, etc.)
+.superpowers/
