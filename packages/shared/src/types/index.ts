@@ -2,6 +2,7 @@ export * from "./api";
 export * from "./assignment";
 export * from "./attachment";
 export * from "./auth";
+export * from "./bookmarks";
 export * from "./classes";
 export * from "./classSubjects";
 export * from "./db";

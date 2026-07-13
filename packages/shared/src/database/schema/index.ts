@@ -7,6 +7,7 @@ export * from "./attachments";
 export * from "./classes";
 export * from "./classSubjects";
 export * from "./materialAttachments";
+export * from "./materialBookmarks";
 export * from "./materials";
 export * from "./notifications";
 export * from "./schedules";

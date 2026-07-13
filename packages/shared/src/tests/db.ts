@@ -300,7 +300,7 @@ export function createDatabaseManager(db: DrizzleDb) {
 
         /**
          * Deletes all records from secondary tables ({@link schema.assignmentAttachments}, {@link schema.assignmentSubmissionAttachments},
-         * {@link schema.materialAttachments}, {@link schema.assignmentSubmissions}, {@link schema.assignments},
+         * {@link schema.materialAttachments}, {@link schema.materialBookmarks}, {@link schema.assignmentSubmissions}, {@link schema.assignments},
          * {@link schema.materials}, {@link schema.notifications}, {@link schema.studentClasses}, {@link schema.schedules},
          * {@link schema.classSubjects}, and {@link schema.classes}).
          *
@@ -311,6 +311,7 @@ export function createDatabaseManager(db: DrizzleDb) {
                 await tx.delete(schema.assignmentAttachments);
                 await tx.delete(schema.assignmentSubmissionAttachments);
                 await tx.delete(schema.materialAttachments);
+                await tx.delete(schema.materialBookmarks);
                 await tx.delete(schema.assignmentSubmissions);
                 await tx.delete(schema.assignments);
                 await tx.delete(schema.materials);
@@ -369,6 +370,10 @@ export function createDatabaseManager(db: DrizzleDb) {
 
                 await tx.execute(
                     sql`TRUNCATE TABLE ${schema.materialAttachments}`,
+                );
+
+                await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.materialBookmarks}`,
                 );
 
                 await tx.execute(
@@ -447,6 +452,11 @@ export function createDatabaseManager(db: DrizzleDb) {
              * Seeder for {@link schema.materialAttachments} table.
              */
             materialAttachments: createSeeder(schema.materialAttachments),
+
+            /**
+             * Seeder for {@link schema.materialBookmarks} table.
+             */
+            materialBookmarks: createSeeder(schema.materialBookmarks),
 
             /**
              * Seeder for {@link schema.materials} table.
