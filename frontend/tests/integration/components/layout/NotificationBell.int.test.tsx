@@ -184,14 +184,15 @@ describe("NotificationBell (integration)", () => {
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    new Date(
-                        mockNotifications[1].createdAt,
-                    ).toLocaleDateString("id", {
-                        day: "numeric",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    }),
+                    new Date(mockNotifications[1].createdAt).toLocaleDateString(
+                        "id",
+                        {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        },
+                    ),
                 ),
             ).toBeInTheDocument();
         });

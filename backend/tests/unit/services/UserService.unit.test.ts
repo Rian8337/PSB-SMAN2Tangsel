@@ -246,7 +246,13 @@ describe("UserService (unit)", () => {
             ["John_Doe"],
         ])("should throw for invalid username: %s", async (invalidUsername) => {
             await expect(
-                service.update(1, invalidUsername, identifier, true, requesterId),
+                service.update(
+                    1,
+                    invalidUsername,
+                    identifier,
+                    true,
+                    requesterId,
+                ),
             ).rejects.toThrow(new BadRequestError("user.invalidName"));
         });
 
@@ -276,7 +282,9 @@ describe("UserService (unit)", () => {
                         true,
                         requesterId,
                     ),
-                ).rejects.toThrow(new BadRequestError("user.invalidIdentifier"));
+                ).rejects.toThrow(
+                    new BadRequestError("user.invalidIdentifier"),
+                );
 
                 expect(mockUserRepository.update).not.toHaveBeenCalled();
             },
@@ -307,7 +315,9 @@ describe("UserService (unit)", () => {
                         true,
                         requesterId,
                     ),
-                ).rejects.toThrow(new BadRequestError("user.invalidIdentifier"));
+                ).rejects.toThrow(
+                    new BadRequestError("user.invalidIdentifier"),
+                );
 
                 expect(mockUserRepository.update).not.toHaveBeenCalled();
             },

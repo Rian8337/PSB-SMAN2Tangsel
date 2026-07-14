@@ -32,9 +32,15 @@ test.describe("Academic Session Management", () => {
         // Clean up regardless of whether an individual test already removed its own session via the UI, since
         // `session` is a primary table and cannot be bulk-cleaned without also wiping shared worker data (e.g. users).
         await Promise.all([
-            seeders.sessions.deleteWhere({ session: createSession, semester: 1 }),
+            seeders.sessions.deleteWhere({
+                session: createSession,
+                semester: 1,
+            }),
             seeders.sessions.deleteWhere({ session: editSession, semester: 1 }),
-            seeders.sessions.deleteWhere({ session: deleteSession, semester: 1 }),
+            seeders.sessions.deleteWhere({
+                session: deleteSession,
+                semester: 1,
+            }),
         ]);
     });
 

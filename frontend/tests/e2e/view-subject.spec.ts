@@ -91,10 +91,12 @@ test.describe("View Subject Flow", () => {
             page.getByRole("link", { name: "Hidden Assignment" }),
         ).not.toBeVisible();
 
-        // Teacher-only "Tambah" (Add) buttons should not be present.
-        await expect(page.getByRole("button", { name: /Tambah/i })).toHaveCount(
-            0,
-        );
+        // Teacher-only "Tambah" (Add) buttons should not be present. Uses an exact match since the
+        // bookmark toggle's "Tambahkan ke bookmark" label (visible to students too) would otherwise also
+        // match a loose /Tambah/i substring regex.
+        await expect(
+            page.getByRole("button", { name: "Tambah", exact: true }),
+        ).toHaveCount(0);
     });
 
     test("Teacher should see all content including hidden items and add buttons", async ({
@@ -135,9 +137,11 @@ test.describe("View Subject Flow", () => {
             page.getByRole("link", { name: "Hidden Assignment" }),
         ).toBeVisible();
 
-        // Teacher-only "Tambah" (Add) buttons should be present for each section.
-        await expect(page.getByRole("button", { name: /Tambah/i })).toHaveCount(
-            2,
-        );
+        // Teacher-only "Tambah" (Add) buttons should be present for each section. Uses an exact match
+        // since the bookmark toggle's "Tambahkan ke bookmark" label would otherwise also match a loose
+        // /Tambah/i substring regex.
+        await expect(
+            page.getByRole("button", { name: "Tambah", exact: true }),
+        ).toHaveCount(2);
     });
 });

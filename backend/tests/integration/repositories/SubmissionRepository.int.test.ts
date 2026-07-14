@@ -144,9 +144,8 @@ describe("SubmissionRepository (integration)", () => {
                 attachmentId: attachment.id!,
             });
 
-            const result = await repository.getForAssignmentWithAttachments(
-                assignmentId,
-            );
+            const result =
+                await repository.getForAssignmentWithAttachments(assignmentId);
 
             const row = result.find(
                 (r) => r.attachmentPath === attachment.path,
@@ -309,7 +308,9 @@ describe("SubmissionRepository (integration)", () => {
 
             expect(result).not.toBeNull();
             expect(result!.id).toBe(submission.id);
-            expect(result!.attachments.some((a) => a.name === "gbs_file.txt")).toBe(true);
+            expect(
+                result!.attachments.some((a) => a.name === "gbs_file.txt"),
+            ).toBe(true);
         });
     });
 
@@ -395,11 +396,9 @@ describe("SubmissionRepository (integration)", () => {
                 path: "add_sr_file.txt",
             });
 
-            const result = await repository.add(
-                assignment.id!,
-                student.id,
-                [attachment.id!],
-            );
+            const result = await repository.add(assignment.id!, student.id, [
+                attachment.id!,
+            ]);
 
             expect(result.id).toBeTypeOf("number");
             expect(result.attachments).toHaveLength(1);

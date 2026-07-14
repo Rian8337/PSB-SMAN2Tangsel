@@ -404,7 +404,9 @@ describe("SubmissionController (integration)", () => {
             await loginStudent(agent);
 
             const res = await agent
-                .post(`/assignments/${freshAssignmentId.toString()}/submissions`)
+                .post(
+                    `/assignments/${freshAssignmentId.toString()}/submissions`,
+                )
                 .attach("files", Buffer.from("content"), "file.txt");
 
             expect(res.status).toBe(201);
@@ -420,7 +422,9 @@ describe("SubmissionController (integration)", () => {
             await loginStudent(agent);
 
             const res = await agent
-                .post(`/assignments/${freshAssignmentId.toString()}/submissions`)
+                .post(
+                    `/assignments/${freshAssignmentId.toString()}/submissions`,
+                )
                 .attach("files", Buffer.from("content"), "file2.txt");
 
             expect(res.status).toBe(409);
@@ -502,7 +506,9 @@ describe("SubmissionController (integration)", () => {
             await loginStudent(agent);
 
             const res = await agent
-                .put(`/assignments/${updateAssignmentId.toString()}/submissions`)
+                .put(
+                    `/assignments/${updateAssignmentId.toString()}/submissions`,
+                )
                 .field("deletedAttachmentIds", JSON.stringify([]))
                 .field("renamedAttachments", JSON.stringify([]))
                 .attach("files", Buffer.from("new content"), "new.txt");

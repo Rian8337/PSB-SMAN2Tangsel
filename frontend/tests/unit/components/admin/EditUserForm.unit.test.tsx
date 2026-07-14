@@ -75,9 +75,7 @@ describe("EditUserForm (unit)", () => {
 
         render();
 
-        const identifierInput = screen.getByDisplayValue(
-            mockUser.identifier,
-        );
+        const identifierInput = screen.getByDisplayValue(mockUser.identifier);
 
         const updateButton = screen.getByRole("button", {
             name: "updateButton",

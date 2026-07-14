@@ -38,9 +38,7 @@ describe("PageHeader (unit)", () => {
             screen.getByTestId("mock-notification-bell"),
         ).toBeInTheDocument();
 
-        expect(
-            screen.getByTestId("mock-session-switcher"),
-        ).toBeInTheDocument();
+        expect(screen.getByTestId("mock-session-switcher")).toBeInTheDocument();
     });
 
     it("should not render the session switcher when showSessionSwitcher is false", () => {

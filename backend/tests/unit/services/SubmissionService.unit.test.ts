@@ -217,7 +217,9 @@ describe("SubmissionService (unit)", () => {
                 new NotFoundError("assignmentService.notFound"),
             );
 
-            expect(mockSubmissionRepository.getByStudent).not.toHaveBeenCalled();
+            expect(
+                mockSubmissionRepository.getByStudent,
+            ).not.toHaveBeenCalled();
         });
 
         it("should throw ConflictError when the student already has a submission", async () => {
@@ -275,9 +277,7 @@ describe("SubmissionService (unit)", () => {
 
             await expect(
                 service.updateSubmission(1, 3, [], [], []),
-            ).rejects.toThrow(
-                new NotFoundError("submissionService.notFound"),
-            );
+            ).rejects.toThrow(new NotFoundError("submissionService.notFound"));
 
             expect(mockAttachmentService.delete).not.toHaveBeenCalled();
         });
@@ -308,10 +308,9 @@ describe("SubmissionService (unit)", () => {
                 path: "/tmp/new",
                 originalFilename: "new.pdf",
             });
-            expect(mockSubmissionRepository.addAttachments).toHaveBeenCalledWith(
-                5,
-                [20],
-            );
+            expect(
+                mockSubmissionRepository.addAttachments,
+            ).toHaveBeenCalledWith(5, [20]);
         });
     });
 
