@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { useSessionCode } from "@/hooks";
+import { useMaterialBookmarks, useSessionCode } from "@/hooks";
 import { useSubjectDashboardApiClient } from "@/providers/api/subject-dashboard-api-provider";
 import {
     Box,
     Button,
     Flex,
     Grid,
+    IconButton,
     Separator,
     Spinner,
     Text,
@@ -16,7 +17,7 @@ import {
     SubjectDashboard as SubjectDashboardData,
     UserRole,
 } from "@psb/shared/types";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -43,6 +44,9 @@ export function SubjectDashboard({
     const [isPending, startTransition] = useTransition();
 
     const isTeacher = role === UserRole.Teacher;
+
+    const { isBookmarked, toggleBookmark } =
+        useMaterialBookmarks(classSubjectId);
 
     const fetchDashboard = useCallback(
         async (signal?: AbortSignal) => {
@@ -189,18 +193,48 @@ export function SubjectDashboard({
                                             )}
                                         </Box>
 
-                                        {isTeacher && (
-                                            <Box
-                                                color="gray.500"
-                                                flexShrink={0}
+                                        <Flex
+                                            align="center"
+                                            gap={2}
+                                            flexShrink={0}
+                                        >
+                                            <IconButton
+                                                aria-label={
+                                                    isBookmarked(material.id)
+                                                        ? t("removeBookmark")
+                                                        : t("addBookmark")
+                                                }
+                                                size="xs"
+                                                variant="ghost"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    void toggleBookmark(
+                                                        material.id,
+                                                    );
+                                                }}
                                             >
-                                                {material.visible ? (
-                                                    <Eye size={20} />
-                                                ) : (
-                                                    <EyeOff size={20} />
-                                                )}
-                                            </Box>
-                                        )}
+                                                <Star
+                                                    size={18}
+                                                    fill={
+                                                        isBookmarked(
+                                                            material.id,
+                                                        )
+                                                            ? "black"
+                                                            : "none"
+                                                    }
+                                                />
+                                            </IconButton>
+
+                                            {isTeacher && (
+                                                <Box color="gray.500">
+                                                    {material.visible ? (
+                                                        <Eye size={20} />
+                                                    ) : (
+                                                        <EyeOff size={20} />
+                                                    )}
+                                                </Box>
+                                            )}
+                                        </Flex>
                                     </Flex>
 
                                     <Separator />

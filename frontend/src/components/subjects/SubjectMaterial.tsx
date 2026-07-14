@@ -2,7 +2,7 @@
 
 import { backendBaseUrl } from "@/api/backendBaseUrl";
 import { useRouter } from "@/i18n/navigation";
-import { useSessionCode } from "@/hooks";
+import { useMaterialBookmarks, useSessionCode } from "@/hooks";
 import { useSubjectMaterialApiClient } from "@/providers/api/subject-material-api-provider";
 import {
     Box,
@@ -10,6 +10,7 @@ import {
     Flex,
     HStack,
     Heading,
+    IconButton,
     Spinner,
     Text,
 } from "@chakra-ui/react";
@@ -17,7 +18,7 @@ import {
     SubjectMaterial as SubjectMaterialData,
     UserRole,
 } from "@psb/shared/types";
-import { FileText } from "lucide-react";
+import { FileText, Star } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "../layout/PageHeader";
@@ -58,6 +59,9 @@ export function SubjectMaterial({
 
     const isTeacher = role === UserRole.Teacher;
     const backButtonUrl = `/${sessionCode}/subjects/${classSubjectId.toString()}`;
+
+    const { isBookmarked, toggleBookmark } =
+        useMaterialBookmarks(classSubjectId);
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
@@ -115,9 +119,30 @@ export function SubjectMaterial({
             />
 
             <Box p={{ base: 4, md: 8 }}>
-                <Heading as="h3" size="lg" mb={2}>
-                    {material?.title}
-                </Heading>
+                <Flex justify="space-between" align="center" mb={2}>
+                    <Heading as="h3" size="lg">
+                        {material?.title}
+                    </Heading>
+
+                    {material && (
+                        <IconButton
+                            aria-label={
+                                isBookmarked(material.id)
+                                    ? t("removeBookmark")
+                                    : t("addBookmark")
+                            }
+                            variant="ghost"
+                            onClick={() => void toggleBookmark(material.id)}
+                        >
+                            <Star
+                                size={22}
+                                fill={
+                                    isBookmarked(material.id) ? "black" : "none"
+                                }
+                            />
+                        </IconButton>
+                    )}
+                </Flex>
 
                 {material?.description && (
                     <Text mb={4}>{material.description}</Text>

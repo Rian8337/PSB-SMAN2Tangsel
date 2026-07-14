@@ -552,7 +552,9 @@
     "editButton": "Edit",
     "deleteButton": "Delete",
     "showToStudents": "Show to students",
-    "hideFromStudents": "Hide from students"
+    "hideFromStudents": "Hide from students",
+    "addBookmark": "Add to bookmarks",
+    "removeBookmark": "Remove from bookmarks"
   },
   "ManageMaterialForm": {
     "createPageTitle": "New Material - {subjectName} - {className}",
@@ -605,7 +607,9 @@
     "noMaterials": "No materials yet.",
     "noAssignments": "No assignments yet.",
     "fetchErrorTitle": "Failed to Load Subject",
-    "fetchErrorMessage": "An error occurred while loading the subject dashboard. Please try again."
+    "fetchErrorMessage": "An error occurred while loading the subject dashboard. Please try again.",
+    "addBookmark": "Add to bookmarks",
+    "removeBookmark": "Remove from bookmarks"
   },
   "MySchedule": {
     "title": "My Schedule",
@@ -633,7 +637,16 @@
     "mobileTitle": "Dashboard | PSB SMAN 2 Tangerang Selatan",
     "home": "Home",
     "schedule": "Schedule",
-    "subjects": "Subjects"
+    "subjects": "Subjects",
+    "bookmarks": "Bookmarks"
+  },
+  "Bookmarks": {
+    "title": "My Bookmarks",
+    "emptyState": "No bookmarked materials yet.",
+    "fetchToast": {
+      "errorTitle": "Failed to Load Bookmarks",
+      "errorMessage": "An error occurred while loading your bookmarks. Please try again."
+    }
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"

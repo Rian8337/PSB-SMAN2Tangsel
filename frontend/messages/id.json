@@ -549,7 +549,9 @@
     "editButton": "Edit",
     "deleteButton": "Hapus",
     "showToStudents": "Tampilkan ke siswa",
-    "hideFromStudents": "Sembunyikan dari siswa"
+    "hideFromStudents": "Sembunyikan dari siswa",
+    "addBookmark": "Tambahkan ke bookmark",
+    "removeBookmark": "Hapus dari bookmark"
   },
   "ManageMaterialForm": {
     "createPageTitle": "Materi Baru - {subjectName} - {className}",
@@ -602,7 +604,9 @@
     "noMaterials": "Belum ada materi.",
     "noAssignments": "Belum ada tugas.",
     "fetchErrorTitle": "Gagal Memuat Mata Pelajaran",
-    "fetchErrorMessage": "Terjadi kesalahan saat memuat dasbor mata pelajaran. Silakan coba lagi."
+    "fetchErrorMessage": "Terjadi kesalahan saat memuat dasbor mata pelajaran. Silakan coba lagi.",
+    "addBookmark": "Tambahkan ke bookmark",
+    "removeBookmark": "Hapus dari bookmark"
   },
   "MySchedule": {
     "title": "Jadwal Saya",
@@ -630,7 +634,16 @@
     "mobileTitle": "Dasbor | PSB SMAN 2 Tangerang Selatan",
     "home": "Beranda",
     "schedule": "Jadwal",
-    "subjects": "Mata Pelajaran"
+    "subjects": "Mata Pelajaran",
+    "bookmarks": "Bookmark"
+  },
+  "Bookmarks": {
+    "title": "Bookmark Saya",
+    "emptyState": "Belum ada materi yang dibookmark.",
+    "fetchToast": {
+      "errorTitle": "Gagal Memuat Bookmark",
+      "errorMessage": "Terjadi kesalahan saat memuat daftar bookmark. Silakan coba lagi."
+    }
   },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"

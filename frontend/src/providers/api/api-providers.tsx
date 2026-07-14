@@ -1,5 +1,6 @@
 import { composeProviders } from "../composer";
 import { AuthApiProvider } from "./auth-api-provider";
+import { BookmarkApiProvider } from "./bookmark-api-provider";
 import { ClassApiProvider } from "./class-api-provider";
 import { ClassStudentApiProvider } from "./class-student-api-provider";
 import { ClassSubjectApiProvider } from "./class-subject-api-provider";
@@ -18,6 +19,7 @@ import { UserApiProvider } from "./user-api-provider";
  */
 export const ApiProviders = composeProviders(
     AuthApiProvider,
+    BookmarkApiProvider,
     ClassApiProvider,
     ClassStudentApiProvider,
     ClassSubjectApiProvider,
