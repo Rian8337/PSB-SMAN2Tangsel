@@ -110,6 +110,9 @@ export const test = base.extend<{}, WorkerFixture>({
             await dbManager.cleanupAllTables();
             await dbManager.seedPrimaryTables();
 
+            // `detached: true` (POSIX only) makes each process the leader of its own process group, so
+            // killServers() can kill the whole group (shell + the pnpm/next/node descendants it spawns via
+            // `shell: true`) instead of only the wrapper shell, which would otherwise orphan the real server.
             const backendProcess = spawn("pnpm start", {
                 cwd: "../backend",
                 env: {
@@ -121,6 +124,7 @@ export const test = base.extend<{}, WorkerFixture>({
                     STORAGE_PATH: "./tests/storage",
                 },
                 shell: true,
+                detached: process.platform !== "win32",
             });
 
             const frontendProcess = spawn("pnpm start", {
@@ -132,6 +136,7 @@ export const test = base.extend<{}, WorkerFixture>({
                     NEXT_PUBLIC_API_URL: `http://127.0.0.1:${backendPort.toString()}`,
                 },
                 shell: true,
+                detached: process.platform !== "win32",
             });
 
             let processError: Error | null = null;
@@ -260,10 +265,33 @@ export const test = base.extend<{}, WorkerFixture>({
                         // Ignore
                     }
                 } else {
-                    backendProcess.kill("SIGKILL");
-                    frontendProcess.kill("SIGKILL");
+                    // Negative PID targets the whole process group (see the `detached` note above), which
+                    // is required to reach the actual pnpm/next/node descendants, not just the wrapper shell.
+                    try {
+                        if (backendProcess.pid !== undefined) {
+                            process.kill(-backendProcess.pid, "SIGKILL");
+                        }
+                    } catch {
+                        // Already exited.
+                    }
+
+                    try {
+                        if (frontendProcess.pid !== undefined) {
+                            process.kill(-frontendProcess.pid, "SIGKILL");
+                        }
+                    } catch {
+                        // Already exited.
+                    }
                 }
             };
+
+            // Safety net: if this worker process crashes or is torn down abnormally (e.g. the browser
+            // itself crashes mid-test, which Playwright recovers from by abandoning the worker and spawning
+            // a replacement), the code below never reaches its normal teardown call to killServers(), which
+            // would otherwise orphan the spawned backend/frontend servers indefinitely. `exit` still fires
+            // for crashes that go through Node's normal shutdown (uncaught exceptions, SIGTERM); it does not
+            // fire for an external SIGKILL, which cannot be intercepted by any process.
+            process.on("exit", killServers);
 
             if (!backendReady || !frontendReady) {
                 killServers();
@@ -277,6 +305,7 @@ export const test = base.extend<{}, WorkerFixture>({
 
             // Teardown
             killServers();
+            process.removeListener("exit", killServers);
 
             await rm(join("..", "backend", "tests", "storage", "attachments"), {
                 recursive: true,
