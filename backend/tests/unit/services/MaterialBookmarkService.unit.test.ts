@@ -13,8 +13,6 @@ const service = new MaterialBookmarkService(
 
 describe("addBookmark", () => {
     it("should verify student access via getStudentMaterial before adding a bookmark", async () => {
-        mockMaterialService.getStudentMaterial.mockResolvedValue({} as never);
-
         await service.addBookmark(1, 3, UserRole.Student);
 
         expect(mockMaterialService.getStudentMaterial).toHaveBeenCalledWith(
@@ -27,8 +25,6 @@ describe("addBookmark", () => {
     });
 
     it("should verify teacher access via getTeacherMaterial before adding a bookmark", async () => {
-        mockMaterialService.getTeacherMaterial.mockResolvedValue({} as never);
-
         await service.addBookmark(1, 2, UserRole.Teacher);
 
         expect(mockMaterialService.getTeacherMaterial).toHaveBeenCalledWith(

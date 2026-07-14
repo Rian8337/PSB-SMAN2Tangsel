@@ -132,7 +132,7 @@ describe("getBookmarkedMaterialIds", () => {
 });
 
 describe("addBookmark", () => {
-    let res: ReturnType<typeof createMockResponse<never>>;
+    let res: ReturnType<typeof createMockResponse>;
 
     beforeEach(() => {
         res = createMockResponse();
@@ -201,7 +201,7 @@ describe("removeBookmark", () => {
             },
         });
 
-        const res = createMockResponse<never>();
+        const res = createMockResponse();
 
         await controller.removeBookmark(req, res);
 
