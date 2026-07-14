@@ -3,7 +3,11 @@ import {
     SubjectDashboard as SubjectDashboardData,
     UserRole,
 } from "@psb/shared/types";
-import { mockRouter, mockSubjectDashboardApiClient } from "@test/mocks";
+import {
+    mockBookmarkApiClient,
+    mockRouter,
+    mockSubjectDashboardApiClient,
+} from "@test/mocks";
 import { renderWithChakraProvider } from "@test/utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -37,6 +41,60 @@ describe("SubjectDashboard (integration)", () => {
         mockSubjectDashboardApiClient.getDashboard.mockResolvedValue(
             mockDashboard,
         );
+    });
+
+    beforeEach(() => {
+        mockBookmarkApiClient.getBookmarkedMaterialIds.mockResolvedValue([1]);
+    });
+
+    describe("bookmarking", () => {
+        it("should show a filled star for a bookmarked material and an outline star for others", async () => {
+            render(UserRole.Student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "removeBookmark" }),
+                ).toBeInTheDocument();
+
+                expect(
+                    screen.getByRole("button", { name: "addBookmark" }),
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should call addBookmark when toggling a non-bookmarked material", async () => {
+            render(UserRole.Student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "addBookmark" }),
+                ).toBeInTheDocument();
+            });
+
+            await userEvent.click(
+                screen.getByRole("button", { name: "addBookmark" }),
+            );
+
+            expect(mockBookmarkApiClient.addBookmark).toHaveBeenCalledWith(2);
+        });
+
+        it("should call removeBookmark when toggling an already-bookmarked material", async () => {
+            render(UserRole.Student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: "removeBookmark" }),
+                ).toBeInTheDocument();
+            });
+
+            await userEvent.click(
+                screen.getByRole("button", { name: "removeBookmark" }),
+            );
+
+            expect(mockBookmarkApiClient.removeBookmark).toHaveBeenCalledWith(
+                1,
+            );
+        });
     });
 
     it("should call getDashboard with the correct classSubjectId on mount", () => {

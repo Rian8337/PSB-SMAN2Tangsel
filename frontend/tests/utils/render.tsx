@@ -1,5 +1,6 @@
 import { ApiProviderProps } from "@/providers/api/api-provider-props";
 import { AuthApiProvider } from "@/providers/api/auth-api-provider";
+import { BookmarkApiProvider } from "@/providers/api/bookmark-api-provider";
 import { ClassApiProvider } from "@/providers/api/class-api-provider";
 import { ClassStudentApiProvider } from "@/providers/api/class-student-api-provider";
 import { ClassSubjectApiProvider } from "@/providers/api/class-subject-api-provider";
@@ -16,6 +17,7 @@ import { composeProviders } from "@/providers/composer";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import {
     mockAuthApiClient,
+    mockBookmarkApiClient,
     mockClassApiClient,
     mockClassStudentApiClient,
     mockClassSubjectApiClient,
@@ -51,6 +53,7 @@ function bindClient<T>(
  */
 const MockApiProviders = composeProviders(
     bindClient(AuthApiProvider, mockAuthApiClient),
+    bindClient(BookmarkApiProvider, mockBookmarkApiClient),
     bindClient(SessionApiProvider, mockSessionApiClient),
     bindClient(ClassApiProvider, mockClassApiClient),
     bindClient(ClassStudentApiProvider, mockClassStudentApiClient),

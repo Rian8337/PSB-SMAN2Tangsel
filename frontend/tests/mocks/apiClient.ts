@@ -1,5 +1,6 @@
 import {
     IAuthAPIClient,
+    IBookmarkAPIClient,
     IClassAPIClient,
     IClassStudentAPIClient,
     IClassSubjectAPIClient,
@@ -25,6 +26,16 @@ export const mockAuthApiClient: Mocked<IAuthAPIClient> = {
     logout: vi.fn(),
     getMe: vi.fn(),
     getMySessions: vi.fn(() => Promise.resolve([])),
+};
+
+/**
+ * Mock implementation of {@link IBookmarkAPIClient}.
+ */
+export const mockBookmarkApiClient: Mocked<IBookmarkAPIClient> = {
+    getMyBookmarks: vi.fn(),
+    getBookmarkedMaterialIds: vi.fn(),
+    addBookmark: vi.fn(),
+    removeBookmark: vi.fn(),
 };
 
 /**

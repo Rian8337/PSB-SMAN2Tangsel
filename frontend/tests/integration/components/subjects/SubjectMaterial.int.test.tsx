@@ -4,6 +4,7 @@ import {
     UserRole,
 } from "@psb/shared/types";
 import {
+    mockBookmarkApiClient,
     mockRouter,
     mockSubjectMaterialApiClient,
     mockToaster,
@@ -38,6 +39,26 @@ describe("SubjectMaterial (integration)", () => {
         mockSubjectMaterialApiClient.getMaterial.mockResolvedValue(
             mockMaterial,
         );
+    });
+
+    beforeEach(() => {
+        mockBookmarkApiClient.getBookmarkedMaterialIds.mockResolvedValue([]);
+    });
+
+    it("should call addBookmark when the bookmark button is clicked", async () => {
+        render(UserRole.Student);
+
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: "addBookmark" }),
+            ).toBeInTheDocument();
+        });
+
+        await userEvent.click(
+            screen.getByRole("button", { name: "addBookmark" }),
+        );
+
+        expect(mockBookmarkApiClient.addBookmark).toHaveBeenCalledWith(1);
     });
 
     it("should call getMaterial with the correct materialId on mount", () => {
