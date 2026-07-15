@@ -113,4 +113,23 @@ test.describe("Bookmark Material Flow", () => {
             page.getByText("Belum ada materi yang dibookmark."),
         ).toBeVisible();
     });
+
+    test("Navigating to the bare /bookmarks route (as the sidebar nav link does) redirects to the active session's bookmarks page", async ({
+        page,
+    }) => {
+        await loginStudent(page);
+
+        await expect(async () => {
+            await page.goto("/id/bookmarks");
+
+            await expect(page).toHaveURL(
+                new RegExp(`/${sessionCode}/bookmarks$`),
+                { timeout: 3000 },
+            );
+        }).toPass({ timeout: 15000 });
+
+        await expect(
+            page.getByRole("heading", { name: "Bookmark Saya" }),
+        ).toBeVisible();
+    });
 });
