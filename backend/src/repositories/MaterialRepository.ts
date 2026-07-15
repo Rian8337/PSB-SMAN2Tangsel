@@ -11,6 +11,7 @@ import {
 import { DrizzleDb, Subject, SubjectMaterial } from "@psb/shared/types";
 import { and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
+import { getDownloadCounts } from "./attachmentDownloadCounts";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IMaterialRepository } from "./IMaterialRepository";
 
@@ -310,6 +311,11 @@ export class MaterialRepository
             )
             .where(eq(materialAttachments.materialId, row.id));
 
+        const downloadCounts = await getDownloadCounts(
+            this.db,
+            attachmentRows.map((a) => a.id),
+        );
+
         return {
             id: row.id,
             classSubjectId: row.classSubjectId,
@@ -319,7 +325,10 @@ export class MaterialRepository
             visible: row.visible,
             createdAt: row.createdAt.toISOString(),
             lastUpdatedAt: row.lastUpdatedAt.toISOString(),
-            attachments: attachmentRows,
+            attachments: attachmentRows.map((a) => ({
+                ...a,
+                downloadCount: downloadCounts.get(a.id) ?? 0,
+            })),
         };
     }
 }

@@ -173,6 +173,13 @@ export function SubjectMaterial({
                                             {attachment.name}
                                         </Text>
                                     </a>
+                                    {isTeacher && (
+                                        <Text fontSize="xs" color="gray.500">
+                                            {t("downloadCount", {
+                                                count: attachment.downloadCount.toString(),
+                                            })}
+                                        </Text>
+                                    )}
                                 </Flex>
                             ))}
                         </Flex>

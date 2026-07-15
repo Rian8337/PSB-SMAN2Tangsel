@@ -1,5 +1,6 @@
 import {
     IAssignmentService,
+    IAttachmentDownloadService,
     IAttachmentService,
     IAuthService,
     IClassService,
@@ -206,3 +207,11 @@ export const mockAttachmentService: Mocked<IAttachmentService> = {
     delete: vi.fn(),
     updateRenameAttachments: vi.fn(),
 };
+
+/**
+ * Mock implementation of {@link IAttachmentDownloadService}.
+ */
+export const mockAttachmentDownloadService: Mocked<IAttachmentDownloadService> =
+    {
+        recordDownload: vi.fn(),
+    };

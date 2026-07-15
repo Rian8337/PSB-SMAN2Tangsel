@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IAssignmentRepository,
+    IAttachmentDownloadRepository,
     IAttachmentRepository,
     IClassRepository,
     IClassStudentRepository,
@@ -19,6 +20,7 @@ import {
 } from "@/repositories";
 import {
     IAssignmentService,
+    IAttachmentDownloadService,
     IAttachmentService,
     IAuthService,
     IClassService,
@@ -62,6 +64,13 @@ export const dependencyTokens = {
     assignmentRepository: Symbol.for(
         "assignmentRepository",
     ) as InjectionToken<IAssignmentRepository>,
+
+    /**
+     * Injection token for an {@link IAttachmentDownloadRepository}.
+     */
+    attachmentDownloadRepository: Symbol.for(
+        "attachmentDownloadRepository",
+    ) as InjectionToken<IAttachmentDownloadRepository>,
 
     /**
      * Injection token for an {@link IAttachmentRepository}.
@@ -178,6 +187,13 @@ export const dependencyTokens = {
     assignmentService: Symbol.for(
         "assignmentService",
     ) as InjectionToken<IAssignmentService>,
+
+    /**
+     * Injection token for an {@link IAttachmentDownloadService}.
+     */
+    attachmentDownloadService: Symbol.for(
+        "attachmentDownloadService",
+    ) as InjectionToken<IAttachmentDownloadService>,
 
     /**
      * Injection token for an {@link IAttachmentService}.

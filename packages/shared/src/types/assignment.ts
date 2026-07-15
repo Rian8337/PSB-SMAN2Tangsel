@@ -12,6 +12,7 @@ export type Assignment = typeof assignments.$inferSelect;
 export interface SubjectAssignmentAttachment {
     readonly id: number;
     readonly name: string;
+    readonly downloadCount: number;
 }
 
 /**

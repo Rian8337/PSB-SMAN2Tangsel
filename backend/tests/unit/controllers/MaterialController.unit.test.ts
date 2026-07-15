@@ -3,6 +3,7 @@ import { SubjectMaterial, UserRole } from "@psb/shared/types";
 import {
     createMockRequestFactory,
     createMockResponse,
+    mockAttachmentDownloadService,
     mockConfigService,
     mockMaterialService,
 } from "@test/mocks";
@@ -18,6 +19,7 @@ describe("MaterialController (unit)", () => {
     const controller = new MaterialController(
         mockMaterialService,
         mockConfigService,
+        mockAttachmentDownloadService,
     );
 
     let res: ReturnType<typeof createMockResponse>;
@@ -31,7 +33,7 @@ describe("MaterialController (unit)", () => {
         visible: true,
         createdAt: "2024-01-15T00:00:00.000Z",
         lastUpdatedAt: "2024-01-23T00:00:00.000Z",
-        attachments: [{ id: 1, name: "buku.pdf" }],
+        attachments: [{ id: 1, name: "buku.pdf", downloadCount: 0 }],
     };
 
     beforeEach(() => {
@@ -449,6 +451,99 @@ describe("MaterialController (unit)", () => {
             );
 
             expect(mockPipe).toHaveBeenCalledWith(res);
+        });
+
+        it("should record a download when the file stream opens", async () => {
+            mockMaterialService.getStudentAttachment.mockResolvedValue({
+                path: "test_attachment.txt",
+                name: "Test Attachment",
+            });
+            mockConfigService.getEnvironmentVariable.mockReturnValue(
+                "/storage",
+            );
+            mockAttachmentDownloadService.recordDownload.mockResolvedValue(
+                undefined,
+            );
+
+            let openHandler: (() => void) | undefined;
+
+            fsMock.createReadStream.mockReturnValue({
+                on: vi.fn((event: string, handler: () => void) => {
+                    if (event === "open") {
+                        openHandler = handler;
+                    }
+                }),
+                pipe: vi.fn(),
+            });
+
+            const req = createMockRequest({
+                params: { materialId: "1", attachmentId: "1" },
+                sessionData: {
+                    userId: 3,
+                    identifier: "0012345678",
+                    role: UserRole.Student,
+                },
+            });
+
+            await controller.downloadAttachment(req, res);
+
+            openHandler?.();
+
+            expect(
+                mockAttachmentDownloadService.recordDownload,
+            ).toHaveBeenCalledWith(1, 3);
+        });
+
+        it("should not fail the download if recording it throws", async () => {
+            mockMaterialService.getStudentAttachment.mockResolvedValue({
+                path: "test_attachment.txt",
+                name: "Test Attachment",
+            });
+
+            mockConfigService.getEnvironmentVariable.mockReturnValue(
+                "/storage",
+            );
+
+            mockAttachmentDownloadService.recordDownload.mockRejectedValue(
+                new Error("db error"),
+            );
+
+            const consoleErrorSpy = vi
+                .spyOn(console, "error")
+                .mockImplementation(() => undefined);
+
+            let openHandler: (() => void) | undefined;
+
+            fsMock.createReadStream.mockReturnValue({
+                on: vi.fn((event: string, handler: () => void) => {
+                    if (event === "open") {
+                        openHandler = handler;
+                    }
+                }),
+                pipe: vi.fn(),
+            });
+
+            const req = createMockRequest({
+                params: { materialId: "1", attachmentId: "1" },
+                sessionData: {
+                    userId: 3,
+                    identifier: "0012345678",
+                    role: UserRole.Student,
+                },
+            });
+
+            await controller.downloadAttachment(req, res);
+
+            openHandler?.();
+
+            await vi.waitFor(() => {
+                expect(consoleErrorSpy).toHaveBeenCalledWith(
+                    "Failed to record attachment download",
+                    expect.any(Error),
+                );
+            });
+
+            consoleErrorSpy.mockRestore();
         });
 
         it("should return 404 when the file does not exist on disk", async () => {

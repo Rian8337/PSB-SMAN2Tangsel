@@ -13,13 +13,13 @@ import {
 import {
     DrizzleDb,
     StudentSubjectAssignment,
-    SubjectAssignmentAttachment,
     SubjectAssignmentSubmission,
     Subject,
     TeacherSubjectAssignment,
 } from "@psb/shared/types";
 import { and, eq } from "drizzle-orm";
 import { inject } from "tsyringe";
+import { getDownloadCounts } from "./attachmentDownloadCounts";
 import { DatabaseRepository } from "./DatabaseRepository";
 import { IAssignmentRepository } from "./IAssignmentRepository";
 
@@ -346,6 +346,11 @@ export class AssignmentRepository
             )
             .where(eq(assignmentAttachments.assignmentId, row.id));
 
+        const downloadCounts = await getDownloadCounts(
+            this.db,
+            assignmentAttachmentRows.map((a) => a.id),
+        );
+
         const submission = await this.fetchStudentSubmission(row.id, studentId);
 
         return {
@@ -357,7 +362,10 @@ export class AssignmentRepository
             dueAt: row.dueAt?.toISOString() ?? null,
             createdAt: row.createdAt.toISOString(),
             lastUpdatedAt: row.lastUpdatedAt.toISOString(),
-            attachments: assignmentAttachmentRows,
+            attachments: assignmentAttachmentRows.map((a) => ({
+                ...a,
+                downloadCount: downloadCounts.get(a.id) ?? 0,
+            })),
             submission,
         };
     }
@@ -373,15 +381,19 @@ export class AssignmentRepository
         lastUpdatedAt: Date;
         subject: Pick<Subject, "id" | "code" | "name">;
     }): Promise<TeacherSubjectAssignment> {
-        const assignmentAttachmentRows: SubjectAssignmentAttachment[] =
-            await this.db
-                .select({ id: attachments.id, name: attachments.name })
-                .from(assignmentAttachments)
-                .innerJoin(
-                    attachments,
-                    eq(assignmentAttachments.attachmentId, attachments.id),
-                )
-                .where(eq(assignmentAttachments.assignmentId, row.id));
+        const assignmentAttachmentRows = await this.db
+            .select({ id: attachments.id, name: attachments.name })
+            .from(assignmentAttachments)
+            .innerJoin(
+                attachments,
+                eq(assignmentAttachments.attachmentId, attachments.id),
+            )
+            .where(eq(assignmentAttachments.assignmentId, row.id));
+
+        const downloadCounts = await getDownloadCounts(
+            this.db,
+            assignmentAttachmentRows.map((a) => a.id),
+        );
 
         return {
             id: row.id,
@@ -393,7 +405,10 @@ export class AssignmentRepository
             visible: row.visible,
             createdAt: row.createdAt.toISOString(),
             lastUpdatedAt: row.lastUpdatedAt.toISOString(),
-            attachments: assignmentAttachmentRows,
+            attachments: assignmentAttachmentRows.map((a) => ({
+                ...a,
+                downloadCount: downloadCounts.get(a.id) ?? 0,
+            })),
         };
     }
 

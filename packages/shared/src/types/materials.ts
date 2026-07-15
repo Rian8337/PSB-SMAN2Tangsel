@@ -12,6 +12,7 @@ export type Material = typeof materials.$inferSelect;
 export interface SubjectMaterialAttachment {
     readonly id: number;
     readonly name: string;
+    readonly downloadCount: number;
 }
 
 /**

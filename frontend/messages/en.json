@@ -527,7 +527,8 @@
     "removeSuccessTitle": "Submission removed",
     "removeErrorTitle": "Failed to remove submission",
     "removeErrorMessage": "An error occurred while removing the submission. Please try again.",
-    "confirmRemoveMessage": "Are you sure you want to remove your submission? This action cannot be undone."
+    "confirmRemoveMessage": "Are you sure you want to remove your submission? This action cannot be undone.",
+    "downloadCount": "Downloaded {count} times"
   },
   "ManageAssignmentSubmissionForm": {
     "attachmentsLabel": "Attachments",
@@ -554,7 +555,8 @@
     "showToStudents": "Show to students",
     "hideFromStudents": "Hide from students",
     "addBookmark": "Add to bookmarks",
-    "removeBookmark": "Remove from bookmarks"
+    "removeBookmark": "Remove from bookmarks",
+    "downloadCount": "Downloaded {count} times"
   },
   "ManageMaterialForm": {
     "createPageTitle": "New Material - {subjectName} - {className}",

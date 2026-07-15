@@ -102,6 +102,44 @@ describe("MaterialRepository (integration)", () => {
             expect(result.attachments).toHaveLength(1);
             expect(result.attachments[0].id).toBe(seededAttachment.id);
             expect(result.attachments[0].name).toBe(seededAttachment.name);
+            expect(result.attachments[0].downloadCount).toBe(0);
+        });
+
+        it("should reflect the correct download count after downloads are recorded", async () => {
+            const countAttachment = await seeders.attachments.seedOne({
+                name: "Download Count Attachment",
+                path: "download_count_attachment.txt",
+            });
+
+            const countMaterial = await seeders.materials.seedOne({
+                classSubjectId,
+                title: "Download Count Material",
+                visible: true,
+            });
+
+            await seeders.materialAttachments.seedOne({
+                materialId: countMaterial.id!,
+                attachmentId: countAttachment.id!,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: student.id,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: student.id,
+            });
+
+            const result = (await repository.getStudentMaterial(
+                countMaterial.id!,
+                student.id,
+            ))!;
+
+            expect(result).not.toBeNull();
+            expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].downloadCount).toBe(2);
         });
 
         it("should return the material with no attachments for a material without attachments", async () => {
@@ -141,6 +179,7 @@ describe("MaterialRepository (integration)", () => {
             expect(result.id).toBe(visibleMaterialId);
             expect(result.visible).toBe(true);
             expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].downloadCount).toBe(0);
         });
 
         it("should return a hidden material for an assigned teacher", async () => {

@@ -3,6 +3,7 @@ export * from "./assignmentAttachments";
 export * from "./assignments";
 export * from "./assignmentSubmissionAttachments";
 export * from "./assignmentSubmissions";
+export * from "./attachmentDownloads";
 export * from "./attachments";
 export * from "./classes";
 export * from "./classSubjects";

@@ -524,7 +524,8 @@
     "removeSuccessTitle": "Pengumpulan dihapus",
     "removeErrorTitle": "Gagal menghapus pengumpulan",
     "removeErrorMessage": "Terjadi kesalahan saat menghapus pengumpulan. Silakan coba lagi.",
-    "confirmRemoveMessage": "Apakah Anda yakin ingin menghapus pengumpulan Anda? Tindakan ini tidak dapat dibatalkan."
+    "confirmRemoveMessage": "Apakah Anda yakin ingin menghapus pengumpulan Anda? Tindakan ini tidak dapat dibatalkan.",
+    "downloadCount": "Diunduh {count} kali"
   },
   "ManageAssignmentSubmissionForm": {
     "attachmentsLabel": "Lampiran",
@@ -551,7 +552,8 @@
     "showToStudents": "Tampilkan ke siswa",
     "hideFromStudents": "Sembunyikan dari siswa",
     "addBookmark": "Tambahkan ke bookmark",
-    "removeBookmark": "Hapus dari bookmark"
+    "removeBookmark": "Hapus dari bookmark",
+    "downloadCount": "Diunduh {count} kali"
   },
   "ManageMaterialForm": {
     "createPageTitle": "Materi Baru - {subjectName} - {className}",

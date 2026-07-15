@@ -305,6 +305,186 @@ describe("MaterialController (integration)", () => {
 
                 expect(res.status).toBe(404);
             });
+
+            describe("download count tracking", () => {
+                let countAttachment: { id: number; name: string };
+                let countMaterialId: number;
+                let countAttachmentFileName: string;
+                let testCounter = 0;
+
+                beforeEach(async () => {
+                    ++testCounter;
+                    countAttachmentFileName = `count_attachment_${testCounter.toString()}.txt`;
+
+                    const attachment = await seeders.attachments.seedOne({
+                        name: "Count Attachment",
+                        path: countAttachmentFileName,
+                    });
+
+                    countAttachment = {
+                        id: attachment.id!,
+                        name: attachment.name,
+                    };
+
+                    await writeFile(
+                        join(storagePath, countAttachmentFileName),
+                        "count test content",
+                    );
+
+                    const material = await seeders.materials.seedOne({
+                        classSubjectId,
+                        title: "Download Count Material",
+                        visible: true,
+                    });
+
+                    countMaterialId = material.id!;
+
+                    await seeders.materialAttachments.seedOne({
+                        materialId: countMaterialId,
+                        attachmentId: countAttachment.id,
+                    });
+                });
+
+                afterEach(async () => {
+                    await rm(join(storagePath, countAttachmentFileName), {
+                        force: true,
+                    });
+                });
+
+                async function waitForDownloadCount(
+                    expectedCount: number,
+                ): Promise<number> {
+                    const deadline = Date.now() + 2000;
+                    let lastCount = -1;
+
+                    while (Date.now() < deadline) {
+                        const res = await agent.get(
+                            `/materials/${countMaterialId.toString()}`,
+                        );
+
+                        const body = res.body as SubjectMaterial;
+
+                        lastCount =
+                            body.attachments.find(
+                                (a) => a.id === countAttachment.id,
+                            )?.downloadCount ?? 0;
+
+                        if (lastCount === expectedCount) {
+                            return lastCount;
+                        }
+
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                    }
+
+                    return lastCount;
+                }
+
+                it("should increment the download count after a successful download", async () => {
+                    const downloadRes = await agent.get(
+                        `/materials/${countMaterialId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    expect(downloadRes.status).toBe(200);
+
+                    const count = await waitForDownloadCount(1);
+
+                    expect(count).toBe(1);
+                });
+
+                it("should increment the download count on every download, without deduplication", async () => {
+                    await agent.get(
+                        `/materials/${countMaterialId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    await agent.get(
+                        `/materials/${countMaterialId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    const count = await waitForDownloadCount(2);
+
+                    expect(count).toBe(2);
+                });
+
+                it("should not increment the download count when the download 404s", async () => {
+                    const downloadRes = await agent.get(
+                        `/materials/${countMaterialId.toString()}/attachments/99999`,
+                    );
+
+                    expect(downloadRes.status).toBe(404);
+
+                    // Give any (incorrectly) fired async write a chance to land before asserting it didn't.
+                    await new Promise((resolve) => setTimeout(resolve, 200));
+
+                    const verify = await agent.get(
+                        `/materials/${countMaterialId.toString()}`,
+                    );
+
+                    const body = verify.body as SubjectMaterial;
+
+                    const attachment = body.attachments.find(
+                        (a) => a.id === countAttachment.id,
+                    );
+
+                    expect(attachment?.downloadCount ?? 0).toBe(0);
+                });
+
+                it("should not increment the download count when the material is hidden from the student", async () => {
+                    const hiddenFileName = `hidden_count_attachment_${testCounter.toString()}.txt`;
+
+                    const hiddenAttachment = await seeders.attachments.seedOne({
+                        name: "Hidden Count Attachment",
+                        path: hiddenFileName,
+                    });
+
+                    await writeFile(
+                        join(storagePath, hiddenFileName),
+                        "hidden count test content",
+                    );
+
+                    const hiddenCountMaterial = await seeders.materials.seedOne(
+                        {
+                            classSubjectId,
+                            title: "Hidden Download Count Material",
+                            visible: false,
+                        },
+                    );
+
+                    await seeders.materialAttachments.seedOne({
+                        materialId: hiddenCountMaterial.id!,
+                        attachmentId: hiddenAttachment.id!,
+                    });
+
+                    const downloadRes = await agent.get(
+                        `/materials/${hiddenCountMaterial.id!.toString()}/attachments/${hiddenAttachment.id!.toString()}`,
+                    );
+
+                    expect(downloadRes.status).toBe(404);
+
+                    // Give any (incorrectly) fired async write a chance to land before asserting it didn't.
+                    await new Promise((resolve) => setTimeout(resolve, 200));
+
+                    // Verify via the teacher (who can see hidden materials in their own class) since
+                    // the student can never fetch a hidden material to check its attachment counts.
+                    const teacherAgent = request.agent(app);
+                    await loginTeacher(teacherAgent);
+
+                    const verify = await teacherAgent.get(
+                        `/materials/${hiddenCountMaterial.id!.toString()}`,
+                    );
+
+                    const body = verify.body as SubjectMaterial;
+
+                    const attachment = body.attachments.find(
+                        (a) => a.id === hiddenAttachment.id,
+                    );
+
+                    expect(attachment?.downloadCount ?? 0).toBe(0);
+
+                    await rm(join(storagePath, hiddenFileName), {
+                        force: true,
+                    });
+                });
+            });
         });
 
         describe("as a teacher", () => {

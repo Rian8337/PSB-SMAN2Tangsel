@@ -308,6 +308,7 @@ export function createDatabaseManager(db: DrizzleDb) {
          */
         cleanupSecondaryTables: async () => {
             await db.transaction(async (tx) => {
+                await tx.delete(schema.attachmentDownloads);
                 await tx.delete(schema.assignmentAttachments);
                 await tx.delete(schema.assignmentSubmissionAttachments);
                 await tx.delete(schema.materialAttachments);
@@ -361,6 +362,10 @@ export function createDatabaseManager(db: DrizzleDb) {
 
                 // Secondary tables
                 await tx.execute(
+                    sql`TRUNCATE TABLE ${schema.attachmentDownloads}`,
+                );
+
+                await tx.execute(
                     sql`TRUNCATE TABLE ${schema.assignmentAttachments}`,
                 );
 
@@ -409,6 +414,11 @@ export function createDatabaseManager(db: DrizzleDb) {
              * Seeder for {@link schema.administrators} table.
              */
             administrators: createSeeder(schema.administrators),
+
+            /**
+             * Seeder for {@link schema.attachmentDownloads} table.
+             */
+            attachmentDownloads: createSeeder(schema.attachmentDownloads),
 
             /**
              * Seeder for {@link schema.assignmentAttachments} table.

@@ -19,7 +19,7 @@ const mockMaterial: SubjectMaterialData = {
     visible: false,
     createdAt: "2024-01-15T00:00:00.000Z",
     lastUpdatedAt: "2024-01-15T00:00:00.000Z",
-    attachments: [{ id: 2, name: "notes.pdf" }],
+    attachments: [{ id: 2, name: "notes.pdf", downloadCount: 0 }],
 };
 
 function renderCreate() {

@@ -1,6 +1,7 @@
 import {
     IAdministratorRepository,
     IAssignmentRepository,
+    IAttachmentDownloadRepository,
     IAttachmentRepository,
     IClassRepository,
     IClassStudentRepository,
@@ -222,3 +223,11 @@ export const mockAttachmentRepository: Mocked<IAttachmentRepository> = {
     updateNameAndPath: vi.fn(),
     deleteByIds: vi.fn(),
 };
+
+/**
+ * Mock implementation of {@link IAttachmentDownloadRepository}.
+ */
+export const mockAttachmentDownloadRepository: Mocked<IAttachmentDownloadRepository> =
+    {
+        record: vi.fn(),
+    };

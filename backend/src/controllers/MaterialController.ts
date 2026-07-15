@@ -3,7 +3,12 @@ import { Roles } from "@/decorators/roles";
 import { Delete, Get, Post, Put } from "@/decorators/routes";
 import { dependencyTokens } from "@/dependencies/tokens";
 import { MessageKey } from "@/i18n";
-import { IConfigService, IMaterialService, TempFile } from "@/services";
+import {
+    IAttachmentDownloadService,
+    IConfigService,
+    IMaterialService,
+    TempFile,
+} from "@/services";
 import {
     ApiRequest,
     ApiResponse,
@@ -38,6 +43,8 @@ export class MaterialController extends BaseController {
         private readonly materialService: IMaterialService,
         @inject(dependencyTokens.configService)
         private readonly configService: IConfigService,
+        @inject(dependencyTokens.attachmentDownloadService)
+        private readonly attachmentDownloadService: IAttachmentDownloadService,
     ) {
         super();
     }
@@ -159,6 +166,17 @@ export class MaterialController extends BaseController {
 
             const absolutePath = join(storagePath, attachment.path);
             const stream = createReadStream(absolutePath);
+
+            stream.on("open", () => {
+                void this.attachmentDownloadService
+                    .recordDownload(parsedAttachmentId.data, sessionData.userId)
+                    .catch((err: unknown) => {
+                        console.error(
+                            "Failed to record attachment download",
+                            err,
+                        );
+                    });
+            });
 
             stream.on("error", (err) => {
                 if (res.headersSent) {

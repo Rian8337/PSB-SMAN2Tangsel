@@ -23,8 +23,8 @@ const mockMaterial: SubjectMaterialData = {
     createdAt: "2024-01-15T00:00:00.000Z",
     lastUpdatedAt: "2024-01-23T00:00:00.000Z",
     attachments: [
-        { id: 1, name: "buku.pdf" },
-        { id: 2, name: "slide.pdf" },
+        { id: 1, name: "buku.pdf", downloadCount: 3 },
+        { id: 2, name: "slide.pdf", downloadCount: 7 },
     ],
 };
 
@@ -139,6 +139,16 @@ describe("SubjectMaterial (integration)", () => {
                 screen.queryByText("hideFromStudents"),
             ).not.toBeInTheDocument();
         });
+
+        it("should not show attachment download counts", async () => {
+            render(UserRole.Student);
+
+            await waitFor(() => {
+                expect(screen.getByText("buku.pdf")).toBeInTheDocument();
+            });
+
+            expect(screen.queryByText("downloadCount")).not.toBeInTheDocument();
+        });
     });
 
     describe("as a teacher", () => {
@@ -152,6 +162,19 @@ describe("SubjectMaterial (integration)", () => {
                     screen.getByText("hideFromStudents"),
                 ).toBeInTheDocument();
             });
+        });
+
+        it("should show each attachment's download count", async () => {
+            render(UserRole.Teacher);
+
+            await waitFor(() => {
+                expect(screen.getByText("buku.pdf")).toBeInTheDocument();
+                expect(screen.getByText("slide.pdf")).toBeInTheDocument();
+            });
+
+            expect(screen.getAllByText("downloadCount")).toHaveLength(
+                mockMaterial.attachments.length,
+            );
         });
 
         it("should show 'Show to students' for a hidden material", async () => {

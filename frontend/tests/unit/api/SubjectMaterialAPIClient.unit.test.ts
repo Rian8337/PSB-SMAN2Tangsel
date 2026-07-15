@@ -15,7 +15,7 @@ describe("SubjectMaterialAPIClient (unit)", () => {
         visible: true,
         createdAt: "2024-01-15T00:00:00.000Z",
         lastUpdatedAt: "2024-01-23T00:00:00.000Z",
-        attachments: [{ id: 1, name: "buku.pdf" }],
+        attachments: [{ id: 1, name: "buku.pdf", downloadCount: 0 }],
     };
 
     beforeEach(() => {

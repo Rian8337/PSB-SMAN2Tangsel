@@ -20,7 +20,7 @@ const mockAssignment: TeacherSubjectAssignment = {
     visible: false,
     createdAt: "2026-01-15T00:00:00.000Z",
     lastUpdatedAt: "2026-01-15T00:00:00.000Z",
-    attachments: [{ id: 2, name: "soal.pdf" }],
+    attachments: [{ id: 2, name: "soal.pdf", downloadCount: 0 }],
 };
 
 function renderCreate() {

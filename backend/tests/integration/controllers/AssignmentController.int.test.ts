@@ -327,6 +327,157 @@ describe("AssignmentController (integration)", () => {
 
                 expect(res.status).toBe(404);
             });
+
+            describe("download count tracking", () => {
+                let countAttachment: { id: number; name: string };
+                let countAssignmentId: number;
+                let countAttachmentFileName: string;
+                let testCounter = 0;
+
+                beforeEach(async () => {
+                    ++testCounter;
+                    countAttachmentFileName = `assignment_count_attachment_${testCounter.toString()}.txt`;
+
+                    const attachment = await seeders.attachments.seedOne({
+                        name: "Count Attachment",
+                        path: countAttachmentFileName,
+                    });
+
+                    countAttachment = {
+                        id: attachment.id!,
+                        name: attachment.name,
+                    };
+
+                    await writeFile(
+                        join(storagePath, countAttachmentFileName),
+                        "count test content",
+                    );
+
+                    const assignment = await seeders.assignments.seedOne({
+                        classSubjectId,
+                        title: "Download Count Assignment",
+                        visible: true,
+                    });
+
+                    countAssignmentId = assignment.id!;
+
+                    await seeders.assignmentAttachments.seedOne({
+                        assignmentId: countAssignmentId,
+                        attachmentId: countAttachment.id,
+                    });
+                });
+
+                afterEach(async () => {
+                    await rm(join(storagePath, countAttachmentFileName), {
+                        force: true,
+                    });
+                });
+
+                async function waitForDownloadCount(
+                    expectedCount: number,
+                ): Promise<number> {
+                    const deadline = Date.now() + 2000;
+                    let lastCount = -1;
+
+                    while (Date.now() < deadline) {
+                        const res = await agent.get(
+                            `/assignments/${countAssignmentId.toString()}`,
+                        );
+
+                        const body = res.body as StudentSubjectAssignment;
+
+                        lastCount =
+                            body.attachments.find(
+                                (a) => a.id === countAttachment.id,
+                            )?.downloadCount ?? 0;
+
+                        if (lastCount === expectedCount) {
+                            return lastCount;
+                        }
+
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                    }
+
+                    return lastCount;
+                }
+
+                it("should increment the download count after a successful download", async () => {
+                    const downloadRes = await agent.get(
+                        `/assignments/${countAssignmentId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    expect(downloadRes.status).toBe(200);
+
+                    const count = await waitForDownloadCount(1);
+
+                    expect(count).toBe(1);
+                });
+
+                it("should increment the download count on every download, without deduplication", async () => {
+                    await agent.get(
+                        `/assignments/${countAssignmentId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    await agent.get(
+                        `/assignments/${countAssignmentId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    const count = await waitForDownloadCount(2);
+
+                    expect(count).toBe(2);
+                });
+
+                it("should not increment the download count when the download 404s", async () => {
+                    const downloadRes = await agent.get(
+                        `/assignments/${countAssignmentId.toString()}/attachments/99999`,
+                    );
+
+                    expect(downloadRes.status).toBe(404);
+
+                    // Give any (incorrectly) fired async write a chance to land before asserting it didn't.
+                    await new Promise((resolve) => setTimeout(resolve, 200));
+
+                    const verify = await agent.get(
+                        `/assignments/${countAssignmentId.toString()}`,
+                    );
+
+                    const body = verify.body as StudentSubjectAssignment;
+
+                    const attachment = body.attachments.find(
+                        (a) => a.id === countAttachment.id,
+                    );
+
+                    expect(attachment?.downloadCount ?? 0).toBe(0);
+                });
+
+                it("should reflect the download count in both student-facing and teacher-facing assignment responses", async () => {
+                    const downloadRes = await agent.get(
+                        `/assignments/${countAssignmentId.toString()}/attachments/${countAttachment.id.toString()}`,
+                    );
+
+                    expect(downloadRes.status).toBe(200);
+
+                    const studentCount = await waitForDownloadCount(1);
+
+                    expect(studentCount).toBe(1);
+
+                    const teacherAgent = request.agent(app);
+                    await loginTeacher(teacherAgent);
+
+                    const teacherRes = await teacherAgent.get(
+                        `/assignments/${countAssignmentId.toString()}`,
+                    );
+
+                    const teacherBody =
+                        teacherRes.body as TeacherSubjectAssignment;
+
+                    const teacherAttachment = teacherBody.attachments.find(
+                        (a) => a.id === countAttachment.id,
+                    );
+
+                    expect(teacherAttachment?.downloadCount).toBe(1);
+                });
+            });
         });
 
         describe("as a teacher", () => {

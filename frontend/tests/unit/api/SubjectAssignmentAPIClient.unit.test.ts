@@ -15,7 +15,7 @@ describe("SubjectAssignmentAPIClient (unit)", () => {
         dueAt: "2026-02-21T18:00:00.000Z",
         createdAt: "2024-01-15T00:00:00.000Z",
         lastUpdatedAt: "2024-01-23T00:00:00.000Z",
-        attachments: [{ id: 1, name: "instructions.pdf" }],
+        attachments: [{ id: 1, name: "instructions.pdf", downloadCount: 0 }],
         submission: null,
     };
 

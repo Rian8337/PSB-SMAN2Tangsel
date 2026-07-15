@@ -237,7 +237,7 @@ describe("MaterialService (unit)", () => {
             visible: true,
             createdAt: "2024-01-15T00:00:00.000Z",
             lastUpdatedAt: "2024-01-15T00:00:00.000Z",
-            attachments: [{ id: 2, name: "existing.pdf" }],
+            attachments: [{ id: 2, name: "existing.pdf", downloadCount: 0 }],
         };
 
         it("should throw NotFoundError when the material does not belong to the teacher", async () => {
@@ -384,7 +384,7 @@ describe("MaterialService (unit)", () => {
                 visible: true,
                 createdAt: "2024-01-15T00:00:00.000Z",
                 lastUpdatedAt: "2024-01-15T00:00:00.000Z",
-                attachments: [{ id: 3, name: "a.pdf" }],
+                attachments: [{ id: 3, name: "a.pdf", downloadCount: 0 }],
             });
 
             mockMaterialRepository.getMaterialAttachmentIds.mockResolvedValue([

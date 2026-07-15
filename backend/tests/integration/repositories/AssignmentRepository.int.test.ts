@@ -101,7 +101,45 @@ describe("AssignmentRepository (integration)", () => {
             expect(result.attachments).toHaveLength(1);
             expect(result.attachments[0].id).toBe(seededAttachment.id);
             expect(result.attachments[0].name).toBe(seededAttachment.name);
+            expect(result.attachments[0].downloadCount).toBe(0);
             expect(result.submission).toBeNull();
+        });
+
+        it("should reflect the correct download count after downloads are recorded", async () => {
+            const countAttachment = await seeders.attachments.seedOne({
+                name: "Download Count Attachment",
+                path: "assignment_download_count_attachment.txt",
+            });
+
+            const countAssignment = await seeders.assignments.seedOne({
+                classSubjectId,
+                title: "Download Count Assignment",
+                visible: true,
+            });
+
+            await seeders.assignmentAttachments.seedOne({
+                assignmentId: countAssignment.id!,
+                attachmentId: countAttachment.id!,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: student.id,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: student.id,
+            });
+
+            const result = (await repository.getStudentAssignment(
+                countAssignment.id!,
+                student.id,
+            ))!;
+
+            expect(result).not.toBeNull();
+            expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].downloadCount).toBe(2);
         });
 
         it("should return the assignment with no attachments for an assignment without attachments", async () => {
@@ -174,6 +212,7 @@ describe("AssignmentRepository (integration)", () => {
             expect(result.classSubjectId).toBe(classSubjectId);
             expect(result.visible).toBe(true);
             expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].downloadCount).toBe(0);
         });
 
         it("should return a hidden assignment for an assigned teacher", async () => {
@@ -186,6 +225,43 @@ describe("AssignmentRepository (integration)", () => {
             expect(result!.id).toBe(hiddenAssignmentId);
             expect(result!.visible).toBe(false);
             expect(result!.attachments).toHaveLength(0);
+        });
+
+        it("should reflect the correct download count after downloads are recorded", async () => {
+            const countAttachment = await seeders.attachments.seedOne({
+                name: "Teacher Download Count Attachment",
+                path: "assignment_teacher_download_count_attachment.txt",
+            });
+
+            const countAssignment = await seeders.assignments.seedOne({
+                classSubjectId,
+                title: "Teacher Download Count Assignment",
+                visible: true,
+            });
+
+            await seeders.assignmentAttachments.seedOne({
+                assignmentId: countAssignment.id!,
+                attachmentId: countAttachment.id!,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: teacher.userId,
+            });
+
+            await seeders.attachmentDownloads.seedOne({
+                attachmentId: countAttachment.id!,
+                userId: student.id,
+            });
+
+            const result = (await repository.getTeacherAssignment(
+                countAssignment.id!,
+                teacher.userId,
+            ))!;
+
+            expect(result).not.toBeNull();
+            expect(result.attachments).toHaveLength(1);
+            expect(result.attachments[0].downloadCount).toBe(2);
         });
     });
 

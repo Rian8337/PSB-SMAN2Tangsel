@@ -23,8 +23,8 @@ const mockStudentAssignment: StudentSubjectAssignment = {
     createdAt: "2024-01-15T00:00:00.000Z",
     lastUpdatedAt: "2024-01-23T00:00:00.000Z",
     attachments: [
-        { id: 1, name: "instructions.pdf" },
-        { id: 2, name: "rubric.pdf" },
+        { id: 1, name: "instructions.pdf", downloadCount: 0 },
+        { id: 2, name: "rubric.pdf", downloadCount: 0 },
     ],
     submission: null,
 };
@@ -39,7 +39,10 @@ const mockTeacherAssignment: TeacherSubjectAssignment = {
     visible: true,
     createdAt: "2024-01-15T00:00:00.000Z",
     lastUpdatedAt: "2024-01-23T00:00:00.000Z",
-    attachments: [],
+    attachments: [
+        { id: 1, name: "instructions.pdf", downloadCount: 3 },
+        { id: 2, name: "rubric.pdf", downloadCount: 7 },
+    ],
 };
 
 function render(role: UserRole) {
@@ -162,6 +165,18 @@ describe("SubjectAssignment (integration)", () => {
             });
         });
 
+        it("should not show attachment download counts", async () => {
+            render(UserRole.Student);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("instructions.pdf"),
+                ).toBeInTheDocument();
+            });
+
+            expect(screen.queryByText("downloadCount")).not.toBeInTheDocument();
+        });
+
         it("should not show assignment management buttons", async () => {
             render(UserRole.Student);
 
@@ -280,6 +295,22 @@ describe("SubjectAssignment (integration)", () => {
                     screen.getByRole("button", { name: "hideFromStudents" }),
                 ).toBeInTheDocument();
             });
+        });
+
+        it("should show each attachment's download count", async () => {
+            render(UserRole.Teacher);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("instructions.pdf"),
+                ).toBeInTheDocument();
+
+                expect(screen.getByText("rubric.pdf")).toBeInTheDocument();
+            });
+
+            expect(screen.getAllByText("downloadCount")).toHaveLength(
+                mockTeacherAssignment.attachments.length,
+            );
         });
 
         it("should show 'showToStudents' for a hidden assignment", async () => {

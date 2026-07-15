@@ -28,7 +28,7 @@ describe("AssignmentService (unit)", () => {
         dueAt: "2026-02-21T18:00:00.000Z",
         createdAt: "2026-01-15T00:00:00.000Z",
         lastUpdatedAt: "2026-01-23T00:00:00.000Z",
-        attachments: [{ id: 1, name: "soal.pdf" }],
+        attachments: [{ id: 1, name: "soal.pdf", downloadCount: 0 }],
         submission: null,
     };
 
@@ -42,7 +42,7 @@ describe("AssignmentService (unit)", () => {
         visible: true,
         createdAt: "2026-01-15T00:00:00.000Z",
         lastUpdatedAt: "2026-01-23T00:00:00.000Z",
-        attachments: [{ id: 1, name: "soal.pdf" }],
+        attachments: [{ id: 1, name: "soal.pdf", downloadCount: 0 }],
     };
 
     describe("getStudentAssignment", () => {
@@ -282,7 +282,7 @@ describe("AssignmentService (unit)", () => {
             visible: true,
             createdAt: "2026-01-15T00:00:00.000Z",
             lastUpdatedAt: "2026-01-15T00:00:00.000Z",
-            attachments: [{ id: 2, name: "existing.pdf" }],
+            attachments: [{ id: 2, name: "existing.pdf", downloadCount: 0 }],
         };
 
         it("should throw NotFoundError when the assignment does not belong to the teacher", async () => {
