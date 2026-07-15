@@ -1,3 +1,4 @@
+export * from "./AnalyticsController";
 export * from "./AssignmentController";
 export * from "./SubmissionController";
 export * from "./AuthController";

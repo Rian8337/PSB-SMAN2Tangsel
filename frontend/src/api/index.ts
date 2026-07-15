@@ -1,3 +1,5 @@
+export * from "./AnalyticsAPIClient";
+export * from "./IAnalyticsAPIClient";
 export * from "./APIError";
 export * from "./backendBaseUrl";
 export * from "./BookmarkAPIClient";

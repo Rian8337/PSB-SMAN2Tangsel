@@ -1,5 +1,6 @@
 import {
     IAdministratorRepository,
+    IAnalyticsRepository,
     IAssignmentRepository,
     IAttachmentDownloadRepository,
     IAttachmentRepository,
@@ -19,6 +20,7 @@ import {
     IUserRepository,
 } from "@/repositories";
 import {
+    IAnalyticsService,
     IAssignmentService,
     IAttachmentDownloadService,
     IAttachmentService,
@@ -57,6 +59,13 @@ export const dependencyTokens = {
     administratorRepository: Symbol.for(
         "administratorRepository",
     ) as InjectionToken<IAdministratorRepository>,
+
+    /**
+     * Injection token for an {@link IAnalyticsRepository}.
+     */
+    analyticsRepository: Symbol.for(
+        "analyticsRepository",
+    ) as InjectionToken<IAnalyticsRepository>,
 
     /**
      * Injection token for an {@link IAssignmentRepository}.
@@ -180,6 +189,13 @@ export const dependencyTokens = {
     //#endregion
 
     //#region Services
+
+    /**
+     * Injection token for an {@link IAnalyticsService}.
+     */
+    analyticsService: Symbol.for(
+        "analyticsService",
+    ) as InjectionToken<IAnalyticsService>,
 
     /**
      * Injection token for an {@link IAssignmentService}.

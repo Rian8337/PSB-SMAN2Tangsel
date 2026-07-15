@@ -1,4 +1,5 @@
 import {
+    IAnalyticsService,
     IAssignmentService,
     IAttachmentDownloadService,
     IAttachmentService,
@@ -215,3 +216,10 @@ export const mockAttachmentDownloadService: Mocked<IAttachmentDownloadService> =
     {
         recordDownload: vi.fn(),
     };
+
+/**
+ * Mock implementation of {@link IAnalyticsService}.
+ */
+export const mockAnalyticsService: Mocked<IAnalyticsService> = {
+    getDownloadAnalytics: vi.fn(),
+};

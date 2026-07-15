@@ -640,7 +640,8 @@
     "home": "Home",
     "schedule": "Schedule",
     "subjects": "Subjects",
-    "bookmarks": "Bookmarks"
+    "bookmarks": "Bookmarks",
+    "analytics": "Analytics"
   },
   "Bookmarks": {
     "title": "My Bookmarks",
@@ -648,6 +649,16 @@
     "fetchToast": {
       "errorTitle": "Failed to Load Bookmarks",
       "errorMessage": "An error occurred while loading your bookmarks. Please try again."
+    }
+  },
+  "Analytics": {
+    "title": "Download Analytics",
+    "chartTitle": "Downloads per Week",
+    "topListTitle": "Top 5 Most Downloaded",
+    "emptyState": "No download data yet.",
+    "fetchToast": {
+      "errorTitle": "Failed to Load Analytics",
+      "errorMessage": "An error occurred while loading download analytics. Please try again."
     }
   },
   "Global": {

@@ -637,7 +637,8 @@
     "home": "Beranda",
     "schedule": "Jadwal",
     "subjects": "Mata Pelajaran",
-    "bookmarks": "Bookmark"
+    "bookmarks": "Bookmark",
+    "analytics": "Analitik"
   },
   "Bookmarks": {
     "title": "Bookmark Saya",
@@ -645,6 +646,16 @@
     "fetchToast": {
       "errorTitle": "Gagal Memuat Bookmark",
       "errorMessage": "Terjadi kesalahan saat memuat daftar bookmark. Silakan coba lagi."
+    }
+  },
+  "Analytics": {
+    "title": "Analitik Unduhan",
+    "chartTitle": "Unduhan per Minggu",
+    "topListTitle": "5 Materi/Tugas Paling Banyak Diunduh",
+    "emptyState": "Belum ada data unduhan.",
+    "fetchToast": {
+      "errorTitle": "Gagal Memuat Analitik",
+      "errorMessage": "Terjadi kesalahan saat memuat data analitik unduhan. Silakan coba lagi."
     }
   },
   "Global": {

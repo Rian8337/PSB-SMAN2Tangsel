@@ -1,5 +1,6 @@
 import {
     IAdministratorRepository,
+    IAnalyticsRepository,
     IAssignmentRepository,
     IAttachmentDownloadRepository,
     IAttachmentRepository,
@@ -231,3 +232,11 @@ export const mockAttachmentDownloadRepository: Mocked<IAttachmentDownloadReposit
     {
         record: vi.fn(),
     };
+
+/**
+ * Mock implementation of {@link IAnalyticsRepository}.
+ */
+export const mockAnalyticsRepository: Mocked<IAnalyticsRepository> = {
+    getDownloadTimeSeries: vi.fn(),
+    getTopDownloadedAttachments: vi.fn(),
+};

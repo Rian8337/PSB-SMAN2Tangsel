@@ -1,4 +1,5 @@
 import { composeProviders } from "../composer";
+import { AnalyticsApiProvider } from "./analytics-api-provider";
 import { AuthApiProvider } from "./auth-api-provider";
 import { BookmarkApiProvider } from "./bookmark-api-provider";
 import { ClassApiProvider } from "./class-api-provider";
@@ -18,6 +19,7 @@ import { UserApiProvider } from "./user-api-provider";
  * All API providers. Can be used to wrap the entire application to provide API clients to all components.
  */
 export const ApiProviders = composeProviders(
+    AnalyticsApiProvider,
     AuthApiProvider,
     BookmarkApiProvider,
     ClassApiProvider,

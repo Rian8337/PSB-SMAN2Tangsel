@@ -1,4 +1,5 @@
 import {
+    IAnalyticsAPIClient,
     IAuthAPIClient,
     IBookmarkAPIClient,
     IClassAPIClient,
@@ -15,6 +16,13 @@ import {
     IUserAPIClient,
 } from "@/api";
 import { Mocked } from "vitest";
+
+/**
+ * Mock implementation of {@link IAnalyticsAPIClient}.
+ */
+export const mockAnalyticsApiClient: Mocked<IAnalyticsAPIClient> = {
+    getDownloadAnalytics: vi.fn(),
+};
 
 /**
  * Mock implementation of {@link IAuthAPIClient}.

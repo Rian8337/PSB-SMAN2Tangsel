@@ -1,4 +1,5 @@
 import { ApiProviderProps } from "@/providers/api/api-provider-props";
+import { AnalyticsApiProvider } from "@/providers/api/analytics-api-provider";
 import { AuthApiProvider } from "@/providers/api/auth-api-provider";
 import { BookmarkApiProvider } from "@/providers/api/bookmark-api-provider";
 import { ClassApiProvider } from "@/providers/api/class-api-provider";
@@ -16,6 +17,7 @@ import { UserApiProvider } from "@/providers/api/user-api-provider";
 import { composeProviders } from "@/providers/composer";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import {
+    mockAnalyticsApiClient,
     mockAuthApiClient,
     mockBookmarkApiClient,
     mockClassApiClient,
@@ -52,6 +54,7 @@ function bindClient<T>(
  * Inner providers added by individual tests take precedence (nearest-ancestor wins).
  */
 const MockApiProviders = composeProviders(
+    bindClient(AnalyticsApiProvider, mockAnalyticsApiClient),
     bindClient(AuthApiProvider, mockAuthApiClient),
     bindClient(BookmarkApiProvider, mockBookmarkApiClient),
     bindClient(SessionApiProvider, mockSessionApiClient),

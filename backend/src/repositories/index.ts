@@ -1,4 +1,5 @@
 export * from "./AdministratorRepository";
+export * from "./AnalyticsRepository";
 export * from "./AssignmentRepository";
 export * from "./attachmentDownloadCounts";
 export * from "./AttachmentDownloadRepository";
@@ -8,6 +9,7 @@ export * from "./ClassStudentRepository";
 export * from "./ClassSubjectRepository";
 export * from "./FileRepository";
 export * from "./IAdministratorRepository";
+export * from "./IAnalyticsRepository";
 export * from "./IAssignmentRepository";
 export * from "./IAttachmentDownloadRepository";
 export * from "./IAttachmentRepository";

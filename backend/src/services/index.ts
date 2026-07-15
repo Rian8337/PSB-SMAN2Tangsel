@@ -1,3 +1,4 @@
+export * from "./AnalyticsService";
 export * from "./AssignmentService";
 export * from "./AttachmentDownloadService";
 export * from "./AttachmentService";
@@ -8,6 +9,7 @@ export * from "./ClassStudentService";
 export * from "./ClassSubjectService";
 export * from "./ConfigService";
 export * from "./FileService";
+export * from "./IAnalyticsService";
 export * from "./IAssignmentService";
 export * from "./IAttachmentDownloadService";
 export * from "./IAuthService";
