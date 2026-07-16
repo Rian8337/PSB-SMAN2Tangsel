@@ -142,7 +142,7 @@ export function SubmissionAnalytics({
                                 <Box>
                                     {concerningStudents.map((student) => (
                                         <Box
-                                            key={`${student.studentId}-${student.classSubjectId}`}
+                                            key={`${student.studentId.toString()}-${student.classSubjectId.toString()}`}
                                         >
                                             <Flex
                                                 justify="space-between"
