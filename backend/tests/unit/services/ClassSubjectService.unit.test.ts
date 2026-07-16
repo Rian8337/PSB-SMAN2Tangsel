@@ -152,7 +152,7 @@ describe("ClassSubjectService (unit)", () => {
 
     const mockDashboard: SubjectDashboard = {
         subject: { id: 1, code: "MA1", name: "Matematika Wajib" },
-        class: { id: 1, name: "X-IPA-1" },
+        class: { id: 1, name: "X-IPA-1", session: "2023/2024", semester: 1 },
         materials: [],
         assignments: [],
     };
