@@ -658,6 +658,20 @@
       "errorMessage": "Terjadi kesalahan saat memuat data analitik unduhan. Silakan coba lagi."
     }
   },
+  "SubmissionAnalytics": {
+    "title": "Analitik Pengumpulan Tugas",
+    "onTime": "Tepat Waktu",
+    "late": "Terlambat",
+    "missing": "Tidak Dikumpulkan",
+    "pending": "Belum Jatuh Tempo",
+    "concernListTitle": "Siswa yang Perlu Perhatian",
+    "noConcerns": "Semua siswa mengumpulkan tepat waktu.",
+    "emptyState": "Belum ada data tugas.",
+    "fetchToast": {
+      "errorTitle": "Gagal Memuat Analitik Pengumpulan Tugas",
+      "errorMessage": "Terjadi kesalahan saat memuat data analitik pengumpulan tugas. Silakan coba lagi."
+    }
+  },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
   },

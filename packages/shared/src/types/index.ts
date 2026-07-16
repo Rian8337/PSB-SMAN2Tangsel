@@ -14,4 +14,5 @@ export * from "./session";
 export * from "./sessions";
 export * from "./subjectDashboard";
 export * from "./subjects";
+export * from "./submissionAnalytics";
 export * from "./users";

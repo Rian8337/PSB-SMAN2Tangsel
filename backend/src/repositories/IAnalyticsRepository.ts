@@ -1,5 +1,6 @@
 import {
     DownloadTimeSeriesPoint,
+    SubmissionAnalytics,
     TopDownloadedAttachment,
     ValidSemester,
     ValidSession,
@@ -30,4 +31,15 @@ export interface IAnalyticsRepository {
         semester: ValidSemester,
         limit: number,
     ): Promise<TopDownloadedAttachment[]>;
+
+    /**
+     * Returns aggregate submission-status counts and a ranked list of students with late/missing
+     * submissions, across all of the teacher's visible assignments within the given session/semester.
+     */
+    getSubmissionAnalytics(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+        concernLimit: number,
+    ): Promise<SubmissionAnalytics>;
 }

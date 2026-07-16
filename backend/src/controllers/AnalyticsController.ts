@@ -6,12 +6,16 @@ import { MessageKey } from "@/i18n";
 import { IAnalyticsService } from "@/services";
 import { ApiRequest, ApiResponse, BadRequestError } from "@/types";
 import { analyticsQuerySchema } from "@/validators";
-import { DownloadAnalytics, UserRole } from "@psb/shared/types";
+import {
+    DownloadAnalytics,
+    SubmissionAnalytics,
+    UserRole,
+} from "@psb/shared/types";
 import { inject } from "tsyringe";
 import { BaseController } from "./BaseController";
 
 /**
- * Controller that handles download analytics endpoints for teachers.
+ * Controller that handles download and submission analytics endpoints for teachers.
  */
 @Controller("/analytics")
 export class AnalyticsController extends BaseController {
@@ -58,6 +62,50 @@ export class AnalyticsController extends BaseController {
                 semester,
                 limit ?? 5,
             );
+
+            res.json(analytics);
+        } catch (e) {
+            this.handleError(req, res, e);
+        }
+    }
+
+    /**
+     * Obtains the submission-analytics payload (summary + concerning students) for the currently
+     * authenticated teacher's own visible assignments within an academic session and semester.
+     */
+    @Get("/submissions")
+    @Roles(UserRole.Teacher)
+    async getSubmissionAnalytics(
+        req: ApiRequest<
+            unknown,
+            SubmissionAnalytics,
+            unknown,
+            Partial<{ session: string; semester: string; limit: string }>
+        >,
+        res: ApiResponse<SubmissionAnalytics>,
+    ) {
+        if (!this.verifySession(req, res)) {
+            return;
+        }
+
+        try {
+            const parsedQuery = analyticsQuerySchema.safeParse(req.query);
+
+            if (!parsedQuery.success) {
+                throw new BadRequestError(
+                    parsedQuery.error.issues[0].message as MessageKey,
+                );
+            }
+
+            const { session, semester, limit } = parsedQuery.data;
+
+            const analytics =
+                await this.analyticsService.getSubmissionAnalytics(
+                    req.sessionData.userId,
+                    session,
+                    semester,
+                    limit ?? 5,
+                );
 
             res.json(analytics);
         } catch (e) {

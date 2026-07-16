@@ -1,5 +1,6 @@
 import {
     DownloadAnalytics,
+    SubmissionAnalytics,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -24,6 +25,21 @@ export class AnalyticsAPIClient
         signal?: AbortSignal,
     ): Promise<DownloadAnalytics> {
         const url = new URL(this.baseURL + "/downloads");
+
+        url.searchParams.append("session", session);
+        url.searchParams.append("semester", semester.toString());
+        url.searchParams.append("limit", limit.toString());
+
+        return this.get(url, { signal }).then((res) => res.json());
+    }
+
+    getSubmissionAnalytics(
+        session: ValidSession,
+        semester: ValidSemester,
+        limit = 5,
+        signal?: AbortSignal,
+    ): Promise<SubmissionAnalytics> {
+        const url = new URL(this.baseURL + "/submissions");
 
         url.searchParams.append("session", session);
         url.searchParams.append("semester", semester.toString());

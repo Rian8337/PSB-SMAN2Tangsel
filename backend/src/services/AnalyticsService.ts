@@ -3,6 +3,7 @@ import { dependencyTokens } from "@/dependencies/tokens";
 import { IAnalyticsRepository } from "@/repositories";
 import {
     DownloadAnalytics,
+    SubmissionAnalytics,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
@@ -37,5 +38,19 @@ export class AnalyticsService implements IAnalyticsService {
         ]);
 
         return { timeSeries, topAttachments };
+    }
+
+    async getSubmissionAnalytics(
+        teacherId: number,
+        session: ValidSession,
+        semester: ValidSemester,
+        concernLimit: number,
+    ): Promise<SubmissionAnalytics> {
+        return this.analyticsRepository.getSubmissionAnalytics(
+            teacherId,
+            session,
+            semester,
+            concernLimit,
+        );
     }
 }

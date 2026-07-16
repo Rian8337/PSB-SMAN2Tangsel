@@ -1,6 +1,7 @@
 import { AnalyticsService } from "@/services/AnalyticsService";
 import {
     DownloadTimeSeriesPoint,
+    SubmissionAnalytics,
     TopDownloadedAttachment,
 } from "@psb/shared/types";
 import { mockAnalyticsRepository } from "@test/mocks";
@@ -127,6 +128,63 @@ describe("AnalyticsService (unit)", () => {
             );
 
             expect(result).toEqual({ timeSeries, topAttachments });
+        });
+    });
+
+    describe("getSubmissionAnalytics", () => {
+        it("should call repository.getSubmissionAnalytics with correct arguments and return result verbatim", async () => {
+            const teacherId = 2;
+            const session = "2024/2025";
+            const semester = 1;
+            const concernLimit = 5;
+
+            const mockAnalytics: SubmissionAnalytics = {
+                summary: {
+                    onTime: 25,
+                    late: 3,
+                    missing: 2,
+                    pending: 0,
+                },
+                concerningStudents: [
+                    {
+                        studentId: 101,
+                        studentIdentifier: "001",
+                        studentName: "John Doe",
+                        lateCount: 2,
+                        missingCount: 1,
+                        classSubjectId: 1,
+                        subject: { id: 1, code: "MA1", name: "Matematika" },
+                        class: { id: 1, name: "X-IPA-1" },
+                    },
+                    {
+                        studentId: 102,
+                        studentIdentifier: "002",
+                        studentName: "Jane Smith",
+                        lateCount: 1,
+                        missingCount: 0,
+                        classSubjectId: 1,
+                        subject: { id: 1, code: "MA1", name: "Matematika" },
+                        class: { id: 1, name: "X-IPA-1" },
+                    },
+                ],
+            };
+
+            mockAnalyticsRepository.getSubmissionAnalytics.mockResolvedValue(
+                mockAnalytics,
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                concernLimit,
+            );
+
+            expect(
+                mockAnalyticsRepository.getSubmissionAnalytics,
+            ).toHaveBeenCalledWith(teacherId, session, semester, concernLimit);
+
+            expect(result).toEqual(mockAnalytics);
         });
     });
 });

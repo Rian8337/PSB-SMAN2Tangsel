@@ -222,4 +222,5 @@ export const mockAttachmentDownloadService: Mocked<IAttachmentDownloadService> =
  */
 export const mockAnalyticsService: Mocked<IAnalyticsService> = {
     getDownloadAnalytics: vi.fn(),
+    getSubmissionAnalytics: vi.fn(),
 };

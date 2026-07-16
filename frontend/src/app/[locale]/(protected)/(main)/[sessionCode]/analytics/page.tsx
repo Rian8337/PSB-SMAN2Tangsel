@@ -1,5 +1,6 @@
 import { getServerAuthApiClient } from "@/api/server";
 import { DownloadAnalytics } from "@/components/analytics/DownloadAnalytics";
+import { SubmissionAnalytics } from "@/components/analytics/SubmissionAnalytics";
 import { routing } from "@/i18n/routing";
 import { UserRole } from "@psb/shared/types";
 import { decodeSessionCode } from "@psb/shared/utils";
@@ -44,9 +45,16 @@ export default async function AnalyticsPage({
     }
 
     return (
-        <DownloadAnalytics
-            session={decoded.session}
-            semester={decoded.semester}
-        />
+        <>
+            <DownloadAnalytics
+                session={decoded.session}
+                semester={decoded.semester}
+            />
+
+            <SubmissionAnalytics
+                session={decoded.session}
+                semester={decoded.semester}
+            />
+        </>
     );
 }

@@ -661,6 +661,20 @@
       "errorMessage": "An error occurred while loading download analytics. Please try again."
     }
   },
+  "SubmissionAnalytics": {
+    "title": "Submission Analytics",
+    "onTime": "On Time",
+    "late": "Late",
+    "missing": "Missing",
+    "pending": "Not Yet Due",
+    "concernListTitle": "Students Needing Attention",
+    "noConcerns": "All students are submitting on time.",
+    "emptyState": "No assignment data yet.",
+    "fetchToast": {
+      "errorTitle": "Failed to Load Submission Analytics",
+      "errorMessage": "An error occurred while loading submission analytics. Please try again."
+    }
+  },
   "Global": {
     "appName": "PSB SMAN 2 Tangerang Selatan"
   },

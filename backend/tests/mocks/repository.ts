@@ -239,4 +239,5 @@ export const mockAttachmentDownloadRepository: Mocked<IAttachmentDownloadReposit
 export const mockAnalyticsRepository: Mocked<IAnalyticsRepository> = {
     getDownloadTimeSeries: vi.fn(),
     getTopDownloadedAttachments: vi.fn(),
+    getSubmissionAnalytics: vi.fn(),
 };

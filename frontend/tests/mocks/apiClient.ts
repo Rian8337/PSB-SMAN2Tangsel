@@ -22,6 +22,7 @@ import { Mocked } from "vitest";
  */
 export const mockAnalyticsApiClient: Mocked<IAnalyticsAPIClient> = {
     getDownloadAnalytics: vi.fn(),
+    getSubmissionAnalytics: vi.fn(),
 };
 
 /**
