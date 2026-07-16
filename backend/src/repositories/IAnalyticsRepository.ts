@@ -1,10 +1,54 @@
 import {
+    Class,
     DownloadTimeSeriesPoint,
-    SubmissionAnalytics,
+    Subject,
     TopDownloadedAttachment,
     ValidSemester,
     ValidSession,
 } from "@psb/shared/types";
+
+/**
+ * A visible assignment in scope for a teacher's submission analytics, along with the class-subject
+ * context needed to classify and group submissions against it.
+ */
+export interface AnalyticsAssignmentRow {
+    readonly assignmentId: number;
+    readonly dueAt: Date | null;
+    readonly classId: number;
+    readonly classSubjectId: number;
+    readonly subject: Pick<Subject, "id" | "code" | "name">;
+    readonly class: Pick<Class, "id" | "name">;
+}
+
+/**
+ * A single student's membership in a class, for roster lookups.
+ */
+export interface ClassRosterRow {
+    readonly classId: number;
+    readonly studentId: number;
+    readonly studentIdentifier: string;
+    readonly studentName: string;
+}
+
+/**
+ * The bare fact that a student submitted a given assignment at a given time.
+ */
+export interface SubmissionRecordRow {
+    readonly assignmentId: number;
+    readonly studentId: number;
+    readonly submittedAt: Date;
+}
+
+/**
+ * The raw data needed to compute submission analytics for a teacher — unclassified, since
+ * classifying a submission's status (on-time/late/missing/pending) is a business rule, not a data
+ * access concern, and belongs in the service layer.
+ */
+export interface SubmissionAnalyticsRawData {
+    readonly assignments: AnalyticsAssignmentRow[];
+    readonly roster: ClassRosterRow[];
+    readonly submissions: SubmissionRecordRow[];
+}
 
 /**
  * Defines operations for aggregating download analytics data for a teacher.
@@ -33,13 +77,13 @@ export interface IAnalyticsRepository {
     ): Promise<TopDownloadedAttachment[]>;
 
     /**
-     * Returns aggregate submission-status counts and a ranked list of students with late/missing
-     * submissions, across all of the teacher's visible assignments within the given session/semester.
+     * Returns the raw assignments/roster/submissions needed to compute submission analytics for a
+     * teacher's visible assignments within the given session/semester. Does not classify or
+     * aggregate — see {@link IAnalyticsService.getSubmissionAnalytics} for that.
      */
-    getSubmissionAnalytics(
+    getSubmissionAnalyticsRawData(
         teacherId: number,
         session: ValidSession,
         semester: ValidSemester,
-        concernLimit: number,
-    ): Promise<SubmissionAnalytics>;
+    ): Promise<SubmissionAnalyticsRawData>;
 }

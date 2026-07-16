@@ -373,47 +373,32 @@ describe("AnalyticsRepository (integration)", () => {
         });
     });
 
-    describe("getSubmissionAnalytics", () => {
-        // This block seeds its own classes/rosters/assignments, entirely separate from the
-        // download-analytics fixtures above. Those fixtures seed no student rosters (no
-        // `studentClasses` rows), so "Assignment One" above never contributes to any roster-based
-        // classification here even though it is visible and in-scope for `teacher`/`session`. The
-        // `teacher`, `session`, `otherSessionData`, `subject`, and `otherTeacherUserId` variables are
-        // reused from the outer `beforeAll` to mirror the scoping-exclusion tests already written for
-        // `getDownloadTimeSeries`/`getTopDownloadedAttachments` above.
+    describe("getSubmissionAnalyticsRawData", () => {
+        // Classifying/aggregating submission status (on-time/late/missing/pending) is business logic
+        // that lives in AnalyticsService, not here — see AnalyticsService.unit.test.ts for that. This
+        // block only verifies that the repository fetches the right *raw* rows: the right assignments
+        // (visible, teacher/session/semester scoped), the right roster (scoped to involved classes),
+        // and the right submissions (scoped to involved assignments). This block seeds its own
+        // classes/rosters/assignments, entirely separate from the download-analytics fixtures above.
+        // The `teacher`, `session`, `otherSessionData`, `subject`, and `otherTeacherUserId` variables
+        // are reused from the outer `beforeAll` to mirror the scoping-exclusion tests already written
+        // for `getDownloadTimeSeries`/`getTopDownloadedAttachments` above.
 
         const dayMs = 24 * 60 * 60 * 1000;
+        // Truncated to whole seconds: the `datetime` columns storing these values don't retain
+        // sub-second precision, so comparing round-tripped values against a millisecond-precision
+        // `Date` would spuriously fail.
+        const pastDue = new Date(
+            Math.floor((Date.now() - 7 * dayMs) / 1000) * 1000,
+        );
+        const submittedAt = new Date(pastDue.getTime() - dayMs);
 
-        // Comfortably in the past/future relative to whenever the suite actually runs.
-        const pastDue = new Date(Date.now() - 7 * dayMs);
-        const submittedBeforeDue = new Date(pastDue.getTime() - dayMs);
-        const submittedAfterDue = new Date(pastDue.getTime() + dayMs);
-        const futureDue = new Date(Date.now() + 7 * dayMs);
-
-        // Roster for the on-time / late / missing (past due) class-subject. stuC additionally
-        // misses a second assignment there, making it the top concern (count 2) for the
-        // concernLimit test.
         let stuAId: number;
         let stuBId: number;
-        let stuCId: number;
 
-        // Pending via a future due date.
-        let stuDId: number;
-
-        // On-time / pending via a null due date.
-        let stuEId: number;
-        let stuFId: number;
-
-        // Non-visible-assignment exclusion.
-        let stuGId: number;
-
-        // The same student enrolled in two different class-subjects taught by the same teacher —
-        // concerning in only one — to verify per-class-subject concern aggregation.
-        let stuDualId: number;
-
-        let classSubjectMixedId: number;
-        let classSubjectDualAId: number;
-        let classSubjectDualBId: number;
+        let classSubjectMainId: number;
+        let classMainId: number;
+        let visibleAssignmentId: number;
 
         async function seedStudent(identifier: string, name: string) {
             const user = await seeders.users.seedOne({
@@ -430,250 +415,63 @@ describe("AnalyticsRepository (integration)", () => {
         }
 
         beforeAll(async () => {
-            // --- Class-subject 1: on-time, late, and missing (past due), across two assignments so
-            // that stuC (always missing) ends up with the highest concern count (2). ---
-            stuAId = await seedStudent("analytics-sa-stu-a", "SA Student A");
-            stuBId = await seedStudent("analytics-sa-stu-b", "SA Student B");
-            stuCId = await seedStudent("analytics-sa-stu-c", "SA Student C");
+            // --- Main class-subject: one visible assignment (stuA submits, stuB doesn't) and one
+            // non-visible assignment, to verify the `visible` filter and the roster/submission shape.
+            stuAId = await seedStudent("analytics-sard-stu-a", "SARD Student A");
+            stuBId = await seedStudent("analytics-sard-stu-b", "SARD Student B");
 
-            const clsMixed = await seeders.classes.seedOne({
-                name: "SA-Mixed",
+            const clsMain = await seeders.classes.seedOne({
+                name: "SARD-Main",
                 session: session.session,
                 semester: session.semester,
             });
 
-            const classSubjectMixed = await seeders.classSubjects.seedOne({
-                classId: clsMixed.id!,
+            classMainId = clsMain.id!;
+
+            const classSubjectMain = await seeders.classSubjects.seedOne({
+                classId: classMainId,
                 subjectId: subject.id,
                 teacherId: teacher.userId,
             });
 
-            classSubjectMixedId = classSubjectMixed.id!;
+            classSubjectMainId = classSubjectMain.id!;
 
-            for (const studentId of [stuAId, stuBId, stuCId]) {
+            for (const studentId of [stuAId, stuBId]) {
                 await seeders.studentClasses.seedOne({
-                    classId: clsMixed.id!,
+                    classId: classMainId,
                     studentId,
                 });
             }
 
-            const mixedAssignment1 = await seeders.assignments.seedOne({
-                classSubjectId: classSubjectMixedId,
-                title: "SA Past Due Mixed 1",
+            const visibleAssignment = await seeders.assignments.seedOne({
+                classSubjectId: classSubjectMainId,
+                title: "SARD Visible Assignment",
                 description: null,
                 visible: true,
                 dueAt: pastDue,
             });
 
+            visibleAssignmentId = visibleAssignment.id!;
+
             await seeders.assignmentSubmissions.seedOne({
-                assignmentId: mixedAssignment1.id!,
+                assignmentId: visibleAssignmentId,
                 studentId: stuAId,
-                createdAt: submittedBeforeDue,
+                createdAt: submittedAt,
             });
-
-            await seeders.assignmentSubmissions.seedOne({
-                assignmentId: mixedAssignment1.id!,
-                studentId: stuBId,
-                createdAt: submittedAfterDue,
-            });
-            // stuC never submits mixedAssignment1 -> missing (1st miss).
-
-            const mixedAssignment2 = await seeders.assignments.seedOne({
-                classSubjectId: classSubjectMixedId,
-                title: "SA Past Due Mixed 2",
-                description: null,
-                visible: true,
-                dueAt: pastDue,
-            });
-
-            await seeders.assignmentSubmissions.seedOne({
-                assignmentId: mixedAssignment2.id!,
-                studentId: stuAId,
-                createdAt: submittedBeforeDue,
-            });
-
-            await seeders.assignmentSubmissions.seedOne({
-                assignmentId: mixedAssignment2.id!,
-                studentId: stuBId,
-                createdAt: submittedBeforeDue,
-            });
-            // stuC never submits mixedAssignment2 either -> missing (2nd miss, total 2).
-
-            // --- Class-subject 2: pending via a FUTURE due date. Must NOT be "missing" and must NOT
-            // appear in concerningStudents. ---
-            stuDId = await seedStudent("analytics-sa-stu-d", "SA Student D");
-
-            const clsPendingFuture = await seeders.classes.seedOne({
-                name: "SA-PendingFuture",
-                session: session.session,
-                semester: session.semester,
-            });
-
-            const classSubjectPendingFuture = await seeders.classSubjects.seedOne(
-                {
-                    classId: clsPendingFuture.id!,
-                    subjectId: subject.id,
-                    teacherId: teacher.userId,
-                },
-            );
-
-            await seeders.studentClasses.seedOne({
-                classId: clsPendingFuture.id!,
-                studentId: stuDId,
-            });
+            // stuB never submits.
 
             await seeders.assignments.seedOne({
-                classSubjectId: classSubjectPendingFuture.id!,
-                title: "SA Future Due",
-                description: null,
-                visible: true,
-                dueAt: futureDue,
-            });
-            // stuD never submits -> pending (future due date).
-
-            // --- Class-subject 3: on-time and pending via a NULL due date. ---
-            stuEId = await seedStudent("analytics-sa-stu-e", "SA Student E");
-            stuFId = await seedStudent("analytics-sa-stu-f", "SA Student F");
-
-            const clsNullDue = await seeders.classes.seedOne({
-                name: "SA-NullDue",
-                session: session.session,
-                semester: session.semester,
-            });
-
-            const classSubjectNullDue = await seeders.classSubjects.seedOne({
-                classId: clsNullDue.id!,
-                subjectId: subject.id,
-                teacherId: teacher.userId,
-            });
-
-            for (const studentId of [stuEId, stuFId]) {
-                await seeders.studentClasses.seedOne({
-                    classId: clsNullDue.id!,
-                    studentId,
-                });
-            }
-
-            const nullDueAssignment = await seeders.assignments.seedOne({
-                classSubjectId: classSubjectNullDue.id!,
-                title: "SA No Due Date",
-                description: null,
-                visible: true,
-                dueAt: null,
-            });
-
-            await seeders.assignmentSubmissions.seedOne({
-                assignmentId: nullDueAssignment.id!,
-                studentId: stuEId,
-                createdAt: new Date(),
-            });
-            // stuE submitted (any time, no deadline) -> onTime.
-            // stuF never submits -> pending (null due date, never "missing").
-
-            // --- Class-subject 4: a NON-VISIBLE assignment, unsubmitted and past due (would look
-            // like a "missing" entry if the `visible` filter were dropped). ---
-            stuGId = await seedStudent("analytics-sa-stu-g", "SA Student G");
-
-            const clsHidden = await seeders.classes.seedOne({
-                name: "SA-Hidden",
-                session: session.session,
-                semester: session.semester,
-            });
-
-            const classSubjectHidden = await seeders.classSubjects.seedOne({
-                classId: clsHidden.id!,
-                subjectId: subject.id,
-                teacherId: teacher.userId,
-            });
-
-            await seeders.studentClasses.seedOne({
-                classId: clsHidden.id!,
-                studentId: stuGId,
-            });
-
-            await seeders.assignments.seedOne({
-                classSubjectId: classSubjectHidden.id!,
-                title: "SA Hidden Assignment",
+                classSubjectId: classSubjectMainId,
+                title: "SARD Hidden Assignment",
                 description: null,
                 visible: false,
                 dueAt: pastDue,
             });
-            // stuG never submits; the assignment is hidden, so it must be excluded entirely.
-
-            // --- Class-subjects 5 & 6: the same student enrolled in two different class-subjects
-            // taught by the same teacher -- concerning in only one -- to verify that concern
-            // aggregation is scoped per class-subject, not summed across the teacher's whole roster.
-            stuDualId = await seedStudent(
-                "analytics-sa-stu-dual",
-                "SA Student Dual",
-            );
-
-            const clsDualA = await seeders.classes.seedOne({
-                name: "SA-DualA",
-                session: session.session,
-                semester: session.semester,
-            });
-
-            const classSubjectDualA = await seeders.classSubjects.seedOne({
-                classId: clsDualA.id!,
-                subjectId: subject.id,
-                teacherId: teacher.userId,
-            });
-
-            classSubjectDualAId = classSubjectDualA.id!;
-
-            await seeders.studentClasses.seedOne({
-                classId: clsDualA.id!,
-                studentId: stuDualId,
-            });
-
-            await seeders.assignments.seedOne({
-                classSubjectId: classSubjectDualAId,
-                title: "SA Dual A Assignment",
-                description: null,
-                visible: true,
-                dueAt: pastDue,
-            });
-            // stuDual never submits -> missing, at classSubjectDualA.
-
-            const clsDualB = await seeders.classes.seedOne({
-                name: "SA-DualB",
-                session: session.session,
-                semester: session.semester,
-            });
-
-            const classSubjectDualB = await seeders.classSubjects.seedOne({
-                classId: clsDualB.id!,
-                subjectId: subject.id,
-                teacherId: teacher.userId,
-            });
-
-            classSubjectDualBId = classSubjectDualB.id!;
-
-            await seeders.studentClasses.seedOne({
-                classId: clsDualB.id!,
-                studentId: stuDualId,
-            });
-
-            const dualBAssignment = await seeders.assignments.seedOne({
-                classSubjectId: classSubjectDualBId,
-                title: "SA Dual B Assignment",
-                description: null,
-                visible: true,
-                dueAt: pastDue,
-            });
-
-            await seeders.assignmentSubmissions.seedOne({
-                assignmentId: dualBAssignment.id!,
-                studentId: stuDualId,
-                createdAt: submittedBeforeDue,
-            });
-            // stuDual submits on time -> onTime, at classSubjectDualB (no concern here).
 
             // --- A class-subject taught by the SAME teacher, but in a DIFFERENT session/semester --
             // to verify session/semester scoping exclusion. ---
             const clsOtherSession = await seeders.classes.seedOne({
-                name: "SA-OtherSession",
+                name: "SARD-OtherSession",
                 session: otherSessionData.session,
                 semester: otherSessionData.semester,
             });
@@ -687,8 +485,8 @@ describe("AnalyticsRepository (integration)", () => {
             );
 
             const stuOtherSessionId = await seedStudent(
-                "analytics-sa-stu-other-session",
-                "SA Student Other Session",
+                "analytics-sard-stu-other-session",
+                "SARD Student Other Session",
             );
 
             await seeders.studentClasses.seedOne({
@@ -698,17 +496,16 @@ describe("AnalyticsRepository (integration)", () => {
 
             await seeders.assignments.seedOne({
                 classSubjectId: classSubjectOtherSession.id!,
-                title: "SA Other Session Assignment",
+                title: "SARD Other Session Assignment",
                 description: null,
                 visible: true,
                 dueAt: pastDue,
             });
-            // Never submitted -> missing, but only within `otherSessionData`'s session/semester.
 
             // --- A class-subject in the SAME session/semester, but taught by a DIFFERENT teacher --
             // to verify teacher scoping exclusion. ---
             const clsOtherTeacher = await seeders.classes.seedOne({
-                name: "SA-OtherTeacher",
+                name: "SARD-OtherTeacher",
                 session: session.session,
                 semester: session.semester,
             });
@@ -722,8 +519,8 @@ describe("AnalyticsRepository (integration)", () => {
             );
 
             const stuOtherTeacherId = await seedStudent(
-                "analytics-sa-stu-other-teacher",
-                "SA Student Other Teacher",
+                "analytics-sard-stu-other-teacher",
+                "SARD Student Other Teacher",
             );
 
             await seeders.studentClasses.seedOne({
@@ -733,181 +530,163 @@ describe("AnalyticsRepository (integration)", () => {
 
             await seeders.assignments.seedOne({
                 classSubjectId: classSubjectOtherTeacher.id!,
-                title: "SA Other Teacher Assignment",
+                title: "SARD Other Teacher Assignment",
                 description: null,
                 visible: true,
                 dueAt: pastDue,
             });
-            // Never submitted -> missing, but only visible when querying as `otherTeacherUserId`.
         });
 
-        // The full, deterministic summary for `teacher`/`session` across all fixtures seeded above:
-        //   - classSubjectMixed: onTime 1+2=3, late 1, missing 1+1=2 (6 pairs, 3 students x 2 assignments)
-        //   - classSubjectPendingFuture: pending 1
-        //   - classSubjectNullDue: onTime 1, pending 1
-        //   - classSubjectHidden: excluded entirely (not visible)
-        //   - classSubjectDualA: missing 1
-        //   - classSubjectDualB: onTime 1
-        //   - otherSession / otherTeacher class-subjects: excluded by scoping
-        // Totals: onTime 3+1+1=5, late 1, missing 2+1=3, pending 1+1=2.
-        const expectedSummary = {
-            onTime: 5,
-            late: 1,
-            missing: 3,
-            pending: 2,
-        };
-
-        it("classifies on-time, late, missing (past due), and pending (future due / null due) submissions across a teacher's visible assignments", async () => {
-            const result = await repository.getSubmissionAnalytics(
+        it("returns only visible assignments, with the correct class/subject shape", async () => {
+            const result = await repository.getSubmissionAnalyticsRawData(
                 teacher.userId,
                 session.session,
                 session.semester,
-                10,
             );
 
-            expect(result.summary).toEqual(expectedSummary);
-        });
-
-        it("does not classify pending submissions (future due or null due, unsubmitted) as missing, and excludes them from concerningStudents", async () => {
-            const result = await repository.getSubmissionAnalytics(
-                teacher.userId,
-                session.session,
-                session.semester,
-                10,
+            // The outer `beforeAll` above also seeds a visible assignment ("Assignment One") for
+            // this same teacher/session, so assert on the specific assignment this block seeded
+            // rather than the whole array.
+            expect(result.assignments).toEqual(
+                expect.arrayContaining([
+                    {
+                        assignmentId: visibleAssignmentId,
+                        dueAt: pastDue,
+                        classId: classMainId,
+                        classSubjectId: classSubjectMainId,
+                        subject: {
+                            id: subject.id,
+                            code: subject.code,
+                            name: subject.name,
+                        },
+                        class: { id: classMainId, name: "SARD-Main" },
+                    },
+                ]),
             );
 
-            const concernedStudentIds = result.concerningStudents.map(
-                (c) => c.studentId,
-            );
-
-            expect(concernedStudentIds).not.toContain(stuDId);
-            expect(concernedStudentIds).not.toContain(stuFId);
-        });
-
-        it("excludes non-visible assignments from the summary and concerningStudents, even when their unsubmitted, past-due state would otherwise look like a miss", async () => {
-            const result = await repository.getSubmissionAnalytics(
-                teacher.userId,
-                session.session,
-                session.semester,
-                10,
-            );
-
-            // If the `visible` filter were dropped, stuG's hidden-but-past-due assignment would add
-            // 1 to `missing` and a concern entry -- neither happens.
-            expect(result.summary).toEqual(expectedSummary);
-
+            // The non-visible sibling assignment must not appear at all.
             expect(
-                result.concerningStudents.some((c) => c.studentId === stuGId),
+                result.assignments.some(
+                    (a) =>
+                        a.classSubjectId === classSubjectMainId &&
+                        a.assignmentId !== visibleAssignmentId,
+                ),
             ).toBe(false);
         });
 
-        it("only counts submissions within the given session/semester", async () => {
-            const otherSessionResult = await repository.getSubmissionAnalytics(
-                teacher.userId,
-                otherSessionData.session,
-                otherSessionData.semester,
-                10,
-            );
-
-            expect(otherSessionResult.summary).toEqual({
-                onTime: 0,
-                late: 0,
-                missing: 1,
-                pending: 0,
-            });
-
-            const targetSessionResult = await repository.getSubmissionAnalytics(
+        it("returns the full roster of classes with in-scope assignments, regardless of submission status", async () => {
+            const result = await repository.getSubmissionAnalyticsRawData(
                 teacher.userId,
                 session.session,
                 session.semester,
-                10,
             );
 
-            expect(targetSessionResult.summary).toEqual(expectedSummary);
-        });
-
-        it("only counts submissions for classes the given teacher teaches", async () => {
-            const otherTeacherResult = await repository.getSubmissionAnalytics(
-                otherTeacherUserId,
-                session.session,
-                session.semester,
-                10,
-            );
-
-            expect(otherTeacherResult.summary).toEqual({
-                onTime: 0,
-                late: 0,
-                missing: 1,
-                pending: 0,
-            });
-
-            const targetTeacherResult = await repository.getSubmissionAnalytics(
-                teacher.userId,
-                session.session,
-                session.semester,
-                10,
-            );
-
-            expect(targetTeacherResult.summary).toEqual(expectedSummary);
-        });
-
-        it("aggregates concerningStudents per class-subject (not summed across the teacher's whole roster), sorted by severity, and respects concernLimit", async () => {
-            const fullResult = await repository.getSubmissionAnalytics(
-                teacher.userId,
-                session.session,
-                session.semester,
-                10,
-            );
-
-            expect(fullResult.concerningStudents).toHaveLength(3);
-
-            // stuC has 2 misses at classSubjectMixed -> the top concern.
-            expect(fullResult.concerningStudents[0]).toMatchObject({
-                studentId: stuCId,
-                classSubjectId: classSubjectMixedId,
-                lateCount: 0,
-                missingCount: 2,
-            });
-
-            expect(fullResult.concerningStudents).toEqual(
+            expect(result.roster).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
-                        studentId: stuBId,
-                        classSubjectId: classSubjectMixedId,
-                        lateCount: 1,
-                        missingCount: 0,
+                        classId: classMainId,
+                        studentId: stuAId,
                     }),
                     expect.objectContaining({
-                        studentId: stuDualId,
-                        classSubjectId: classSubjectDualAId,
-                        lateCount: 0,
-                        missingCount: 1,
+                        classId: classMainId,
+                        studentId: stuBId,
                     }),
                 ]),
             );
 
-            // stuDual must NOT have a phantom concern entry for classSubjectDualB, where it only
-            // submitted on time.
-            expect(
-                fullResult.concerningStudents.some(
-                    (c) =>
-                        c.studentId === stuDualId &&
-                        c.classSubjectId === classSubjectDualBId,
-                ),
-            ).toBe(false);
+            expect(result.roster).toHaveLength(2);
+        });
 
-            const limitedResult = await repository.getSubmissionAnalytics(
+        it("returns submissions only for in-scope assignments", async () => {
+            const result = await repository.getSubmissionAnalyticsRawData(
                 teacher.userId,
                 session.session,
                 session.semester,
-                1,
             );
 
-            expect(limitedResult.concerningStudents).toHaveLength(1);
-            expect(limitedResult.concerningStudents[0]).toMatchObject({
-                studentId: stuCId,
-                classSubjectId: classSubjectMixedId,
+            expect(result.submissions).toEqual([
+                {
+                    assignmentId: visibleAssignmentId,
+                    studentId: stuAId,
+                    submittedAt,
+                },
+            ]);
+        });
+
+        it("only returns data within the given session/semester", async () => {
+            const otherSessionResult =
+                await repository.getSubmissionAnalyticsRawData(
+                    teacher.userId,
+                    otherSessionData.session,
+                    otherSessionData.semester,
+                );
+
+            expect(
+                otherSessionResult.assignments.some(
+                    (a) => a.classSubjectId === classSubjectMainId,
+                ),
+            ).toBe(false);
+
+            const targetSessionResult =
+                await repository.getSubmissionAnalyticsRawData(
+                    teacher.userId,
+                    session.session,
+                    session.semester,
+                );
+
+            expect(
+                targetSessionResult.assignments.some(
+                    (a) => a.assignmentId === visibleAssignmentId,
+                ),
+            ).toBe(true);
+        });
+
+        it("only returns data for classes the given teacher teaches", async () => {
+            const otherTeacherResult =
+                await repository.getSubmissionAnalyticsRawData(
+                    otherTeacherUserId,
+                    session.session,
+                    session.semester,
+                );
+
+            expect(
+                otherTeacherResult.assignments.some(
+                    (a) => a.classSubjectId === classSubjectMainId,
+                ),
+            ).toBe(false);
+
+            const targetTeacherResult =
+                await repository.getSubmissionAnalyticsRawData(
+                    teacher.userId,
+                    session.session,
+                    session.semester,
+                );
+
+            expect(
+                targetTeacherResult.assignments.some(
+                    (a) => a.assignmentId === visibleAssignmentId,
+                ),
+            ).toBe(true);
+        });
+
+        it("returns empty assignments/roster/submissions when the teacher has no visible assignments in scope", async () => {
+            const noAssignmentsTeacher = await seeders.users.seedOne({
+                active: true,
+                name: "SARD No Assignments Teacher",
+                password: testPasswordHash,
+                role: UserRole.Teacher,
+                identifier: "analytics-sard-no-assignments-teacher",
             });
+
+            await seeders.teachers.seedOne({ userId: noAssignmentsTeacher.id! });
+
+            const result = await repository.getSubmissionAnalyticsRawData(
+                noAssignmentsTeacher.id!,
+                session.session,
+                session.semester,
+            );
+
+            expect(result).toEqual({ assignments: [], roster: [], submissions: [] });
         });
     });
 });

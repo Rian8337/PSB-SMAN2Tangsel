@@ -1,3 +1,7 @@
+import {
+    AnalyticsAssignmentRow,
+    ClassRosterRow,
+} from "@/repositories/IAnalyticsRepository";
 import { AnalyticsService } from "@/services/AnalyticsService";
 import {
     DownloadTimeSeriesPoint,
@@ -132,59 +136,364 @@ describe("AnalyticsService (unit)", () => {
     });
 
     describe("getSubmissionAnalytics", () => {
-        it("should call repository.getSubmissionAnalytics with correct arguments and return result verbatim", async () => {
-            const teacherId = 2;
-            const session = "2024/2025";
-            const semester = 1;
-            const concernLimit = 5;
+        // Classifying a submission's status (on-time/late/missing/pending) and aggregating
+        // concerning students is business logic that lives here, not in the repository — these
+        // tests exercise that logic directly against plain mocked raw data, no database required.
+        // (The repository's own tests only verify that its queries fetch the right raw rows.)
 
-            const mockAnalytics: SubmissionAnalytics = {
-                summary: {
-                    onTime: 25,
-                    late: 3,
-                    missing: 2,
-                    pending: 0,
-                },
-                concerningStudents: [
-                    {
-                        studentId: 101,
-                        studentIdentifier: "001",
-                        studentName: "John Doe",
-                        lateCount: 2,
-                        missingCount: 1,
-                        classSubjectId: 1,
-                        subject: { id: 1, code: "MA1", name: "Matematika" },
-                        class: { id: 1, name: "X-IPA-1" },
-                    },
-                    {
-                        studentId: 102,
-                        studentIdentifier: "002",
-                        studentName: "Jane Smith",
-                        lateCount: 1,
-                        missingCount: 0,
-                        classSubjectId: 1,
-                        subject: { id: 1, code: "MA1", name: "Matematika" },
-                        class: { id: 1, name: "X-IPA-1" },
-                    },
-                ],
+        const teacherId = 2;
+        const session = "2024/2025";
+        const semester = 1;
+
+        function makeAssignment(
+            overrides: Partial<AnalyticsAssignmentRow> = {},
+        ): AnalyticsAssignmentRow {
+            return {
+                assignmentId: 1,
+                dueAt: null,
+                classId: 1,
+                classSubjectId: 1,
+                subject: { id: 1, code: "MA1", name: "Matematika" },
+                class: { id: 1, name: "X-IPA-1" },
+                ...overrides,
             };
+        }
 
-            mockAnalyticsRepository.getSubmissionAnalytics.mockResolvedValue(
-                mockAnalytics,
+        function makeStudent(
+            overrides: Partial<ClassRosterRow> = {},
+        ): ClassRosterRow {
+            return {
+                classId: 1,
+                studentId: 101,
+                studentIdentifier: "001",
+                studentName: "Student One",
+                ...overrides,
+            };
+        }
+
+        it("calls the repository with the correct arguments", async () => {
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                { assignments: [], roster: [], submissions: [] },
+            );
+
+            await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(
+                mockAnalyticsRepository.getSubmissionAnalyticsRawData,
+            ).toHaveBeenCalledWith(teacherId, session, semester);
+        });
+
+        it("returns a zeroed summary and no concerns when there are no assignments in scope", async () => {
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                { assignments: [], roster: [], submissions: [] },
             );
 
             const result = await service.getSubmissionAnalytics(
                 teacherId,
                 session,
                 semester,
-                concernLimit,
+                5,
             );
 
-            expect(
-                mockAnalyticsRepository.getSubmissionAnalytics,
-            ).toHaveBeenCalledWith(teacherId, session, semester, concernLimit);
+            expect(result).toEqual<SubmissionAnalytics>({
+                summary: { onTime: 0, late: 0, missing: 0, pending: 0 },
+                concerningStudents: [],
+            });
+        });
 
-            expect(result).toEqual(mockAnalytics);
+        it("classifies a submission on or before the deadline as on-time", async () => {
+            const dueAt = new Date("2024-03-15T00:00:00.000Z");
+            const submittedAt = new Date("2024-03-14T00:00:00.000Z");
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt })],
+                    roster: [makeStudent()],
+                    submissions: [
+                        { assignmentId: 1, studentId: 101, submittedAt },
+                    ],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 1,
+                late: 0,
+                missing: 0,
+                pending: 0,
+            });
+            expect(result.concerningStudents).toEqual([]);
+        });
+
+        it("classifies a submission with no deadline as on-time, never late", async () => {
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt: null })],
+                    roster: [makeStudent()],
+                    submissions: [
+                        {
+                            assignmentId: 1,
+                            studentId: 101,
+                            submittedAt: new Date(),
+                        },
+                    ],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 1,
+                late: 0,
+                missing: 0,
+                pending: 0,
+            });
+        });
+
+        it("classifies a submission after the deadline as late", async () => {
+            const dueAt = new Date("2024-03-15T00:00:00.000Z");
+            const submittedAt = new Date("2024-03-16T00:00:00.000Z");
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt })],
+                    roster: [makeStudent()],
+                    submissions: [
+                        { assignmentId: 1, studentId: 101, submittedAt },
+                    ],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 0,
+                late: 1,
+                missing: 0,
+                pending: 0,
+            });
+            expect(result.concerningStudents).toEqual([
+                expect.objectContaining({
+                    studentId: 101,
+                    lateCount: 1,
+                    missingCount: 0,
+                }),
+            ]);
+        });
+
+        it("classifies a missing (unsubmitted, past due) submission as missing", async () => {
+            const dueAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt })],
+                    roster: [makeStudent()],
+                    submissions: [],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 0,
+                late: 0,
+                missing: 1,
+                pending: 0,
+            });
+            expect(result.concerningStudents).toEqual([
+                expect.objectContaining({
+                    studentId: 101,
+                    lateCount: 0,
+                    missingCount: 1,
+                }),
+            ]);
+        });
+
+        it("classifies an unsubmitted assignment with a future deadline as pending, not missing", async () => {
+            const dueAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt })],
+                    roster: [makeStudent()],
+                    submissions: [],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 0,
+                late: 0,
+                missing: 0,
+                pending: 1,
+            });
+            expect(result.concerningStudents).toEqual([]);
+        });
+
+        it("classifies an unsubmitted assignment with no deadline as pending, never missing", async () => {
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [makeAssignment({ dueAt: null })],
+                    roster: [makeStudent()],
+                    submissions: [],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.summary).toEqual({
+                onTime: 0,
+                late: 0,
+                missing: 0,
+                pending: 1,
+            });
+            expect(result.concerningStudents).toEqual([]);
+        });
+
+        it("aggregates a student's late/missing counts per class-subject, not across the teacher's whole roster", async () => {
+            const dueAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [
+                        makeAssignment({
+                            assignmentId: 1,
+                            classId: 1,
+                            classSubjectId: 1,
+                            dueAt,
+                        }),
+                        makeAssignment({
+                            assignmentId: 2,
+                            classId: 2,
+                            classSubjectId: 2,
+                            dueAt,
+                            class: { id: 2, name: "X-IPA-2" },
+                        }),
+                    ],
+                    roster: [
+                        makeStudent({ classId: 1 }),
+                        makeStudent({ classId: 2 }),
+                    ],
+                    submissions: [
+                        // On time in class-subject 2; missing (no submission) in class-subject 1.
+                        {
+                            assignmentId: 2,
+                            studentId: 101,
+                            submittedAt: new Date(dueAt.getTime() - 1000),
+                        },
+                    ],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.concerningStudents).toEqual([
+                expect.objectContaining({
+                    studentId: 101,
+                    classSubjectId: 1,
+                    lateCount: 0,
+                    missingCount: 1,
+                }),
+            ]);
+            // No phantom entry for class-subject 2, where the student was on time.
+            expect(
+                result.concerningStudents.some((c) => c.classSubjectId === 2),
+            ).toBe(false);
+        });
+
+        it("sorts concerning students by severity (late + missing) descending and respects concernLimit", async () => {
+            const dueAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+            mockAnalyticsRepository.getSubmissionAnalyticsRawData.mockResolvedValue(
+                {
+                    assignments: [
+                        makeAssignment({ assignmentId: 1, dueAt }),
+                        makeAssignment({ assignmentId: 2, dueAt }),
+                    ],
+                    roster: [
+                        makeStudent({
+                            studentId: 101,
+                            studentName: "One Miss",
+                        }),
+                        makeStudent({
+                            studentId: 102,
+                            studentName: "Two Misses",
+                        }),
+                    ],
+                    submissions: [
+                        // Student 101 submits assignment 1 on time, misses assignment 2 -> 1 miss.
+                        {
+                            assignmentId: 1,
+                            studentId: 101,
+                            submittedAt: new Date(dueAt.getTime() - 1000),
+                        },
+                        // Student 102 submits nothing -> 2 misses.
+                    ],
+                },
+            );
+
+            const result = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                5,
+            );
+
+            expect(result.concerningStudents.map((c) => c.studentId)).toEqual(
+                [102, 101],
+            );
+
+            const limited = await service.getSubmissionAnalytics(
+                teacherId,
+                session,
+                semester,
+                1,
+            );
+
+            expect(limited.concerningStudents).toHaveLength(1);
+            expect(limited.concerningStudents[0].studentId).toBe(102);
         });
     });
 });

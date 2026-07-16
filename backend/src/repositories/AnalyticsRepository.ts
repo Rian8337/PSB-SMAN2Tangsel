@@ -18,8 +18,6 @@ import {
 import {
     DownloadTimeSeriesPoint,
     DrizzleDb,
-    StudentSubmissionConcern,
-    SubmissionAnalytics,
     TopDownloadedAttachment,
     ValidSemester,
     ValidSession,
@@ -27,7 +25,10 @@ import {
 import { and, count, eq, inArray, sql } from "drizzle-orm";
 import { inject } from "tsyringe";
 import { DatabaseRepository } from "./DatabaseRepository";
-import { IAnalyticsRepository } from "./IAnalyticsRepository";
+import {
+    IAnalyticsRepository,
+    SubmissionAnalyticsRawData,
+} from "./IAnalyticsRepository";
 
 /**
  * The SQL expression for the Monday date that starts the week containing
@@ -250,14 +251,11 @@ export class AnalyticsRepository
             .slice(0, limit);
     }
 
-    async getSubmissionAnalytics(
+    async getSubmissionAnalyticsRawData(
         teacherId: number,
         session: ValidSession,
         semester: ValidSemester,
-        concernLimit: number,
-    ): Promise<SubmissionAnalytics> {
-        const now = new Date();
-
+    ): Promise<SubmissionAnalyticsRawData> {
         // Get every visible assignment in the teacher's class-subjects for this session/semester.
         const assignmentRows = await this.db
             .select({
@@ -289,10 +287,7 @@ export class AnalyticsRepository
             );
 
         if (assignmentRows.length === 0) {
-            return {
-                summary: { onTime: 0, late: 0, missing: 0, pending: 0 },
-                concerningStudents: [],
-            };
+            return { assignments: [], roster: [], submissions: [] };
         }
 
         const classIds = [...new Set(assignmentRows.map((a) => a.classId))];
@@ -321,93 +316,10 @@ export class AnalyticsRepository
             .from(assignmentSubmissions)
             .where(inArray(assignmentSubmissions.assignmentId, assignmentIds));
 
-        const submissionMap = new Map<string, Date>(
-            submissionRows.map((r) => [
-                `${String(r.assignmentId)}:${String(r.studentId)}`,
-                r.submittedAt,
-            ]),
-        );
-
-        const rosterByClass = new Map<number, typeof rosterRows>();
-
-        for (const row of rosterRows) {
-            const list = rosterByClass.get(row.classId) ?? [];
-
-            list.push(row);
-            rosterByClass.set(row.classId, list);
-        }
-
-        const summary: {
-            onTime: number;
-            late: number;
-            missing: number;
-            pending: number;
-        } = {
-            onTime: 0,
-            late: 0,
-            missing: 0,
-            pending: 0,
+        return {
+            assignments: assignmentRows,
+            roster: rosterRows,
+            submissions: submissionRows,
         };
-
-        // This is keyed by `${studentId}:${classSubjectId}`. A concern is scoped per class-subject,
-        // not summed across a teacher's whole roster (see plan Context for rationale).
-        const concernMap = new Map<
-            string,
-            Omit<StudentSubmissionConcern, "lateCount" | "missingCount"> & {
-                lateCount: number;
-                missingCount: number;
-            }
-        >();
-
-        for (const assignment of assignmentRows) {
-            const roster = rosterByClass.get(assignment.classId) ?? [];
-
-            for (const student of roster) {
-                const submittedAt = submissionMap.get(
-                    `${String(assignment.assignmentId)}:${String(student.studentId)}`,
-                );
-
-                const status = submittedAt
-                    ? !assignment.dueAt || submittedAt <= assignment.dueAt
-                        ? "onTime"
-                        : "late"
-                    : assignment.dueAt && assignment.dueAt <= now
-                      ? "missing"
-                      : "pending";
-
-                summary[status]++;
-
-                if (status === "late" || status === "missing") {
-                    const key = `${String(student.studentId)}:${String(assignment.classSubjectId)}`;
-                    const existing = concernMap.get(key) ?? {
-                        studentId: student.studentId,
-                        studentIdentifier: student.studentIdentifier,
-                        studentName: student.studentName,
-                        classSubjectId: assignment.classSubjectId,
-                        subject: assignment.subject,
-                        class: assignment.class,
-                        lateCount: 0,
-                        missingCount: 0,
-                    };
-
-                    existing[
-                        status === "late" ? "lateCount" : "missingCount"
-                    ]++;
-
-                    concernMap.set(key, existing);
-                }
-            }
-        }
-
-        const concerningStudents = [...concernMap.values()]
-            .sort(
-                (a, b) =>
-                    b.lateCount +
-                    b.missingCount -
-                    (a.lateCount + a.missingCount),
-            )
-            .slice(0, concernLimit);
-
-        return { summary, concerningStudents };
     }
 }
